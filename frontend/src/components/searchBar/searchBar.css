@@ -1,0 +1,25 @@
+.search-bar-container {
+    width: 50%;
+}
+
+.search-bar-group {
+    font-family: 'Quicksand-Regular', sans-serif;
+    border-radius: 50px !important;
+    height: 45px;
+}
+
+.search-bar-button {
+    border-top-left-radius: 50px !important;
+    border-bottom-left-radius: 50px !important;
+}
+
+.search-bar-button:focus,
+.search-bar-button:hover {
+    background-color: #be5031 !important;
+    color: white !important;
+}
+
+.search-bar-text {
+    border-top-right-radius: 50px !important;
+    border-bottom-right-radius: 50px !important;
+}
