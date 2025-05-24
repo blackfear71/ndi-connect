@@ -8,16 +8,16 @@ const TestForm = ({ formData, setFormData, onSubmit }) => {
         <div>
             <input
                 type="text"
-                name="name"
-                placeholder="Nom"
-                value={formData.name}
+                name="year"
+                placeholder="Année"
+                value={formData.year}
                 onChange={handleChange}
             />
             <input
                 type="text"
-                name="description"
-                placeholder="Description"
-                value={formData.description}
+                name="place"
+                placeholder="Lieu"
+                value={formData.place}
                 onChange={handleChange}
             />
             <button onClick={() => onSubmit(formData)}>Ajouter</button>

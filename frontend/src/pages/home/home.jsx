@@ -4,10 +4,6 @@ import { Link } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
-import HomeAccess from '../../components/homeAccess/homeAccess';
-import HomeCard from '../../components/homeCard/homeCard';
-import HomePresentation from '../../components/homePresentation/homePresentation';
-import HomeSuggestions from '../../components/homeSuggestions/homeSuggestions';
 import TestForm from '../../components/testForm/testForm';
 
 import { combineLatest, of, switchMap } from 'rxjs';
@@ -19,12 +15,12 @@ import { catchError, map, take } from 'rxjs/operators';
 const Home = () => {
     const [editions, setEditions] = useState([]);
     const [formData, setFormData] = useState({
-        name: '',
-        description: '',
+        year: '',
+        place: '',
     });
     const [formUpdate, setFormUpdate] = useState({
-        name: '',
-        description: '',
+        year: '',
+        place: '',
     });
 
     useEffect(() => {
@@ -69,8 +65,8 @@ const Home = () => {
     };
 
     const resetFormData = () => {
-        formData.name = '';
-        formData.description = '';
+        formData.year = '';
+        formData.place = '';
 
         setFormData(formData);
     };
@@ -123,21 +119,6 @@ const Home = () => {
 
     return (
         <div>
-            {/* Cartes accueil */}
-            <HomePresentation />
-
-            {/* Suggestions */}
-            <HomeSuggestions />
-
-            {/* Accès */}
-            <HomeAccess />
-
-            <Link to="/">Accueil</Link>
-            {editions && editions.length > 0 && (
-                <span>
-                    |<Link to={`/edition/${editions[0].id}`}>Edition</Link>
-                </span>
-            )}
             <h1>Editions</h1>
             <TestForm
                 formData={formData}
@@ -148,14 +129,18 @@ const Home = () => {
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                 {editions && editions.length > 0 ? (
                     editions.map((edition) => (
-                        <HomeCard
-                            key={edition.id}
-                            edition={edition}
-                            formUpdate={formUpdate}
-                            setFormUpdate={setFormUpdate}
-                            onUpdate={handleUpdate}
-                            onDelete={handleDelete}
-                        />
+                        <Link to={`/edition/${edition.id}`}>
+                            {edition.year} - {edition.place}
+                        </Link>
+
+                        // <HomeCard
+                        //     key={edition.id}
+                        //     edition={edition}
+                        //     formUpdate={formUpdate}
+                        //     setFormUpdate={setFormUpdate}
+                        //     onUpdate={handleUpdate}
+                        //     onDelete={handleDelete}
+                        // />
                     ))
                 ) : (
                     <div>Aucun enregistrement</div>

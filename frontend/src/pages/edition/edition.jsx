@@ -34,12 +34,13 @@ const Edition = () => {
 
     return (
         <div>
-            <Link to="/">Accueil</Link>|
-            {edition && <Link to={`/edition/${id}`}>Edition</Link>}
-            <h1>Page d'une édition'</h1>
+            <Link to="/">Accueil</Link>
+            <h1>Page d'une édition</h1>
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                 {edition ? (
-                    <HomeCard key={edition.id} edition={edition} />
+                    <div>
+                        {edition.year} - {edition.place}
+                    </div>
                 ) : (
                     <div>Enregistrement non trouvé</div>
                 )}

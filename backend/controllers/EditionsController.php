@@ -7,9 +7,7 @@ class EditionsController
 
     public function __construct($db)
     {
-        $this->service = new EditionsController($db);
-        
-        file_put_contents(__DIR__ . '/debug-router.log', "-----------------\nCONSTR\n", FILE_APPEND);
+        $this->service = new EditionsService($db);
     }
 
     public function index()
