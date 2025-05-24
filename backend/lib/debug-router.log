@@ -1,0 +1,14 @@
+-->
+Route method: GET
+Pattern: #^/editions/all$#
+Match: 1
+-->
+Route method: GET
+Pattern: #^/editions/all$#
+Match: 1
+-->TEST
+-->
+Route method: GET
+Pattern: #^/editions/all$#
+Match: 1
+-->TEST

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import TestService from '../../api/testService';
+import EditionsService from '../../api/editionsService';
 
 import HomeAccess from '../../components/homeAccess/homeAccess';
 import HomeCard from '../../components/homeCard/homeCard';
@@ -17,7 +17,7 @@ import { catchError, map, take } from 'rxjs/operators';
 // TODO : voir pour créer un fichier de traductions/libellés
 
 const Home = () => {
-    const [test, setTest] = useState([]);
+    const [editions, setEditions] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -28,14 +28,15 @@ const Home = () => {
     });
 
     useEffect(() => {
-        const testService = new TestService();
+        const editionsService = new EditionsService();
 
-        const subscriptionTest = testService.getAllTest();
+        const subscriptionEditions = editionsService.getAllEditions();
 
-        combineLatest([subscriptionTest])
+        combineLatest([subscriptionEditions])
             .pipe(
-                map(([dataTest]) => {
-                    setTest(dataTest.response);
+                map(([dataEditions]) => {
+                    console.log(dataEditions.response);
+                    setEditions(dataEditions.response);
                 }),
                 take(1),
                 catchError(() => {
@@ -46,14 +47,14 @@ const Home = () => {
     }, []);
 
     const handleSubmit = () => {
-        const testService = new TestService();
+        const editionsService = new EditionsService();
 
-        testService
-            .insertTest(formData)
+        editionsService
+            .insertEdition(formData)
             .pipe(
-                switchMap(() => testService.getAllTest()),
-                map((dataTest) => {
-                    setTest(dataTest.response);
+                switchMap(() => editionsService.getAllEditions()),
+                map((dataEditions) => {
+                    setEditions(dataEditions.response);
                     resetFormData();
                 }),
                 take(1),
@@ -74,15 +75,15 @@ const Home = () => {
         setFormData(formData);
     };
 
-    const handleUpdate = (test_id) => {
-        const testService = new TestService();
+    const handleUpdate = (id) => {
+        const editionsService = new EditionsService();
 
-        testService
-            .updateTest(test_id, formUpdate)
+        editionsService
+            .updateEdition(id, formUpdate)
             .pipe(
-                switchMap(() => testService.getAllTest()),
-                map((dataTest) => {
-                    setTest(dataTest.response);
+                switchMap(() => editionsService.getAllEditions()),
+                map((dataEditions) => {
+                    setEditions(dataEditions.response);
                     resetFormUpdate();
                 }),
                 take(1),
@@ -101,15 +102,15 @@ const Home = () => {
         setFormData(formUpdate);
     };
 
-    const handleDelete = (test_id) => {
-        const testService = new TestService();
+    const handleDelete = (id) => {
+        const editionsService = new EditionsService();
 
-        testService
-            .deleteTest(test_id)
+        editionsService
+            .deleteEdition(id)
             .pipe(
-                switchMap(() => testService.getAllTest()),
-                map((dataTest) => {
-                    setTest(dataTest.response);
+                switchMap(() => editionsService.getAllEditions()),
+                map((dataEditions) => {
+                    setEditions(dataEditions.response);
                 }),
                 take(1),
                 catchError((err) => {
@@ -132,12 +133,12 @@ const Home = () => {
             <HomeAccess />
 
             <Link to="/">Accueil</Link>
-            {test.length > 0 && (
+            {editions && editions.length > 0 && (
                 <span>
-                    |<Link to={`/testPage/${test[0].test_id}`}>Test</Link>
+                    |<Link to={`/edition/${editions[0].id}`}>Edition</Link>
                 </span>
             )}
-            <h1>Page d'accueil</h1>
+            <h1>Editions</h1>
             <TestForm
                 formData={formData}
                 setFormData={setFormData}
@@ -145,11 +146,11 @@ const Home = () => {
             />
 
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {test && test.length > 0 ? (
-                    test.map((p) => (
+                {editions && editions.length > 0 ? (
+                    editions.map((edition) => (
                         <HomeCard
-                            key={p.test_id}
-                            test={p}
+                            key={edition.id}
+                            edition={edition}
                             formUpdate={formUpdate}
                             setFormUpdate={setFormUpdate}
                             onUpdate={handleUpdate}

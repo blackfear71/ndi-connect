@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Layout from './components/layout/layout';
 
+import Edition from './pages/edition/edition';
 import Home from './pages/home/home';
-import TestFeature from './pages/testFeature/testFeature';
 
 import './App.css';
 
@@ -17,10 +17,7 @@ function App() {
                         <Route index element={<Home />} />
 
                         {/* Page de test */}
-                        <Route
-                            path="testPage/:test_id"
-                            element={<TestFeature />}
-                        />
+                        <Route path="edition/:id" element={<Edition />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

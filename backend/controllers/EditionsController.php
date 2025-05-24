@@ -1,13 +1,15 @@
 <?php
-require_once 'services/TestService.php';
+require_once 'services/EditionsService.php';
 
-class TestController
+class EditionsController
 {
     private $service;
 
     public function __construct($db)
     {
-        $this->service = new TestService($db);
+        $this->service = new EditionsController($db);
+        
+        file_put_contents(__DIR__ . '/debug-router.log', "-----------------\nCONSTR\n", FILE_APPEND);
     }
 
     public function index()
@@ -30,7 +32,7 @@ class TestController
                 echo json_encode($show);
             } else {
                 http_response_code(404);
-                echo json_encode(['error' => 'Test non trouvé']);
+                echo json_encode(['error' => 'Edition non trouvé']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -47,7 +49,7 @@ class TestController
                 echo json_encode($created);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Test non créé']);
+                echo json_encode(['error' => 'Edition non créée']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -64,7 +66,7 @@ class TestController
                 echo json_encode($updated);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Test non mis à jour']);
+                echo json_encode(['error' => 'Edition non mise à jour']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -81,7 +83,7 @@ class TestController
                 echo json_encode(['deleted' => $deleted]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Test non supprimé']);
+                echo json_encode(['error' => 'Edition non supprimée']);
             }
         } catch (Exception $e) {
             http_response_code(500);

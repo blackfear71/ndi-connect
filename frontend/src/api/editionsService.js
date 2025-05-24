@@ -5,28 +5,27 @@ const API_URL = 'http://localhost/ndi-connect/backend'; //process.env.REACT_APP_
 /**
  * Service class for managing projects from the API.
  */
-class TestService {
+class EditionsService {
     /**
      * Allows to get a project from the database.
      *
      * @param {*} projetId The project identifier.
      */
-    getAllTest = () => {
-        const url = `${API_URL}/tests/all`;
+    getAllEditions = () => {
+        const url = `${API_URL}/editions/all`;
+        // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
+        return ajax.get(url); //, headers);
+    };
+
+    getEdition = (id) => {
+        const url = `${API_URL}/editions/find/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
 
         return ajax.get(url); //, headers);
     };
 
-    getOneTest = (test_id) => {
-        const url = `${API_URL}/tests/find/${test_id}`;
-        // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
-
-        return ajax.get(url); //, headers);
-    };
-
-    insertTest = (body) => {
-        const url = `${API_URL}/tests/create`;
+    insertEdition = (body) => {
+        const url = `${API_URL}/editions/create`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
 
         // TODO : à voir pour passer les headers comme ça
@@ -35,15 +34,15 @@ class TestService {
         return ajax.post(url, body); //, headers);
     };
 
-    updateTest = (test_id, body) => {
-        const url = `${API_URL}/tests/update/${test_id}`;
+    updateEdition = (id, body) => {
+        const url = `${API_URL}/editions/update/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
 
         return ajax.patch(url, body); //, headers);
     };
 
-    deleteTest = (test_id) => {
-        const url = `${API_URL}/tests/delete/${test_id}`;
+    deleteEdition = (id) => {
+        const url = `${API_URL}/editions/delete/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
 
         return ajax.delete(url); //, headers);
@@ -62,4 +61,4 @@ class TestService {
     // };
 }
 
-export default TestService;
+export default EditionsService;

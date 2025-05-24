@@ -44,6 +44,7 @@ class Router
 
         // Supprime le dossier du script (ex: "/ndi-connect/backend")
         $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+
         if ($scriptDir !== '' && str_starts_with($uri, $scriptDir)) {
             $uri = substr($uri, strlen($scriptDir));
         }
@@ -54,12 +55,13 @@ class Router
         // DEBUGG
         // file_put_contents(__DIR__ . '/debug-router.log', "-----------------\nMethod: $method\nURI: $uri\n", FILE_APPEND);
 
-        foreach ($this->routes as $route) {
+        foreach ($this->routes as $route) {            
             // DEBUGG
-            // $testPatern = preg_match($route['pattern'], $uri, $matches);
-            // file_put_contents(__DIR__ . '/debug-router.log', "-->\nRoute method: " . $route['method'] . "\nPattern: " . $route['pattern'] . "\nMatch: $testPatern\n", FILE_APPEND);
+            $testPatern = preg_match($route['pattern'], $uri, $matches);
+            file_put_contents(__DIR__ . '/debug-router.log', "-->\nRoute method: " . $route['method'] . "\nPattern: " . $route['pattern'] . "\nMatch: $testPatern\n", FILE_APPEND);
 
             if ($route['method'] === $method && preg_match($route['pattern'], $uri, $matches)) {
+                file_put_contents(__DIR__ . '/debug-router.log', "-->TEST\n", FILE_APPEND);
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 return call_user_func($route['callback'], $params);
             }

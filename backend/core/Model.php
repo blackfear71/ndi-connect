@@ -12,7 +12,7 @@ class Model
     // Récupérer tous les enregistrements
     public function all()
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY test_id ASC";
+        $sql = "SELECT * FROM {$this->table} ORDER BY id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -20,7 +20,7 @@ class Model
     // Récupérer un enregistrement par ID
     public function find($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE test_id = :id";
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,7 +46,7 @@ class Model
         foreach ($data as $key => $value) {
             $fields[] = "$key = :$key";
         }
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE test_id = :id";
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
         $data['id'] = $id;
@@ -58,7 +58,7 @@ class Model
     // Supprimer un enregistrement
     public function delete($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE test_id = :id";
+        $sql = "DELETE FROM {$this->table} WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }

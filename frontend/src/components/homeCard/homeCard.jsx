@@ -6,11 +6,17 @@ import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
 import './homeCard.css';
 
-const HomeCard = ({ test, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
+const HomeCard = ({
+    edition,
+    formUpdate,
+    setFormUpdate,
+    onUpdate,
+    onDelete,
+}) => {
     const [isUpdating, setIsUpdating] = useState(false);
 
     const onClickUpdating = () => {
-        setFormUpdate({ name: test.name, description: test.description });
+        setFormUpdate({ name: edition.name, description: edition.description });
         setIsUpdating(!isUpdating);
     };
 
@@ -20,7 +26,7 @@ const HomeCard = ({ test, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
     };
 
     const handleUpdateClick = () => {
-        onUpdate(test.test_id);
+        onUpdate(edition.id);
         setIsUpdating(false);
     };
 
@@ -57,8 +63,8 @@ const HomeCard = ({ test, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
                     </div>
                 ) : (
                     <div>
-                        <Card.Title>{test.name}</Card.Title>
-                        <Card.Text>{test.description}</Card.Text>
+                        <Card.Title>{edition.name}</Card.Title>
+                        <Card.Text>{edition.description}</Card.Text>
                         {formUpdate && (
                             <button onClick={() => onClickUpdating()}>
                                 Modifier
@@ -68,10 +74,7 @@ const HomeCard = ({ test, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
                 )}
             </Card.Body>
             {onDelete && (
-                <Button
-                    variant="primary"
-                    onClick={() => onDelete(test.test_id)}
-                >
+                <Button variant="primary" onClick={() => onDelete(edition.id)}>
                     Supprimer
                 </Button>
             )}

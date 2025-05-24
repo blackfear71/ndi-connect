@@ -1,13 +1,13 @@
 <?php
-require_once 'models/Test.php';
+require_once 'models/Editions.php';
 
-class TestService
+class EditionsService
 {
     private $model;
 
     public function __construct($db)
     {
-        $this->model = new Test($db);
+        $this->model = new Editions($db);
     }
 
     public function index()

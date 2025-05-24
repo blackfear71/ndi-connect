@@ -2,27 +2,27 @@ import { useEffect, useState } from 'react';
 
 import { Link, useParams } from 'react-router-dom';
 
-import TestService from '../../api/testService';
+import EditionsService from '../../api/editionsService';
 
 import HomeCard from '../../components/homeCard/homeCard';
 
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
-const TestFeature = () => {
-    const { test_id } = useParams();
+const Edition = () => {
+    const { id } = useParams();
 
-    const [test, setTest] = useState();
+    const [edition, setEdition] = useState();
 
     useEffect(() => {
-        const testService = new TestService();
+        const editionsService = new EditionsService();
 
-        const subscriptionTest = testService.getOneTest(test_id);
+        const subscriptionEdition = editionsService.getEdition(id);
 
-        combineLatest([subscriptionTest])
+        combineLatest([subscriptionEdition])
             .pipe(
-                map(([dataTest]) => {
-                    setTest(dataTest.response);
+                map(([dataEdition]) => {
+                    setEdition(dataEdition.response);
                 }),
                 take(1),
                 catchError(() => {
@@ -35,11 +35,11 @@ const TestFeature = () => {
     return (
         <div>
             <Link to="/">Accueil</Link>|
-            {test && <Link to={`/testPage/${test_id}`}>Test</Link>}
-            <h1>Page de test</h1>
+            {edition && <Link to={`/edition/${id}`}>Edition</Link>}
+            <h1>Page d'une édition'</h1>
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {test ? (
-                    <HomeCard key={test.test_id} test={test} />
+                {edition ? (
+                    <HomeCard key={edition.id} edition={edition} />
                 ) : (
                     <div>Enregistrement non trouvé</div>
                 )}
@@ -47,4 +47,4 @@ const TestFeature = () => {
         </div>
     );
 };
-export default TestFeature;
+export default Edition;
