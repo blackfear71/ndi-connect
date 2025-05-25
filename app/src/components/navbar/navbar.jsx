@@ -10,13 +10,17 @@ const Navbar = () => {
     return (
         <nav className="navbar-container">
             {/* Logo */}
-            <img src={ndiConnectLogo} alt="ndi-connect" className="navbar-logo" />
+            <img
+                src={ndiConnectLogo}
+                alt="ndi-connect"
+                className="navbar-logo"
+            />
 
             {/* Barre de recherche */}
             <SearchBar />
 
             {/* Utilisateur */}
-            <FaUserCircle size={40} color="#BE5031" className="navbar-user" />
+            <FaUserCircle size={40} color="#000000" className="navbar-user" />
         </nav>
     );
 };
