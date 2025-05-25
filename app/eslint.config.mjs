@@ -13,7 +13,7 @@ export default [
     },
     js.configs.recommended,
     {
-        files: ['src/**/*.jsx', '**/*.test.jsx', '**/*.test.js'],
+        files: ['**/*.js', '**/*.jsx'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
@@ -26,6 +26,7 @@ export default [
                 beforeEach: 'readonly',
                 afterEach: 'readonly',
                 it: 'readonly',
+                process: 'readonly',
             },
             parserOptions: {
                 ecmaFeatures: {
