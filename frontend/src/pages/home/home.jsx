@@ -31,7 +31,6 @@ const Home = () => {
         combineLatest([subscriptionEditions])
             .pipe(
                 map(([dataEditions]) => {
-                    console.log(dataEditions.response);
                     setEditions(dataEditions.response);
                 }),
                 take(1),

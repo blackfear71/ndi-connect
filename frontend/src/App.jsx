@@ -10,7 +10,7 @@ import './App.css';
 function App() {
     return (
         <div className="App">
-            <BrowserRouter>
+            <BrowserRouter basename="/app">
                 <Routes>
                     <Route path="/" element={<Layout />}>
                         {/* Accueil : route par défaut */}

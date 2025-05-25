@@ -1,6 +1,10 @@
 import { ajax } from 'rxjs/ajax';
 
-const API_URL = 'http://localhost/ndi-connect/backend'; //process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+// LOCAL    : 'http://localhost/ndi-connect/backend';
+// IDEAL    : process.env.REACT_APP_API_URL
+// ORIGINE  : 'http://localhost:3000/api';
+// SYNOLOGY : 'api'
+const API_URL = 'api';
 
 /**
  * Service class for managing projects from the API.
