@@ -8,7 +8,7 @@ require_once __DIR__ . '/lib/Router.php';
 
 $router = new Router();
 
-$basePath = dirname($_SERVER['SCRIPT_NAME']); // "/ndi-connect/backend"
+$basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
 // DEBUGG

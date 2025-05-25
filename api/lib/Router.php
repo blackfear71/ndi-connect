@@ -42,7 +42,7 @@ class Router
         // Récupère le chemin brut de l'URL (sans query string)
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-        // Supprime le dossier du script (ex: "/ndi-connect/backend")
+        // Supprime le dossier du script (ex: "/api")
         $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 
         if ($scriptDir !== '' && str_starts_with($uri, $scriptDir)) {
