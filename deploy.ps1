@@ -28,7 +28,7 @@ function Get-RelativePath {
 $FRONT_SRC_DIR = ".\app"
 $BACK_SRC_DIR = ".\api"
 $DEPLOY_DIR = ".\dist\ndi-connect"
-$DEPLOY_APP_DIR = Join-Path $DEPLOY_DIR "app"
+$DEPLOY_APP_DIR = $DEPLOY_DIR
 $DEPLOY_API_DIR = Join-Path $DEPLOY_DIR "api"
 
 # Confirmation
