@@ -9,7 +9,6 @@ import TestForm from '../../components/testForm/testForm';
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
-// TODO : voir pour utiliser des fichiers .env
 // TODO : voir pour créer un fichier de traductions/libellés
 
 const Home = () => {
