@@ -1,7 +1,20 @@
+/**
+ * Composant de saisie (création)
+ * @param {*} param0
+ * @returns
+ */
 const TestForm = ({ formData, setFormData, onSubmit }) => {
+    /**
+     * Met à jour le formik à la saisie (création)
+     * @param {*} e Evènement
+     */
     const handleChange = (e) => {
+        // Autorise uniquement les chiffres
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        if (/^\d*$/.test(value)) {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     return (
@@ -12,6 +25,9 @@ const TestForm = ({ formData, setFormData, onSubmit }) => {
                 placeholder="Année"
                 value={formData.year}
                 onChange={handleChange}
+                maxLength={4}
+                inputMode="numeric"
+                pattern="[0-9]*"
             />
             <input
                 type="text"

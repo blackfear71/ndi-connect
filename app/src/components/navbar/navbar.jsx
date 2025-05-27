@@ -6,6 +6,10 @@ import SearchBar from '../searchBar/searchBar';
 
 import './navbar.css';
 
+/**
+ * Barre de navigation
+ * @returns
+ */
 const Navbar = () => {
     return (
         <nav className="navbar-container">

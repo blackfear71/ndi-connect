@@ -3,13 +3,12 @@ import { ajax } from 'rxjs/ajax';
 const API_URL = process.env.REACT_APP_API_URL;
 
 /**
- * Service class for managing projects from the API.
+ * Service appel API éditions
  */
 class EditionsService {
     /**
-     * Allows to get a project from the database.
-     *
-     * @param {*} projetId The project identifier.
+     * Récupération de toutes les éditions
+     * @returns Liste des éditions
      */
     getAllEditions = () => {
         const url = `${API_URL}/editions/all`;
@@ -17,6 +16,11 @@ class EditionsService {
         return ajax.get(url); //, headers);
     };
 
+    /**
+     * Récupération d'une édition
+     * @param {*} id Identifiant édition
+     * @returns Edition
+     */
     getEdition = (id) => {
         const url = `${API_URL}/editions/find/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
@@ -24,6 +28,11 @@ class EditionsService {
         return ajax.get(url); //, headers);
     };
 
+    /**
+     * Création édition
+     * @param {*} body Données édition
+     * @returns
+     */
     insertEdition = (body) => {
         const url = `${API_URL}/editions/create`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
@@ -34,6 +43,12 @@ class EditionsService {
         return ajax.post(url, body); //, headers);
     };
 
+    /**
+     * Mise à jour édition
+     * @param {*} id Identifiant édition
+     * @param {*} body Données édition
+     * @returns
+     */
     updateEdition = (id, body) => {
         const url = `${API_URL}/editions/update/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
@@ -41,24 +56,15 @@ class EditionsService {
         return ajax.patch(url, body); //, headers);
     };
 
+    /**
+     * Suppression édition
+     */
     deleteEdition = (id) => {
         const url = `${API_URL}/editions/delete/${id}`;
         // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
 
         return ajax.delete(url); //, headers);
     };
-    /**
-     * Update the definition of the project
-     *
-     * @param {*} projetId The project identifier
-     * @param {*} body the data to save
-     */
-    // updateDefinitionProject = (projetId, body) => {
-    //     const url = `${this.rootApiUrl}/projects/${projetId}/definition`;
-    //     const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
-
-    //     return ajax.patch(url, body, headers);
-    // };
 }
 
 export default EditionsService;

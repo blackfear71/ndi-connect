@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { Link } from 'react-router-dom';
-
 import EditionsService from '../../api/editionsService';
 
+import HomeCard from '../../components/homeCard/homeCard';
 import TestForm from '../../components/testForm/testForm';
 
 import { combineLatest, of, switchMap } from 'rxjs';
@@ -12,7 +11,10 @@ import { catchError, map, take } from 'rxjs/operators';
 // TODO : voir pour créer un fichier de traductions/libellés
 
 const Home = () => {
+    // API states
     const [editions, setEditions] = useState([]);
+
+    // Formik
     const [formData, setFormData] = useState({
         year: '',
         place: '',
@@ -22,6 +24,7 @@ const Home = () => {
         place: '',
     });
 
+    // Lancement initial de la page
     useEffect(() => {
         const editionsService = new EditionsService();
 
@@ -40,6 +43,9 @@ const Home = () => {
             .subscribe();
     }, []);
 
+    /**
+     * Création
+     */
     const handleSubmit = () => {
         const editionsService = new EditionsService();
 
@@ -62,6 +68,9 @@ const Home = () => {
             .subscribe();
     };
 
+    /**
+     * Réinitialisation formulaire (modification)
+     */
     const resetFormData = () => {
         formData.year = '';
         formData.place = '';
@@ -69,6 +78,10 @@ const Home = () => {
         setFormData(formData);
     };
 
+    /**
+     * Mise à jour
+     * @param {*} id Identifiant édition
+     */
     const handleUpdate = (id) => {
         const editionsService = new EditionsService();
 
@@ -89,13 +102,20 @@ const Home = () => {
             .subscribe();
     };
 
+    /**
+     * Réinitialisation formulaire (modification)
+     */
     const resetFormUpdate = () => {
-        formUpdate.name = '';
-        formUpdate.description = '';
+        formUpdate.year = '';
+        formUpdate.place = '';
 
         setFormData(formUpdate);
     };
 
+    /**
+     * Suppression
+     * @param {*} id Identifiant édition
+     */
     const handleDelete = (id) => {
         const editionsService = new EditionsService();
 
@@ -118,27 +138,26 @@ const Home = () => {
     return (
         <div>
             <h1>Editions</h1>
+
+            {/* Formulaire de création */}
             <TestForm
                 formData={formData}
                 setFormData={setFormData}
                 onSubmit={handleSubmit}
             />
 
+            {/* Cartes */}
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
                 {editions && editions.length > 0 ? (
                     editions.map((edition) => (
-                        <Link to={`/edition/${edition.id}`}>
-                            {edition.year} - {edition.place}
-                        </Link>
-
-                        // <HomeCard
-                        //     key={edition.id}
-                        //     edition={edition}
-                        //     formUpdate={formUpdate}
-                        //     setFormUpdate={setFormUpdate}
-                        //     onUpdate={handleUpdate}
-                        //     onDelete={handleDelete}
-                        // />
+                        <HomeCard
+                            key={edition.id}
+                            edition={edition}
+                            formUpdate={formUpdate}
+                            setFormUpdate={setFormUpdate}
+                            onUpdate={handleUpdate}
+                            onDelete={handleDelete}
+                        />
                     ))
                 ) : (
                     <div>Aucun enregistrement</div>
@@ -147,4 +166,5 @@ const Home = () => {
         </div>
     );
 };
+
 export default Home;

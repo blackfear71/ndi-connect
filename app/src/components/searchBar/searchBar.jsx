@@ -3,6 +3,11 @@ import { FaSearch } from 'react-icons/fa';
 
 import './searchBar.css';
 
+/**
+ * Barre de recherche
+ * @param {*} param0
+ * @returns
+ */
 const SearchBar = ({ placeholder = 'Rechercher...' }) => {
     return (
         <div className="search-bar-container">

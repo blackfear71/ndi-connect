@@ -1,11 +1,17 @@
 import { useState } from 'react';
 
 import { Button, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
 import './homeCard.css';
 
+/**
+ * Composant carte accueil
+ * @param {*} param0
+ * @returns
+ */
 const HomeCard = ({
     edition,
     formUpdate,
@@ -15,16 +21,26 @@ const HomeCard = ({
 }) => {
     const [isUpdating, setIsUpdating] = useState(false);
 
+    /**
+     * Permet la modification
+     */
     const onClickUpdating = () => {
-        setFormUpdate({ name: edition.name, description: edition.description });
+        setFormUpdate({ year: edition.year, place: edition.place });
         setIsUpdating(!isUpdating);
     };
 
+    /**
+     * Met à jour le formik à la saisie (modification)
+     * @param {*} e Evènement
+     */
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormUpdate((prev) => ({ ...prev, [name]: value }));
     };
 
+    /**
+     * Mise à jour des données
+     */
     const handleUpdateClick = () => {
         onUpdate(edition.id);
         setIsUpdating(false);
@@ -32,26 +48,28 @@ const HomeCard = ({
 
     return (
         <Card style={{ width: '18rem' }} bg="danger" text="white">
-            <Card.Img
-                variant="top"
-                src={ndiConnectLogo}
-                style={{ background: 'white' }}
-            />
+            <Link to={`/edition/${edition.id}`}>
+                <Card.Img
+                    variant="top"
+                    src={ndiConnectLogo}
+                    style={{ background: 'white' }}
+                />
+            </Link>
             <Card.Body>
                 {isUpdating ? (
                     <div>
                         <input
                             type="text"
-                            name="name"
-                            placeholder="Nom"
-                            value={formUpdate.name}
+                            name="year"
+                            placeholder="Année"
+                            value={formUpdate.year}
                             onChange={handleChange}
                         />
                         <input
                             type="text"
-                            name="description"
-                            placeholder="Description"
-                            value={formUpdate.description}
+                            name="place"
+                            placeholder="Lieu"
+                            value={formUpdate.place}
                             onChange={handleChange}
                         />
                         <button onClick={() => handleUpdateClick()}>
@@ -63,8 +81,8 @@ const HomeCard = ({
                     </div>
                 ) : (
                     <div>
-                        <Card.Title>{edition.name}</Card.Title>
-                        <Card.Text>{edition.description}</Card.Text>
+                        <Card.Title>{edition.year}</Card.Title>
+                        <Card.Text>{edition.place}</Card.Text>
                         {formUpdate && (
                             <button onClick={() => onClickUpdating()}>
                                 Modifier
