@@ -3,6 +3,9 @@ class Database
 {
     public $conn;
 
+    /**
+     * Connexion à la base de données
+     */
     public function getConnection()
     {
         $this->conn = null;
@@ -31,6 +34,9 @@ class Database
         return $this->conn;
     }
 
+    /**
+     * Chargement du fichier d'environnement
+     */
     public function loadEnv($path)
     {
         if (!file_exists($path)) {
@@ -41,8 +47,9 @@ class Database
         $env = [];
 
         foreach ($lines as $line) {
+            // Ignorer les commentaires
             if (strpos(trim($line), '#') === 0) {
-                continue; // ignore les commentaires
+                continue;
             }
 
             $parts = explode('=', $line, 2);

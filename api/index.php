@@ -11,8 +11,7 @@ $router = new Router();
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
-// DEBUGG
-// file_put_contents(__DIR__ . '/debug-router.log', "-----------------\nDIR: " . __DIR__ . "\nBASE: $basePath\nMETHOD: " . $_SERVER['REQUEST_METHOD'] . "\nURI: $uri\n", FILE_APPEND);
+// TODO : voir comment afficher des données côté back (var_dump ?) ou s'il existe une autre méthode pour débugger
 
 // Dispatch vers le bon groupe de routes
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

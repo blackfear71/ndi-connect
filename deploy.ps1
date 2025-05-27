@@ -1,6 +1,7 @@
-# Couleurs
+﻿# Couleurs
 $Host.UI.RawUI.ForegroundColor = "White"
 
+# Applique la couleur au texte
 function Write-Color {
     param (
         [string]$Text,
@@ -12,6 +13,7 @@ function Write-Color {
     $Host.UI.RawUI.ForegroundColor = $oldColor
 }
 
+# Récupère le chemin relatif
 function Get-RelativePath {
     param (
         [string]$From,
@@ -27,6 +29,7 @@ function Get-RelativePath {
 # Configuration
 $FRONT_SRC_DIR = ".\app"
 $BACK_SRC_DIR = ".\api"
+$DEPLOY_DIST_DIR = ".\dist"
 $DEPLOY_DIR = ".\dist\ndi-connect"
 $DEPLOY_APP_DIR = $DEPLOY_DIR
 $DEPLOY_API_DIR = Join-Path $DEPLOY_DIR "api"
@@ -78,10 +81,13 @@ Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object { $_.Name -ne '.
     Copy-Item -Path $_.FullName -Destination $destPath -Force
 }
 
-# Terminé
+# Déploiement terminé
 Write-Color "Déploiement terminé dans '$DEPLOY_DIR'" Green
 
-# Fin - attente d'appui sur une touche avant fermeture
-Write-Host "Appuyez sur une touche pour fermer..."
+# Fin - attente d'appui sur une touche puis ouverture de l'explorateur
+Write-Host "`nAppuyez sur une touche pour ouvrir le dossier dans l'Explorateur Windows..."
 [void][System.Console]::ReadKey($true)
+
+# Ouvre l'explorateur à l'emplacement du dossier de déploiement
+Start-Process (Resolve-Path $DEPLOY_DIST_DIR)
 exit

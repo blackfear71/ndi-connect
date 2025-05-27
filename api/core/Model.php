@@ -4,12 +4,17 @@ class Model
     protected $db;
     protected $table;
 
+    /**
+     * Constructeur par défaut
+     */
     public function __construct($db)
     {
         $this->db = $db;
     }
 
-    // Récupérer tous les enregistrements
+    /**
+     * Lecture de tous les enregistrements
+     */
     public function all()
     {
         $sql = "SELECT * FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
@@ -17,7 +22,9 @@ class Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Récupérer un enregistrement par ID
+    /**
+     * Lecture d'un enregistrement par Id
+     */
     public function find($id)
     {
         $sql = "SELECT * FROM {$this->table} WHERE id = :id AND is_active = 1";
@@ -26,7 +33,9 @@ class Model
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Créer un enregistrement (table à colonnes dynamiques)
+    /**
+     * Insertion d'un enregistrement (table à colonnes dynamiques)
+     */
     public function create($data)
     {
         $data['created_at'] = date('Y-m-d H:i:s');
@@ -44,7 +53,9 @@ class Model
         return $this->find($this->db->lastInsertId());
     }
 
-    // Mettre à jour un enregistrement par ID
+    /**
+     * Modification d'un enregistrement par Id
+     */
     public function update($id, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
@@ -65,7 +76,9 @@ class Model
         return $this->find($id);
     }
 
-    // Supprimer logiquement un enregistrement
+    /**
+     * Suppression logique d'un enregistrement
+     */
     public function delete($id)
     {
         $data['is_active'] = 0;
@@ -81,6 +94,7 @@ class Model
         $data['id'] = $id;
         return $stmt->execute($data);
 
+        // TODO : à passer dans une autre fonction
         // $sql = "DELETE FROM {$this->table} WHERE id = :id";
         // $stmt = $this->db->prepare($sql);
         // return $stmt->execute(['id' => $id]);

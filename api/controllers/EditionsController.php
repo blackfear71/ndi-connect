@@ -5,11 +5,17 @@ class EditionsController
 {
     private $service;
 
+    /**
+     * Constructeur par défaut
+     */
     public function __construct($db)
     {
         $this->service = new EditionsService($db);
     }
 
+    /**
+     * Lecture de tous les enregistrements
+     */
     public function index()
     {
         try {
@@ -21,6 +27,9 @@ class EditionsController
         }
     }
 
+    /**
+     * Lecture d'un enregistrement
+     */
     public function show($id)
     {
         try {
@@ -38,6 +47,9 @@ class EditionsController
         }
     }
 
+    /**
+     * Insertion d'un enregistrement
+     */
     public function create($data)
     {
         try {
@@ -55,6 +67,9 @@ class EditionsController
         }
     }
 
+    /**
+     * Modification d'un enregistrement
+     */
     public function update($id, $data)
     {
         try {
@@ -72,6 +87,9 @@ class EditionsController
         }
     }
 
+    /**
+     * Suppression logique d'un enregistrement
+     */
     public function delete($id)
     {
         try {

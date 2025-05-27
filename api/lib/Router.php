@@ -3,31 +3,49 @@ class Router
 {
     private $routes = [];
 
+    /**
+     * Ajout route suppression
+     */
     public function delete($path, $callback)
     {
         $this->addRoute('DELETE', $path, $callback);
     }
 
+    /**
+     * Ajout route lecture
+     */
     public function get($path, $callback)
     {
         $this->addRoute('GET', $path, $callback);
     }
 
+    /**
+     * Ajout route options
+     */
     public function options($path, $callback)
     {
         $this->addRoute('OPTIONS', $path, $callback);
     }
 
+    /**
+     * Ajout route modification
+     */
     public function patch($path, $callback)
     {
         $this->addRoute('PATCH', $path, $callback);
     }
 
+    /**
+     * Ajout route création
+     */
     public function post($path, $callback)
     {
         $this->addRoute('POST', $path, $callback);
     }
 
+    /**
+     * Ajout de route
+     */
     private function addRoute($method, $path, $callback)
     {
         $pattern = preg_replace('#:([\w]+)#', '(?P<\1>[^/]+)', $path);
@@ -35,6 +53,9 @@ class Router
         $this->routes[] = compact('method', 'pattern', 'callback');
     }
 
+    /**
+     * Recherche dynamique de la route et lancement
+     */
     public function run()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -52,8 +73,8 @@ class Router
         // Assure que l'URI commence par un /
         $uri = '/' . ltrim($uri, '/');
 
-        foreach ($this->routes as $route) {            
-            // DEBUGG
+        foreach ($this->routes as $route) {
+            // TODO DEBUGG
             // $testPatern = preg_match($route['pattern'], $uri, $matches);
             // file_put_contents(__DIR__ . '/debug-router.log', "-->\nRoute method: " . $route['method'] . "\nPattern: " . $route['pattern'] . "\nMatch: $testPatern\n", FILE_APPEND);
 
