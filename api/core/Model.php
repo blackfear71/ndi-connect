@@ -12,7 +12,7 @@ class Model
     // Récupérer tous les enregistrements
     public function all()
     {
-        $sql = "SELECT * FROM {$this->table} ORDER BY id ASC";
+        $sql = "SELECT * FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -20,7 +20,7 @@ class Model
     // Récupérer un enregistrement par ID
     public function find($id)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE id = :id";
+        $sql = "SELECT * FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -29,6 +29,9 @@ class Model
     // Créer un enregistrement (table à colonnes dynamiques)
     public function create($data)
     {
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['created_by'] = 'test';
+
         $columns = implode(', ', array_keys($data));
         $params = ':' . implode(', :', array_keys($data));
         
@@ -44,10 +47,15 @@ class Model
     // Mettre à jour un enregistrement par ID
     public function update($id, $data)
     {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_by'] = 'test';
+
         $fields = [];
+
         foreach ($data as $key => $value) {
             $fields[] = "$key = :$key";
         }
+
         $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
@@ -57,11 +65,24 @@ class Model
         return $this->find($id);
     }
 
-    // Supprimer un enregistrement
+    // Supprimer logiquement un enregistrement
     public function delete($id)
     {
-        $sql = "DELETE FROM {$this->table} WHERE id = :id";
+        $data['is_active'] = 0;
+        $data['deleted_at'] = date('Y-m-d H:i:s');
+
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute(['id' => $id]);
+
+        $data['id'] = $id;
+        return $stmt->execute($data);
+
+        // $sql = "DELETE FROM {$this->table} WHERE id = :id";
+        // $stmt = $this->db->prepare($sql);
+        // return $stmt->execute(['id' => $id]);
     }
 }

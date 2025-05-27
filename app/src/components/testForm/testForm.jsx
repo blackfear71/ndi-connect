@@ -11,6 +11,16 @@ const TestForm = ({ formData, setFormData, onSubmit }) => {
     const handleChange = (e) => {
         // Autorise uniquement les chiffres
         const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    /**
+     * Met à jour le formik à la saisie d'un numérique (création)
+     * @param {*} e Evènement
+     */
+    const handleChangeNumeric = (e) => {
+        // Autorise uniquement les chiffres
+        const { name, value } = e.target;
 
         if (/^\d*$/.test(value)) {
             setFormData((prev) => ({ ...prev, [name]: value }));
@@ -24,7 +34,7 @@ const TestForm = ({ formData, setFormData, onSubmit }) => {
                 name="year"
                 placeholder="Année"
                 value={formData.year}
-                onChange={handleChange}
+                onChange={handleChangeNumeric}
                 maxLength={4}
                 inputMode="numeric"
                 pattern="[0-9]*"
