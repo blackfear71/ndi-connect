@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
-import './homeCard.css';
+import './HomeCard.css';
 
 /**
  * Composant carte accueil

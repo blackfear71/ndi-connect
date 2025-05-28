@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Layout from './components/layout/layout';
+import Layout from './components/Layout/Layout';
 
-import Edition from './pages/edition/edition';
-import Home from './pages/home/home';
+import Edition from './pages/Edition/Edition';
+import Home from './pages/Home/Home';
 
 import './App.css';
 

@@ -1,3 +1,4 @@
+# Redirige vers index.php si pas de fichier réel ciblé
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]

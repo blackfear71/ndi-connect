@@ -1,5 +1,5 @@
 <?php
-require_once 'config/database.php';
+require_once 'core/Database.php';
 require_once 'controllers/EditionsController.php';
 
 $database = new Database();

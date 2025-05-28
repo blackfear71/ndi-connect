@@ -2,15 +2,15 @@ import { FaUserCircle } from 'react-icons/fa';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
-import SearchBar from '../searchBar/searchBar';
+import SearchBar from '../SearchBar/SearchBar';
 
-import './navbar.css';
+import './NavBar.css';
 
 /**
  * Barre de navigation
  * @returns
  */
-const Navbar = () => {
+const NavBar = () => {
     return (
         <nav className="navbar-container">
             {/* Logo */}
@@ -29,4 +29,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default NavBar;

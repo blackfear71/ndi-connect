@@ -1,5 +1,5 @@
 <?php
-require_once 'models/Editions.php';
+require_once 'repositories/EditionsRepository.php';
 
 class EditionsService
 {
@@ -10,7 +10,7 @@ class EditionsService
      */
     public function __construct($db)
     {
-        $this->model = new Editions($db);
+        $this->model = new EditionsRepository($db);
     }
 
     /**

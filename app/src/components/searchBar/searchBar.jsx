@@ -1,7 +1,7 @@
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
 
-import './searchBar.css';
+import './SearchBar.css';
 
 /**
  * Barre de recherche

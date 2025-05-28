@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
 
-import Navbar from '../navbar/navbar';
+import NavBar from '../NavBar/NavBar';
 
-import './layout.css';
+import './Layout.css';
 
 /**
  * Composant zone d'affichage globale
@@ -12,7 +12,7 @@ const Layout = () => {
     return (
         <div>
             {/* Barre de navigation */}
-            <Navbar />
+            <NavBar />
 
             {/* Contenu */}
             <div className="layout-outlet-container">

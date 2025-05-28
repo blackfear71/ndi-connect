@@ -1,10 +1,19 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost:3000");
-header("Access-Control-Allow-Methods: DELETE, GET, OPTIONS, PATCH, POST");
-header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header("Content-Type: application/json");
+$allowedOrigins = [
+    'http://localhost:3000',
+    'http://ndi-connect.ddns.net:8080',
+    'https://ndi-connect.ddns.net:8443',
+];
 
-require_once __DIR__ . '/lib/Router.php';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+}
+
+require_once __DIR__ . '/core/Router.php';
 
 $router = new Router();
 

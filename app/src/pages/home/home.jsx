@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import EditionsService from '../../api/editionsService';
 
-import HomeCard from '../../components/homeCard/homeCard';
-import TestForm from '../../components/testForm/testForm';
+import HomeCard from '../../components/HomeCard/HomeCard';
+import TestForm from '../../components/TestForm/TestForm';
 
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';

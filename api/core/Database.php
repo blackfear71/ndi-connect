@@ -22,11 +22,11 @@ class Database
 
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $sql['host'] . ";dbname=" . $sql['database'],
+                "mysql:host=" . $sql['host'] . ";dbname=" . $sql['database'] . ";charset=utf8mb4",
                 $sql['username'],
                 $sql['password']
             );
-            $this->conn->exec("set names utf8");
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
             echo "Erreur de connexion : " . $exception->getMessage();
         }

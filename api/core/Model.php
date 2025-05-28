@@ -38,6 +38,7 @@ class Model
      */
     public function create($data)
     {
+        // TODO : adapter created_by
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['created_by'] = 'test';
 
@@ -58,6 +59,7 @@ class Model
      */
     public function update($id, $data)
     {
+        // TODO : adapter updated_by
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = 'test';
 
