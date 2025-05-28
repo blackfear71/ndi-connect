@@ -12,13 +12,14 @@ import { catchError, map, take } from 'rxjs/operators';
 
 const Home = () => {
     // API states
-    const [editions, setEditions] = useState([]);
+    const [editionsByYear, setEditionsByYear] = useState([]);
 
     // Formik
     const [formData, setFormData] = useState({
         year: '',
         place: '',
     });
+    // TODO : problème avec ce formik qui est global à la page : si on modifie une carte (avec une autre ouverte), elles sont toutes modifiées visuellement (mais pas dans le back)
     const [formUpdate, setFormUpdate] = useState({
         year: '',
         place: '',
@@ -33,7 +34,7 @@ const Home = () => {
         combineLatest([subscriptionEditions])
             .pipe(
                 map(([dataEditions]) => {
-                    setEditions(dataEditions.response);
+                    groupByYear(dataEditions.response);
                 }),
                 take(1),
                 catchError(() => {
@@ -54,7 +55,7 @@ const Home = () => {
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    setEditions(dataEditions.response);
+                    groupByYear(dataEditions.response);
                     resetFormData();
                 }),
                 take(1),
@@ -90,7 +91,7 @@ const Home = () => {
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    setEditions(dataEditions.response);
+                    groupByYear(dataEditions.response);
                     resetFormUpdate();
                 }),
                 take(1),
@@ -124,7 +125,7 @@ const Home = () => {
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    setEditions(dataEditions.response);
+                    groupByYear(dataEditions.response);
                 }),
                 take(1),
                 catchError((err) => {
@@ -133,6 +134,38 @@ const Home = () => {
                 }),
             )
             .subscribe();
+    };
+
+    /**
+     * Regroupe par année les éditions et trie
+     * @param {*} editions Liste des éditions
+     * @returns Editions regroupées et triées
+     */
+    const groupByYear = (editions) => {
+        const grouped = {};
+
+        editions.forEach((item) => {
+            const year = item.year;
+            if (!grouped[year]) {
+                grouped[year] = [];
+            }
+            grouped[year].push(item);
+        });
+
+        // Trie les lieux dans chaque groupe d'année
+        for (const year in grouped) {
+            grouped[year].sort((a, b) => a.place.localeCompare(b.place));
+        }
+
+        // Trie les années par ordre décroissant et retourne un array
+        const sortedArray = Object.keys(grouped)
+            .sort((a, b) => b - a)
+            .map((year) => ({
+                year: Number(year),
+                editions: grouped[year],
+            }));
+
+        setEditionsByYear(sortedArray);
     };
 
     return (
@@ -148,16 +181,21 @@ const Home = () => {
 
             {/* Cartes */}
             <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {editions && editions.length > 0 ? (
-                    editions.map((edition) => (
-                        <HomeCard
-                            key={edition.id}
-                            edition={edition}
-                            formUpdate={formUpdate}
-                            setFormUpdate={setFormUpdate}
-                            onUpdate={handleUpdate}
-                            onDelete={handleDelete}
-                        />
+                {editionsByYear && editionsByYear.length > 0 ? (
+                    editionsByYear.map((group) => (
+                        <div key={group.year}>
+                            <h2>{group.year}</h2>
+                            {group.editions.map((edition) => (
+                                <HomeCard
+                                    key={edition.id}
+                                    edition={edition}
+                                    formUpdate={formUpdate}
+                                    setFormUpdate={setFormUpdate}
+                                    onUpdate={handleUpdate}
+                                    onDelete={handleDelete}
+                                />
+                            ))}
+                        </div>
                     ))
                 ) : (
                     <div>Aucun enregistrement</div>
