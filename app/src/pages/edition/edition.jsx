@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 
-import { Link, useParams } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { FaArrowLeft } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
+
+import './Edition.css';
 
 /**
  * Page détail édition
@@ -39,17 +43,24 @@ const Edition = () => {
 
     return (
         <div>
-            <Link to="/">Accueil</Link>
-            <h1>Page d'une édition</h1>
-            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {edition ? (
-                    <div>
-                        {edition.year} - {edition.place}
-                    </div>
-                ) : (
-                    <div>Enregistrement non trouvé</div>
-                )}
-            </div>
+            <Button
+                variant="warning"
+                href="/"
+                className="d-inline-flex align-items-center gap-2"
+            >
+                <FaArrowLeft size={20} color="#000000" />
+                Accueil
+            </Button>
+
+            {edition ? (
+                <div>
+                    <h1>
+                        Edition {edition.year} - {edition.place}
+                    </h1>
+                </div>
+            ) : (
+                <div>Edition non trouvé</div>
+            )}
         </div>
     );
 };

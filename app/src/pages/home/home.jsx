@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
+import { Button } from 'react-bootstrap';
+
 import EditionsService from '../../api/editionsService';
 
-import HomeCard from '../../components/HomeCard/HomeCard';
-import TestForm from '../../components/TestForm/TestForm';
+import EditionModal from '../../components/EditionModal/EditionModal';
 
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -12,7 +13,9 @@ import { catchError, map, take } from 'rxjs/operators';
 
 const Home = () => {
     // API states
-    const [editionsByYear, setEditionsByYear] = useState([]);
+    const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
+    const [yearsAndEditions, setYearsAndEditions] = useState([]);
+    const [editionsByYear, setEditionsByYear] = useState();
 
     // Formik
     const [formData, setFormData] = useState({
@@ -44,11 +47,21 @@ const Home = () => {
             .subscribe();
     }, []);
 
+    const openEditionModal = () => {
+        setIsOpenEditionModal(true);
+    };
+
+    const closeEditionModal = () => {
+        setIsOpenEditionModal(false);
+    };
+
     /**
      * Création
      */
     const handleSubmit = () => {
         const editionsService = new EditionsService();
+
+        // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
 
         editionsService
             .insertEdition(formData)
@@ -56,7 +69,9 @@ const Home = () => {
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response);
+                    closeEditionModal();
                     resetFormData();
+                    setEditionsByYear([]);
                 }),
                 take(1),
                 catchError((err) => {
@@ -165,42 +180,78 @@ const Home = () => {
                 editions: grouped[year],
             }));
 
-        setEditionsByYear(sortedArray);
+        setYearsAndEditions(sortedArray);
+    };
+
+    const showEditionsByYear = (year) => {
+        setEditionsByYear(year.editions);
+    };
+
+    const showYearsOfEditions = () => {
+        setEditionsByYear([]);
     };
 
     return (
         <div>
             <h1>Editions</h1>
 
-            {/* Formulaire de création */}
-            <TestForm
-                formData={formData}
-                setFormData={setFormData}
-                onSubmit={handleSubmit}
-            />
-
-            {/* Cartes */}
-            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                {editionsByYear && editionsByYear.length > 0 ? (
-                    editionsByYear.map((group) => (
-                        <div key={group.year}>
-                            <h2>{group.year}</h2>
-                            {group.editions.map((edition) => (
-                                <HomeCard
-                                    key={edition.id}
-                                    edition={edition}
-                                    formUpdate={formUpdate}
-                                    setFormUpdate={setFormUpdate}
-                                    onUpdate={handleUpdate}
-                                    onDelete={handleDelete}
-                                />
-                            ))}
-                        </div>
-                    ))
-                ) : (
-                    <div>Aucun enregistrement</div>
-                )}
+            {/* Ajout */}
+            <div className="d-grid mb-2">
+                <Button variant="success" size="lg" onClick={openEditionModal}>
+                    Ajouter une édition
+                </Button>
             </div>
+
+            {/* Années et éditions */}
+            {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
+                editionsByYear && editionsByYear.length > 0 ? (
+                    <div className="d-grid gap-2">
+                        {/* Retour */}
+                        <Button
+                            variant="warning"
+                            size="lg"
+                            onClick={showYearsOfEditions}
+                        >
+                            Retour
+                        </Button>
+
+                        {/* Editions */}
+                        {editionsByYear.map((edition) => (
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                href={`/edition/${edition.id}`}
+                            >
+                                {edition.place}
+                            </Button>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="d-grid gap-2">
+                        {/* Années */}
+                        {yearsAndEditions.map((year) => (
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                onClick={() => showEditionsByYear(year)}
+                            >
+                                {year.year}
+                            </Button>
+                        ))}
+                    </div>
+                )
+            ) : (
+                <div>Aucune édition</div>
+            )}
+
+            {isOpenEditionModal && (
+                <EditionModal
+                    formData={formData}
+                    setFormData={setFormData}
+                    onClose={closeEditionModal}
+                    onSubmit={handleSubmit}
+                />
+            )}
         </div>
     );
 };
