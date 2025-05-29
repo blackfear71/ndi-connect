@@ -13,10 +13,10 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Layout />}>
-                        {/* Accueil : route par défaut */}
+                        {/* Editions : route par défaut */}
                         <Route index element={<Home />} />
 
-                        {/* Page de test */}
+                        {/* Edition */}
                         <Route path="edition/:id" element={<Edition />} />
                     </Route>
                 </Routes>
