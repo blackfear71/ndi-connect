@@ -2,7 +2,7 @@ import { FaUserCircle } from 'react-icons/fa';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
-import SearchBar from '../SearchBar/SearchBar';
+import SearchBar from '../SearchBar1/SearchBar1';
 
 import './NavBar.css';
 
