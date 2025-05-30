@@ -17,7 +17,7 @@ $router->get('/editions/find/:id', function ($params) use ($db) {
 
 $router->post('/editions/create', function () use ($db) {
     // Headers
-    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
 
     $login = $headers['x-user-login'] ?? null;
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
@@ -31,7 +31,7 @@ $router->post('/editions/create', function () use ($db) {
 
 $router->patch('/editions/update/:id', function ($params) use ($db) {
     // Headers
-    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
 
     $login = $headers['x-user-login'] ?? null;
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
@@ -45,7 +45,7 @@ $router->patch('/editions/update/:id', function ($params) use ($db) {
 
 $router->delete('/editions/delete/:id', function ($params) use ($db) {
     // Headers
-    $headers = function_exists('getallheaders') ? getallheaders() : [];
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
 
     $login = $headers['x-user-login'] ?? null;
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
