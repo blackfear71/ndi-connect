@@ -75,6 +75,7 @@ class Model
         $data['id'] = $id;
         $stmt->execute($data);
 
+        // TODO : pas fan de rappeler le repository dans lui-même, passer par le service
         return $this->find($id);
     }
 

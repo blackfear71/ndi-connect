@@ -1,9 +1,11 @@
 <?php
 require_once 'services/EditionsService.php';
+require_once 'services/UsersService.php';
 
 class EditionsController
 {
     private $service;
+    private $usersService;
 
     /**
      * Constructeur par défaut
@@ -11,6 +13,7 @@ class EditionsController
     public function __construct($db)
     {
         $this->service = new EditionsService($db);
+        $this->usersService = new UsersService($db);
     }
 
     /**
@@ -50,9 +53,17 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function create($data)
+    public function create($login, $token, $data)
     {
         try {
+            // Contrôle autorisation
+            if (!$this->usersService->checkAuth($login, $token)) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Action non autorisée']);
+                exit;
+            }
+
+            // Traitement
             $created = $this->service->create($data);
 
             if ($created) {
@@ -70,9 +81,17 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function update($id, $data)
+    public function update($id, $login, $token, $data)
     {
         try {
+            // Contrôle autorisation
+            if (!$this->usersService->checkAuth($login, $token)) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Action non autorisée']);
+                exit;
+            }
+
+            // Traitement
             $updated = $this->service->update($id, $data);
 
             if ($updated) {
@@ -90,9 +109,17 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($id)
+    public function delete($id, $login, $token)
     {
         try {
+            // Contrôle autorisation
+            if (!$this->usersService->checkAuth($login, $token)) {
+                http_response_code(401);
+                echo json_encode(['error' => 'Action non autorisée']);
+                exit;
+            }
+
+            // Traitement
             $deleted = $this->service->delete($id);
 
             if ($deleted) {

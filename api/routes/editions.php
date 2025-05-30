@@ -6,23 +6,50 @@ $database = new Database();
 $db = $database->getConnection();
 
 $router->get('/editions/all', function () use ($db) {
+    // Appel contrôleur
     (new EditionsController($db))->index();
 });
 
 $router->get('/editions/find/:id', function ($params) use ($db) {
+    // Appel contrôleur
     (new EditionsController($db))->show($params['id']);
 });
 
 $router->post('/editions/create', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+
+    $login = $headers['x-user-login'] ?? null;
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+
+    // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
-    (new EditionsController($db))->create($data);
+
+    // Appel contrôleur
+    (new EditionsController($db))->create($login, $token, $data);
 });
 
 $router->patch('/editions/update/:id', function ($params) use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+
+    $login = $headers['x-user-login'] ?? null;
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+
+    // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
-    (new EditionsController($db))->update($params['id'], $data);
+
+    // Appel contrôleur
+    (new EditionsController($db))->update($params['id'], $login, $token, $data);
 });
 
 $router->delete('/editions/delete/:id', function ($params) use ($db) {
-    (new EditionsController($db))->delete($params['id']);
+    // Headers
+    $headers = function_exists('getallheaders') ? getallheaders() : [];
+
+    $login = $headers['x-user-login'] ?? null;
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+
+    // Appel contrôleur
+    (new EditionsController($db))->delete($params['id'], $login, $token);
 });

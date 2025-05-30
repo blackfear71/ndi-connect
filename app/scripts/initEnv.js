@@ -18,7 +18,8 @@ const envFiles = [
     {
         path: path.resolve('../api/.env'),
         label: 'Back',
-        content: `DB_HOST=localhost
+        content: `# A modifier avec les identifiants du compte phpMyAdmin et à copier manuellement pour autoriser la connexion à la base de données
+DB_HOST=localhost
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASSWORD=root

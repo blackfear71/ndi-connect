@@ -3,14 +3,14 @@ require_once 'repositories/EditionsRepository.php';
 
 class EditionsService
 {
-    private $model;
+    private $repository;
 
     /**
      * Constructeur par défaut
      */
     public function __construct($db)
     {
-        $this->model = new EditionsRepository($db);
+        $this->repository = new EditionsRepository($db);
     }
 
     /**
@@ -18,7 +18,7 @@ class EditionsService
      */
     public function index()
     {
-        return $this->model->all();
+        return $this->repository->all();
     }
 
     /**
@@ -26,7 +26,7 @@ class EditionsService
      */
     public function show($id)
     {
-        return $this->model->find($id);
+        return $this->repository->find($id);
     }
 
     /**
@@ -34,7 +34,7 @@ class EditionsService
      */
     public function create($data)
     {
-        return $this->model->create($data);
+        return $this->repository->create($data);
     }
 
     /**
@@ -42,7 +42,7 @@ class EditionsService
      */
     public function update($id, $data)
     {
-        return $this->model->update($id, $data);
+        return $this->repository->update($id, $data);
     }
 
     /**
@@ -50,6 +50,6 @@ class EditionsService
      */
     public function delete($id)
     {
-        return $this->model->delete($id);
+        return $this->repository->delete($id);
     }
 }

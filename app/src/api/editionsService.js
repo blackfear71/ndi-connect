@@ -7,13 +7,26 @@ const API_URL = process.env.REACT_APP_API_URL;
  */
 class EditionsService {
     /**
+     * Constructeur du service
+     * @param {*} login Identifiant
+     * @param {*} token Token de connexion
+     */
+    constructor(login = null, token = null) {
+        this.apiUrl = API_URL;
+        this.headers = {
+            'Content-Type': 'application/json',
+            ...(login && { 'X-User-Login': login }),
+            ...(token && { Authorization: `Bearer ${token}` }),
+        };
+    }
+
+    /**
      * Récupération de toutes les éditions
      * @returns Liste des éditions
      */
     getAllEditions = () => {
         const url = `${API_URL}/editions/all`;
-        // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
-        return ajax.get(url); //, headers);
+        return ajax.get(url, this.headers);
     };
 
     /**
@@ -23,9 +36,7 @@ class EditionsService {
      */
     getEdition = (id) => {
         const url = `${API_URL}/editions/find/${id}`;
-        // const headers = { 'l': this.login, 't': this.token, 'Accept-Language': this.langueId };
-
-        return ajax.get(url); //, headers);
+        return ajax.get(url, this.headers);
     };
 
     /**
@@ -35,12 +46,8 @@ class EditionsService {
      */
     insertEdition = (body) => {
         const url = `${API_URL}/editions/create`;
-        // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
-
-        // TODO : à voir pour passer les headers comme ça
         // TODO : prévoir des objets à l'image de la table pour passer le body (front ou back ?)
-
-        return ajax.post(url, body); //, headers);
+        return ajax.post(url, body, this.headers);
     };
 
     /**
@@ -51,9 +58,7 @@ class EditionsService {
      */
     updateEdition = (id, body) => {
         const url = `${API_URL}/editions/update/${id}`;
-        // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
-
-        return ajax.patch(url, body); //, headers);
+        return ajax.patch(url, body, this.headers);
     };
 
     /**
@@ -61,9 +66,7 @@ class EditionsService {
      */
     deleteEdition = (id) => {
         const url = `${API_URL}/editions/delete/${id}`;
-        // const headers = { 'l': this.login, 't': this.token, 'Content-Type': 'application/json', 'Accept-Language': this.langueId };
-
-        return ajax.delete(url); //, headers);
+        return ajax.delete(url, this.headers);
     };
 }
 

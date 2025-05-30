@@ -1,10 +1,12 @@
 import { Button, Form, Modal } from 'react-bootstrap';
 
+import Error from '../../components/Error/Error';
+
 // TODO : voir si je ramène l'ouverture/fermeture dans la modale
 
-const EditionModal = ({ formData, setFormData, onClose, onSubmit }) => {
+const EditionModal = ({ formData, setFormData, onClose, onSubmit, error }) => {
     /**
-     * Met à jour le formik à la saisie (création)
+     * Met à jour le formulaire à la saisie (création)
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
@@ -14,7 +16,7 @@ const EditionModal = ({ formData, setFormData, onClose, onSubmit }) => {
     };
 
     /**
-     * Met à jour le formik à la saisie d'un numérique (création)
+     * Met à jour le formulaire à la saisie d'un numérique (création)
      * @param {*} e Evènement
      */
     const handleChangeNumeric = (e) => {
@@ -33,6 +35,9 @@ const EditionModal = ({ formData, setFormData, onClose, onSubmit }) => {
             </Modal.Header>
 
             <Modal.Body>
+                {/* Erreur */}
+                {error && <Error message={error} />}
+
                 <Form className="d-flex align-items-end">
                     <Form.Group className="me-2" controlId="year">
                         <Form.Label>Année</Form.Label>

@@ -30,7 +30,7 @@ const HomeCard = ({
     };
 
     /**
-     * Met à jour le formik à la saisie (modification)
+     * Met à jour le formulaire à la saisie (modification)
      * @param {*} e Evènement
      */
     const handleChange = (e) => {

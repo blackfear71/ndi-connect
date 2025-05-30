@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Button } from 'react-bootstrap';
 
@@ -9,24 +9,34 @@ import EditionModal from '../../components/EditionModal/EditionModal';
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
+import { AuthContext } from '../../utils/AuthContext';
+
 // TODO : voir pour créer un fichier de traductions/libellés
 
+/**
+ * Page d'accueil
+ * @returns
+ */
 const Home = () => {
-    // API states
-    const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
-    const [yearsAndEditions, setYearsAndEditions] = useState([]);
-    const [editionsByYear, setEditionsByYear] = useState();
+    // Contexte
+    const { isLoggedIn } = useContext(AuthContext);
 
-    // Formik
+    // Local states
+    const [error, setError] = useState('');
+    const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
     const [formData, setFormData] = useState({
         year: '',
         place: '',
     });
-    // TODO : problème avec ce formik qui est global à la page : si on modifie une carte (avec une autre ouverte), elles sont toutes modifiées visuellement (mais pas dans le back)
+    // TODO : problème avec ce formulaire qui est global à la page : si on modifie une carte (avec une autre ouverte), elles sont toutes modifiées visuellement (mais pas dans le back)
     const [formUpdate, setFormUpdate] = useState({
         year: '',
         place: '',
     });
+
+    // API states
+    const [yearsAndEditions, setYearsAndEditions] = useState([]);
+    const [editionsByYear, setEditionsByYear] = useState();
 
     // Lancement initial de la page
     useEffect(() => {
@@ -40,26 +50,29 @@ const Home = () => {
                     groupByYear(dataEditions.response);
                 }),
                 take(1),
-                catchError(() => {
+                catchError((err) => {
+                    setError(err.response.error);
                     return of();
                 }),
             )
             .subscribe();
     }, []);
 
-    const openEditionModal = () => {
-        setIsOpenEditionModal(true);
-    };
-
-    const closeEditionModal = () => {
-        setIsOpenEditionModal(false);
+    /**
+     * Ouverture/fermeture de la modale de création d'édition
+     */
+    const openCloseEditionModal = () => {
+        setIsOpenEditionModal(!isOpenEditionModal);
     };
 
     /**
      * Création
      */
     const handleSubmit = () => {
-        const editionsService = new EditionsService();
+        const editionsService = new EditionsService(
+            localStorage.getItem('login'),
+            localStorage.getItem('token'),
+        );
 
         // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
 
@@ -68,16 +81,20 @@ const Home = () => {
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
-                    closeEditionModal();
-                    resetFormData();
-                    setEditionsByYear([]);
+                    if (dataEditions.response.error) {
+                        setError(dataEditions.response.error);
+                    } else {
+                        groupByYear(dataEditions.response);
+                        openCloseEditionModal();
+                        resetFormData();
+                        setEditionsByYear([]);
+                    }
                 }),
                 take(1),
                 catchError((err) => {
-                    // TODO : voir pour l'affichage d'un bandeau avec erreur générique
                     // TODO : voir aussi comment gérer un tableau avec code réponse (200, 404...) et le message associé
-                    console.error(err);
+                    // TODO : par défaut si le back renvoie un http_response_code autre que 200 ça tombe dans le catchError, à voir pour récupérer quand même la réponse (sauf dans les cas 500 ?)
+                    setError(err.response.error);
                     return of();
                 }),
             )
@@ -99,19 +116,26 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleUpdate = (id) => {
-        const editionsService = new EditionsService();
+        const editionsService = new EditionsService(
+            localStorage.getItem('login'),
+            localStorage.getItem('token'),
+        );
 
         editionsService
             .updateEdition(id, formUpdate)
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
-                    resetFormUpdate();
+                    if (dataEditions.response.error) {
+                        setError(dataEditions.response.error);
+                    } else {
+                        groupByYear(dataEditions.response);
+                        resetFormUpdate();
+                    }
                 }),
                 take(1),
                 catchError((err) => {
-                    console.error(err);
+                    setError(err.response.error);
                     return of();
                 }),
             )
@@ -133,18 +157,25 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleDelete = (id) => {
-        const editionsService = new EditionsService();
+        const editionsService = new EditionsService(
+            localStorage.getItem('login'),
+            localStorage.getItem('token'),
+        );
 
         editionsService
             .deleteEdition(id)
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
+                    if (dataEditions.response.error) {
+                        setError(dataEditions.response.error);
+                    } else {
+                        groupByYear(dataEditions.response);
+                    }
                 }),
                 take(1),
                 catchError((err) => {
-                    console.error(err);
+                    setError(err.response.error);
                     return of();
                 }),
             )
@@ -196,11 +227,17 @@ const Home = () => {
             <h1>Editions</h1>
 
             {/* Ajout */}
-            <div className="d-grid mb-2">
-                <Button variant="success" size="lg" onClick={openEditionModal}>
-                    Ajouter une édition
-                </Button>
-            </div>
+            {isLoggedIn && (
+                <div className="d-grid mb-2">
+                    <Button
+                        variant="success"
+                        size="lg"
+                        onClick={openCloseEditionModal}
+                    >
+                        Ajouter une édition
+                    </Button>
+                </div>
+            )}
 
             {/* Années et éditions */}
             {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
@@ -218,6 +255,7 @@ const Home = () => {
                         {/* Editions */}
                         {editionsByYear.map((edition) => (
                             <Button
+                                key={edition.id}
                                 variant="primary"
                                 size="lg"
                                 href={`/edition/${edition.id}`}
@@ -231,6 +269,7 @@ const Home = () => {
                         {/* Années */}
                         {yearsAndEditions.map((year) => (
                             <Button
+                                key={year.year}
                                 variant="primary"
                                 size="lg"
                                 onClick={() => showEditionsByYear(year)}
@@ -244,12 +283,14 @@ const Home = () => {
                 <div>Aucune édition</div>
             )}
 
+            {/* Modale de création d'édition */}
             {isOpenEditionModal && (
                 <EditionModal
                     formData={formData}
                     setFormData={setFormData}
-                    onClose={closeEditionModal}
+                    onClose={openCloseEditionModal}
                     onSubmit={handleSubmit}
+                    error={error}
                 />
             )}
         </div>

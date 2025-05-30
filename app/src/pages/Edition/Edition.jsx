@@ -6,6 +6,8 @@ import { useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
+import Error from '../../components/Error/Error';
+
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
@@ -19,6 +21,9 @@ const Edition = () => {
     // Params
     const { id } = useParams();
 
+    // Local states
+    const [error, setError] = useState('');
+
     // API states
     const [edition, setEdition] = useState();
 
@@ -31,10 +36,15 @@ const Edition = () => {
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
-                    setEdition(dataEdition.response);
+                    if (dataEdition.response.error) {
+                        setError(dataEdition.response.error);
+                    } else {
+                        setEdition(dataEdition.response);
+                    }
                 }),
                 take(1),
-                catchError(() => {
+                catchError((err) => {
+                    setError(err.response.error);
                     return of();
                 }),
             )
@@ -43,6 +53,7 @@ const Edition = () => {
 
     return (
         <div>
+            {/* Retour */}
             <Button
                 variant="warning"
                 href="/"
@@ -52,6 +63,7 @@ const Edition = () => {
                 Accueil
             </Button>
 
+            {/* Edition */}
             {edition ? (
                 <div>
                     <h1>
@@ -61,6 +73,9 @@ const Edition = () => {
             ) : (
                 <div>Edition non trouvé</div>
             )}
+
+            {/* Erreur */}
+            {error && <Error message={error} />}
         </div>
     );
 };
