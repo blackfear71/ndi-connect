@@ -28,52 +28,69 @@ const EditionModal = ({ formData, setFormData, onClose, onSubmit, error }) => {
         }
     };
 
+    /**
+     * Gère le comportement du formulaire
+     * @param {*} e Evènement
+     */
+    const handleSubmit = (e) => {
+        // Empêche le rechargement de la page
+        e.preventDefault();
+
+        // Soumets le formulaire
+        onSubmit(formData);
+    };
+
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <Modal.Header closeButton>
-                <Modal.Title>Ajouter une nouvelle édition</Modal.Title>
-            </Modal.Header>
+            <Form onSubmit={handleSubmit}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Ajouter une nouvelle édition</Modal.Title>
+                </Modal.Header>
 
-            <Modal.Body>
-                {/* Erreur */}
-                {error && <Error message={error} />}
+                <Modal.Body>
+                    {/* Erreur */}
+                    {error && <Error message={error} />}
 
-                <Form className="d-flex align-items-end">
-                    <Form.Group className="me-2" controlId="year">
-                        <Form.Label>Année</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="year"
-                            placeholder="Année"
-                            value={formData.year}
-                            onChange={handleChangeNumeric}
-                            maxLength={4}
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                        />
-                    </Form.Group>
+                    <div className="d-flex align-items-end">
+                        <Form.Group className="me-2" controlId="year">
+                            <Form.Label>Année</Form.Label>
+                            {/* TODO : côté back il faut vérifier que c'est entre 1901 et 2155 */}
+                            <Form.Control
+                                type="text"
+                                name="year"
+                                placeholder="Année"
+                                value={formData.year}
+                                onChange={handleChangeNumeric}
+                                maxLength={4}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                required
+                            />
+                        </Form.Group>
 
-                    <Form.Group className="me-2" controlId="place">
-                        <Form.Label>Lieu</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="place"
-                            placeholder="Lieu"
-                            value={formData.place}
-                            onChange={handleChange}
-                        />
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
+                        <Form.Group className="me-2" controlId="place">
+                            <Form.Label>Lieu</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="place"
+                                placeholder="Lieu"
+                                value={formData.place}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+                    </div>
+                </Modal.Body>
 
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Fermer
-                </Button>
-                <Button variant="primary" onClick={() => onSubmit(formData)}>
-                    Ajouter
-                </Button>
-            </Modal.Footer>
+                <Modal.Footer>
+                    <Button type="button" variant="secondary" onClick={onClose}>
+                        Fermer
+                    </Button>
+                    <Button type="submit" variant="primary">
+                        Ajouter
+                    </Button>
+                </Modal.Footer>
+            </Form>
         </Modal>
     );
 };

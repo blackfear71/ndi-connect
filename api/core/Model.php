@@ -36,11 +36,10 @@ class Model
     /**
      * Insertion d'un enregistrement (table à colonnes dynamiques)
      */
-    public function create($data)
+    public function create($login, $data)
     {
-        // TODO : adapter created_by
         $data['created_at'] = date('Y-m-d H:i:s');
-        $data['created_by'] = 'test';
+        $data['created_by'] = $login;
 
         $columns = implode(', ', array_keys($data));
         $params = ':' . implode(', :', array_keys($data));
@@ -51,17 +50,17 @@ class Model
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
 
+        // TODO : pas fan de rappeler le repository dans lui-même, passer par le service
         return $this->find($this->db->lastInsertId());
     }
 
     /**
      * Modification d'un enregistrement par Id
      */
-    public function update($id, $data)
+    public function update($id, $login, $data)
     {
-        // TODO : adapter updated_by
         $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = 'test';
+        $data['updated_by'] = $login;
 
         $fields = [];
 

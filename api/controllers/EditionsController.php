@@ -64,7 +64,7 @@ class EditionsController
             }
 
             // Traitement
-            $created = $this->service->create($data);
+            $created = $this->service->create($login, $data);
 
             if ($created) {
                 echo json_encode($created);
@@ -92,7 +92,7 @@ class EditionsController
             }
 
             // Traitement
-            $updated = $this->service->update($id, $data);
+            $updated = $this->service->update($id, $login, $data);
 
             if ($updated) {
                 echo json_encode($updated);

@@ -32,17 +32,17 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function create($data)
+    public function create($login, $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->create($login, $data);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function update($id, $data)
+    public function update($id, $login, $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->repository->update($id, $login, $data);
     }
 
     /**
