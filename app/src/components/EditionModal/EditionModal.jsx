@@ -37,7 +37,7 @@ const EditionModal = ({ formData, setFormData, onClose, onSubmit, error }) => {
         e.preventDefault();
 
         // Soumets le formulaire
-        onSubmit(formData);
+        onSubmit();
     };
 
     return (

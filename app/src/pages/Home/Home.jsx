@@ -24,7 +24,7 @@ const Home = () => {
     // Local states
     const [error, setError] = useState('');
     const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
-    const [formData, setFormData] = useState({
+    const [formEdition, setFormEdition] = useState({
         year: '',
         place: ''
     });
@@ -74,7 +74,7 @@ const Home = () => {
         // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
 
         editionsService
-            .insertEdition(formData)
+            .insertEdition(formEdition)
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
@@ -83,7 +83,7 @@ const Home = () => {
                     } else {
                         groupByYear(dataEditions.response);
                         openCloseEditionModal();
-                        resetFormData();
+                        resetFormEdition();
                         setEditionsByYear([]);
                     }
                 }),
@@ -101,11 +101,11 @@ const Home = () => {
     /**
      * Réinitialisation formulaire (modification)
      */
-    const resetFormData = () => {
-        formData.year = '';
-        formData.place = '';
+    const resetFormEdition = () => {
+        formEdition.year = '';
+        formEdition.place = '';
 
-        setFormData(formData);
+        setFormEdition(formEdition);
     };
 
     /**
@@ -143,7 +143,7 @@ const Home = () => {
         formUpdate.year = '';
         formUpdate.place = '';
 
-        setFormData(formUpdate);
+        setFormEdition(formUpdate);
     };
 
     /**
@@ -264,8 +264,8 @@ const Home = () => {
             {/* Modale de création d'édition */}
             {isOpenEditionModal && (
                 <EditionModal
-                    formData={formData}
-                    setFormData={setFormData}
+                    formData={formEdition}
+                    setFormData={setFormEdition}
                     onClose={openCloseEditionModal}
                     onSubmit={handleSubmit}
                     error={error}
