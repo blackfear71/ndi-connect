@@ -36,7 +36,6 @@ const NavBar = () => {
         setIsOpenConnectionModal(!isOpenConnectionModal);
     };
 
-    // TODO : valider le formulaire à l'appui de Entrée + préselectionner à l'ouverture
     /**
      * Connexion ou déconnexion selon le cas
      */
@@ -67,10 +66,11 @@ const NavBar = () => {
                 <ConnectionModal
                     formData={formConnection}
                     setFormData={setFormConnection}
-                    onClose={openCloseConnectionModal}
-                    onSubmit={handleSubmit}
+                    isOpen={isOpenConnectionModal}
                     isLoggedIn={isLoggedIn}
                     error={authError}
+                    onClose={openCloseConnectionModal}
+                    onSubmit={handleSubmit}
                 />
             )}
         </nav>

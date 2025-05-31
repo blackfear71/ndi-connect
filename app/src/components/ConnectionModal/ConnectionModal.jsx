@@ -1,10 +1,24 @@
+import { useEffect, useRef } from 'react';
+
 import { Button, Form, Modal } from 'react-bootstrap';
 
 import Error from '../Error/Error';
 
 // TODO : voir si je ramène l'ouverture/fermeture dans la modale
 
-const ConnectionModal = ({ formData, setFormData, onClose, onSubmit, isLoggedIn, error }) => {
+const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, onClose, onSubmit }) => {
+    // Local states
+    const loginInputRef = useRef(null);
+
+    /**
+     * Met le focus sur le champ "login" à l'ouverture de la modale quand on est pas connecté
+     */
+    useEffect(() => {
+        if (isOpen && !isLoggedIn && loginInputRef.current) {
+            loginInputRef.current.focus();
+        }
+    }, [isOpen, isLoggedIn]);
+
     /**
      * Met à jour le formulaire à la saisie (création)
      * @param {*} e Evènement
@@ -42,6 +56,7 @@ const ConnectionModal = ({ formData, setFormData, onClose, onSubmit, isLoggedIn,
                             <Form.Group className="me-2" controlId="login">
                                 <Form.Label>Identifiant</Form.Label>
                                 <Form.Control
+                                    ref={loginInputRef}
                                     type="text"
                                     name="login"
                                     placeholder="Identifiant"

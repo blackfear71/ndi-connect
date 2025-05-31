@@ -1,10 +1,24 @@
+import { useEffect, useRef } from 'react';
+
 import { Button, Form, Modal } from 'react-bootstrap';
 
 import Error from '../../components/Error/Error';
 
 // TODO : voir si je ramène l'ouverture/fermeture dans la modale
 
-const EditionModal = ({ formData, setFormData, onClose, onSubmit, error }) => {
+const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit }) => {
+    // Local states
+    const yearInputRef = useRef(null);
+
+    /**
+     * Met le focus sur le champ "année" à l'ouverture de la modale quand on est pas connecté
+     */
+    useEffect(() => {
+        if (isOpen && yearInputRef.current) {
+            yearInputRef.current.focus();
+        }
+    }, [isOpen]);
+
     /**
      * Met à jour le formulaire à la saisie (création)
      * @param {*} e Evènement
@@ -56,6 +70,7 @@ const EditionModal = ({ formData, setFormData, onClose, onSubmit, error }) => {
                             <Form.Label>Année</Form.Label>
                             {/* TODO : côté back il faut vérifier que c'est entre 1901 et 2155 */}
                             <Form.Control
+                                ref={yearInputRef}
                                 type="text"
                                 name="year"
                                 placeholder="Année"

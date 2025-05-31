@@ -6,7 +6,7 @@ import EditionsService from '../../api/editionsService';
 
 import EditionModal from '../../components/EditionModal/EditionModal';
 
-import { combineLatest, of, switchMap } from 'rxjs';
+import { combineLatest, of, switchMap, throwError } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
@@ -76,7 +76,14 @@ const Home = () => {
         editionsService
             .insertEdition(formEdition)
             .pipe(
-                switchMap(() => editionsService.getAllEditions()),
+                switchMap((dataEdition) => {
+                    // On passe au catchError s'il n'y a pas d'id en retour
+                    if (!dataEdition.response) {
+                        return throwError(() => new Error('Insertion échouée'));
+                    }
+
+                    return editionsService.getAllEditions();
+                }),
                 map((dataEditions) => {
                     if (dataEditions.response.error) {
                         setError(dataEditions.response.error);
@@ -109,7 +116,7 @@ const Home = () => {
     };
 
     /**
-     * Mise à jour
+     * Modification
      * @param {*} id Identifiant édition
      */
     const handleUpdate = (id) => {
@@ -118,7 +125,14 @@ const Home = () => {
         editionsService
             .updateEdition(id, formUpdate)
             .pipe(
-                switchMap(() => editionsService.getAllEditions()),
+                switchMap((dataEdition) => {
+                    // On passe au catchError s'il n'y a pas d'id en retour
+                    if (!dataEdition.response) {
+                        return throwError(() => new Error('Modification échouée'));
+                    }
+
+                    return editionsService.getAllEditions();
+                }),
                 map((dataEditions) => {
                     if (dataEditions.response.error) {
                         setError(dataEditions.response.error);
@@ -156,7 +170,14 @@ const Home = () => {
         editionsService
             .deleteEdition(id)
             .pipe(
-                switchMap(() => editionsService.getAllEditions()),
+                switchMap((dataEdition) => {
+                    // On passe au catchError s'il n'y a pas d'id en retour
+                    if (!dataEdition.response) {
+                        return throwError(() => new Error('Suppression échouée'));
+                    }
+
+                    return editionsService.getAllEditions();
+                }),
                 map((dataEditions) => {
                     if (dataEditions.response.error) {
                         setError(dataEditions.response.error);
@@ -262,13 +283,14 @@ const Home = () => {
             )}
 
             {/* Modale de création d'édition */}
-            {isOpenEditionModal && (
+            {isLoggedIn && isOpenEditionModal && (
                 <EditionModal
                     formData={formEdition}
                     setFormData={setFormEdition}
+                    isOpen={isOpenEditionModal}
+                    error={error}
                     onClose={openCloseEditionModal}
                     onSubmit={handleSubmit}
-                    error={error}
                 />
             )}
         </div>

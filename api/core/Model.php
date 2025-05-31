@@ -44,14 +44,11 @@ class Model
         $columns = implode(', ', array_keys($data));
         $params = ':' . implode(', :', array_keys($data));
 
-        // TODO : attention le type compte, j'ai passé YEAR en VARCHAR(4) mais si je veux revenir dessus il faut convertir avant d'insérer
-
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
 
-        // TODO : pas fan de rappeler le repository dans lui-même, passer par le service
-        return $this->find($this->db->lastInsertId());
+        return $this->db->lastInsertId();
     }
 
     /**
@@ -72,16 +69,14 @@ class Model
         $stmt = $this->db->prepare($sql);
 
         $data['id'] = $id;
-        $stmt->execute($data);
 
-        // TODO : pas fan de rappeler le repository dans lui-même, passer par le service
-        return $this->find($id);
+        return $stmt->execute($data);
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($id)
+    public function logicalDelete($id)
     {
         $data['is_active'] = 0;
         $data['deleted_at'] = date('Y-m-d H:i:s');
@@ -95,10 +90,15 @@ class Model
 
         $data['id'] = $id;
         return $stmt->execute($data);
+    }
 
-        // TODO : à passer dans une autre fonction
-        // $sql = "DELETE FROM {$this->table} WHERE id = :id";
-        // $stmt = $this->db->prepare($sql);
-        // return $stmt->execute(['id' => $id]);
+    /**
+     * Suppression physique d'un enregistrement
+     */
+    public function physicalDelete($id)
+    {
+        $sql = "DELETE FROM {$this->table} WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['id' => $id]);
     }
 }
