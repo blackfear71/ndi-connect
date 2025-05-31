@@ -44,9 +44,9 @@ class Model
 
         $columns = implode(', ', array_keys($data));
         $params = ':' . implode(', :', array_keys($data));
-        
+
         // TODO : attention le type compte, j'ai passé YEAR en VARCHAR(4) mais si je veux revenir dessus il faut convertir avant d'insérer
-        
+
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($params)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);

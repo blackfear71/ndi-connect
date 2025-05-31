@@ -4,14 +4,7 @@ import Error from '../Error/Error';
 
 // TODO : voir si je ramène l'ouverture/fermeture dans la modale
 
-const ConnectionModal = ({
-    formData,
-    setFormData,
-    onClose,
-    onSubmit,
-    isLoggedIn,
-    error,
-}) => {
+const ConnectionModal = ({ formData, setFormData, onClose, onSubmit, isLoggedIn, error }) => {
     /**
      * Met à jour le formulaire à la saisie (création)
      * @param {*} e Evènement
@@ -24,18 +17,13 @@ const ConnectionModal = ({
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <Modal.Header closeButton>
-                <Modal.Title>
-                    {isLoggedIn ? <>Déconnexion</> : <>Connexion</>}
-                </Modal.Title>
+                <Modal.Title>{isLoggedIn ? <>Déconnexion</> : <>Connexion</>}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 {error && <Error message={error} />}
                 {isLoggedIn ? (
-                    <>
-                        Vous êtes connecté, vous pouvez vous déconnecter avec le
-                        bouton ci-dessous
-                    </>
+                    <>Vous êtes connecté, vous pouvez vous déconnecter avec le bouton ci-dessous</>
                 ) : (
                     <Form className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="login">

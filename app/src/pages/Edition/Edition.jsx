@@ -46,7 +46,7 @@ const Edition = () => {
                 catchError((err) => {
                     setError(err.response.error);
                     return of();
-                }),
+                })
             )
             .subscribe();
     }, []);
@@ -54,11 +54,7 @@ const Edition = () => {
     return (
         <div>
             {/* Retour */}
-            <Button
-                variant="warning"
-                href="/"
-                className="d-inline-flex align-items-center gap-2"
-            >
+            <Button variant="warning" href="/" className="d-inline-flex align-items-center gap-2">
                 <FaArrowLeft size={20} color="#000000" />
                 Accueil
             </Button>

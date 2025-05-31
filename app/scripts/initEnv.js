@@ -7,13 +7,13 @@ const envFiles = [
         path: path.resolve('.env.development'),
         label: 'Front (dev)',
         content: `REACT_APP_API_URL=http://localhost/ndi-connect/api
-`,
+`
     },
     {
         path: path.resolve('.env.production'),
         label: 'Front (prod)',
         content: `REACT_APP_API_URL=/api
-`,
+`
     },
     {
         path: path.resolve('../api/.env'),
@@ -23,8 +23,8 @@ DB_HOST=localhost
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASSWORD=root
-`,
-    },
+`
+    }
 ];
 
 // Création des fichiers

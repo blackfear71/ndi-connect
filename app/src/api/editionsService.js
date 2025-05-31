@@ -16,7 +16,7 @@ class EditionsService {
         this.headers = {
             'Content-Type': 'application/json',
             ...(login && { 'X-User-Login': login }),
-            ...(token && { Authorization: `Bearer ${token}` }),
+            ...(token && { Authorization: `Bearer ${token}` })
         };
     }
 

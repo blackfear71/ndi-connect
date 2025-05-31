@@ -53,12 +53,12 @@ export const AuthProvider = ({ children }) => {
 
                         return of({
                             error: true,
-                            message: 'Erreur de vérification du token',
+                            message: 'Erreur de vérification du token'
                         });
                     }),
                     finalize(() => {
                         setLoading(false);
-                    }),
+                    })
                 )
                 .subscribe();
         }
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
                         setAuthError('Erreur de connexion');
                         reject('Erreur de connexion');
                         return of();
-                    }),
+                    })
                 )
                 .subscribe();
         });
@@ -109,10 +109,7 @@ export const AuthProvider = ({ children }) => {
         return new Promise((resolve, reject) => {
             setAuthError('');
 
-            const usersService = new UsersService(
-                localStorage.getItem('login'),
-                localStorage.getItem('token'),
-            );
+            const usersService = new UsersService(localStorage.getItem('login'), localStorage.getItem('token'));
 
             const subscriptionUser = usersService.disconnect();
 
@@ -135,7 +132,7 @@ export const AuthProvider = ({ children }) => {
                         setAuthError('Erreur de déconnexion');
                         reject('Erreur de déconnexion');
                         return of();
-                    }),
+                    })
                 )
                 .subscribe();
         });

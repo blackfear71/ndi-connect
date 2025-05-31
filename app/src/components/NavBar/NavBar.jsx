@@ -22,7 +22,7 @@ const NavBar = () => {
     const [isOpenConnectionModal, setIsOpenConnectionModal] = useState(false);
     const [formConnection, setFormConnection] = useState({
         login: '',
-        password: '',
+        password: ''
     });
 
     /**
@@ -31,7 +31,7 @@ const NavBar = () => {
     const openCloseConnectionModal = () => {
         setFormConnection({
             login: '',
-            password: '',
+            password: ''
         });
         setIsOpenConnectionModal(!isOpenConnectionModal);
     };
@@ -54,22 +54,13 @@ const NavBar = () => {
     return (
         <nav className="navbar-container">
             {/* Logo */}
-            <img
-                src={ndiConnectLogo}
-                alt="ndi-connect"
-                className="navbar-logo"
-            />
+            <img src={ndiConnectLogo} alt="ndi-connect" className="navbar-logo" />
 
             {/* Barre de recherche */}
             <SearchBar />
 
             {/* Utilisateur */}
-            <FaUserCircle
-                size={40}
-                color="#000000"
-                className="navbar-user"
-                onClick={openCloseConnectionModal}
-            />
+            <FaUserCircle size={40} color="#000000" className="navbar-user" onClick={openCloseConnectionModal} />
 
             {/* Modale de connexion */}
             {isOpenConnectionModal && (

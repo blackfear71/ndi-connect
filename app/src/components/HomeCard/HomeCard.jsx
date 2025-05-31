@@ -12,13 +12,7 @@ import './HomeCard.css';
  * @param {*} param0
  * @returns
  */
-const HomeCard = ({
-    edition,
-    formUpdate,
-    setFormUpdate,
-    onUpdate,
-    onDelete,
-}) => {
+const HomeCard = ({ edition, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
     const [isUpdating, setIsUpdating] = useState(false);
 
     /**
@@ -49,11 +43,7 @@ const HomeCard = ({
     return (
         <Card style={{ width: '18rem' }} bg="danger" text="white">
             <Link to={`/edition/${edition.id}`}>
-                <Card.Img
-                    variant="top"
-                    src={ndiConnectLogo}
-                    style={{ background: 'white' }}
-                />
+                <Card.Img variant="top" src={ndiConnectLogo} style={{ background: 'white' }} />
             </Link>
             <Card.Body>
                 {isUpdating ? (
@@ -72,22 +62,14 @@ const HomeCard = ({
                             value={formUpdate.place}
                             onChange={handleChange}
                         />
-                        <button onClick={() => handleUpdateClick()}>
-                            Valider
-                        </button>
-                        <button onClick={() => setIsUpdating(!isUpdating)}>
-                            Annuler
-                        </button>
+                        <button onClick={() => handleUpdateClick()}>Valider</button>
+                        <button onClick={() => setIsUpdating(!isUpdating)}>Annuler</button>
                     </div>
                 ) : (
                     <div>
                         <Card.Title>{edition.year}</Card.Title>
                         <Card.Text>{edition.place}</Card.Text>
-                        {formUpdate && (
-                            <button onClick={() => onClickUpdating()}>
-                                Modifier
-                            </button>
-                        )}
+                        {formUpdate && <button onClick={() => onClickUpdating()}>Modifier</button>}
                     </div>
                 )}
             </Card.Body>

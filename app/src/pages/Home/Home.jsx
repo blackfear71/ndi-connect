@@ -26,12 +26,12 @@ const Home = () => {
     const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
     const [formData, setFormData] = useState({
         year: '',
-        place: '',
+        place: ''
     });
     // TODO : problème avec ce formulaire qui est global à la page : si on modifie une carte (avec une autre ouverte), elles sont toutes modifiées visuellement (mais pas dans le back)
     const [formUpdate, setFormUpdate] = useState({
         year: '',
-        place: '',
+        place: ''
     });
 
     // API states
@@ -53,7 +53,7 @@ const Home = () => {
                 catchError((err) => {
                     setError(err.response.error);
                     return of();
-                }),
+                })
             )
             .subscribe();
     }, []);
@@ -69,10 +69,7 @@ const Home = () => {
      * Création
      */
     const handleSubmit = () => {
-        const editionsService = new EditionsService(
-            localStorage.getItem('login'),
-            localStorage.getItem('token'),
-        );
+        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
 
@@ -96,7 +93,7 @@ const Home = () => {
                     // TODO : par défaut si le back renvoie un http_response_code autre que 200 ça tombe dans le catchError, à voir pour récupérer quand même la réponse (sauf dans les cas 500 ?)
                     setError(err.response.error);
                     return of();
-                }),
+                })
             )
             .subscribe();
     };
@@ -116,10 +113,7 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleUpdate = (id) => {
-        const editionsService = new EditionsService(
-            localStorage.getItem('login'),
-            localStorage.getItem('token'),
-        );
+        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         editionsService
             .updateEdition(id, formUpdate)
@@ -137,7 +131,7 @@ const Home = () => {
                 catchError((err) => {
                     setError(err.response.error);
                     return of();
-                }),
+                })
             )
             .subscribe();
     };
@@ -157,10 +151,7 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleDelete = (id) => {
-        const editionsService = new EditionsService(
-            localStorage.getItem('login'),
-            localStorage.getItem('token'),
-        );
+        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         editionsService
             .deleteEdition(id)
@@ -177,7 +168,7 @@ const Home = () => {
                 catchError((err) => {
                     setError(err.response.error);
                     return of();
-                }),
+                })
             )
             .subscribe();
     };
@@ -208,7 +199,7 @@ const Home = () => {
             .sort((a, b) => b - a)
             .map((year) => ({
                 year: Number(year),
-                editions: grouped[year],
+                editions: grouped[year]
             }));
 
         setYearsAndEditions(sortedArray);
@@ -229,11 +220,7 @@ const Home = () => {
             {/* Ajout */}
             {isLoggedIn && (
                 <div className="d-grid mb-2">
-                    <Button
-                        variant="success"
-                        size="lg"
-                        onClick={openCloseEditionModal}
-                    >
+                    <Button variant="success" size="lg" onClick={openCloseEditionModal}>
                         Ajouter une édition
                     </Button>
                 </div>
@@ -244,22 +231,13 @@ const Home = () => {
                 editionsByYear && editionsByYear.length > 0 ? (
                     <div className="d-grid gap-2">
                         {/* Retour */}
-                        <Button
-                            variant="warning"
-                            size="lg"
-                            onClick={showYearsOfEditions}
-                        >
+                        <Button variant="warning" size="lg" onClick={showYearsOfEditions}>
                             Retour
                         </Button>
 
                         {/* Editions */}
                         {editionsByYear.map((edition) => (
-                            <Button
-                                key={edition.id}
-                                variant="primary"
-                                size="lg"
-                                href={`/edition/${edition.id}`}
-                            >
+                            <Button key={edition.id} variant="primary" size="lg" href={`/edition/${edition.id}`}>
                                 {edition.place}
                             </Button>
                         ))}
