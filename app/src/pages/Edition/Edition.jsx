@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 
@@ -20,6 +21,9 @@ import './Edition.css';
 const Edition = () => {
     // Params
     const { id } = useParams();
+
+    // Traductions
+    const { t } = useTranslation();
 
     // Local states
     const [error, setError] = useState('');
@@ -56,18 +60,14 @@ const Edition = () => {
             {/* Retour */}
             <Button variant="warning" href="/" className="d-inline-flex align-items-center gap-2">
                 <FaArrowLeft size={20} color="#000000" />
-                Accueil
+                {t('common.home')}
             </Button>
 
             {/* Edition */}
-            {edition ? (
+            {edition && (
                 <div>
-                    <h1>
-                        Edition {edition.year} - {edition.place}
-                    </h1>
+                    <h1>{t('edition.editionTitle', { year: edition.year, place: edition.place })}</h1>
                 </div>
-            ) : (
-                <div>Edition non trouvé</div>
             )}
 
             {/* Erreur */}

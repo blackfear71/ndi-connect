@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import { Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 import EditionsService from '../../api/editionsService';
 
@@ -11,8 +12,6 @@ import { catchError, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
 
-// TODO : voir pour créer un fichier de traductions/libellés
-
 /**
  * Page d'accueil
  * @returns
@@ -20,6 +19,9 @@ import { AuthContext } from '../../utils/AuthContext';
 const Home = () => {
     // Contexte
     const { isLoggedIn } = useContext(AuthContext);
+
+    // Traductions
+    const { t } = useTranslation();
 
     // Local states
     const [error, setError] = useState('');
@@ -79,7 +81,7 @@ const Home = () => {
                 switchMap((dataEdition) => {
                     // On passe au catchError s'il n'y a pas d'id en retour
                     if (!dataEdition.response) {
-                        return throwError(() => new Error('Insertion échouée'));
+                        return throwError(() => new Error(t('errors.insertEditionError')));
                     }
 
                     return editionsService.getAllEditions();
@@ -128,7 +130,7 @@ const Home = () => {
                 switchMap((dataEdition) => {
                     // On passe au catchError s'il n'y a pas d'id en retour
                     if (!dataEdition.response) {
-                        return throwError(() => new Error('Modification échouée'));
+                        return throwError(() => new Error(t('errors.updateEditionError')));
                     }
 
                     return editionsService.getAllEditions();
@@ -173,7 +175,7 @@ const Home = () => {
                 switchMap((dataEdition) => {
                     // On passe au catchError s'il n'y a pas d'id en retour
                     if (!dataEdition.response) {
-                        return throwError(() => new Error('Suppression échouée'));
+                        return throwError(() => new Error(t('errors.deleteEditionError')));
                     }
 
                     return editionsService.getAllEditions();
@@ -236,13 +238,13 @@ const Home = () => {
 
     return (
         <div>
-            <h1>Editions</h1>
+            <h1>{t('home.editions')}</h1>
 
             {/* Ajout */}
             {isLoggedIn && (
                 <div className="d-grid mb-2">
                     <Button variant="success" size="lg" onClick={openCloseEditionModal}>
-                        Ajouter une édition
+                        {t('home.addEdition')}
                     </Button>
                 </div>
             )}
@@ -253,7 +255,7 @@ const Home = () => {
                     <div className="d-grid gap-2">
                         {/* Retour */}
                         <Button variant="warning" size="lg" onClick={showYearsOfEditions}>
-                            Retour
+                            {t('common.return')}
                         </Button>
 
                         {/* Editions */}
@@ -279,7 +281,7 @@ const Home = () => {
                     </div>
                 )
             ) : (
-                <div>Aucune édition</div>
+                <div>{t('home.noEdition')}</div>
             )}
 
             {/* Modale de création d'édition */}

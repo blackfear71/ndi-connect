@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 import UsersService from '../api/usersService';
 
 import { combineLatest, of } from 'rxjs';
@@ -14,6 +16,10 @@ export const AuthContext = createContext(null);
  */
 export const AuthProvider = ({ children }) => {
     // TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non), il lui faut un indicateur et des contrôles spécifiques
+    // Traductions
+    const { t } = useTranslation();
+
+    // Local states
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [authError, setAuthError] = useState('');
     const [loading, setLoading] = useState(true);
@@ -53,7 +59,7 @@ export const AuthProvider = ({ children }) => {
 
                         return of({
                             error: true,
-                            message: 'Erreur de vérification du token'
+                            message: t('errors.checkAuthError')
                         });
                     }),
                     finalize(() => {
@@ -93,8 +99,8 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError(() => {
-                        setAuthError('Erreur de connexion');
-                        reject('Erreur de connexion');
+                        setAuthError(t('errors.loginError'));
+                        reject(t('errors.loginError'));
                         return of();
                     })
                 )
@@ -128,9 +134,9 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError(() => {
-                        // Peut-être que les erreurs 401 et autres du back forcent à passer dans le catch...
-                        setAuthError('Erreur de déconnexion');
-                        reject('Erreur de déconnexion');
+                        // Peut-être que les erreurs 401 et autres du back forcent à passer dans le catch... => oui
+                        setAuthError(t('errors.logoutError'));
+                        reject(t('errors.logoutError'));
                         return of();
                     })
                 )

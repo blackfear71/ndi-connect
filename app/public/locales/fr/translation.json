@@ -1,0 +1,37 @@
+{
+    "errors": {
+        "checkAuthError": "Erreur de vérification du token",
+        "deleteEditionError": "Suppression échouée",
+        "insertEditionError": "Insertion échouée",
+        "loginError": "Erreur de connexion",
+        "logoutError": "Erreur de déconnexion",
+        "updateEditionError": "Modification échouée"
+    },
+    "common": {
+        "add": "Ajouter",
+        "close": "Fermer",
+        "delete": "Supprimer",
+        "home": "Accueil",
+        "return": "Retour",
+        "update": "Modifier"
+    },
+    "edition": {
+        "editionTitle": "Édition {{year}} - {{place}}",
+        "editionNotFound": "Édition non trouvée",
+        "place": "Lieu",
+        "year": "Année"
+    },
+    "home": {
+        "addEdition": "Ajouter une édition",
+        "editions": "Éditions",
+        "noEdition": "Aucune édition"
+    },
+    "navbar": {
+        "connect": "Connexion",
+        "disconnect": "Déconnexion",
+        "disconnectMessage": "Vous êtes connecté, vous pouvez vous déconnecter avec le bouton ci-dessous",
+        "login": "Identifiant",
+        "password": "Mot de passe",
+        "search": "Rechercher..."
+    }
+}

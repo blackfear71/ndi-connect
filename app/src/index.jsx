@@ -9,6 +9,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import './index.css';
+import './utils/i18n';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 

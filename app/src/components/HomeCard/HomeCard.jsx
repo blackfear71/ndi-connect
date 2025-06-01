@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { Button, Card } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
@@ -13,6 +14,10 @@ import './HomeCard.css';
  * @returns
  */
 const HomeCard = ({ edition, formUpdate, setFormUpdate, onUpdate, onDelete }) => {
+    // Traductions
+    const { t } = useTranslation();
+
+    // Local states
     const [isUpdating, setIsUpdating] = useState(false);
 
     /**
@@ -51,14 +56,14 @@ const HomeCard = ({ edition, formUpdate, setFormUpdate, onUpdate, onDelete }) =>
                         <input
                             type="text"
                             name="year"
-                            placeholder="Année"
+                            placeholder={t('edition.year')}
                             value={formUpdate.year}
                             onChange={handleChange}
                         />
                         <input
                             type="text"
                             name="place"
-                            placeholder="Lieu"
+                            placeholder={t('edition.place')}
                             value={formUpdate.place}
                             onChange={handleChange}
                         />
@@ -69,13 +74,13 @@ const HomeCard = ({ edition, formUpdate, setFormUpdate, onUpdate, onDelete }) =>
                     <div>
                         <Card.Title>{edition.year}</Card.Title>
                         <Card.Text>{edition.place}</Card.Text>
-                        {formUpdate && <button onClick={() => onClickUpdating()}>Modifier</button>}
+                        {formUpdate && <button onClick={() => onClickUpdating()}>{t('common.update')}</button>}
                     </div>
                 )}
             </Card.Body>
             {onDelete && (
                 <Button variant="primary" onClick={() => onDelete(edition.id)}>
-                    Supprimer
+                    {t('common.delete')}
                 </Button>
             )}
         </Card>

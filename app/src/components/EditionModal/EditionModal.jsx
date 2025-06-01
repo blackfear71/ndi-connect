@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 import Error from '../../components/Error/Error';
 
-// TODO : voir si je ramène l'ouverture/fermeture dans la modale
-
 const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     // Local states
     const yearInputRef = useRef(null);
 
@@ -58,7 +60,7 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
         <Modal show onHide={onClose} centered backdrop="static">
             <Form onSubmit={handleSubmit}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Ajouter une nouvelle édition</Modal.Title>
+                    <Modal.Title>{t('home.addEdition')}</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
@@ -67,13 +69,13 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
 
                     <div className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="year">
-                            <Form.Label>Année</Form.Label>
+                            <Form.Label>{t('edition.year')}</Form.Label>
                             {/* TODO : côté back il faut vérifier que c'est entre 1901 et 2155 */}
                             <Form.Control
                                 ref={yearInputRef}
                                 type="text"
                                 name="year"
-                                placeholder="Année"
+                                placeholder={t('edition.year')}
                                 value={formData.year}
                                 onChange={handleChangeNumeric}
                                 maxLength={4}
@@ -84,11 +86,11 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
                         </Form.Group>
 
                         <Form.Group className="me-2" controlId="place">
-                            <Form.Label>Lieu</Form.Label>
+                            <Form.Label>{t('edition.place')}</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="place"
-                                placeholder="Lieu"
+                                placeholder={t('edition.place')}
                                 value={formData.place}
                                 onChange={handleChange}
                                 required
@@ -99,10 +101,10 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
 
                 <Modal.Footer>
                     <Button type="button" variant="secondary" onClick={onClose}>
-                        Fermer
+                        {t('common.close')}
                     </Button>
                     <Button type="submit" variant="primary">
-                        Ajouter
+                        {t('common.add')}
                     </Button>
                 </Modal.Footer>
             </Form>
