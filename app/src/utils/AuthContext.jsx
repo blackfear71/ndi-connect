@@ -15,7 +15,7 @@ export const AuthContext = createContext(null);
  * @returns
  */
 export const AuthProvider = ({ children }) => {
-    // TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non), il lui faut un indicateur et des contrôles spécifiques
+    // TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non), il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur et le niveau d'autorisation => peut-être envisager de supprimer le login de la localstorage pour ne conserver que le token
     // Traductions
     const { t } = useTranslation();
 
@@ -52,15 +52,12 @@ export const AuthProvider = ({ children }) => {
                         }
                     }),
                     take(1),
-                    catchError(() => {
+                    catchError((err) => {
                         localStorage.removeItem('login');
                         localStorage.removeItem('token');
                         setIsLoggedIn(false);
-
-                        return of({
-                            error: true,
-                            message: t('errors.checkAuthError')
-                        });
+                        setAuthError(err.response.error);
+                        return of();
                     }),
                     finalize(() => {
                         setLoading(false);
@@ -80,27 +77,22 @@ export const AuthProvider = ({ children }) => {
 
             const usersService = new UsersService();
 
-            // TODO : contrôler les champs obligatoires
+            // TODO : contrôler les champs obligatoires (front + back)
 
             const subscriptionUser = usersService.connect(formData);
 
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        if (dataUser.response.error) {
-                            setAuthError(dataUser.response.error);
-                            reject(dataUser.response.error);
-                        } else {
-                            localStorage.setItem('login', formData.login);
-                            localStorage.setItem('token', dataUser.response.token);
-                            setIsLoggedIn(true);
-                            resolve();
-                        }
+                        localStorage.setItem('login', formData.login);
+                        localStorage.setItem('token', dataUser.response.token);
+                        setIsLoggedIn(true);
+                        resolve();
                     }),
                     take(1),
-                    catchError(() => {
-                        setAuthError(t('errors.loginError'));
-                        reject(t('errors.loginError'));
+                    catchError((err) => {
+                        setAuthError(err.response.error);
+                        reject(err.response.error);
                         return of();
                     })
                 )
@@ -122,21 +114,15 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        if (dataUser.response.disconnected) {
-                            localStorage.removeItem('login');
-                            localStorage.removeItem('token');
-                            setIsLoggedIn(false);
-                            resolve();
-                        } else {
-                            setAuthError(dataUser.response.error);
-                            reject(dataUser.response.error);
-                        }
+                        localStorage.removeItem('login');
+                        localStorage.removeItem('token');
+                        setIsLoggedIn(false);
+                        resolve();
                     }),
                     take(1),
-                    catchError(() => {
-                        // Peut-être que les erreurs 401 et autres du back forcent à passer dans le catch... => oui
-                        setAuthError(t('errors.logoutError'));
-                        reject(t('errors.logoutError'));
+                    catchError((err) => {
+                        setAuthError(err.response.error);
+                        reject(err.response.error);
                         return of();
                     })
                 )

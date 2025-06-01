@@ -53,7 +53,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err.response.error);
+                    setError(err?.response?.error);
                     return of();
                 })
             )
@@ -78,29 +78,17 @@ const Home = () => {
         editionsService
             .insertEdition(formEdition)
             .pipe(
-                switchMap((dataEdition) => {
-                    // On passe au catchError s'il n'y a pas d'id en retour
-                    if (!dataEdition.response) {
-                        return throwError(() => new Error(t('errors.insertEditionError')));
-                    }
-
-                    return editionsService.getAllEditions();
-                }),
+                switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    if (dataEditions.response.error) {
-                        setError(dataEditions.response.error);
-                    } else {
-                        groupByYear(dataEditions.response);
-                        openCloseEditionModal();
-                        resetFormEdition();
-                        setEditionsByYear([]);
-                    }
+                    // TODO : afficher un message de bonne fin ? (renommer le composant Error en plus générique ?)
+                    groupByYear(dataEditions.response);
+                    openCloseEditionModal();
+                    resetFormEdition();
+                    setEditionsByYear([]);
                 }),
                 take(1),
                 catchError((err) => {
-                    // TODO : voir aussi comment gérer un tableau avec code réponse (200, 404...) et le message associé
-                    // TODO : par défaut si le back renvoie un http_response_code autre que 200 ça tombe dans le catchError, à voir pour récupérer quand même la réponse (sauf dans les cas 500 ?)
-                    setError(err.response.error);
+                    setError(err?.response?.error);
                     return of();
                 })
             )
@@ -127,25 +115,14 @@ const Home = () => {
         editionsService
             .updateEdition(id, formUpdate)
             .pipe(
-                switchMap((dataEdition) => {
-                    // On passe au catchError s'il n'y a pas d'id en retour
-                    if (!dataEdition.response) {
-                        return throwError(() => new Error(t('errors.updateEditionError')));
-                    }
-
-                    return editionsService.getAllEditions();
-                }),
+                switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    if (dataEditions.response.error) {
-                        setError(dataEditions.response.error);
-                    } else {
-                        groupByYear(dataEditions.response);
-                        resetFormUpdate();
-                    }
+                    groupByYear(dataEditions.response);
+                    resetFormUpdate();
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err.response.error);
+                    setError(err?.response?.error);
                     return of();
                 })
             )
@@ -172,24 +149,13 @@ const Home = () => {
         editionsService
             .deleteEdition(id)
             .pipe(
-                switchMap((dataEdition) => {
-                    // On passe au catchError s'il n'y a pas d'id en retour
-                    if (!dataEdition.response) {
-                        return throwError(() => new Error(t('errors.deleteEditionError')));
-                    }
-
-                    return editionsService.getAllEditions();
-                }),
+                switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    if (dataEditions.response.error) {
-                        setError(dataEditions.response.error);
-                    } else {
-                        groupByYear(dataEditions.response);
-                    }
+                    groupByYear(dataEditions.response);
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err.response.error);
+                    setError(err?.response?.error);
                     return of();
                 })
             )

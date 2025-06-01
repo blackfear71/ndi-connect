@@ -1,11 +1,16 @@
 {
     "errors": {
-        "checkAuthError": "Erreur de vérification du token",
-        "deleteEditionError": "Suppression échouée",
-        "insertEditionError": "Insertion échouée",
-        "loginError": "Erreur de connexion",
-        "logoutError": "Erreur de déconnexion",
-        "updateEditionError": "Modification échouée"
+        "creationFailed": "Création échouée",
+        "deletionFailed": "Suppression échouée",
+        "editionNotFound": "Edition non trouvée",
+        "invalidAuth": "Authentification invalide",
+        "loginFailed": "Erreur de connexion",
+        "logoutFailed": "Erreur de déconnexion",
+        "routeNotFound": "Route non trouvée",
+        "unauthorizedAction": "Action non autorisée",
+        "unknownEndpoint": "Endpoint inconnu",
+        "unknownError": "Une erreur inconnue est survenue",
+        "updateFailed": "Modification échouée"
     },
     "common": {
         "add": "Ajouter",

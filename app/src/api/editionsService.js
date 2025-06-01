@@ -39,6 +39,8 @@ class EditionsService {
         return ajax.get(url, this.headers);
     };
 
+    // TODO : prévoir des objets à l'image de la table pour passer le body (front ou back ?)
+
     /**
      * Création édition
      * @param {*} body Données édition
@@ -46,7 +48,6 @@ class EditionsService {
      */
     insertEdition = (body) => {
         const url = `${API_URL}/editions/create`;
-        // TODO : prévoir des objets à l'image de la table pour passer le body (front ou back ?)
         return ajax.post(url, body, this.headers);
     };
 

@@ -21,7 +21,6 @@ $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
 // TODO : voir comment afficher des données côté back (var_dump ?) ou s'il existe une autre méthode pour débugger
-// TODO : voir pour utiliser le fichier de traductions/libellés côté front
 
 // Dispatch vers le bon groupe de routes
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -33,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     require_once __DIR__ . '/routes/users.php';
 } else {
     http_response_code(404);
-    echo json_encode(['error' => 'Endpoint inconnu']);
+    echo json_encode(['error' => 'ERR_UNKNOWN_ENDPOINT']);
     exit;
 }
 

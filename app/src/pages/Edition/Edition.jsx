@@ -40,15 +40,11 @@ const Edition = () => {
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
-                    if (dataEdition.response.error) {
-                        setError(dataEdition.response.error);
-                    } else {
-                        setEdition(dataEdition.response);
-                    }
+                    setEdition(dataEdition.response);
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err.response.error);
+                    setError(err?.response?.error);
                     return of();
                 })
             )
@@ -71,7 +67,7 @@ const Edition = () => {
             )}
 
             {/* Erreur */}
-            {error && <Error message={error} />}
+            {error && <Error code={error} />}
         </div>
     );
 };

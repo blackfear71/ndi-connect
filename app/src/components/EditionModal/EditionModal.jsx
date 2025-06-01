@@ -65,12 +65,12 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
 
                 <Modal.Body>
                     {/* Erreur */}
-                    {error && <Error message={error} />}
+                    {error && <Error code={error} />}
 
                     <div className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="year">
                             <Form.Label>{t('edition.year')}</Form.Label>
-                            {/* TODO : côté back il faut vérifier que c'est entre 1901 et 2155 */}
+                            {/* TODO : côté front + back il faut vérifier que c'est entre 1901 et 2155 */}
                             <Form.Control
                                 ref={yearInputRef}
                                 type="text"

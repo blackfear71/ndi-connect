@@ -74,10 +74,6 @@ class Router
         $uri = '/' . ltrim($uri, '/');
 
         foreach ($this->routes as $route) {
-            // TODO DEBUGG
-            // $testPatern = preg_match($route['pattern'], $uri, $matches);
-            // file_put_contents(__DIR__ . '/debug-router.log', "-->\nRoute method: " . $route['method'] . "\nPattern: " . $route['pattern'] . "\nMatch: $testPatern\n", FILE_APPEND);
-
             if ($route['method'] === $method && preg_match($route['pattern'], $uri, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 return call_user_func($route['callback'], $params);
@@ -86,6 +82,6 @@ class Router
 
         // Si aucune route ne correspond
         http_response_code(404);
-        echo json_encode(['error' => 'Not Found']);
+        echo json_encode(['error' => 'ERR_ROUTE_NOT_FOUND']);
     }
 }

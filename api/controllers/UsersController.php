@@ -25,7 +25,7 @@ class UsersController
                 echo json_encode(['authorized' => $authorized]);
             } else {
                 http_response_code(401);
-                echo json_encode(['error' => 'Authentification non valide']);
+                echo json_encode(['error' => 'ERR_INVALID_AUTH']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -45,7 +45,7 @@ class UsersController
                 echo json_encode(['token' => $token]);
             } else {
                 http_response_code(401);
-                echo json_encode(['error' => 'Connexion échouée']);
+                echo json_encode(['error' => 'ERR_LOGIN_FAILED']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -65,7 +65,7 @@ class UsersController
                 echo json_encode(['disconnected' => $disconnected]);
             } else {
                 http_response_code(401);
-                echo json_encode(['error' => 'Déconnexion échouée']);
+                echo json_encode(['error' => 'ERR_LOGOUT_FAILED']);
             }
         } catch (Exception $e) {
             http_response_code(500);

@@ -42,7 +42,7 @@ class EditionsController
                 echo json_encode($show);
             } else {
                 http_response_code(404);
-                echo json_encode(['error' => 'Edition non trouvé']);
+                echo json_encode(['error' => 'ERR_EDITION_NOT_FOUND']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -59,7 +59,7 @@ class EditionsController
             // Contrôle autorisation
             if (!$this->usersService->checkAuth($login, $token)) {
                 http_response_code(401);
-                echo json_encode(['error' => 'Action non autorisée']);
+                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
@@ -70,7 +70,7 @@ class EditionsController
                 echo json_encode($created);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Edition non créée']);
+                echo json_encode(['error' => 'ERR_CREATION_FAILED']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -87,7 +87,7 @@ class EditionsController
             // Contrôle autorisation
             if (!$this->usersService->checkAuth($login, $token)) {
                 http_response_code(401);
-                echo json_encode(['error' => 'Action non autorisée']);
+                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
@@ -98,7 +98,7 @@ class EditionsController
                 echo json_encode($updated);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Edition non mise à jour']);
+                echo json_encode(['error' => 'ERR_UPDATE_FAILED']);
             }
         } catch (Exception $e) {
             http_response_code(500);
@@ -115,7 +115,7 @@ class EditionsController
             // Contrôle autorisation
             if (!$this->usersService->checkAuth($login, $token)) {
                 http_response_code(401);
-                echo json_encode(['error' => 'Action non autorisée']);
+                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
@@ -126,7 +126,7 @@ class EditionsController
                 echo json_encode(['deleted' => $deleted]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Edition non supprimée']);
+                echo json_encode(['error' => 'ERR_DELETION_FAILED']);
             }
         } catch (Exception $e) {
             http_response_code(500);
