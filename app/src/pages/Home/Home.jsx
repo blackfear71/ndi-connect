@@ -7,7 +7,7 @@ import EditionsService from '../../api/editionsService';
 
 import EditionModal from '../../components/EditionModal/EditionModal';
 
-import { combineLatest, of, switchMap, throwError } from 'rxjs';
+import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
