@@ -1,7 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
 
-import { useTranslation } from 'react-i18next';
-
 import UsersService from '../api/usersService';
 
 import { combineLatest, of } from 'rxjs';
@@ -9,16 +7,16 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 
 export const AuthContext = createContext(null);
 
+// TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non),
+//        il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur
+//        et le niveau d'autorisation => peut-être envisager de supprimer le login de la localstorage pour ne conserver que le token
+
 /**
  * Contexte d'authentification global
  * @param {*} param0
  * @returns
  */
 export const AuthProvider = ({ children }) => {
-    // TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non), il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur et le niveau d'autorisation => peut-être envisager de supprimer le login de la localstorage pour ne conserver que le token
-    // Traductions
-    const { t } = useTranslation();
-
     // Local states
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [authError, setAuthError] = useState('');
@@ -56,7 +54,7 @@ export const AuthProvider = ({ children }) => {
                         localStorage.removeItem('login');
                         localStorage.removeItem('token');
                         setIsLoggedIn(false);
-                        setAuthError(err.response.error);
+                        setAuthError(err?.response?.error);
                         return of();
                     }),
                     finalize(() => {
@@ -91,7 +89,7 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthError(err.response.error);
+                        setAuthError(err?.response?.error);
                         reject(err.response.error);
                         return of();
                     })
@@ -121,7 +119,7 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthError(err.response.error);
+                        setAuthError(err?.response?.error);
                         reject(err.response.error);
                         return of();
                     })

@@ -31,7 +31,9 @@ const Edition = () => {
     // API states
     const [edition, setEdition] = useState();
 
-    // Lancement initial de la page
+    /**
+     * Lancement initial de la page
+     */
     useEffect(() => {
         const editionsService = new EditionsService();
 

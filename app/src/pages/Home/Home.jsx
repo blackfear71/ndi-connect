@@ -40,7 +40,9 @@ const Home = () => {
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
     const [editionsByYear, setEditionsByYear] = useState();
 
-    // Lancement initial de la page
+    /**
+     * Lancement initial de la page
+     */
     useEffect(() => {
         const editionsService = new EditionsService();
 
@@ -71,6 +73,8 @@ const Home = () => {
      * Création
      */
     const handleSubmit = () => {
+        setError('');
+
         const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
@@ -110,6 +114,8 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleUpdate = (id) => {
+        setError('');
+
         const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         editionsService
@@ -144,6 +150,8 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleDelete = (id) => {
+        setError('');
+
         const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
 
         editionsService
