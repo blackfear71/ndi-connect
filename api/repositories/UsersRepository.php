@@ -8,34 +8,34 @@ class UsersRepository extends Model
     /**
      * Contrôle authentification
      */
-    public function checkAuth($login, $token)
+    public function checkAuth($token)
     {
-        $data['login'] = $login;
         $data['token'] = $token;
 
-        $sql = "SELECT COUNT(id) AS count FROM {$this->table} WHERE login = :login AND token = :token AND is_active = 1";
+        $sql = "SELECT login FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Connexion utilisateur
+     * Récupération mot de passe utilisateur
      */
     public function getUserPassword($login)
     {
-        $sql = "SELECT id, password FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $sql = "SELECT password FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Déconnexion utilisateur
+     * Mise à jour token de connexion
      */
     public function updateToken($login, $token)
     {
         $data['token'] = $token;
+        $data['token_expires_at'] = $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL;
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
 

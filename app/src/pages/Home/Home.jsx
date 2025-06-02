@@ -75,7 +75,7 @@ const Home = () => {
     const handleSubmit = () => {
         setError('');
 
-        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
+        const editionsService = new EditionsService(localStorage.getItem('token'));
 
         // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
 
@@ -116,7 +116,7 @@ const Home = () => {
     const handleUpdate = (id) => {
         setError('');
 
-        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
+        const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
             .updateEdition(id, formUpdate)
@@ -152,7 +152,7 @@ const Home = () => {
     const handleDelete = (id) => {
         setError('');
 
-        const editionsService = new EditionsService(localStorage.getItem('login'), localStorage.getItem('token'));
+        const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
             .deleteEdition(id)

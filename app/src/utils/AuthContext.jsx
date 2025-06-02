@@ -8,8 +8,8 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 export const AuthContext = createContext(null);
 
 // TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non),
-//        il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur
-//        et le niveau d'autorisation => peut-être envisager de supprimer le login de la localstorage pour ne conserver que le token
+//        il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur (?)
+//        et le niveau d'autorisation
 
 /**
  * Contexte d'authentification global
@@ -26,15 +26,14 @@ export const AuthProvider = ({ children }) => {
      * Contrôle de la connexion au lancement de l'application
      */
     useEffect(() => {
-        const userLogin = localStorage.getItem('login');
         const userToken = localStorage.getItem('token');
 
         // Vérification token présent
-        if (!userLogin || !userToken) {
+        if (!userToken) {
             setLoading(false);
             setIsLoggedIn(false);
         } else {
-            const usersService = new UsersService(userLogin, userToken);
+            const usersService = new UsersService(userToken);
 
             const subscriptionUser = usersService.checkAuth();
 
@@ -44,14 +43,12 @@ export const AuthProvider = ({ children }) => {
                         if (dataUser.response.authorized) {
                             setIsLoggedIn(true);
                         } else {
-                            localStorage.removeItem('login');
                             localStorage.removeItem('token');
                             setIsLoggedIn(false);
                         }
                     }),
                     take(1),
                     catchError((err) => {
-                        localStorage.removeItem('login');
                         localStorage.removeItem('token');
                         setIsLoggedIn(false);
                         setAuthError(err?.response?.error);
@@ -82,7 +79,6 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        localStorage.setItem('login', formData.login);
                         localStorage.setItem('token', dataUser.response.token);
                         setIsLoggedIn(true);
                         resolve();
@@ -90,7 +86,7 @@ export const AuthProvider = ({ children }) => {
                     take(1),
                     catchError((err) => {
                         setAuthError(err?.response?.error);
-                        reject(err.response.error);
+                        reject(err?.response?.error);
                         return of();
                     })
                 )
@@ -105,14 +101,13 @@ export const AuthProvider = ({ children }) => {
         return new Promise((resolve, reject) => {
             setAuthError('');
 
-            const usersService = new UsersService(localStorage.getItem('login'), localStorage.getItem('token'));
+            const usersService = new UsersService(localStorage.getItem('token'));
 
             const subscriptionUser = usersService.disconnect();
 
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        localStorage.removeItem('login');
                         localStorage.removeItem('token');
                         setIsLoggedIn(false);
                         resolve();
@@ -120,7 +115,7 @@ export const AuthProvider = ({ children }) => {
                     take(1),
                     catchError((err) => {
                         setAuthError(err?.response?.error);
-                        reject(err.response.error);
+                        reject(err?.response?.error);
                         return of();
                     })
                 )

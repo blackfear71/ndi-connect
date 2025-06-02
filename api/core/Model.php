@@ -76,10 +76,11 @@ class Model
     /**
      * Suppression logique d'un enregistrement
      */
-    public function logicalDelete($id)
+    public function logicalDelete($id, $login)
     {
-        $data['is_active'] = 0;
         $data['deleted_at'] = date('Y-m-d H:i:s');
+        $data['deleted_by'] = $login;
+        $data['is_active'] = 0;
 
         foreach ($data as $key => $value) {
             $fields[] = "$key = :$key";

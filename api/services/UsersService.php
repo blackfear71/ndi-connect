@@ -16,10 +16,9 @@ class UsersService
     /**
      * Contrôle authentification
      */
-    public function checkAuth($login, $token)
+    public function checkAuth($token)
     {
-        $result = $this->repository->checkAuth($login, $token);
-        return $result['count'] > 0;
+        return $this->repository->checkAuth($token);
     }
 
     /**
@@ -34,11 +33,7 @@ class UsersService
             $token = bin2hex(random_bytes(32));
             $update = $this->repository->updateToken($data['login'], $token);
 
-            if ($update) {
-                return $token;
-            } else {
-                return null;
-            }
+            return $update ? $token : null;
         } else {
             return null;
         }

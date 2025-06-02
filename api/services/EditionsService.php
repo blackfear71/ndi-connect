@@ -48,8 +48,8 @@ class EditionsService
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($id)
+    public function delete($id, $login)
     {
-        return $this->repository->delete($id);
+        return $this->repository->logicalDelete($id, $login);
     }
 }

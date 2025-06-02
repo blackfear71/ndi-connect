@@ -8,12 +8,10 @@ $db = $database->getConnection();
 $router->get('/users/checkAuth', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-
-    $login = $headers['x-user-login'] ?? null;
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
 
     // Appel contrôleur
-    (new UsersController($db))->checkAuth($login, $token);
+    (new UsersController($db))->checkAuth($token);
 });
 
 $router->post('/users/connect', function () use ($db) {
@@ -27,9 +25,8 @@ $router->post('/users/connect', function () use ($db) {
 $router->post('/users/disconnect', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-
-    $login = $headers['x-user-login'] ?? null;
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
 
     // Appel contrôleur
-    (new UsersController($db))->disconnect($login);
+    (new UsersController($db))->disconnect($token);
 });

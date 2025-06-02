@@ -53,18 +53,20 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function create($login, $token, $data)
+    public function create($token, $data)
     {
         try {
             // Contrôle autorisation
-            if (!$this->usersService->checkAuth($login, $token)) {
+            $login = $this->usersService->checkAuth($token);
+
+            if (!$login) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
-            // Traitement
-            $created = $this->service->create($login, $data);
+            // Insertion d'un enregistrement
+            $created = $this->service->create($login['login'], $data);
 
             if ($created) {
                 echo json_encode($created);
@@ -81,18 +83,20 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function update($id, $login, $token, $data)
+    public function update($token, $id, $data)
     {
         try {
             // Contrôle autorisation
-            if (!$this->usersService->checkAuth($login, $token)) {
+            $login = $this->usersService->checkAuth($token);
+
+            if (!$login) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
-            // Traitement
-            $updated = $this->service->update($id, $login, $data);
+            // Modification d'un enregistrement
+            $updated = $this->service->update($id, $login['login'], $data);
 
             if ($updated) {
                 echo json_encode($updated);
@@ -109,18 +113,20 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($id, $login, $token)
+    public function delete($token, $id)
     {
         try {
             // Contrôle autorisation
-            if (!$this->usersService->checkAuth($login, $token)) {
+            $login = $this->usersService->checkAuth($token);
+
+            if (!$login) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
-            // Traitement
-            $deleted = $this->service->delete($id);
+            // Suppression logique d'un enregistrement
+            $deleted = $this->service->delete($id, $login['login']);
 
             if ($deleted) {
                 echo json_encode(['deleted' => $deleted]);
