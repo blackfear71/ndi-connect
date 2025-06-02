@@ -72,7 +72,7 @@ class UsersController
             }
 
             // Déconnexion utilisateur
-            $disconnected = $this->service->disconnect($login['login']);
+            $disconnected = $this->service->disconnect($login);
 
             if ($disconnected) {
                 echo json_encode(['disconnected' => $disconnected]);

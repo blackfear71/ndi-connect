@@ -15,7 +15,9 @@ class UsersRepository extends Model
         $sql = "SELECT login FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? $result['login'] : null;
     }
 
     /**
@@ -26,7 +28,9 @@ class UsersRepository extends Model
         $sql = "SELECT password FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? $result['password'] : null;
     }
 
     /**

@@ -28,7 +28,7 @@ class UsersService
     {
         $userPassword = $this->repository->getUserPassword($data['login'], $data['password']);
 
-        if ($userPassword && password_verify($data['password'], $userPassword['password'])) {
+        if ($userPassword && password_verify($data['password'], $userPassword)) {
             // Stockage token
             $token = bin2hex(random_bytes(32));
             $update = $this->repository->updateToken($data['login'], $token);

@@ -66,7 +66,7 @@ class EditionsController
             }
 
             // Insertion d'un enregistrement
-            $created = $this->service->create($login['login'], $data);
+            $created = $this->service->create($login, $data);
 
             if ($created) {
                 echo json_encode($created);
@@ -96,7 +96,7 @@ class EditionsController
             }
 
             // Modification d'un enregistrement
-            $updated = $this->service->update($id, $login['login'], $data);
+            $updated = $this->service->update($id, $login, $data);
 
             if ($updated) {
                 echo json_encode($updated);
@@ -126,7 +126,7 @@ class EditionsController
             }
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->delete($id, $login['login']);
+            $deleted = $this->service->delete($id, $login);
 
             if ($deleted) {
                 echo json_encode(['deleted' => $deleted]);
