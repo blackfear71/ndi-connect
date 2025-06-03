@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
             const usersService = new UsersService();
 
-            // TODO : contrôler les champs obligatoires (front + back)
+            // TODO : contrôler les champs obligatoires (front + back) avec messages d'erreur
 
             const subscriptionUser = usersService.connect(formData);
 

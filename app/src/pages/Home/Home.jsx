@@ -79,8 +79,6 @@ const Home = () => {
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
-        // TODO : contrôler les champs obligatoires (sinon on peut ne pas saisir d'année)
-
         editionsService
             .insertEdition(formEdition)
             .pipe(
@@ -267,6 +265,7 @@ const Home = () => {
                     setFormData={setFormEdition}
                     isOpen={isOpenEditionModal}
                     error={error}
+                    setError={setError}
                     onClose={openCloseEditionModal}
                     onSubmit={handleSubmit}
                 />

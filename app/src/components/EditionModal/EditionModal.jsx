@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Error from '../../components/Error/Error';
 
-const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit }) => {
+const EditionModal = ({ formData, setFormData, isOpen, error, setError, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -52,6 +52,20 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
         // Empêche le rechargement de la page
         e.preventDefault();
 
+        // Contrôle que la valeur de l'année est comprise entre 1901 et 2155
+        const year = parseInt(formData.year, 10);
+
+        if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
+            setError('errors.invalidYear');
+            return;
+        }
+
+        // Contrôle le lieu renseigné
+        if (!formData.place) {
+            setError('errors.invalidPlace');
+            return;
+        }
+
         // Soumets le formulaire
         onSubmit();
     };
@@ -70,7 +84,6 @@ const EditionModal = ({ formData, setFormData, isOpen, error, onClose, onSubmit 
                     <div className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="year">
                             <Form.Label>{t('edition.year')}</Form.Label>
-                            {/* TODO : côté front + back il faut vérifier que c'est entre 1901 et 2155 */}
                             <Form.Control
                                 ref={yearInputRef}
                                 type="text"

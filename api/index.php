@@ -20,8 +20,6 @@ $router = new Router();
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
-// TODO : voir comment afficher des données côté back (var_dump ?) ou s'il existe une autre méthode pour débugger
-
 // Dispatch vers le bon groupe de routes
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);

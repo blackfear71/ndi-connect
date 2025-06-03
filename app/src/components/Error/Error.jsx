@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import i18next from 'i18next';
 import Alert from 'react-bootstrap/Alert';
 import { useTranslation } from 'react-i18next';
 
@@ -16,7 +17,7 @@ const Error = ({ code }) => {
         <>
             {show && (
                 <Alert variant="danger" onClose={() => setShow(false)} dismissible>
-                    {t(getErrorTranslationKey(code))}
+                    {i18next.exists(code) ? t(code) : t(getErrorTranslationKey(code))}
                 </Alert>
             )}
         </>
