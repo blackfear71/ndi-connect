@@ -20,16 +20,19 @@ class UsersController
     {
         try {
             // Contrôle autorisation
-            $login = $this->service->checkAuth($token);
+            $user = $this->service->checkAuth($token);
 
-            if (!$login) {
+            if (!$user) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_INVALID_AUTH']);
                 exit;
             }
 
-            // Autorisation valide
-            echo json_encode(['authorized' => true]);
+            // Autorisation valide & token
+            $user['authorized'] = true;
+            $user['token'] = $token;
+
+            echo json_encode($user);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
@@ -42,10 +45,10 @@ class UsersController
     public function connect($data)
     {
         try {
-            $token = $this->service->connect($data);
+            $user = $this->service->connect($data);
 
-            if ($token) {
-                echo json_encode(['token' => $token]);
+            if ($user) {
+                echo json_encode($user);
             } else {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_LOGIN_FAILED']);
@@ -63,16 +66,16 @@ class UsersController
     {
         try {
             // Contrôle autorisation
-            $login = $this->service->checkAuth($token);
+            $user = $this->service->checkAuth($token);
 
-            if (!$login) {
+            if (!$user) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
             // Déconnexion utilisateur
-            $disconnected = $this->service->disconnect($login);
+            $disconnected = $this->service->disconnect($user['login']);
 
             if ($disconnected) {
                 echo json_encode(['disconnected' => $disconnected]);

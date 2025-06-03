@@ -12,25 +12,21 @@ class UsersRepository extends Model
     {
         $data['token'] = $token;
 
-        $sql = "SELECT login FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
+        $sql = "SELECT login, level FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? $result['login'] : null;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Récupération mot de passe utilisateur
+     * Récupération données utilisateur
      */
-    public function getUserPassword($login)
+    public function getUserData($login)
     {
-        $sql = "SELECT password FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $sql = "SELECT login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? $result['password'] : null;
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**

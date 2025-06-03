@@ -7,6 +7,8 @@ import EditionsService from '../../api/editionsService';
 
 import EditionModal from '../../components/EditionModal/EditionModal';
 
+import UserRole from '../../enums/UserRole';
+
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
@@ -18,7 +20,7 @@ import { AuthContext } from '../../utils/AuthContext';
  */
 const Home = () => {
     // Contexte
-    const { isLoggedIn } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -215,7 +217,7 @@ const Home = () => {
             <h1>{t('home.editions')}</h1>
 
             {/* Ajout */}
-            {isLoggedIn && (
+            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                 <div className="d-grid mb-2">
                     <Button variant="success" size="lg" onClick={openCloseEditionModal}>
                         {t('home.addEdition')}
@@ -259,7 +261,7 @@ const Home = () => {
             )}
 
             {/* Modale de création d'édition */}
-            {isLoggedIn && isOpenEditionModal && (
+            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && isOpenEditionModal && (
                 <EditionModal
                     formData={formEdition}
                     setFormData={setFormEdition}

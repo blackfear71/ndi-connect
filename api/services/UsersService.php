@@ -26,14 +26,19 @@ class UsersService
      */
     public function connect($data)
     {
-        $userPassword = $this->repository->getUserPassword($data['login'], $data['password']);
+        $user = $this->repository->getUserData($data['login']);
 
-        if ($userPassword && password_verify($data['password'], $userPassword)) {
+        if ($user && password_verify($data['password'], $user['password'])) {
             // Stockage token
-            $token = bin2hex(random_bytes(32));
-            $update = $this->repository->updateToken($data['login'], $token);
+            $user['token'] = bin2hex(random_bytes(32));
+            $update = $this->repository->updateToken($data['login'], $user['token']);
 
-            return $update ? $token : null;
+            if ($update) {
+                unset($user['password']);
+                return $user;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

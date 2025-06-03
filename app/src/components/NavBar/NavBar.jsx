@@ -16,7 +16,7 @@ import './NavBar.css';
  */
 const NavBar = () => {
     // Contexte
-    const { isLoggedIn, authError, login, logout } = useContext(AuthContext);
+    const { auth, authError, login, logout } = useContext(AuthContext);
 
     // Local states
     const [isOpenConnectionModal, setIsOpenConnectionModal] = useState(false);
@@ -40,7 +40,7 @@ const NavBar = () => {
      * Connexion ou déconnexion selon le cas
      */
     const handleSubmit = () => {
-        const action = isLoggedIn ? logout : () => login(formConnection);
+        const action = auth.isLoggedIn ? logout : () => login(formConnection);
 
         // On attend la promesse de connexion/déconnexion pour fermer la modale
         action()
@@ -67,7 +67,7 @@ const NavBar = () => {
                     formData={formConnection}
                     setFormData={setFormConnection}
                     isOpen={isOpenConnectionModal}
-                    isLoggedIn={isLoggedIn}
+                    isLoggedIn={auth.isLoggedIn}
                     error={authError}
                     onClose={openCloseConnectionModal}
                     onSubmit={handleSubmit}

@@ -7,10 +7,6 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 
 export const AuthContext = createContext(null);
 
-// TODO : gérer un utilisateur super admin (le compte admin qui peut en plus faire des suppression... les autres non),
-//        il lui faut un indicateur et des contrôles spécifiques => utiliser un objet qui a le nom de l'utilisateur (?)
-//        et le niveau d'autorisation
-
 /**
  * Contexte d'authentification global
  * @param {*} param0
@@ -18,7 +14,11 @@ export const AuthContext = createContext(null);
  */
 export const AuthProvider = ({ children }) => {
     // Local states
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [auth, setAuth] = useState({
+        isLoggedIn: false,
+        login: null,
+        level: 0
+    });
     const [authError, setAuthError] = useState('');
     const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         // Vérification token présent
         if (!userToken) {
             setLoading(false);
-            setIsLoggedIn(false);
+            resetAuth();
         } else {
             const usersService = new UsersService(userToken);
 
@@ -40,17 +40,16 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        if (dataUser.response.authorized) {
-                            setIsLoggedIn(true);
-                        } else {
-                            localStorage.removeItem('token');
-                            setIsLoggedIn(false);
-                        }
+                        dataUser.response.authorized ? persistAuth(dataUser.response) : resetAuth();
                     }),
                     take(1),
                     catchError((err) => {
-                        localStorage.removeItem('token');
-                        setIsLoggedIn(false);
+                        // Vérification requête abandonnée
+                        if (isAbortedAjaxError(err)) {
+                            return of();
+                        }
+
+                        resetAuth();
                         setAuthError(err?.response?.error);
                         return of();
                     }),
@@ -79,12 +78,12 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        localStorage.setItem('token', dataUser.response.token);
-                        setIsLoggedIn(true);
+                        persistAuth(dataUser.response);
                         resolve();
                     }),
                     take(1),
                     catchError((err) => {
+                        resetAuth();
                         setAuthError(err?.response?.error);
                         reject(err?.response?.error);
                         return of();
@@ -108,8 +107,6 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        localStorage.removeItem('token');
-                        setIsLoggedIn(false);
                         resolve();
                     }),
                     take(1),
@@ -117,15 +114,53 @@ export const AuthProvider = ({ children }) => {
                         setAuthError(err?.response?.error);
                         reject(err?.response?.error);
                         return of();
+                    }),
+                    finalize(() => {
+                        resetAuth();
                     })
                 )
                 .subscribe();
         });
     };
 
+    /**
+     * Enregistre les informations de connexion
+     * @param {*} data Données utilisateur
+     */
+    const persistAuth = (data) => {
+        setAuth({
+            isLoggedIn: true,
+            login: data.login,
+            level: data.level
+        });
+        localStorage.setItem('token', data.token);
+    };
+    /**
+     * Réinitialise les informations d'authentification
+     */
+    const resetAuth = () => {
+        setAuth({
+            isLoggedIn: false,
+            login: null,
+            level: 0
+        });
+        localStorage.clear();
+    };
+
+    /**
+     * Vérification requête abandonnée (par F5 trop rapide, navigation, etc.)
+     * @param {*} err Erreur
+     * @returns Indicateur requête abandonnée
+     */
+    const isAbortedAjaxError = (err) => {
+        const msg = err?.message?.toLowerCase?.();
+        return (
+            err?.name === 'AjaxError' &&
+            (err?.status === 0 || msg?.includes('abort') || msg?.includes('ns_binding_aborted'))
+        );
+    };
+
     return (
-        <AuthContext.Provider value={{ isLoggedIn, authError, login, logout }}>
-            {!loading && children}
-        </AuthContext.Provider>
+        <AuthContext.Provider value={{ auth, authError, login, logout }}>{!loading && children}</AuthContext.Provider>
     );
 };

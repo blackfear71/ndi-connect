@@ -1,4 +1,6 @@
 <?php
+require_once 'enums/UserRole.php';
+
 require_once 'services/EditionsService.php';
 require_once 'services/UsersService.php';
 
@@ -57,16 +59,16 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $login = $this->usersService->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
-            if (!$login) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
             // Insertion d'un enregistrement
-            $created = $this->service->create($login, $data);
+            $created = $this->service->create($user['login'], $data);
 
             if ($created) {
                 echo json_encode($created);
@@ -87,16 +89,16 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $login = $this->usersService->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
-            if (!$login) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
             // Modification d'un enregistrement
-            $updated = $this->service->update($id, $login, $data);
+            $updated = $this->service->update($id, $user['login'], $data);
 
             if ($updated) {
                 echo json_encode($updated);
@@ -117,16 +119,16 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $login = $this->usersService->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
-            if (!$login) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
                 echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
                 exit;
             }
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->delete($id, $login);
+            $deleted = $this->service->delete($id, $user['login']);
 
             if ($deleted) {
                 echo json_encode(['deleted' => $deleted]);
