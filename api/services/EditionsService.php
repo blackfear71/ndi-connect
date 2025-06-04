@@ -68,7 +68,7 @@ class EditionsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidEditionData(array $data): bool
+    private function isValidEditionData($data)
     {
         $year = trim($data['year'] ?? '');
         $place = trim($data['place'] ?? '');

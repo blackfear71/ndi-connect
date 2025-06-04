@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Error from '../Error/Error';
 
-const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, onClose, onSubmit }) => {
+const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, setError, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -37,6 +37,19 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, onC
     const handleSubmit = (e) => {
         // Empêche le rechargement de la page
         e.preventDefault();
+
+        // Contrôle que l'identifiant et le mot de passe sont renseignés
+        if (!isLoggedIn) {
+            if (!formData.login) {
+                setError('errors.invalidLogin');
+                return;
+            }
+
+            if (!formData.password) {
+                setError('errors.invalidPassword');
+                return;
+            }
+        }
 
         // Soumets le formulaire
         onSubmit();

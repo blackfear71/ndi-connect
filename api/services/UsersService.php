@@ -26,6 +26,11 @@ class UsersService
      */
     public function connect($data)
     {
+        // Contrôle des données
+        if (!$this->isValidConnectionData($data)) {
+            return null;
+        }
+
         $user = $this->repository->getUserData($data['login']);
 
         if ($user && password_verify($data['password'], $user['password'])) {
@@ -42,6 +47,17 @@ class UsersService
         } else {
             return null;
         }
+    }
+
+    /**
+     * Contrôle des données saisies
+     */
+    private function isValidConnectionData($data)
+    {
+        $login = trim($data['login'] ?? '');
+        $password = trim($data['password'] ?? '');
+
+        return $login && $password;
     }
 
     /**

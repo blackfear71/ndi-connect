@@ -4,6 +4,8 @@
         "deletionFailed": "Suppression échouée",
         "editionNotFound": "Edition non trouvée",
         "invalidAuth": "Authentification invalide",
+        "invalidLogin": "L'identifiant est invalide",
+        "invalidPassword": "Le mot de passe est invalide",
         "invalidPlace": "Le lieu est invalide",
         "invalidYear": "L'année est invalide",
         "loginFailed": "Erreur de connexion",

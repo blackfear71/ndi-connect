@@ -26,6 +26,8 @@ export const AuthProvider = ({ children }) => {
      * Contrôle de la connexion au lancement de l'application
      */
     useEffect(() => {
+        setAuthError('');
+
         const userToken = localStorage.getItem('token');
 
         // Vérification token présent
@@ -70,8 +72,6 @@ export const AuthProvider = ({ children }) => {
             setAuthError('');
 
             const usersService = new UsersService();
-
-            // TODO : contrôler les champs obligatoires (front + back) avec messages d'erreur
 
             const subscriptionUser = usersService.connect(formData);
 
