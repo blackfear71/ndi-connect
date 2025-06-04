@@ -79,7 +79,7 @@ const EditionModal = ({ formData, setFormData, isOpen, error, setError, onClose,
 
                 <Modal.Body>
                     {/* Erreur */}
-                    {error && <Error code={error} />}
+                    {error && <Error code={error} setError={setError} />}
 
                     <div className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="year">

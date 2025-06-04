@@ -69,7 +69,7 @@ const Edition = () => {
             )}
 
             {/* Erreur */}
-            {error && <Error code={error} />}
+            {error && <Error code={error} setError={setError} />}
         </div>
     );
 };

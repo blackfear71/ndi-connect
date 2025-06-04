@@ -63,7 +63,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, set
                 </Modal.Header>
 
                 <Modal.Body>
-                    {error && <Error code={error} />}
+                    {error && <Error code={error} setError={setError} />}
                     {isLoggedIn ? (
                         <>{t('navbar.disconnectMessage')}</>
                     ) : (
