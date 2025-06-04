@@ -37,8 +37,6 @@ class EditionsService {
         return ajax.get(url, this.headers);
     };
 
-    // TODO : prévoir des objets à l'image de la table pour passer le body (front ou back ?)
-
     /**
      * Création édition
      * @param {*} body Données édition

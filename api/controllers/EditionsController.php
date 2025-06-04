@@ -4,6 +4,20 @@ require_once 'enums/UserRole.php';
 require_once 'services/EditionsService.php';
 require_once 'services/UsersService.php';
 
+// TODO : en sortie, voici le format typique d'un tableau à renvoyer au front :
+// [
+//     'status' => 'success', // ou 'error'
+//     'message' => 'User created successfully.',
+//     'data' => [
+//         'id' => 42,
+//         'username' => 'alice'
+//     ]
+// ]
+// Faire en sorte d'avoir ce genre de tableau, puis avoir une méthode générique dans le composant <Message />
+// (comme pour la récupération des trads entre back et front) qui va déterminer le type d'erreur selon si 'status' est 'success' ou 'error'
+// => remplacer le type dans les setMessage par le statut.
+// Attention il faudra aussi adapter la récupération des réponses pour ne pas prendre 'data.response' mais 'data.response.data/message/status'
+
 class EditionsController
 {
     private $service;
