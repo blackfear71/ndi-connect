@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import EditionsService from '../../api/editionsService';
 
 import EditionModal from '../../components/EditionModal/EditionModal';
+import Error from '../../components/Error/Error';
 
 import UserRole from '../../enums/UserRole';
 
@@ -84,11 +85,12 @@ const Home = () => {
             .pipe(
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    // TODO : afficher un message de bonne fin ? (renommer le composant Error en plus générique ?)
                     groupByYear(dataEditions.response);
                     openCloseEditionModal();
                     resetFormEdition();
                     setEditionsByYear([]);
+                    // TODO : afficher un message de bonne fin ? (renommer le composant Error en plus générique ?)
+                    setError('home.creationEdition');
                 }),
                 take(1),
                 catchError((err) => {
@@ -212,6 +214,10 @@ const Home = () => {
 
     return (
         <div>
+            {/* Messages */}
+            {error && <Error variant="success" code={error} setError={setError} autoClose={true} />}
+
+            {/* Titre */}
             <h1>{t('home.editions')}</h1>
 
             {/* Ajout */}

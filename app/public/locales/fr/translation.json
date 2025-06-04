@@ -32,6 +32,7 @@
     },
     "home": {
         "addEdition": "Ajouter une édition",
+        "creationEdition": "Édition créée",
         "editions": "Éditions",
         "noEdition": "Aucune édition"
     },
