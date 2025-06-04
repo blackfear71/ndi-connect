@@ -4,9 +4,9 @@ import i18next from 'i18next';
 import Alert from 'react-bootstrap/Alert';
 import { useTranslation } from 'react-i18next';
 
-import { getErrorTranslationKey } from '../../utils/errorMapper';
+import { getMessageTranslationKey } from '../../utils/messageMapper';
 
-const Error = ({ variant = 'danger', code, setError, autoClose = false, duration = 10000 }) => {
+const Message = ({ code, type = 'danger', setMessage, autoClose = false, duration = 10000 }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -20,31 +20,31 @@ const Error = ({ variant = 'danger', code, setError, autoClose = false, duration
         if (autoClose && show) {
             const timer = setTimeout(() => {
                 setShow(false);
-                setError && setError('');
+                setMessage && setMessage(null);
             }, duration);
 
             // Nettoyage si le composant est démonté avant
             return () => clearTimeout(timer);
         }
-    }, [autoClose, show, duration, setError]);
+    }, [autoClose, show, duration, setMessage]);
 
     /**
      * Fermeture manuelle du message
      */
     const handleClose = () => {
         setShow(false);
-        setError && setError('');
+        setMessage && setMessage(null);
     };
 
     return (
         <>
             {show && (
-                <Alert variant={variant} onClose={!autoClose && handleClose} dismissible={!autoClose}>
-                    {i18next.exists(code) ? t(code) : t(getErrorTranslationKey(code))}
+                <Alert variant={type} onClose={!autoClose && handleClose} dismissible={!autoClose}>
+                    {i18next.exists(code) ? t(code) : t(getMessageTranslationKey(code))}
                 </Alert>
             )}
         </>
     );
 };
 
-export default Error;
+export default Message;

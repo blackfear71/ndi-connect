@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
-import Error from '../../components/Error/Error';
+import Message from '../../components/Message/Message';
 
 import { combineLatest, of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -26,7 +26,7 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [error, setError] = useState('');
+    const [message, setMessage] = useState(null);
 
     // API states
     const [edition, setEdition] = useState();
@@ -46,7 +46,7 @@ const Edition = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err?.response?.error);
+                    setMessage({ code: err?.response?.error, type: 'danger' });
                     return of();
                 })
             )
@@ -55,21 +55,21 @@ const Edition = () => {
 
     return (
         <div>
+            {/* Message */}
+            {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+
             {/* Retour */}
             <Button variant="warning" href="/" className="d-inline-flex align-items-center gap-2">
                 <FaArrowLeft size={20} color="#000000" />
                 {t('common.home')}
             </Button>
 
-            {/* Edition */}
+            {/* Titre */}
             {edition && (
                 <div>
                     <h1>{t('edition.editionTitle', { year: edition.year, place: edition.place })}</h1>
                 </div>
             )}
-
-            {/* Erreur */}
-            {error && <Error code={error} setError={setError} />}
         </div>
     );
 };

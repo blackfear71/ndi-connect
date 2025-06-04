@@ -3,9 +3,9 @@ import { useEffect, useRef } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import Error from '../../components/Error/Error';
+import Message from '../Message/Message';
 
-const EditionModal = ({ formData, setFormData, isOpen, error, setError, onClose, onSubmit }) => {
+const EditionModal = ({ formData, setFormData, isOpen, message, setMessage, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -56,13 +56,13 @@ const EditionModal = ({ formData, setFormData, isOpen, error, setError, onClose,
         const year = parseInt(formData.year, 10);
 
         if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
-            setError('errors.invalidYear');
+            setMessage({ code: 'errors.invalidYear', type: 'danger' });
             return;
         }
 
         // Contrôle le lieu renseigné
         if (!formData.place) {
-            setError('errors.invalidPlace');
+            setMessage({ code: 'errors.invalidPlace', type: 'danger' });
             return;
         }
 
@@ -78,9 +78,10 @@ const EditionModal = ({ formData, setFormData, isOpen, error, setError, onClose,
                 </Modal.Header>
 
                 <Modal.Body>
-                    {/* Erreur */}
-                    {error && <Error code={error} setError={setError} />}
+                    {/* Message */}
+                    {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
+                    {/* Formulaire */}
                     <div className="d-flex align-items-end">
                         <Form.Group className="me-2" controlId="year">
                             <Form.Label>{t('edition.year')}</Form.Label>

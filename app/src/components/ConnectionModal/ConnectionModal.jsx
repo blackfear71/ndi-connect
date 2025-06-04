@@ -3,9 +3,9 @@ import { useEffect, useRef } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import Error from '../Error/Error';
+import Message from '../Message/Message';
 
-const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, setError, onClose, onSubmit }) => {
+const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, setMessage, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -41,12 +41,12 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, set
         // Contrôle que l'identifiant et le mot de passe sont renseignés
         if (!isLoggedIn) {
             if (!formData.login) {
-                setError('errors.invalidLogin');
+                setMessage({ code: 'errors.invalidLogin', type: 'danger' });
                 return;
             }
 
             if (!formData.password) {
-                setError('errors.invalidPassword');
+                setMessage({ code: 'errors.invalidPassword', type: 'danger' });
                 return;
             }
         }
@@ -63,7 +63,10 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, error, set
                 </Modal.Header>
 
                 <Modal.Body>
-                    {error && <Error code={error} setError={setError} />}
+                    {/* Message */}
+                    {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+
+                    {/* Formulaire */}
                     {isLoggedIn ? (
                         <>{t('navbar.disconnectMessage')}</>
                     ) : (

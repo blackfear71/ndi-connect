@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import EditionsService from '../../api/editionsService';
 
 import EditionModal from '../../components/EditionModal/EditionModal';
-import Error from '../../components/Error/Error';
+import Message from '../../components/Message/Message';
 
 import UserRole from '../../enums/UserRole';
 
@@ -27,7 +27,8 @@ const Home = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [error, setError] = useState('');
+    const [messagePage, setMessagePage] = useState(null);
+    const [messageModal, setMessageModal] = useState(null);
     const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
     const [formEdition, setFormEdition] = useState({
         year: '',
@@ -58,7 +59,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err?.response?.error);
+                    setMessagePage(err?.response?.error);
                     return of();
                 })
             )
@@ -76,25 +77,27 @@ const Home = () => {
      * Création
      */
     const handleSubmit = () => {
-        setError('');
+        setMessageModal(null);
+        setMessagePage(null);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
             .insertEdition(formEdition)
             .pipe(
+                map((dataEdition) => {
+                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response);
                     openCloseEditionModal();
                     resetFormEdition();
                     setEditionsByYear([]);
-                    // TODO : afficher un message de bonne fin ? (renommer le composant Error en plus générique ?)
-                    setError('home.creationEdition');
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err?.response?.error);
+                    setMessageModal({ code: err?.response?.error, type: 'success' });
                     return of();
                 })
             )
@@ -116,13 +119,17 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleUpdate = (id) => {
-        setError('');
+        setMessageModal(null);
+        setMessagePage(null);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
             .updateEdition(id, formUpdate)
             .pipe(
+                map((dataEdition) => {
+                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response);
@@ -130,7 +137,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err?.response?.error);
+                    setMessageModal({ code: err?.response?.error, type: 'danger' });
                     return of();
                 })
             )
@@ -152,20 +159,24 @@ const Home = () => {
      * @param {*} id Identifiant édition
      */
     const handleDelete = (id) => {
-        setError('');
+        setMessageModal(null);
+        setMessagePage(null);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
             .deleteEdition(id)
             .pipe(
+                map((dataEdition) => {
+                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response);
                 }),
                 take(1),
                 catchError((err) => {
-                    setError(err?.response?.error);
+                    setMessageModal({ code: err?.response?.error, type: 'danger' });
                     return of();
                 })
             )
@@ -214,8 +225,10 @@ const Home = () => {
 
     return (
         <div>
-            {/* Messages */}
-            {error && <Error variant="success" code={error} setError={setError} autoClose={true} />}
+            {/* Message */}
+            {messagePage && (
+                <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} autoClose={true} />
+            )}
 
             {/* Titre */}
             <h1>{t('home.editions')}</h1>
@@ -270,8 +283,8 @@ const Home = () => {
                     formData={formEdition}
                     setFormData={setFormEdition}
                     isOpen={isOpenEditionModal}
-                    error={error}
-                    setError={setError}
+                    message={messageModal}
+                    setMessage={setMessageModal}
                     onClose={openCloseEditionModal}
                     onSubmit={handleSubmit}
                 />

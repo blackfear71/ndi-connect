@@ -19,14 +19,14 @@ export const AuthProvider = ({ children }) => {
         login: null,
         level: 0
     });
-    const [authError, setAuthError] = useState('');
+    const [authError, setAuthError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     /**
      * Contrôle de la connexion au lancement de l'application
      */
     useEffect(() => {
-        setAuthError('');
+        setAuthError(null);
 
         const userToken = localStorage.getItem('token');
 
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
                         }
 
                         resetAuth();
-                        setAuthError(err?.response?.error);
+                        setAuthError({ code: err?.response?.error, type: 'danger' });
                         return of();
                     }),
                     finalize(() => {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
      */
     const login = (formData) => {
         return new Promise((resolve, reject) => {
-            setAuthError('');
+            setAuthError(null);
 
             const usersService = new UsersService();
 
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
                     take(1),
                     catchError((err) => {
                         resetAuth();
-                        setAuthError(err?.response?.error);
+                        setAuthError({ code: err?.response?.error, type: 'danger' });
                         reject(err?.response?.error);
                         return of();
                     })
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
      */
     const logout = () => {
         return new Promise((resolve, reject) => {
-            setAuthError('');
+            setAuthError(null);
 
             const usersService = new UsersService(localStorage.getItem('token'));
 
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthError(err?.response?.error);
+                        setAuthError({ code: err?.response?.error, type: 'danger' });
                         reject(err?.response?.error);
                         return of();
                     }),

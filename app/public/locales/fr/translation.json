@@ -16,6 +16,11 @@
         "unknownError": "Une erreur inconnue est survenue",
         "updateFailed": "Modification échouée"
     },
+    "messages": {
+        "creationSuccess": "Création réussie",
+        "deletionSuccess": "Suppression réussie",
+        "updateSuccess": "Modification réussie"
+    },
     "common": {
         "add": "Ajouter",
         "close": "Fermer",

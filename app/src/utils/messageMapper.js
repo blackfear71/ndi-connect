@@ -1,9 +1,9 @@
 /**
- * Fonction de conversion des erreurs back vers front
- * @param {*} code Code de l'erreur
- * @returns Code message front
+ * Fonction de conversion des messages back vers front
+ * @param {*} code Code du message back
+ * @returns Code du message front
  */
-export const getErrorTranslationKey = (code) => {
+export const getMessageTranslationKey = (code) => {
     const map = {
         ERR_CREATION_FAILED: 'errors.creationFailed',
         ERR_DELETION_FAILED: 'errors.deletionFailed',
@@ -14,7 +14,10 @@ export const getErrorTranslationKey = (code) => {
         ERR_ROUTE_NOT_FOUND: 'errors.routeNotFound',
         ERR_UNAUTHORIZED_ACTION: 'errors.unauthorizedAction',
         ERR_UNKNOWN_ENDPOINT: 'errors.unknownEndpoint',
-        ERR_UPDATE_FAILED: 'errors.updateFailed'
+        ERR_UPDATE_FAILED: 'errors.updateFailed',
+        MSG_CREATION_SUCCESS: 'messages.creationSuccess',
+        MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
+        MSG_UPDATE_SUCCESS: 'messages.updateSuccess'
     };
 
     return map[code] || 'errors.unknownError'; // clé fallback

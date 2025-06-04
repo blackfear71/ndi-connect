@@ -71,7 +71,7 @@ class EditionsController
             $created = $this->service->create($user['login'], $data);
 
             if ($created) {
-                echo json_encode($created);
+                echo json_encode(['message' => 'MSG_CREATION_SUCCESS']);
             } else {
                 http_response_code(400);
                 echo json_encode(['error' => 'ERR_CREATION_FAILED']);
@@ -101,7 +101,7 @@ class EditionsController
             $updated = $this->service->update($id, $user['login'], $data);
 
             if ($updated) {
-                echo json_encode($updated);
+                echo json_encode(['message' => 'MSG_UPDATE_SUCCESS']);
             } else {
                 http_response_code(400);
                 echo json_encode(['error' => 'ERR_UPDATE_FAILED']);
@@ -131,7 +131,7 @@ class EditionsController
             $deleted = $this->service->delete($id, $user['login']);
 
             if ($deleted) {
-                echo json_encode(['deleted' => $deleted]);
+                echo json_encode(['message' => 'MSG_DELETION_SUCCESS']);
             } else {
                 http_response_code(400);
                 echo json_encode(['error' => 'ERR_DELETION_FAILED']);
