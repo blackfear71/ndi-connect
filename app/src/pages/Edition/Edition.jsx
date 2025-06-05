@@ -97,7 +97,7 @@ const Edition = () => {
                         navigate('/');
                     } else {
                         openCloseEditionModal('');
-                        resetFormEdition();
+                        resetFormEdition(dataEdition.response.data);
                         setEdition(dataEdition.response.data);
                         setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
                     }
@@ -121,10 +121,10 @@ const Edition = () => {
     /**
      * Réinitialisation formulaire (modification)
      */
-    const resetFormEdition = () => {
+    const resetFormEdition = (data) => {
         setFormEdition({
-            year: edition.year,
-            place: edition.place
+            year: data.year,
+            place: data.place
         });
     };
 
