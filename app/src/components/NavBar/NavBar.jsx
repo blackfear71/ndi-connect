@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { FaUserCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
@@ -56,7 +57,9 @@ const NavBar = () => {
     return (
         <nav className="navbar-container">
             {/* Logo */}
-            <img src={ndiConnectLogo} alt="ndi-connect" className="navbar-logo" />
+            <Link to="/">
+                <img src={ndiConnectLogo} alt="ndi-connect" className="navbar-logo" />
+            </Link>
 
             {/* Barre de recherche */}
             <SearchBar />
