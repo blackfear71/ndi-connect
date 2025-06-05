@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        dataUser.response.authorized ? persistAuth(dataUser.response) : resetAuth();
+                        dataUser.response.data.authorized ? persistAuth(dataUser.response.data) : resetAuth();
                     }),
                     take(1),
                     catchError((err) => {
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
                         }
 
                         resetAuth();
-                        setAuthError({ code: err?.response?.error, type: 'danger' });
+                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {
@@ -78,14 +78,14 @@ export const AuthProvider = ({ children }) => {
             combineLatest([subscriptionUser])
                 .pipe(
                     map(([dataUser]) => {
-                        persistAuth(dataUser.response);
+                        persistAuth(dataUser.response.data);
                         resolve();
                     }),
                     take(1),
                     catchError((err) => {
                         resetAuth();
-                        setAuthError({ code: err?.response?.error, type: 'danger' });
-                        reject(err?.response?.error);
+                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                        reject(err?.response?.message);
                         return of();
                     })
                 )
@@ -111,8 +111,8 @@ export const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthError({ code: err?.response?.error, type: 'danger' });
-                        reject(err?.response?.error);
+                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                        reject(err?.response?.message);
                         return of();
                     }),
                     finalize(() => {

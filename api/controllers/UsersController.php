@@ -24,7 +24,11 @@ class UsersController
 
             if (!$user) {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_INVALID_AUTH']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_INVALID_AUTH',
+                    'data' => null
+                ]);
                 exit;
             }
 
@@ -32,10 +36,18 @@ class UsersController
             $user['authorized'] = true;
             $user['token'] = $token;
 
-            echo json_encode($user);
+            echo json_encode([
+                'status' => 'success',
+                'message' => '',
+                'data' => $user
+            ]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -48,14 +60,26 @@ class UsersController
             $user = $this->service->connect($data);
 
             if ($user) {
-                echo json_encode($user);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => '',
+                    'data' => $user
+                ]);
             } else {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_LOGIN_FAILED']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_LOGIN_FAILED',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -70,7 +94,11 @@ class UsersController
 
             if (!$user) {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_UNAUTHORIZED_ACTION',
+                    'data' => null
+                ]);
                 exit;
             }
 
@@ -78,14 +106,26 @@ class UsersController
             $disconnected = $this->service->disconnect($user['login']);
 
             if ($disconnected) {
-                echo json_encode(['disconnected' => $disconnected]);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => '',
+                    'data' => ['disconnected' => $disconnected]
+                ]);
             } else {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_LOGOUT_FAILED']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_LOGOUT_FAILED',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 }

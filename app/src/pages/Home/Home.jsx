@@ -55,11 +55,11 @@ const Home = () => {
         combineLatest([subscriptionEditions])
             .pipe(
                 map(([dataEditions]) => {
-                    groupByYear(dataEditions.response);
+                    groupByYear(dataEditions.response.data);
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessagePage(err?.response?.error);
+                    setMessagePage(err?.response?.message);
                     return of();
                 })
             )
@@ -86,18 +86,18 @@ const Home = () => {
             .insertEdition(formEdition)
             .pipe(
                 map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
+                    groupByYear(dataEditions.response.data);
                     openCloseEditionModal();
                     resetFormEdition();
                     setEditionsByYear([]);
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModal({ code: err?.response?.error, type: 'success' });
+                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 })
             )
@@ -128,16 +128,16 @@ const Home = () => {
             .updateEdition(id, formUpdate)
             .pipe(
                 map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
+                    groupByYear(dataEditions.response.data);
                     resetFormUpdate();
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModal({ code: err?.response?.error, type: 'danger' });
+                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 })
             )
@@ -168,15 +168,15 @@ const Home = () => {
             .deleteEdition(id)
             .pipe(
                 map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: 'success' });
+                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
-                    groupByYear(dataEditions.response);
+                    groupByYear(dataEditions.response.data);
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModal({ code: err?.response?.error, type: 'danger' });
+                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 })
             )
@@ -215,10 +215,17 @@ const Home = () => {
         setYearsAndEditions(sortedArray);
     };
 
+    /**
+     * Affiche les éditions d'une année
+     * @param {*} year Année
+     */
     const showEditionsByYear = (year) => {
         setEditionsByYear(year.editions);
     };
 
+    /**
+     * Affiche les années
+     */
     const showYearsOfEditions = () => {
         setEditionsByYear([]);
     };
@@ -226,9 +233,7 @@ const Home = () => {
     return (
         <div>
             {/* Message */}
-            {messagePage && (
-                <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} autoClose={true} />
-            )}
+            {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
             {/* Titre */}
             <h1>{t('home.editions')}</h1>

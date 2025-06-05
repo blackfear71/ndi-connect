@@ -56,13 +56,13 @@ const EditionModal = ({ formData, setFormData, isOpen, message, setMessage, onCl
         const year = parseInt(formData.year, 10);
 
         if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
-            setMessage({ code: 'errors.invalidYear', type: 'danger' });
+            setMessage({ code: 'errors.invalidYear', type: 'error' });
             return;
         }
 
         // Contrôle le lieu renseigné
         if (!formData.place) {
-            setMessage({ code: 'errors.invalidPlace', type: 'danger' });
+            setMessage({ code: 'errors.invalidPlace', type: 'error' });
             return;
         }
 

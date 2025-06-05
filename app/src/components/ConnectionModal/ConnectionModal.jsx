@@ -41,12 +41,12 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
         // Contrôle que l'identifiant et le mot de passe sont renseignés
         if (!isLoggedIn) {
             if (!formData.login) {
-                setMessage({ code: 'errors.invalidLogin', type: 'danger' });
+                setMessage({ code: 'errors.invalidLogin', type: 'error' });
                 return;
             }
 
             if (!formData.password) {
-                setMessage({ code: 'errors.invalidPassword', type: 'danger' });
+                setMessage({ code: 'errors.invalidPassword', type: 'error' });
                 return;
             }
         }

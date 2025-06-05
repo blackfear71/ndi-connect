@@ -42,11 +42,11 @@ const Edition = () => {
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
-                    setEdition(dataEdition.response);
+                    setEdition(dataEdition.response.data);
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessage({ code: err?.response?.error, type: 'danger' });
+                    setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 })
             )

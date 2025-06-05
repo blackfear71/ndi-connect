@@ -4,20 +4,6 @@ require_once 'enums/UserRole.php';
 require_once 'services/EditionsService.php';
 require_once 'services/UsersService.php';
 
-// TODO : en sortie, voici le format typique d'un tableau à renvoyer au front :
-// [
-//     'status' => 'success', // ou 'error'
-//     'message' => 'User created successfully.',
-//     'data' => [
-//         'id' => 42,
-//         'username' => 'alice'
-//     ]
-// ]
-// Faire en sorte d'avoir ce genre de tableau, puis avoir une méthode générique dans le composant <Message />
-// (comme pour la récupération des trads entre back et front) qui va déterminer le type d'erreur selon si 'status' est 'success' ou 'error'
-// => remplacer le type dans les setMessage par le statut.
-// Attention il faudra aussi adapter la récupération des réponses pour ne pas prendre 'data.response' mais 'data.response.data/message/status'
-
 class EditionsController
 {
     private $service;
@@ -39,10 +25,19 @@ class EditionsController
     {
         try {
             $index = $this->service->index();
-            echo json_encode($index);
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => '',
+                'data' => $index
+            ]);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -55,14 +50,26 @@ class EditionsController
             $show = $this->service->show($id);
 
             if ($show) {
-                echo json_encode($show);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => '',
+                    'data' => $show
+                ]);
             } else {
                 http_response_code(404);
-                echo json_encode(['error' => 'ERR_EDITION_NOT_FOUND']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_EDITION_NOT_FOUND',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -77,7 +84,11 @@ class EditionsController
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_UNAUTHORIZED_ACTION',
+                    'data' => null
+                ]);
                 exit;
             }
 
@@ -85,14 +96,26 @@ class EditionsController
             $created = $this->service->create($user['login'], $data);
 
             if ($created) {
-                echo json_encode(['message' => 'MSG_CREATION_SUCCESS']);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'MSG_CREATION_SUCCESS',
+                    'data' => null
+                ]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'ERR_CREATION_FAILED']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_CREATION_FAILED',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -107,7 +130,11 @@ class EditionsController
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_UNAUTHORIZED_ACTION',
+                    'data' => null
+                ]);
                 exit;
             }
 
@@ -115,14 +142,26 @@ class EditionsController
             $updated = $this->service->update($id, $user['login'], $data);
 
             if ($updated) {
-                echo json_encode(['message' => 'MSG_UPDATE_SUCCESS']);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'MSG_UPDATE_SUCCESS',
+                    'data' => null
+                ]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'ERR_UPDATE_FAILED']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_UPDATE_FAILED',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 
@@ -137,7 +176,11 @@ class EditionsController
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
                 http_response_code(401);
-                echo json_encode(['error' => 'ERR_UNAUTHORIZED_ACTION']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_UNAUTHORIZED_ACTION',
+                    'data' => null
+                ]);
                 exit;
             }
 
@@ -145,14 +188,26 @@ class EditionsController
             $deleted = $this->service->delete($id, $user['login']);
 
             if ($deleted) {
-                echo json_encode(['message' => 'MSG_DELETION_SUCCESS']);
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'MSG_DELETION_SUCCESS',
+                    'data' => null
+                ]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'ERR_DELETION_FAILED']);
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'ERR_DELETION_FAILED',
+                    'data' => null
+                ]);
             }
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'data' => null
+            ]);
         }
     }
 }
