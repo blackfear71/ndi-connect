@@ -16,23 +16,23 @@ class EditionsService
     /**
      * Lecture de tous les enregistrements
      */
-    public function index()
+    public function getAllEditions()
     {
-        return $this->repository->all();
+        return $this->repository->getAllEditions();
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function show($id)
+    public function getEdition($id)
     {
-        return $this->repository->find($id);
+        return $this->repository->getEdition($id);
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function create($login, $data)
+    public function createEdition($login, $data)
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -46,7 +46,7 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function update($id, $login, $data)
+    public function updateEdition($id, $login, $data)
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -54,13 +54,15 @@ class EditionsService
         }
 
         // Modification
-        return $this->repository->update($id, $login, $data);
+        if ( $this->repository->update($id, $login, $data)) {
+            return $this->getEdition($id);
+        }
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($id, $login)
+    public function deleteEdition($id, $login)
     {
         return $this->repository->logicalDelete($id, $login);
     }

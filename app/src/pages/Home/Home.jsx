@@ -29,13 +29,8 @@ const Home = () => {
     // Local states
     const [messagePage, setMessagePage] = useState(null);
     const [messageModal, setMessageModal] = useState(null);
-    const [isOpenEditionModal, setIsOpenEditionModal] = useState(false);
+    const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
-        year: '',
-        place: ''
-    });
-    // TODO : problème avec ce formulaire qui est global à la page : si on modifie une carte (avec une autre ouverte), elles sont toutes modifiées visuellement (mais pas dans le back)
-    const [formUpdate, setFormUpdate] = useState({
         year: '',
         place: ''
     });
@@ -69,8 +64,8 @@ const Home = () => {
     /**
      * Ouverture/fermeture de la modale de création d'édition
      */
-    const openCloseEditionModal = () => {
-        setIsOpenEditionModal(!isOpenEditionModal);
+    const openCloseEditionModal = (openAction) => {
+        setModalOptions({ action: openAction, isOpen: !modalOptions.isOpen });
     };
 
     /**
@@ -91,7 +86,7 @@ const Home = () => {
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response.data);
-                    openCloseEditionModal();
+                    openCloseEditionModal('');
                     resetFormEdition();
                     setEditionsByYear([]);
                 }),
@@ -105,82 +100,13 @@ const Home = () => {
     };
 
     /**
-     * Réinitialisation formulaire (modification)
+     * Réinitialisation formulaire (création)
      */
     const resetFormEdition = () => {
-        formEdition.year = '';
-        formEdition.place = '';
-
-        setFormEdition(formEdition);
-    };
-
-    /**
-     * Modification
-     * @param {*} id Identifiant édition
-     */
-    const handleUpdate = (id) => {
-        setMessageModal(null);
-        setMessagePage(null);
-
-        const editionsService = new EditionsService(localStorage.getItem('token'));
-
-        editionsService
-            .updateEdition(id, formUpdate)
-            .pipe(
-                map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
-                }),
-                switchMap(() => editionsService.getAllEditions()),
-                map((dataEditions) => {
-                    groupByYear(dataEditions.response.data);
-                    resetFormUpdate();
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                })
-            )
-            .subscribe();
-    };
-
-    /**
-     * Réinitialisation formulaire (modification)
-     */
-    const resetFormUpdate = () => {
-        formUpdate.year = '';
-        formUpdate.place = '';
-
-        setFormEdition(formUpdate);
-    };
-
-    /**
-     * Suppression
-     * @param {*} id Identifiant édition
-     */
-    const handleDelete = (id) => {
-        setMessageModal(null);
-        setMessagePage(null);
-
-        const editionsService = new EditionsService(localStorage.getItem('token'));
-
-        editionsService
-            .deleteEdition(id)
-            .pipe(
-                map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
-                }),
-                switchMap(() => editionsService.getAllEditions()),
-                map((dataEditions) => {
-                    groupByYear(dataEditions.response.data);
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                })
-            )
-            .subscribe();
+        setFormEdition({
+            year: '',
+            place: ''
+        });
     };
 
     /**
@@ -241,7 +167,7 @@ const Home = () => {
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                 <div className="d-grid mb-2">
-                    <Button variant="success" size="lg" onClick={openCloseEditionModal}>
+                    <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
                         {t('home.addEdition')}
                     </Button>
                 </div>
@@ -252,7 +178,7 @@ const Home = () => {
                 editionsByYear && editionsByYear.length > 0 ? (
                     <div className="d-grid gap-2">
                         {/* Retour */}
-                        <Button variant="warning" size="lg" onClick={showYearsOfEditions}>
+                        <Button variant="warning" size="lg" onClick={() => showYearsOfEditions()}>
                             {t('common.return')}
                         </Button>
 
@@ -283,11 +209,11 @@ const Home = () => {
             )}
 
             {/* Modale de création d'édition */}
-            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && isOpenEditionModal && (
+            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (
                 <EditionModal
                     formData={formEdition}
                     setFormData={setFormEdition}
-                    isOpen={isOpenEditionModal}
+                    modalOptions={modalOptions}
                     message={messageModal}
                     setMessage={setMessageModal}
                     onClose={openCloseEditionModal}

@@ -27,12 +27,15 @@
         "delete": "Supprimer",
         "home": "Accueil",
         "return": "Retour",
-        "update": "Modifier"
+        "update": "Modifier",
+        "unknownLabel": "Libellé inconnu"
     },
     "edition": {
+        "deleteEdition": "Supprimer l'édition",
+        "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
         "editionTitle": "Édition {{year}} - {{place}}",
-        "editionNotFound": "Édition non trouvée",
         "place": "Lieu",
+        "updateEdition": "Modifier l'édition",
         "year": "Année"
     },
     "home": {

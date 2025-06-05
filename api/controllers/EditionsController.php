@@ -21,15 +21,15 @@ class EditionsController
     /**
      * Lecture de tous les enregistrements
      */
-    public function index()
+    public function getAllEditions()
     {
         try {
-            $index = $this->service->index();
+            $editions = $this->service->getAllEditions();
 
             echo json_encode([
                 'status' => 'success',
                 'message' => '',
-                'data' => $index
+                'data' => $editions
             ]);
         } catch (Exception $e) {
             http_response_code(500);
@@ -44,16 +44,16 @@ class EditionsController
     /**
      * Lecture d'un enregistrement
      */
-    public function show($id)
+    public function getEdition($id)
     {
         try {
-            $show = $this->service->show($id);
+            $edition = $this->service->getEdition($id);
 
-            if ($show) {
+            if ($edition) {
                 echo json_encode([
                     'status' => 'success',
                     'message' => '',
-                    'data' => $show
+                    'data' => $edition
                 ]);
             } else {
                 http_response_code(404);
@@ -76,7 +76,7 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function create($token, $data)
+    public function createEdition($token, $data)
     {
         try {
             // Contrôle autorisation
@@ -93,7 +93,7 @@ class EditionsController
             }
 
             // Insertion d'un enregistrement
-            $created = $this->service->create($user['login'], $data);
+            $created = $this->service->createEdition($user['login'], $data);
 
             if ($created) {
                 echo json_encode([
@@ -122,7 +122,7 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function update($token, $id, $data)
+    public function updateEdition($token, $id, $data)
     {
         try {
             // Contrôle autorisation
@@ -139,13 +139,13 @@ class EditionsController
             }
 
             // Modification d'un enregistrement
-            $updated = $this->service->update($id, $user['login'], $data);
+            $edition = $this->service->updateEdition($id, $user['login'], $data);
 
-            if ($updated) {
+            if ($edition) {
                 echo json_encode([
                     'status' => 'success',
                     'message' => 'MSG_UPDATE_SUCCESS',
-                    'data' => null
+                    'data' => $edition
                 ]);
             } else {
                 http_response_code(400);
@@ -168,7 +168,7 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function delete($token, $id)
+    public function deleteEdition($token, $id)
     {
         try {
             // Contrôle autorisation
@@ -185,7 +185,7 @@ class EditionsController
             }
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->delete($id, $user['login']);
+            $deleted = $this->service->deleteEdition($id, $user['login']);
 
             if ($deleted) {
                 echo json_encode([

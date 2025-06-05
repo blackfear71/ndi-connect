@@ -100,7 +100,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
                 </Modal.Body>
 
                 <Modal.Footer>
-                    <Button type="button" variant="secondary" onClick={onClose}>
+                    <Button type="button" variant="secondary" onClick={() => onClose()}>
                         {t('common.close')}
                     </Button>
                     <Button type="submit" variant="primary">

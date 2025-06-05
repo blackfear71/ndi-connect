@@ -7,12 +7,12 @@ $db = $database->getConnection();
 
 $router->get('/editions/all', function () use ($db) {
     // Appel contrôleur
-    (new EditionsController($db))->index();
+    (new EditionsController($db))->getAllEditions();
 });
 
 $router->get('/editions/find/:id', function ($params) use ($db) {
     // Appel contrôleur
-    (new EditionsController($db))->show($params['id']);
+    (new EditionsController($db))->getEdition($params['id']);
 });
 
 $router->post('/editions/create', function () use ($db) {
@@ -24,7 +24,7 @@ $router->post('/editions/create', function () use ($db) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new EditionsController($db))->create($token, $data);
+    (new EditionsController($db))->createEdition($token, $data);
 });
 
 $router->patch('/editions/update/:id', function ($params) use ($db) {
@@ -36,7 +36,7 @@ $router->patch('/editions/update/:id', function ($params) use ($db) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new EditionsController($db))->update($token, $params['id'], $data);
+    (new EditionsController($db))->updateEdition($token, $params['id'], $data);
 });
 
 $router->delete('/editions/delete/:id', function ($params) use ($db) {
@@ -45,5 +45,5 @@ $router->delete('/editions/delete/:id', function ($params) use ($db) {
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
 
     // Appel contrôleur
-    (new EditionsController($db))->delete($token, $params['id']);
+    (new EditionsController($db))->deleteEdition($token, $params['id']);
 });
