@@ -23,6 +23,7 @@ class UsersController
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
+                Logger::log('Authentification incorrecte', 'WARNING');
                 http_response_code(401);
                 echo json_encode([
                     'status' => 'error',
@@ -42,6 +43,7 @@ class UsersController
                 'data' => $user
             ]);
         } catch (Exception $e) {
+            Logger::log('Exception levée dans checkAuth de UsersController : ' . $e->getMessage(), 'ERROR');
             http_response_code(500);
             echo json_encode([
                 'status' => 'error',
@@ -59,21 +61,24 @@ class UsersController
         try {
             $user = $this->service->connect($data);
 
-            if ($user) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => '',
-                    'data' => $user
-                ]);
-            } else {
+            if (!$user) {
+                Logger::log('Utilisateur non trouvé (connect) : ' . json_encode($data), 'ERROR');
                 http_response_code(401);
                 echo json_encode([
                     'status' => 'error',
                     'message' => 'ERR_LOGIN_FAILED',
                     'data' => null
                 ]);
+                exit;
             }
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => '',
+                'data' => $user
+            ]);
         } catch (Exception $e) {
+            Logger::log('Exception levée dans connect de UsersController : ' . $e->getMessage(), 'ERROR');
             http_response_code(500);
             echo json_encode([
                 'status' => 'error',
@@ -93,6 +98,7 @@ class UsersController
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
+                Logger::log('Utilisateur non trouvé (disconnect)', 'ERROR');
                 http_response_code(401);
                 echo json_encode([
                     'status' => 'error',
@@ -112,6 +118,7 @@ class UsersController
                     'data' => ['disconnected' => $disconnected]
                 ]);
             } else {
+                Logger::log('Erreur lors de la déconnexion de : ' . $user['login'], 'ERROR');
                 http_response_code(401);
                 echo json_encode([
                     'status' => 'error',
@@ -120,6 +127,7 @@ class UsersController
                 ]);
             }
         } catch (Exception $e) {
+            Logger::log('Exception levée dans disconnect de UsersController : ' . $e->getMessage(), 'ERROR');
             http_response_code(500);
             echo json_encode([
                 'status' => 'error',

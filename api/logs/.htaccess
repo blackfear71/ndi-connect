@@ -1,0 +1,2 @@
+# Bloque l'accès au dossier
+Deny from all

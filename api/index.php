@@ -1,4 +1,11 @@
 <?php
+require_once 'core/Logger.php';
+
+ini_set('display_errors', 0);                      // Ne pas afficher les erreurs à l'écran
+ini_set('log_errors', 1);                          // Activer le logging
+ini_set('error_log', __DIR__ . '/logs/error.log'); // Chemin vers le fichier de log
+error_reporting(E_ALL);                            // Reporter toutes les erreurs
+
 $allowedOrigins = [
     'http://localhost:3000',
     'http://ndi-connect.ddns.net:8080',
@@ -29,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else if (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {
+    Logger::log("Endpoint inconnu : " . $uri, 'ERROR');
     http_response_code(404);
     echo json_encode(['error' => 'ERR_UNKNOWN_ENDPOINT']);
     exit;
