@@ -1,4 +1,6 @@
 <?php
+require_once 'core/ResponseHelper.php';
+
 require_once 'services/UsersService.php';
 
 class UsersController
@@ -23,13 +25,8 @@ class UsersController
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
-                Logger::log('Authentification incorrecte', 'WARNING');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_INVALID_AUTH',
-                    'data' => null
-                ]);
+                // Authentification incorrecte
+                ResponseHelper::error('ERR_INVALID_AUTH', 401, 'Authentification incorrecte');
                 exit;
             }
 
@@ -37,19 +34,11 @@ class UsersController
             $user['authorized'] = true;
             $user['token'] = $token;
 
-            echo json_encode([
-                'status' => 'success',
-                'message' => '',
-                'data' => $user
-            ]);
+            ResponseHelper::success($user);
         } catch (Exception $e) {
+            // Exception levée
             Logger::log('Exception levée dans checkAuth de UsersController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            ResponseHelper::error($e->getMessage(), 500);
         }
     }
 
@@ -59,32 +48,20 @@ class UsersController
     public function connect($data)
     {
         try {
+            // Connexion utilisateur
             $user = $this->service->connect($data);
 
             if (!$user) {
-                Logger::log('Utilisateur non trouvé (connect) : ' . $data['login'], 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_LOGIN_FAILED',
-                    'data' => null
-                ]);
+                // Utilisateur non trouvé
+                ResponseHelper::error('ERR_LOGIN_FAILED', 401, 'Utilisateur non trouvé (connect) : ' . $data['login']);
                 exit;
             }
 
-            echo json_encode([
-                'status' => 'success',
-                'message' => '',
-                'data' => $user
-            ]);
+            ResponseHelper::success($user);
         } catch (Exception $e) {
+            // Exception levée
             Logger::log('Exception levée dans connect de UsersController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            ResponseHelper::error($e->getMessage(), 500);
         }
     }
 
@@ -98,13 +75,8 @@ class UsersController
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
-                Logger::log('Utilisateur non trouvé (disconnect)', 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_UNAUTHORIZED_ACTION',
-                    'data' => null
-                ]);
+                // Utilisateur non trouvé
+                ResponseHelper::error('ERR_UNAUTHORIZED_ACTION', 401, 'Utilisateur non trouvé (disconnect)');
                 exit;
             }
 
@@ -112,28 +84,15 @@ class UsersController
             $disconnected = $this->service->disconnect($user['login']);
 
             if ($disconnected) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => '',
-                    'data' => ['disconnected' => $disconnected]
-                ]);
+                ResponseHelper::success(['disconnected' => $disconnected]);
             } else {
-                Logger::log('Erreur lors de la déconnexion de : ' . $user['login'], 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_LOGOUT_FAILED',
-                    'data' => null
-                ]);
+                // Échec de la déconnexion
+                ResponseHelper::error('ERR_LOGOUT_FAILED', 401, 'Erreur lors de la déconnexion de : ' . $user['login']);
             }
         } catch (Exception $e) {
+            // Exception levée
             Logger::log('Exception levée dans disconnect de UsersController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            ResponseHelper::error($e->getMessage(), 500);
         }
     }
 }

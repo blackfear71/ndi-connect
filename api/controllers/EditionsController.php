@@ -1,4 +1,6 @@
 <?php
+require_once 'core/ResponseHelper.php';
+
 require_once 'enums/UserRole.php';
 
 require_once 'services/EditionsService.php';
@@ -26,19 +28,15 @@ class EditionsController
         try {
             $editions = $this->service->getAllEditions();
 
-            echo json_encode([
-                'status' => 'success',
-                'message' => '',
-                'data' => $editions
-            ]);
+            // Réponse en cas de succès
+            ResponseHelper::success($editions);
         } catch (Exception $e) {
-            Logger::log('Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 
@@ -51,28 +49,23 @@ class EditionsController
             $edition = $this->service->getEdition($id);
 
             if ($edition) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => '',
-                    'data' => $edition
-                ]);
+                // Réponse si l'enregistrement est trouvé
+                ResponseHelper::success($edition);
             } else {
-                Logger::log('Edition non trouvée pour l\'id : ' . $id, 'ERROR');
-                http_response_code(404);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_EDITION_NOT_FOUND',
-                    'data' => null
-                ]);
+                // Réponse si l'enregistrement est introuvable
+                ResponseHelper::error(
+                    'ERR_EDITION_NOT_FOUND',
+                    404,
+                    'Edition non trouvée pour l\'id : ' . $id
+                );
             }
         } catch (Exception $e) {
-            Logger::log('Exception levée dans getEdition de EditionsController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans getEdition de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 
@@ -86,13 +79,12 @@ class EditionsController
             $user = $this->usersService->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
-                Logger::log('Action non autorisée dans createEdition de EditionsController', 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_UNAUTHORIZED_ACTION',
-                    'data' => null
-                ]);
+                // Accès refusé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Action non autorisée dans createEdition de EditionsController'
+                );
                 exit;
             }
 
@@ -100,28 +92,23 @@ class EditionsController
             $created = $this->service->createEdition($user['login'], $data);
 
             if ($created) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'MSG_CREATION_SUCCESS',
-                    'data' => null
-                ]);
+                // Succès
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
             } else {
-                Logger::log('Erreur lors de la création de l\'édition : ' . json_encode($data), 'ERROR');
-                http_response_code(400);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_CREATION_FAILED',
-                    'data' => null
-                ]);
+                // Échec de la création
+                ResponseHelper::error(
+                    'ERR_CREATION_FAILED',
+                    400,
+                    'Erreur lors de la création de l\'édition : ' . json_encode($data)
+                );
             }
         } catch (Exception $e) {
-            Logger::log('Exception levée dans createEdition de EditionsController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans createEdition de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 
@@ -135,13 +122,12 @@ class EditionsController
             $user = $this->usersService->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
-                Logger::log('Action non autorisée dans createEdition de EditionsController', 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_UNAUTHORIZED_ACTION',
-                    'data' => null
-                ]);
+                // Accès refusé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Action non autorisée dans updateEdition de EditionsController'
+                );
                 exit;
             }
 
@@ -149,28 +135,23 @@ class EditionsController
             $edition = $this->service->updateEdition($id, $user['login'], $data);
 
             if ($edition) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'MSG_UPDATE_SUCCESS',
-                    'data' => $edition
-                ]);
+                // Succès
+                ResponseHelper::success($edition, 'MSG_UPDATE_SUCCESS');
             } else {
-                Logger::log('Erreur lors de la modification de l\'édition : ' . $id . ' - ' . json_encode($data), 'ERROR');
-                http_response_code(400);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_UPDATE_FAILED',
-                    'data' => null
-                ]);
+                // Échec de la modification
+                ResponseHelper::error(
+                    'ERR_UPDATE_FAILED',
+                    400,
+                    'Erreur lors de la modification de l\'édition : ' . $id . ' - ' . json_encode($data)
+                );
             }
         } catch (Exception $e) {
-            Logger::log('Exception levée dans updateEdition de EditionsController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans updateEdition de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 
@@ -184,13 +165,12 @@ class EditionsController
             $user = $this->usersService->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN) {
-                Logger::log('Action non autorisée dans createEdition de EditionsController', 'ERROR');
-                http_response_code(401);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_UNAUTHORIZED_ACTION',
-                    'data' => null
-                ]);
+                // Accès refusé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Action non autorisée dans deleteEdition de EditionsController'
+                );
                 exit;
             }
 
@@ -198,28 +178,23 @@ class EditionsController
             $deleted = $this->service->deleteEdition($id, $user['login']);
 
             if ($deleted) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => 'MSG_DELETION_SUCCESS',
-                    'data' => null
-                ]);
+                // Succès
+                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
             } else {
-                Logger::log('Erreur lors de la suppression de l\'édition : ' . $id, 'ERROR');
-                http_response_code(400);
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => 'ERR_DELETION_FAILED',
-                    'data' => null
-                ]);
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_DELETION_FAILED',
+                    400,
+                    'Erreur lors de la suppression de l\'édition : ' . $id
+                );
             }
         } catch (Exception $e) {
-            Logger::log('Exception levée dans deleteEdition de EditionsController : ' . $e->getMessage(), 'ERROR');
-            http_response_code(500);
-            echo json_encode([
-                'status' => 'error',
-                'message' => $e->getMessage(),
-                'data' => null
-            ]);
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans deleteEdition de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 }
