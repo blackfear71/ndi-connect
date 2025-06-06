@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import EditionsService from '../../api/editionsService';
@@ -11,7 +11,7 @@ import Message from '../../components/Message/Message';
 import UserRole from '../../enums/UserRole';
 
 import { combineLatest, of, switchMap } from 'rxjs';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
 
@@ -27,6 +27,8 @@ const Home = () => {
     const { t } = useTranslation();
 
     // Local states
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
     const [messageModal, setMessageModal] = useState(null);
     const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
@@ -56,6 +58,9 @@ const Home = () => {
                 catchError((err) => {
                     setMessagePage(err?.response?.message);
                     return of();
+                }),
+                finalize(() => {
+                    setIsLoading(false);
                 })
             )
             .subscribe();
@@ -74,6 +79,7 @@ const Home = () => {
     const handleSubmit = () => {
         setMessageModal(null);
         setMessagePage(null);
+        setIsSubmitting(true);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
@@ -94,6 +100,9 @@ const Home = () => {
                 catchError((err) => {
                     setMessageModal({ code: err?.response?.message, type: err?.response?.status });
                     return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -158,67 +167,71 @@ const Home = () => {
 
     return (
         <div>
-            {/* Message */}
-            {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
-
-            {/* Titre */}
-            <h1>{t('home.editions')}</h1>
-
-            {/* Ajout */}
-            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                <div className="d-grid mb-2">
-                    <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
-                        {t('home.addEdition')}
-                    </Button>
+            {isLoading ? (
+                <div className="layout-spinner-centered">
+                    <Spinner animation="border" role="status" />
                 </div>
-            )}
-
-            {/* Années et éditions */}
-            {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
-                editionsByYear && editionsByYear.length > 0 ? (
-                    <div className="d-grid gap-2">
-                        {/* Retour */}
-                        <Button variant="warning" size="lg" onClick={() => showYearsOfEditions()}>
-                            {t('common.return')}
-                        </Button>
-
-                        {/* Editions */}
-                        {editionsByYear.map((edition) => (
-                            <Button key={edition.id} variant="primary" size="lg" href={`/edition/${edition.id}`}>
-                                {edition.place}
-                            </Button>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="d-grid gap-2">
-                        {/* Années */}
-                        {yearsAndEditions.map((year) => (
-                            <Button
-                                key={year.year}
-                                variant="primary"
-                                size="lg"
-                                onClick={() => showEditionsByYear(year)}
-                            >
-                                {year.year}
-                            </Button>
-                        ))}
-                    </div>
-                )
             ) : (
-                <div>{t('home.noEdition')}</div>
-            )}
+                <>
+                    {/* Message */}
+                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
-            {/* Modale de création d'édition */}
-            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (
-                <EditionModal
-                    formData={formEdition}
-                    setFormData={setFormEdition}
-                    modalOptions={modalOptions}
-                    message={messageModal}
-                    setMessage={setMessageModal}
-                    onClose={openCloseEditionModal}
-                    onSubmit={handleSubmit}
-                />
+                    {/* Titre */}
+                    <h1>{t('home.editions')}</h1>
+
+                    {/* Ajout */}
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                        <div className="d-grid mb-2">
+                            <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
+                                {t('home.addEdition')}
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Années et éditions */}
+                    {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
+                        editionsByYear && editionsByYear.length > 0 ? (
+                            <div className="d-grid gap-2">
+                                {/* Retour */}
+                                <Button variant="warning" size="lg" onClick={() => showYearsOfEditions()}>
+                                    {t('common.return')}
+                                </Button>
+
+                                {/* Editions */}
+                                {editionsByYear.map((edition) => (
+                                    <Button key={edition.id} variant="primary" size="lg" href={`/edition/${edition.id}`}>
+                                        {edition.place}
+                                    </Button>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="d-grid gap-2">
+                                {/* Années */}
+                                {yearsAndEditions.map((year) => (
+                                    <Button key={year.year} variant="primary" size="lg" onClick={() => showEditionsByYear(year)}>
+                                        {year.year}
+                                    </Button>
+                                ))}
+                            </div>
+                        )
+                    ) : (
+                        <div>{t('home.noEdition')}</div>
+                    )}
+
+                    {/* Modale de création d'édition */}
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (
+                        <EditionModal
+                            formData={formEdition}
+                            setFormData={setFormEdition}
+                            modalOptions={modalOptions}
+                            message={messageModal}
+                            setMessage={setMessageModal}
+                            onClose={openCloseEditionModal}
+                            onSubmit={handleSubmit}
+                            isSubmitting={isSubmitting}
+                        />
+                    )}
+                </>
             )}
         </div>
     );

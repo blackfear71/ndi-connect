@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import Message from '../Message/Message';
 
-const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, setMessage, onClose, onSubmit }) => {
+const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -57,57 +57,60 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <Form onSubmit={handleSubmit}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}</Modal.Title>
-                </Modal.Header>
+            <fieldset disabled={isSubmitting}>
+                <Form onSubmit={handleSubmit}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}</Modal.Title>
+                    </Modal.Header>
 
-                <Modal.Body>
-                    {/* Message */}
-                    {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                    <Modal.Body>
+                        {/* Message */}
+                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
-                    {/* Formulaire */}
-                    {isLoggedIn ? (
-                        <>{t('navbar.disconnectMessage')}</>
-                    ) : (
-                        <div className="d-flex align-items-end">
-                            <Form.Group className="me-2" controlId="login">
-                                <Form.Label>{t('navbar.login')}</Form.Label>
-                                <Form.Control
-                                    ref={loginInputRef}
-                                    type="text"
-                                    name="login"
-                                    placeholder={t('navbar.login')}
-                                    value={formData.login}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </Form.Group>
+                        {/* Formulaire */}
+                        {isLoggedIn ? (
+                            <>{t('navbar.disconnectMessage')}</>
+                        ) : (
+                            <div className="d-flex align-items-end">
+                                <Form.Group className="me-2" controlId="login">
+                                    <Form.Label>{t('navbar.login')}</Form.Label>
+                                    <Form.Control
+                                        ref={loginInputRef}
+                                        type="text"
+                                        name="login"
+                                        placeholder={t('navbar.login')}
+                                        value={formData.login}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
 
-                            <Form.Group className="me-2" controlId="password">
-                                <Form.Label>{t('navbar.password')}</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    name="password"
-                                    placeholder={t('navbar.password')}
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </Form.Group>
-                        </div>
-                    )}
-                </Modal.Body>
+                                <Form.Group className="me-2" controlId="password">
+                                    <Form.Label>{t('navbar.password')}</Form.Label>
+                                    <Form.Control
+                                        type="password"
+                                        name="password"
+                                        placeholder={t('navbar.password')}
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
+                            </div>
+                        )}
+                    </Modal.Body>
 
-                <Modal.Footer>
-                    <Button type="button" variant="secondary" onClick={() => onClose()}>
-                        {t('common.close')}
-                    </Button>
-                    <Button type="submit" variant="primary">
-                        {isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}
-                    </Button>
-                </Modal.Footer>
-            </Form>
+                    <Modal.Footer>
+                        <Button type="button" variant="secondary" onClick={() => onClose()}>
+                            {t('common.close')}
+                        </Button>
+                        <Button type="submit" variant="primary">
+                            {isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}
+                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </fieldset>
         </Modal>
     );
 };

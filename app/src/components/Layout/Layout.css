@@ -1,3 +1,10 @@
 .layout-outlet-container {
     padding: 80px 20px 20px 20px;
 }
+
+.layout-spinner-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 100px);
+}

@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import Message from '../Message/Message';
 
-const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit }) => {
+const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -92,60 +92,63 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <Form onSubmit={handleSubmit}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{t(getTitleFromAction(modalOptions.action))}</Modal.Title>
-                </Modal.Header>
+            <fieldset disabled={isSubmitting}>
+                <Form onSubmit={handleSubmit}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{t(getTitleFromAction(modalOptions.action))}</Modal.Title>
+                    </Modal.Header>
 
-                <Modal.Body>
-                    {/* Message */}
-                    {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                    <Modal.Body>
+                        {/* Message */}
+                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
-                    {/* Formulaire */}
-                    {modalOptions.action === 'delete' ? (
-                        <>{t('edition.deleteEditionMessage')}</>
-                    ) : (
-                        <div className="d-flex align-items-end">
-                            <Form.Group className="me-2" controlId="year">
-                                <Form.Label>{t('edition.year')}</Form.Label>
-                                <Form.Control
-                                    ref={yearInputRef}
-                                    type="text"
-                                    name="year"
-                                    placeholder={t('edition.year')}
-                                    value={formData.year}
-                                    onChange={handleChangeNumeric}
-                                    maxLength={4}
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    required
-                                />
-                            </Form.Group>
+                        {/* Formulaire */}
+                        {modalOptions.action === 'delete' ? (
+                            <>{t('edition.deleteEditionMessage')}</>
+                        ) : (
+                            <div className="d-flex align-items-end">
+                                <Form.Group className="me-2" controlId="year">
+                                    <Form.Label>{t('edition.year')}</Form.Label>
+                                    <Form.Control
+                                        ref={yearInputRef}
+                                        type="text"
+                                        name="year"
+                                        placeholder={t('edition.year')}
+                                        value={formData.year}
+                                        onChange={handleChangeNumeric}
+                                        maxLength={4}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        required
+                                    />
+                                </Form.Group>
 
-                            <Form.Group className="me-2" controlId="place">
-                                <Form.Label>{t('edition.place')}</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="place"
-                                    placeholder={t('edition.place')}
-                                    value={formData.place}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </Form.Group>
-                        </div>
-                    )}
-                </Modal.Body>
+                                <Form.Group className="me-2" controlId="place">
+                                    <Form.Label>{t('edition.place')}</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="place"
+                                        placeholder={t('edition.place')}
+                                        value={formData.place}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
+                            </div>
+                        )}
+                    </Modal.Body>
 
-                <Modal.Footer>
-                    <Button type="button" variant="secondary" onClick={() => onClose()}>
-                        {t('common.close')}
-                    </Button>
-                    <Button type="submit" variant="primary">
-                        {t(getButtonFromAction(modalOptions.action))}
-                    </Button>
-                </Modal.Footer>
-            </Form>
+                    <Modal.Footer>
+                        <Button type="button" variant="secondary" onClick={() => onClose()}>
+                            {t('common.close')}
+                        </Button>
+                        <Button type="submit" variant="primary">
+                            {t(getButtonFromAction(modalOptions.action))}
+                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </fieldset>
         </Modal>
     );
 };

@@ -1,5 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 
+import { Spinner } from 'react-bootstrap';
+
 import UsersService from '../api/usersService';
 
 import { combineLatest, of } from 'rxjs';
@@ -20,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         level: 0
     });
     const [authError, setAuthError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [authLoading, setAuthLoading] = useState(true);
 
     /**
      * Contrôle de la connexion au lancement de l'application
@@ -32,7 +34,7 @@ export const AuthProvider = ({ children }) => {
 
         // Vérification token présent
         if (!userToken) {
-            setLoading(false);
+            setAuthLoading(false);
             resetAuth();
         } else {
             const usersService = new UsersService(userToken);
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }) => {
                         return of();
                     }),
                     finalize(() => {
-                        setLoading(false);
+                        setAuthLoading(false);
                     })
                 )
                 .subscribe();
@@ -154,13 +156,18 @@ export const AuthProvider = ({ children }) => {
      */
     const isAbortedAjaxError = (err) => {
         const msg = err?.message?.toLowerCase?.();
-        return (
-            err?.name === 'AjaxError' &&
-            (err?.status === 0 || msg?.includes('abort') || msg?.includes('ns_binding_aborted'))
-        );
+        return err?.name === 'AjaxError' && (err?.status === 0 || msg?.includes('abort') || msg?.includes('ns_binding_aborted'));
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authError, login, logout }}>{!loading && children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ auth, authError, login, logout }}>
+            {authLoading ? (
+                <div className="d-flex justify-content-center align-items-center vh-100">
+                    <Spinner animation="border" role="status" />
+                </div>
+            ) : (
+                <>{children}</>
+            )}
+        </AuthContext.Provider>
     );
 };

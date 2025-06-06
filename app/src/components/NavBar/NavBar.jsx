@@ -21,11 +21,12 @@ const NavBar = () => {
 
     // Local states
     const [message, setMessage] = useState(null);
-    const [isOpenConnectionModal, setIsOpenConnectionModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formConnection, setFormConnection] = useState({
         login: '',
         password: ''
     });
+    const [modalOptions, setModalOptions] = useState({ isOpen: false });
 
     /**
      * Ouverture/fermeture de la modale de connexion
@@ -35,7 +36,7 @@ const NavBar = () => {
             login: '',
             password: ''
         });
-        setIsOpenConnectionModal(!isOpenConnectionModal);
+        setModalOptions({ isOpen: !modalOptions.isOpen });
     };
 
     /**
@@ -43,6 +44,7 @@ const NavBar = () => {
      */
     const handleSubmit = () => {
         setMessage(null);
+        setIsSubmitting(true);
 
         const action = auth.isLoggedIn ? logout : () => login(formConnection);
 
@@ -51,7 +53,10 @@ const NavBar = () => {
             .then(() => {
                 openCloseConnectionModal();
             })
-            .catch(() => {});
+            .catch(() => {})
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -68,16 +73,17 @@ const NavBar = () => {
             <FaUserCircle size={40} color="black" className="navbar-user" onClick={() => openCloseConnectionModal()} />
 
             {/* Modale de connexion */}
-            {isOpenConnectionModal && (
+            {modalOptions.isOpen && (
                 <ConnectionModal
                     formData={formConnection}
                     setFormData={setFormConnection}
-                    isOpen={isOpenConnectionModal}
+                    isOpen={modalOptions.isOpen}
                     isLoggedIn={auth.isLoggedIn}
                     message={message || authError}
                     setMessage={setMessage}
                     onClose={openCloseConnectionModal}
                     onSubmit={handleSubmit}
+                    isSubmitting={isSubmitting}
                 />
             )}
         </nav>
