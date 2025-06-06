@@ -62,7 +62,7 @@ class UsersController
             $user = $this->service->connect($data);
 
             if (!$user) {
-                Logger::log('Utilisateur non trouvé (connect) : ' . json_encode($data), 'ERROR');
+                Logger::log('Utilisateur non trouvé (connect) : ' . $data['login'], 'ERROR');
                 http_response_code(401);
                 echo json_encode([
                     'status' => 'error',
