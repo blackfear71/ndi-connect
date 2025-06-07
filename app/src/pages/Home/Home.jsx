@@ -186,7 +186,7 @@ const Home = () => {
                     {/* Ajout */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                         <div className="d-grid mb-2">
-                            <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
+                            <Button variant="outline-edition" onClick={() => openCloseEditionModal('create')}>
                                 {t('home.addEdition')}
                             </Button>
                         </div>
@@ -197,13 +197,13 @@ const Home = () => {
                         editionsByYear && editionsByYear.length > 0 ? (
                             <div className="d-grid gap-2">
                                 {/* Retour */}
-                                <Button variant="warning" size="lg" onClick={() => showYearsOfEditions()}>
+                                <Button variant="outline-action" onClick={() => showYearsOfEditions()}>
                                     {t('common.return')}
                                 </Button>
 
                                 {/* Editions */}
                                 {editionsByYear.map((edition) => (
-                                    <Button key={edition.id} variant="primary" size="lg" href={`/edition/${edition.id}`}>
+                                    <Button key={edition.id} variant="edition" href={`/edition/${edition.id}`}>
                                         {edition.place}
                                     </Button>
                                 ))}
@@ -212,7 +212,7 @@ const Home = () => {
                             <div className="d-grid gap-2">
                                 {/* Années */}
                                 {yearsAndEditions.map((year) => (
-                                    <Button key={year.year} variant="primary" size="lg" onClick={() => showEditionsByYear(year)}>
+                                    <Button key={year.year} variant="edition" onClick={() => showEditionsByYear(year)}>
                                         {year.year}
                                     </Button>
                                 ))}

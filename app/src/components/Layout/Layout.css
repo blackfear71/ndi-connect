@@ -6,7 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 100px);
+    height: calc(100vh - 100px); /* Modifier en fonction de .layout-outlet-container */
 }
 
 .layout-outlet-container h1 {

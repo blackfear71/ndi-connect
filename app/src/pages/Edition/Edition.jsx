@@ -148,8 +148,8 @@ const Edition = () => {
                     {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
                     {/* Retour */}
-                    <Button variant="warning" href="/" className="d-inline-flex align-items-center gap-2 mb-2 text-white">
-                        <FaHouse size={20} color="white" />
+                    <Button variant="outline-action" href="/" className="d-inline-flex align-items-center gap-2 mb-2">
+                        <FaHouse size={20} className="outline-action-icon" />
                         {t('common.home')}
                     </Button>
 
@@ -158,21 +158,21 @@ const Edition = () => {
                         <>
                             {/* Modifier */}
                             <Button
-                                variant="info"
+                                variant="outline-action"
                                 onClick={() => openCloseEditionModal('update')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 text-white"
+                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 btn-blue"
                             >
-                                <FaWandMagicSparkles size={20} color="white" />
+                                <FaWandMagicSparkles size={20} className="outline-action-icon" />
                                 {t('common.update')}
                             </Button>
 
                             {/* Supprimer */}
                             <Button
-                                variant="danger"
+                                variant="outline-action"
                                 onClick={() => openCloseEditionModal('delete')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 text-white"
+                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 btn-red"
                             >
-                                <FaTrashCan size={20} color="white" />
+                                <FaTrashCan size={20} className="outline-action-icon" />
                                 {t('common.delete')}
                             </Button>
                         </>
