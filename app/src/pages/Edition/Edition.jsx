@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaComputer } from 'react-icons/fa6';
 import { FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -182,7 +183,10 @@ const Edition = () => {
                     {/* Titre */}
                     {edition && (
                         <div>
-                            <h1>{t('edition.editionTitle', { year: edition.year, place: edition.place })}</h1>
+                            <h1>
+                                <FaComputer size={30} />
+                                {t('edition.editionTitle', { year: edition.year, place: edition.place })}
+                            </h1>
                         </div>
                     )}
 

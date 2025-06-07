@@ -33,15 +33,15 @@
     "edition": {
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
-        "editionTitle": "Édition {{year}} - {{place}}",
+        "editionTitle": "Edition {{year}} - {{place}}",
         "place": "Lieu",
         "updateEdition": "Modifier l'édition",
         "year": "Année"
     },
     "home": {
         "addEdition": "Ajouter une édition",
-        "creationEdition": "Édition créée",
-        "editions": "Éditions",
+        "creationEdition": "Edition créée",
+        "editions": "Editions",
         "noEdition": "Aucune édition"
     },
     "navbar": {

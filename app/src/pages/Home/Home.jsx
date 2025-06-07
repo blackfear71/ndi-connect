@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaCalendarDays } from 'react-icons/fa6';
 
 import EditionsService from '../../api/editionsService';
 
@@ -177,11 +178,14 @@ const Home = () => {
                     {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
                     {/* Titre */}
-                    <h1>{t('home.editions')}</h1>
+                    <h1>
+                        <FaCalendarDays size={30} />
+                        {t('home.editions')}
+                    </h1>
 
                     {/* Ajout */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                        <div className="d-grid mb-2">
+                        <div className="d-inline-flex align-items-center">
                             <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
                                 {t('home.addEdition')}
                             </Button>
