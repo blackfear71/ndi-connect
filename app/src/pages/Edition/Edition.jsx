@@ -148,7 +148,7 @@ const Edition = () => {
                     {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
                     {/* Retour */}
-                    <Button variant="outline-action" href="/" className="d-inline-flex align-items-center gap-2 mb-2">
+                    <Button variant="outline-action" href="/" className="d-inline-flex align-items-center gap-2 mb-2 me-2">
                         <FaHouse size={20} className="outline-action-icon" />
                         {t('common.home')}
                     </Button>
@@ -160,7 +160,7 @@ const Edition = () => {
                             <Button
                                 variant="outline-action"
                                 onClick={() => openCloseEditionModal('update')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 btn-blue"
+                                className="d-inline-flex align-items-center gap-2 mb-2 me-2 btn-blue"
                             >
                                 <FaWandMagicSparkles size={20} className="outline-action-icon" />
                                 {t('common.update')}
@@ -170,7 +170,7 @@ const Edition = () => {
                             <Button
                                 variant="outline-action"
                                 onClick={() => openCloseEditionModal('delete')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 ms-2 btn-red"
+                                className="d-inline-flex align-items-center gap-2 mb-2 btn-red"
                             >
                                 <FaTrashCan size={20} className="outline-action-icon" />
                                 {t('common.delete')}
