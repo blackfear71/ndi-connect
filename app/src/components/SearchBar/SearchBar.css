@@ -12,8 +12,8 @@
 
 .search-bar-text {
     border: none !important;
-    padding-left: 45px !important;
-    padding-right: 45px !important;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
     overflow: hidden !important;
     height: 40px;
 }
@@ -45,15 +45,15 @@
 .search-results-dropdown {
     position: absolute;
     top: calc(100% + 10px);
-    left: 80px;
-    right: 80px;
+    left: 20px;
+    right: 20px;
     background-color: white;
     border: 1px solid #cccccc;
     border-top: none;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: calc(100% - 160px);
-    max-height: calc(100vh - 80px);
+    width: calc(100% - 40px);
+    max-height: calc(100vh - 90px);
     overflow-y: auto;
     border-radius: 10px;
 }
