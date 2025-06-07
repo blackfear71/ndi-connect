@@ -8,3 +8,7 @@
     align-items: center;
     height: calc(100vh - 100px);
 }
+
+.layout-outlet-container h1 {
+    color: white;
+}

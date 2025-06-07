@@ -70,7 +70,7 @@ const NavBar = () => {
             <SearchBar />
 
             {/* Utilisateur */}
-            <FaUserCircle size={40} color="black" className="navbar-user" onClick={() => openCloseConnectionModal()} />
+            <FaUserCircle size={40} color="white" className="navbar-user" onClick={() => openCloseConnectionModal()} />
 
             {/* Modale de connexion */}
             {modalOptions.isOpen && (

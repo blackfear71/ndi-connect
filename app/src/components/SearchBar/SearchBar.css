@@ -11,12 +11,19 @@
 .search-bar-button {
     border-top-left-radius: 50px !important;
     border-bottom-left-radius: 50px !important;
+    background-color: #163c76 !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 15px !important; /* Ajuste si besoin */
+    border: none !important;
 }
 
 .search-bar-button:focus,
 .search-bar-button:hover {
-    background-color: #be5031 !important;
-    color: white !important;
+    background-color: white !important;
+    color: #163c76 !important;
 }
 
 .search-bar-text {
