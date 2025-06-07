@@ -19,12 +19,6 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.input-group > .form-control,
-.input-group > .btn {
-    border: none;
-    box-shadow: none;
-}
-
 .btn-edition {
     background-color: #163c76 !important;
     border-color: #163c76 !important;
