@@ -18,8 +18,6 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
 
-import './Edition.css';
-
 /**
  * Page détail édition
  * @returns
