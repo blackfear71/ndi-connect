@@ -185,7 +185,7 @@ const Home = () => {
 
                     {/* Ajout */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                        <div className="d-inline-flex align-items-center">
+                        <div className="d-grid mb-2">
                             <Button variant="success" size="lg" onClick={() => openCloseEditionModal('create')}>
                                 {t('home.addEdition')}
                             </Button>
