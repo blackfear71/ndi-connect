@@ -15,9 +15,23 @@
     margin: 10px 20px;
 }
 
-.navbar-user {
-    color: white;
+.navbar-user-wrapper {
+    position: relative;
+    margin: 10px 20px;
     height: 40px;
     width: 40px;
-    margin: 10px 20px;
+    cursor: pointer;
+}
+
+.navbar-user {
+    color: white;
+    height: 100%;
+    width: 100%;
+}
+
+.navbar-user-connected {
+    position: absolute;
+    bottom: 0;
+    bottom: -1px;
+    right: -2px;
 }

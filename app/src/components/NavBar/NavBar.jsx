@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { FaUserCircle } from 'react-icons/fa';
+import { FcApproval } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
@@ -69,8 +70,11 @@ const NavBar = () => {
             {/* Barre de recherche */}
             <SearchBar />
 
-            {/* Utilisateur */}
-            <FaUserCircle className="navbar-user" onClick={() => openCloseConnectionModal()} />
+            {/* Connexion */}
+            <div className="navbar-user-wrapper" onClick={() => openCloseConnectionModal()}>
+                <FaUserCircle className="navbar-user" />
+                {auth.isLoggedIn && <FcApproval className="navbar-user-connected" />}
+            </div>
 
             {/* Modale de connexion */}
             {modalOptions.isOpen && (
