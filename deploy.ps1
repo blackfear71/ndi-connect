@@ -26,6 +26,36 @@ function Get-RelativePath {
     return $relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
 }
 
+# Incrémente la version du package.json
+function IncrementVersion {
+    param (
+        [string]$version,
+        [string]$type
+    )
+
+    $parts = $version -split '\.'
+    $major = [int]$parts[0]
+    $minor = [int]$parts[1]
+    $patch = [int]$parts[2]
+
+    switch ($type) {
+        "patch" {
+            $patch++
+        }
+        "minor" {
+            $minor++
+            $patch = 0
+        }
+        "major" {
+            $major++
+            $minor = 0
+            $patch = 0
+        }
+    }
+
+    return "$major.$minor.$patch"
+}
+
 # Configuration
 $FRONT_SRC_DIR = ".\app"
 $BACK_SRC_DIR = ".\api"
@@ -34,13 +64,42 @@ $DEPLOY_DIR = ".\dist\ndi-connect"
 $DEPLOY_APP_DIR = $DEPLOY_DIR
 $DEPLOY_API_DIR = Join-Path $DEPLOY_DIR "api"
 
-# Confirmation
-$confirmation = Read-Host "Voulez-vous vraiment lancer le déploiement ? (O/N)"
+# Choix de version
+Write-Host "Choisissez le type de version :"
+Write-Host "1. Patch"
+Write-Host "2. Mineure"
+Write-Host "3. Majeure"
+Write-Host "4. Annuler le déploiement"
+$versionChoice = Read-Host "Votre choix (1-4) "
 
-if ($confirmation -ne 'O' -and $confirmation -ne 'o') {
+if ($versionChoice -eq '4') {
     Write-Host "Déploiement annulé."
     exit
 }
+
+# Lire le fichier package.json
+$packageJsonPath = ".\app\package.json"
+$jsonText = Get-Content $packageJsonPath -Raw
+$packageContent = $jsonText | ConvertFrom-Json
+$currentVersion = $packageContent.version
+
+# Déterminer le type de version
+$versionType = switch ($versionChoice) {
+    "1" { "patch" }
+    "2" { "minor" }
+    "3" { "major" }
+    default {
+        Write-Color "Choix invalide. Déploiement annulé." Red
+        exit
+    }
+}
+
+# Appeler le script Node pour mettre à jour la version
+Push-Location ".\app\scripts"
+$newVersion = node updateVersion.js $versionType
+Pop-Location
+
+Write-Color "Version mise à jour : $currentVersion -> $newVersion" Green
 
 # Nettoyage
 Write-Color "Nettoyage du dossier de déploiement..." Blue

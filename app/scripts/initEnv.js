@@ -1,3 +1,4 @@
+// Script de création des fichiers .env (front et back)
 const fs = require('fs');
 const path = require('path');
 
