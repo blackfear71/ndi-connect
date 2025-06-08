@@ -81,6 +81,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
                                         placeholder={t('navbar.login')}
                                         value={formData.login}
                                         onChange={handleChange}
+                                        maxLength={100}
                                         required
                                     />
                                 </Form.Group>
@@ -93,6 +94,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
                                         placeholder={t('navbar.password')}
                                         value={formData.password}
                                         onChange={handleChange}
+                                        maxLength={100}
                                         required
                                     />
                                 </Form.Group>

@@ -131,6 +131,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                         placeholder={t('edition.place')}
                                         value={formData.place}
                                         onChange={handleChange}
+                                        maxLength={100}
                                         required
                                     />
                                 </Form.Group>
