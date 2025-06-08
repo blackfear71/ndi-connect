@@ -148,43 +148,46 @@ const Edition = () => {
                     {/* Message */}
                     {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
-                    {/* Retour */}
-                    <Button
-                        variant="outline-action"
-                        size="sm"
-                        href="/"
-                        className="d-inline-flex align-items-center gap-2 mb-2 me-2 btn-yellow"
-                    >
-                        <FaHouse size={15} className="outline-action-icon" />
-                        {t('common.home')}
-                    </Button>
-
                     {/* Actions */}
-                    {showActions && auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                        <>
-                            {/* Modifier */}
-                            <Button
-                                variant="outline-action"
-                                size="sm"
-                                onClick={() => openCloseEditionModal('update')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 me-2 btn-blue"
-                            >
-                                <FaWandMagicSparkles size={15} className="outline-action-icon" />
-                                {t('common.update')}
-                            </Button>
+                    <div className="d-flex justify-content-between flex-wrap gap-2 mb-2">
+                        {/* Accueil */}
+                        <Button
+                            variant="outline-action"
+                            size="sm"
+                            href="/"
+                            className="d-flex align-items-center justify-content-center gap-2 flex-fill btn-yellow"
+                        >
+                            <FaHouse size={15} className="outline-action-icon" />
+                            {t('common.home')}
+                        </Button>
 
-                            {/* Supprimer */}
-                            <Button
-                                variant="outline-action"
-                                size="sm"
-                                onClick={() => openCloseEditionModal('delete')}
-                                className="d-inline-flex align-items-center gap-2 mb-2 btn-red"
-                            >
-                                <FaTrashCan size={15} className="outline-action-icon" />
-                                {t('common.delete')}
-                            </Button>
-                        </>
-                    )}
+                        {/* Actions */}
+                        {showActions && auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                            <>
+                                {/* Modifier */}
+                                <Button
+                                    variant="outline-action"
+                                    size="sm"
+                                    onClick={() => openCloseEditionModal('update')}
+                                    className="d-flex align-items-center justify-content-center gap-2 flex-fill btn-blue"
+                                >
+                                    <FaWandMagicSparkles size={15} className="outline-action-icon" />
+                                    {t('common.update')}
+                                </Button>
+
+                                {/* Supprimer */}
+                                <Button
+                                    variant="outline-action"
+                                    size="sm"
+                                    onClick={() => openCloseEditionModal('delete')}
+                                    className="d-flex align-items-center justify-content-center gap-2 flex-fill btn-red"
+                                >
+                                    <FaTrashCan size={15} className="outline-action-icon" />
+                                    {t('common.delete')}
+                                </Button>
+                            </>
+                        )}
+                    </div>
 
                     {/* Titre */}
                     {edition && (
