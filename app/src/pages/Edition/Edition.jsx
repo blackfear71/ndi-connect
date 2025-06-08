@@ -2,8 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaComputer } from 'react-icons/fa6';
-import { FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
+import { FaComputer, FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
@@ -17,6 +16,8 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
+
+import './Edition.css';
 
 /**
  * Page détail édition
@@ -148,8 +149,13 @@ const Edition = () => {
                     {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
 
                     {/* Retour */}
-                    <Button variant="outline-action" href="/" className="d-inline-flex align-items-center gap-2 mb-2 me-2">
-                        <FaHouse size={20} className="outline-action-icon" />
+                    <Button
+                        variant="outline-action"
+                        size="sm"
+                        href="/"
+                        className="d-inline-flex align-items-center gap-2 mb-2 me-2 btn-yellow"
+                    >
+                        <FaHouse size={15} className="outline-action-icon" />
                         {t('common.home')}
                     </Button>
 
@@ -159,20 +165,22 @@ const Edition = () => {
                             {/* Modifier */}
                             <Button
                                 variant="outline-action"
+                                size="sm"
                                 onClick={() => openCloseEditionModal('update')}
                                 className="d-inline-flex align-items-center gap-2 mb-2 me-2 btn-blue"
                             >
-                                <FaWandMagicSparkles size={20} className="outline-action-icon" />
+                                <FaWandMagicSparkles size={15} className="outline-action-icon" />
                                 {t('common.update')}
                             </Button>
 
                             {/* Supprimer */}
                             <Button
                                 variant="outline-action"
+                                size="sm"
                                 onClick={() => openCloseEditionModal('delete')}
                                 className="d-inline-flex align-items-center gap-2 mb-2 btn-red"
                             >
-                                <FaTrashCan size={20} className="outline-action-icon" />
+                                <FaTrashCan size={15} className="outline-action-icon" />
                                 {t('common.delete')}
                             </Button>
                         </>

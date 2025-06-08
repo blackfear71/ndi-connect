@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaCalendarDays } from 'react-icons/fa6';
+import { IoCalendarNumberOutline } from 'react-icons/io5';
 
 import EditionsService from '../../api/editionsService';
 
@@ -15,6 +15,8 @@ import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
+
+import './Home.css';
 
 /**
  * Page d'accueil
@@ -179,7 +181,7 @@ const Home = () => {
 
                     {/* Titre */}
                     <h1>
-                        <FaCalendarDays size={30} />
+                        <IoCalendarNumberOutline size={30} />
                         {t('home.editions')}
                     </h1>
 
@@ -197,7 +199,7 @@ const Home = () => {
                         editionsByYear && editionsByYear.length > 0 ? (
                             <div className="d-grid gap-2">
                                 {/* Retour */}
-                                <Button variant="outline-action" onClick={() => showYearsOfEditions()}>
+                                <Button variant="outline-edition" className="btn-yellow" onClick={() => showYearsOfEditions()}>
                                     {t('common.return')}
                                 </Button>
 
