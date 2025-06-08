@@ -1,15 +1,22 @@
-.layout-outlet-container {
-    padding: 80px 20px 20px 20px;
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .layout-spinner-centered {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 100px); /* Modifier en fonction de .layout-outlet-container */
+    height: calc(100vh - 100px); /* Modifier en fonction de .layout-main */
 }
 
-.layout-outlet-container h1 {
+.layout-main {
+    flex: 1;
+    padding: 80px 20px 20px 20px;
+}
+
+.layout-main h1 {
     display: flex;
     align-items: center;
     gap: 10px;
