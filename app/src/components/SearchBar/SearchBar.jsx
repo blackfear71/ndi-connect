@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Button, Form, InputGroup } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
+import EditionsService from '../../api/editionsService';
+
+import Message from '../../components/Message/Message';
+
+import { combineLatest, of } from 'rxjs';
+import { catchError, map, take } from 'rxjs/operators';
 
 import './SearchBar.css';
 
@@ -12,12 +20,17 @@ import './SearchBar.css';
  * @returns
  */
 const SearchBar = ({ placeholder }) => {
+    // Router
+    const navigate = useNavigate();
+
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const containerRef = useRef(null);
     const inputRef = useRef(null);
+    const [message, setMessage] = useState(null);
+    const [searchMessage, setSearchMessage] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [showResults, setShowResults] = useState(false);
 
@@ -37,61 +50,54 @@ const SearchBar = ({ placeholder }) => {
      */
     const handleChange = async (e) => {
         const value = e.target.value;
+        setMessage(null);
+        setSearchMessage(null);
         setSearchText(value);
 
-        // TODO : back recherche (éditions seulement pour l'instant)
-        if (value.length > 1) {
-            const data = await mockResults(value);
-            setResults(data);
-            setShowResults(true);
-        } else {
+        // On lance la recherche seulement à partir de 3 caractères saisis
+        if (value.length === 0) {
             setResults([]);
             setShowResults(false);
+        } else if (value.length > 2) {
+            const editionsService = new EditionsService();
+
+            const subscriptionEditions = editionsService.getSearchEditions({ search: value });
+
+            combineLatest([subscriptionEditions])
+                .pipe(
+                    map(([dataEditions]) => {
+                        if (dataEditions.response.data.length === 0) {
+                            setSearchMessage('messages.noResults');
+                        }
+
+                        setResults(dataEditions.response.data);
+                        setShowResults(true);
+                    }),
+                    take(1),
+                    catchError((err) => {
+                        setMessage({ code: err?.response?.message, type: err?.response?.status });
+                        return of();
+                    })
+                )
+                .subscribe();
+        } else {
+            setResults([]);
+            setSearchMessage('messages.searchMessage');
+            setShowResults(true);
+            return;
         }
     };
-
-    // TODO : à supprimer
-    const mockResults = (text) =>
-        new Promise((resolve) => {
-            setTimeout(() => {
-                resolve([
-                    { result: `Résultat pour "${text}" 1`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 2`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 3`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 4`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 5`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 6`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 7`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 8`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 9`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 10`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 11`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 12`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 13`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 14`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 15`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 16`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 17`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 18`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 19`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 20`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 21`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 22`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 23`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 24`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 25`, category: 'Edition' },
-                    { result: `Résultat pour "${text}" 26`, category: 'Edition' }
-                ]);
-            }, 300);
-        });
 
     /**
      * Vide la zone de recherche
      */
     const handleClear = () => {
+        // Vide les résultats
         setSearchText('');
         setResults([]);
         setShowResults(false);
+
+        // Met le curseur sur la zone de saisie
         inputRef.current?.focus();
     };
 
@@ -114,6 +120,20 @@ const SearchBar = ({ placeholder }) => {
         }
     };
 
+    /**
+     * Redirige vers le résultat de la recherche
+     * @param {*} id Identifiant de l'édition
+     */
+    const handleResultClick = (id) => {
+        // Vide les résultats
+        setSearchText('');
+        setResults([]);
+        setShowResults(false);
+
+        // Redirige vers l'édition
+        navigate(`/edition/${id}`);
+    };
+
     return (
         <div className="search-bar-container" ref={containerRef}>
             {/* Barre de recherche */}
@@ -131,13 +151,28 @@ const SearchBar = ({ placeholder }) => {
                 {searchText && <FaTimes className="search-bar-icon clear-icon" onClick={handleClear} />}
             </div>
 
+            {/* Messages */}
+            {showResults && searchMessage && (
+                <div className="search-results-dropdown">
+                    <div className="search-result-message">{t(searchMessage)}</div>
+                </div>
+            )}
+
+            {message && (
+                <div className="search-results-dropdown">
+                    <div className="search-result-message search-result-message-no-margin-bottom">
+                        <Message code={message.code} type={message.type} setMessage={setMessage} />
+                    </div>
+                </div>
+            )}
+
             {/* Résultats */}
             {showResults && results.length > 0 && (
                 <div className="search-results-dropdown">
                     {results.map((item, idx) => (
-                        <div key={idx} className="search-result-item">
-                            <div className="search-result-item-left">{item.result}</div>
-                            <div className="search-result-item-right">{item.category}</div>
+                        <div key={idx} className="search-result-item" onClick={() => handleResultClick(item.id)}>
+                            <div className="search-result-item-left">{item.place}</div>
+                            <div className="search-result-item-right">{t('edition.editionResult', { year: item.year })}</div>
                         </div>
                     ))}
                 </div>

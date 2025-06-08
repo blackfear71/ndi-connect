@@ -30,6 +30,18 @@ class EditionsService
     }
 
     /**
+     * Lecture des éditions recherchées
+     */
+    public function getSearchEditions($search)
+    {
+        if (empty($search)) {
+            return [];
+        }
+        
+        return $this->repository->getSearchEditions(trim($search));
+    }
+
+    /**
      * Insertion d'un enregistrement
      */
     public function createEdition($login, $data)
@@ -54,7 +66,7 @@ class EditionsService
         }
 
         // Modification
-        if ( $this->repository->update($id, $login, $data)) {
+        if ($this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
     }

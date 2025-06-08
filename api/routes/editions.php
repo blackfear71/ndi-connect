@@ -15,6 +15,14 @@ $router->get('/editions/find/:id', function ($params) use ($db) {
     (new EditionsController($db))->getEdition($params['id']);
 });
 
+$router->post('/editions/search', function () use ($db) {
+    // Données d'entrée
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Appel contrôleur
+    (new EditionsController($db))->getSearchEditions($data['search']);
+});
+
 $router->post('/editions/create', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];

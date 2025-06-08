@@ -49,7 +49,7 @@ const Edition = () => {
     const [edition, setEdition] = useState();
 
     /**
-     * Lancement initial de la page
+     * Lancement initial de la page (à chaque changement d'id)
      */
     useEffect(() => {
         const editionsService = new EditionsService();
@@ -77,7 +77,7 @@ const Edition = () => {
                 })
             )
             .subscribe();
-    }, []);
+    }, [id]);
 
     /**
      * Modification

@@ -58,6 +58,14 @@
     border-radius: 10px;
 }
 
+.search-result-message {
+    padding: 10px;
+}
+
+.search-result-message-no-margin-bottom .alert {
+    margin-bottom: 0 !important;
+}
+
 .search-result-item {
     display: flex;
     justify-content: space-between;

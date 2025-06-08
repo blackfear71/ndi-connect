@@ -25,4 +25,15 @@ class EditionsRepository extends Model
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Lecture des éditions recherchées
+     */
+    public function getSearchEditions($search)
+    {
+        $sql = "SELECT id, year, place FROM {$this->table} WHERE (CAST(year AS CHAR) LIKE :search OR place LIKE :search) AND is_active = 1 ORDER BY id ASC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['search' => "%$search%"]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

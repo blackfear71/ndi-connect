@@ -52,7 +52,11 @@ const Message = ({ code, type, setMessage }) => {
 
     return (
         show && (
-            <Alert variant={getVariantFromType(type)} onClose={!autoClose && handleClose} dismissible={!autoClose}>
+            <Alert
+                variant={getVariantFromType(type)}
+                onClose={!autoClose && handleClose}
+                dismissible={!['success', 'warning', 'info'].includes(type)}
+            >
                 {i18next.exists(code) ? t(code) : t(getMessageTranslationKey(code))}
             </Alert>
         )

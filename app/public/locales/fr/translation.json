@@ -19,6 +19,8 @@
     "messages": {
         "creationSuccess": "Création réussie",
         "deletionSuccess": "Suppression réussie",
+        "noResults": "Aucun résultat ne correspond à la recherche",
+        "searchMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "updateSuccess": "Modification réussie"
     },
     "common": {
@@ -33,6 +35,7 @@
     "edition": {
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
+        "editionResult": "Edition {{year}}",
         "editionTitle": "Edition {{year}} - {{place}}",
         "place": "Lieu",
         "updateEdition": "Modifier l'édition",

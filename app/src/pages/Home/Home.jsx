@@ -57,7 +57,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessagePage(err?.response?.message);
+                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {

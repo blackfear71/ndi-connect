@@ -38,6 +38,16 @@ class EditionsService {
     };
 
     /**
+     * Récupération des éditions recherchées
+     * @param {*} body Saisie
+     * @returns Liste des éditions recherchées
+     */
+    getSearchEditions = (body) => {
+        const url = `${API_URL}/editions/search`;
+        return ajax.post(url, body, this.headers);
+    };
+
+    /**
      * Création édition
      * @param {*} body Données édition
      * @returns

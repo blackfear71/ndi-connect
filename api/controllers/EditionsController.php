@@ -70,6 +70,26 @@ class EditionsController
     }
 
     /**
+     * Lecture des éditions recherchées
+     */
+    public function getSearchEditions($search)
+    {
+        try {
+            $editions = $this->service->getSearchEditions($search);
+
+            // Réponse en cas de succès
+            ResponseHelper::success($editions);
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans getSearchEditions de EditionsController : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
      * Insertion d'un enregistrement
      */
     public function createEdition($token, $data)
