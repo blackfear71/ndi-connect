@@ -1,4 +1,3 @@
-
 .btn-outline-action {
     border-width: 2px !important;
 }
@@ -54,4 +53,14 @@
 .btn-red:hover .outline-action-icon,
 .btn-red:active .outline-action-icon {
     color: white !important;
+}
+
+.edition-tabs .nav-link {
+    color: white !important;
+    border-color: white !important;
+}
+
+.edition-tabs .nav-link.active {
+    color: #ffcf68 !important;
+    border-color: #ffcf68 !important;
 }

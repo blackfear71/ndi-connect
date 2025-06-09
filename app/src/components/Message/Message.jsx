@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getMessageTranslationKey } from '../../utils/messageMapper';
 
-const Message = ({ code, type, setMessage }) => {
+const Message = ({ code, type = 'error', setMessage }) => {
     // Traductions
     const { t } = useTranslation();
 

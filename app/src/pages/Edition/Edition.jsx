@@ -1,13 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Button, Spinner } from 'react-bootstrap';
+import { Button, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaComputer, FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
+import EditionAbout from '../../components/EditionAbout/EditionAbout';
+import EditionGifts from '../../components/EditionGifts/EditionGifts';
 import EditionModal from '../../components/EditionModal/EditionModal';
+import EditionPlayers from '../../components/EditionPlayers/EditionPlayers';
 import Message from '../../components/Message/Message';
 
 import UserRole from '../../enums/UserRole';
@@ -47,7 +50,10 @@ const Edition = () => {
     const [showActions, setShowActions] = useState(true);
 
     // API states
+    const [about, setAbout] = useState();
     const [edition, setEdition] = useState();
+    const [gifts, setGifts] = useState([]);
+    const [players, setPlayers] = useState([]);
 
     /**
      * Lancement initial de la page (à chaque changement d'id)
@@ -60,7 +66,10 @@ const Edition = () => {
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
-                    setEdition(dataEdition.response.data);
+                    setAbout(dataEdition.response.data.about);
+                    setEdition(dataEdition.response.data.edition);
+                    setGifts(dataEdition.response.data.gifts);
+                    setPlayers(dataEdition.response.data.players);
                     setFormEdition({
                         ...formEdition,
                         year: dataEdition.response.data.year,
@@ -198,6 +207,30 @@ const Edition = () => {
                             </h1>
                         </div>
                     )}
+
+                    {/* Contenu */}
+                    <Tabs
+                        variant="underline"
+                        defaultActiveKey="players"
+                        id="justify-tab-example"
+                        className="mb-3 edition-tabs"
+                        justify
+                    >
+                        {/* Participants */}
+                        <Tab eventKey="players" title={t('edition.players')}>
+                            <EditionPlayers players={players} />
+                        </Tab>
+
+                        {/* Cadeaux */}
+                        <Tab eventKey="gifts" title={t('edition.gifts')}>
+                            <EditionGifts gifts={gifts} />
+                        </Tab>
+
+                        {/* A propos */}
+                        <Tab eventKey="about" title={t('edition.about')}>
+                            <EditionAbout about={about} />
+                        </Tab>
+                    </Tabs>
 
                     {/* Modale de modification/suppression d'édition */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (

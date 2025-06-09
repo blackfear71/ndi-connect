@@ -33,13 +33,17 @@
         "unknownLabel": "Libellé inconnu"
     },
     "edition": {
+        "about": "A propos",
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
         "editionResult": "Edition {{year}}",
         "editionTitle": "Edition {{year}} - {{place}}",
+        "gifts": "Cadeaux",
+        "players": "Participants",
         "place": "Lieu",
         "updateEdition": "Modifier l'édition",
         "year": "Année"
+
     },
     "home": {
         "addEdition": "Ajouter une édition",

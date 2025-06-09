@@ -4,11 +4,15 @@ require_once 'core/ResponseHelper.php';
 require_once 'enums/UserRole.php';
 
 require_once 'services/EditionsService.php';
+require_once 'services/GiftsService.php';
+require_once 'services/PlayersService.php';
 require_once 'services/UsersService.php';
 
 class EditionsController
 {
     private $service;
+    private $giftsService;
+    private $playersService;
     private $usersService;
 
     /**
@@ -18,6 +22,8 @@ class EditionsController
     {
         $this->service = new EditionsService($db);
         $this->usersService = new UsersService($db);
+        $this->giftsService = new GiftsService($db);
+        $this->playersService = new PlayersService($db);
     }
 
     /**
@@ -49,6 +55,12 @@ class EditionsController
             $edition = $this->service->getEdition($id);
 
             if ($edition) {
+                // TOOD : à remanier
+                $edition['edition'] = $edition;
+                $edition['about'] = $edition;
+                $edition['gifts'] = $this->giftsService->getEditionGifts($id);
+                $edition['players'] = $this->playersService->getEditionPlayers($id);
+
                 // Réponse si l'enregistrement est trouvé
                 ResponseHelper::success($edition);
             } else {
