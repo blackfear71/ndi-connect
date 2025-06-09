@@ -99,6 +99,8 @@ const Edition = () => {
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
+        // TODO : en cas de suppression, passer aussi en suppression les participants et cadeaux
+
         const subscriptionEdition =
             modalOptions.action === 'delete'
                 ? editionsService.deleteEdition(edition.id)
