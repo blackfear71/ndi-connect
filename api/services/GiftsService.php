@@ -20,4 +20,12 @@ class GiftsService
     {
         return $this->repository->getEditionGifts($id);
     }
+
+    /**
+     * Suppression logique des cadeaux d'une édition
+     */
+    public function deleteGifts($id, $login)
+    {
+        return $this->repository->deleteGifts($id, $login);
+    }
 }

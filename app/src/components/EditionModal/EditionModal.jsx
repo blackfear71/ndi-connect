@@ -52,18 +52,21 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
         // Empêche le rechargement de la page
         e.preventDefault();
 
-        // Contrôle que la valeur de l'année est comprise entre 1901 et 2155
-        const year = parseInt(formData.year, 10);
+        // Contrôles si pas de suppression
+        if (modalOptions.action !== 'delete') {
+            // Contrôle que la valeur de l'année est comprise entre 1901 et 2155
+            const year = parseInt(formData.year, 10);
 
-        if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
-            setMessage({ code: 'errors.invalidYear', type: 'error' });
-            return;
-        }
+            if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
+                setMessage({ code: 'errors.invalidYear', type: 'error' });
+                return;
+            }
 
-        // Contrôle le lieu renseigné
-        if (!formData.place) {
-            setMessage({ code: 'errors.invalidPlace', type: 'error' });
-            return;
+            // Contrôle le lieu renseigné
+            if (!formData.place) {
+                setMessage({ code: 'errors.invalidPlace', type: 'error' });
+                return;
+            }
         }
 
         // Soumets le formulaire

@@ -20,4 +20,12 @@ class PlayersService
     {
         return $this->repository->getEditionPlayers($id);
     }
+
+    /**
+     * Suppression logique des participants d'une édition
+     */
+    public function deletePlayers($id, $login)
+    {
+        return $this->repository->deletePlayers($id, $login);
+    }    
 }

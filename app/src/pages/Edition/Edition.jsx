@@ -70,10 +70,11 @@ const Edition = () => {
                     setEdition(dataEdition.response.data.edition);
                     setGifts(dataEdition.response.data.gifts);
                     setPlayers(dataEdition.response.data.players);
+
                     setFormEdition({
                         ...formEdition,
-                        year: dataEdition.response.data.year,
-                        place: dataEdition.response.data.place
+                        year: dataEdition.response.data.edition.year,
+                        place: dataEdition.response.data.edition.place
                     });
                 }),
                 take(1),
@@ -98,8 +99,6 @@ const Edition = () => {
         setIsSubmitting(true);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
-
-        // TODO : en cas de suppression, passer aussi en suppression les participants et cadeaux
 
         const subscriptionEdition =
             modalOptions.action === 'delete'
