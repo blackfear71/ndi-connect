@@ -32,15 +32,15 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer($idEdition, $login, $data)
+    public function createPlayer($idEdition, $user, $data)
     {
         // Contrôle des données
-        if (!$this->isValidPlayerData($data)) {
+        if (!$this->isValidPlayerData($user['level'], $data)) {
             return null;
         }
 
         // Insertion et récupération des participants de l'édition
-        if ($this->repository->create($login, $data)) {
+        if ($this->repository->create($user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
     }
@@ -48,17 +48,17 @@ class PlayersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer($idEdition, $idPlayer, $login, $data)
+    public function updatePlayer($idEdition, $idPlayer, $user, $data)
     {
         // Contrôle des données
-        if (!$this->isValidPlayerData($data)) {
+        if (!$this->isValidPlayerData($user['level'], $data)) {
             return null;
         }
 
         // TODO : attention avec la mise à jour des points, actuellement ça écrase la valeur alors qu'il faut incrémenter la valeur
 
         // Modification et récupération des participants de l'édition
-        if ($this->repository->update($idPlayer, $login, $data)) {
+        if ($this->repository->update($idPlayer, $user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
     }
@@ -77,12 +77,11 @@ class PlayersService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData($data)
+    private function isValidPlayerData($userLevel, $data)
     {
         $name = trim($data['name'] ?? '');
+        $points = $data['points'] ?? null;
 
-        // TODO : si admin contrôler points >= 0, si superadmin contrôler points non vides
-
-        return $name;
+        return $name && $points && is_numeric($points) && ($userLevel == UserRole::SUPERADMIN->value || $points >= 0);
     }
 }

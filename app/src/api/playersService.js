@@ -1,7 +1,6 @@
 import { ajax } from 'rxjs/ajax';
 
-// TODO : réduire les routes en collant "players" à ça, faire aussi pour les autres services
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL + '/players';
 
 /**
  * Service appel API participants
@@ -26,7 +25,7 @@ class PlayersService {
      * @returns
      */
     insertPlayer = (idEdition, body) => {
-        const url = `${API_URL}/players/create/${idEdition}`;
+        const url = `${this.apiUrl}/create/${idEdition}`;
         return ajax.post(url, body, this.headers);
     };
 
@@ -38,7 +37,7 @@ class PlayersService {
      * @returns
      */
     updatePlayer = (idEdition, idPlayer, body) => {
-        const url = `${API_URL}/players/update/${idEdition}/${idPlayer}`;
+        const url = `${this.apiUrl}/update/${idEdition}/${idPlayer}`;
         return ajax.patch(url, body, this.headers);
     };
 
@@ -49,7 +48,7 @@ class PlayersService {
      * @returns
      */
     deletePlayer = (idEdition, idPlayer) => {
-        const url = `${API_URL}/players/delete/${idEdition}/${idPlayer}`;
+        const url = `${this.apiUrl}/delete/${idEdition}/${idPlayer}`;
         return ajax.delete(url, this.headers);
     };
 }

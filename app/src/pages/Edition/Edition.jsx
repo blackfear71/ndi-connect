@@ -17,7 +17,7 @@ import PlayerModal from '../../components/PlayerModal/PlayerModal';
 
 import UserRole from '../../enums/UserRole';
 
-import { combineLatest, of, switchMap } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';

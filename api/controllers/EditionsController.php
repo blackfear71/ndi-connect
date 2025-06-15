@@ -98,7 +98,7 @@ class EditionsController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
@@ -141,7 +141,7 @@ class EditionsController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
@@ -184,7 +184,7 @@ class EditionsController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',

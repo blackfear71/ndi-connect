@@ -1,6 +1,6 @@
 import { ajax } from 'rxjs/ajax';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL + '/editions';
 
 /**
  * Service appel API éditions
@@ -23,7 +23,7 @@ class EditionsService {
      * @returns Liste des éditions
      */
     getAllEditions = () => {
-        const url = `${API_URL}/editions/all`;
+        const url = `${this.apiUrl}/all`;
         return ajax.get(url, this.headers);
     };
 
@@ -33,7 +33,7 @@ class EditionsService {
      * @returns Edition
      */
     getEdition = (id) => {
-        const url = `${API_URL}/editions/find/${id}`;
+        const url = `${this.apiUrl}/find/${id}`;
         return ajax.get(url, this.headers);
     };
 
@@ -43,7 +43,7 @@ class EditionsService {
      * @returns Liste des éditions recherchées
      */
     getSearchEditions = (body) => {
-        const url = `${API_URL}/editions/search`;
+        const url = `${this.apiUrl}/search`;
         return ajax.post(url, body, this.headers);
     };
 
@@ -53,7 +53,7 @@ class EditionsService {
      * @returns
      */
     insertEdition = (body) => {
-        const url = `${API_URL}/editions/create`;
+        const url = `${this.apiUrl}/create`;
         return ajax.post(url, body, this.headers);
     };
 
@@ -64,7 +64,7 @@ class EditionsService {
      * @returns
      */
     updateEdition = (id, body) => {
-        const url = `${API_URL}/editions/update/${id}`;
+        const url = `${this.apiUrl}/update/${id}`;
         return ajax.patch(url, body, this.headers);
     };
 
@@ -74,7 +74,7 @@ class EditionsService {
      * @returns
      */
     deleteEdition = (id) => {
-        const url = `${API_URL}/editions/delete/${id}`;
+        const url = `${this.apiUrl}/delete/${id}`;
         return ajax.delete(url, this.headers);
     };
 }

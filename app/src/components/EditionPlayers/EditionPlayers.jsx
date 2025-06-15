@@ -2,8 +2,8 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import { Badge, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaAngleRight, FaCheck, FaTrashCan } from 'react-icons/fa6';
-import { FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 
 import UserRole from '../../enums/UserRole';
 

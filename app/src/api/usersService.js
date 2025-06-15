@@ -1,6 +1,6 @@
 import { ajax } from 'rxjs/ajax';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL + '/users';
 
 /**
  * Service appel API utilisateur (connexion, déconnexion...)
@@ -23,7 +23,7 @@ class UsersService {
      * @returns Indicateur authentification valide
      */
     checkAuth = () => {
-        const url = `${this.apiUrl}/users/checkAuth`;
+        const url = `${this.apiUrl}/checkAuth`;
         return ajax.get(url, this.headers);
     };
 
@@ -33,7 +33,7 @@ class UsersService {
      * @returns Token de connexion
      */
     connect = (body) => {
-        const url = `${this.apiUrl}/users/connect`;
+        const url = `${this.apiUrl}/connect`;
         return ajax.post(url, body, this.headers);
     };
 
@@ -42,7 +42,7 @@ class UsersService {
      * @returns Indicateur déconnexion
      */
     disconnect = () => {
-        const url = `${this.apiUrl}/users/disconnect`;
+        const url = `${this.apiUrl}/disconnect`;
         return ajax.post(url, null, this.headers);
     };
 }

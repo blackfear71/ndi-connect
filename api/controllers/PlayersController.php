@@ -29,7 +29,7 @@ class PlayersController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::ADMIN) {
+            if (!$user || $user['level'] < UserRole::ADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
@@ -40,7 +40,7 @@ class PlayersController
             }
 
             // Insertion d'un enregistrement
-            $players = $this->service->createPlayer($idEdition, $user['login'], $data);
+            $players = $this->service->createPlayer($idEdition, $user, $data);
 
             if ($players) {
                 // Succès
@@ -72,7 +72,7 @@ class PlayersController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::ADMIN) {
+            if (!$user || $user['level'] < UserRole::ADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
@@ -83,7 +83,7 @@ class PlayersController
             }
 
             // Modification d'un enregistrement
-            $players = $this->service->updatePlayer($idEdition, $idPlayer, $user['login'], $data);
+            $players = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
 
             if ($players) {
                 // Succès
@@ -93,7 +93,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du participant : ' . $data['id'] . ' - ' . json_encode($data)
+                    'Erreur lors de la modification du participant : ' . $idPlayer . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -115,7 +115,7 @@ class PlayersController
             // Contrôle autorisation
             $user = $this->usersService->checkAuth($token);
 
-            if (!$user || $user['level'] < UserRole::SUPERADMIN) {
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
