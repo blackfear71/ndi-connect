@@ -1,11 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
 
-const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+    // Contexte
+    const { auth, setAuthError } = useContext(AuthContext);
+
     // Traductions
     const { t } = useTranslation();
 
@@ -16,10 +20,15 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
      * Met le focus sur le champ "login" à l'ouverture de la modale quand on est pas connecté
      */
     useEffect(() => {
-        if (isOpen && !isLoggedIn && loginInputRef.current) {
-            loginInputRef.current.focus();
+        if (modalOptions?.isOpen) {
+            // Réinitialisation du message
+            setMessage(null);
+            setAuthError(null);
+
+            // Focus
+            !auth.isLoggedIn && loginInputRef.current?.focus();
         }
-    }, [isOpen, isLoggedIn]);
+    }, [modalOptions?.isOpen, auth.isLoggedIn]);
 
     /**
      * Met à jour le formulaire à la saisie (création)
@@ -39,7 +48,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
         e.preventDefault();
 
         // Contrôle que l'identifiant et le mot de passe sont renseignés
-        if (!isLoggedIn) {
+        if (!auth.isLoggedIn) {
             if (!formData.login) {
                 setMessage({ code: 'errors.invalidLogin', type: 'error' });
                 return;
@@ -60,7 +69,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
             <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}</Modal.Title>
+                        <Modal.Title>{auth.isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
@@ -68,7 +77,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
                         {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
                         {/* Formulaire */}
-                        {isLoggedIn ? (
+                        {auth.isLoggedIn ? (
                             <>{t('navbar.disconnectMessage')}</>
                         ) : (
                             <div className="d-flex align-items-end">
@@ -107,7 +116,7 @@ const ConnectionModal = ({ formData, setFormData, isOpen, isLoggedIn, message, s
                             {t('common.close')}
                         </Button>
                         <Button type="submit" variant="primary">
-                            {isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}
+                            {auth.isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}
                             {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Footer>

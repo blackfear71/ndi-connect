@@ -121,9 +121,9 @@ class EditionsService
      */
     private function isValidEditionData($data)
     {
-        $year = trim($data['year'] ?? '');
+        $year = $data['year'] ?? null;
         $place = trim($data['place'] ?? '');
 
-        return $year && is_numeric($year) && $year >= 1901 && $year <= 2155 && $place;
+        return is_numeric($year) && $year >= 1901 && $year <= 2155 && $place;
     }
 }

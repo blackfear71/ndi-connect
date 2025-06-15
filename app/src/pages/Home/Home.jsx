@@ -73,7 +73,11 @@ const Home = () => {
      * Ouverture/fermeture de la modale de création d'édition
      */
     const openCloseEditionModal = (openAction) => {
+        // Ouverture ou fermeture
         setModalOptions({ action: openAction, isOpen: !modalOptions.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptions.isOpen && resetFormEdition();
     };
 
     /**

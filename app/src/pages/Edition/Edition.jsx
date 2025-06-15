@@ -144,7 +144,11 @@ const Edition = () => {
      * Ouverture/fermeture de la modale de modification d'édition
      */
     const openCloseEditionModal = (openAction) => {
+        // Ouverture ou fermeture
         setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsEdition.isOpen && resetFormEdition();
     };
 
     /**
@@ -166,7 +170,8 @@ const Edition = () => {
 
         const body = {
             id_edition: edition.id,
-            name: formPlayer.name
+            name: formPlayer.name,
+            points: 0
         };
 
         const token = localStorage.getItem('token');
@@ -176,6 +181,7 @@ const Edition = () => {
             .insertPlayer(edition.id, body)
             .pipe(
                 map((dataPlayer) => {
+                    resetFormPlayer();
                     setPlayers(dataPlayer.response.data);
                     setMessagePage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
                 }),
@@ -316,13 +322,7 @@ const Edition = () => {
                     )}
 
                     {/* Contenu */}
-                    <Tabs
-                        variant="underline"
-                        defaultActiveKey="players"
-                        id="justify-tab-example"
-                        className="mb-3 edition-tabs"
-                        justify
-                    >
+                    <Tabs variant="underline" defaultActiveKey="players" id="justify-tab-example" className="mb-3 edition-tabs" justify>
                         {/* Participants */}
                         <Tab eventKey="players" title={t('edition.players')}>
                             <EditionPlayers

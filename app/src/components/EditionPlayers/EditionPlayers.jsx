@@ -14,16 +14,7 @@ import './EditionPlayers.css';
 /**
  * Liste des participants
  */
-const EditionPlayers = ({
-    players,
-    formData,
-    setFormData,
-    resetFormPlayer,
-    setModalOptions,
-    setMessage,
-    onSubmit,
-    isSubmitting
-}) => {
+const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setModalOptions, setMessage, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -61,7 +52,7 @@ const EditionPlayers = ({
     /**
      * Annule la création d'un participant
      */
-    const handleDelete = () => {
+    const handleCancel = () => {
         // Masque la saisie
         setShowEntry(false);
 
@@ -135,7 +126,7 @@ const EditionPlayers = ({
                                     required
                                 />
                                 <Button
-                                    onClick={handleDelete}
+                                    onClick={handleCancel}
                                     className="edition-players-button"
                                     style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                                 >
@@ -155,41 +146,43 @@ const EditionPlayers = ({
             )}
 
             {/* Liste */}
-            {players && players.length > 0
-                ? players.map((player) => (
-                      <div key={player.id} className="d-flex align-items-center gap-2 mt-2">
-                          {/* Participant */}
-                          <div className="d-flex align-items-center flex-grow-1 edition-players-name">
-                              <Badge bg="secondary" className="me-1">
-                                  {player.points}
-                              </Badge>
-                              {player.name}
-                          </div>
+            {players && players.length > 0 ? (
+                players.map((player) => (
+                    <div key={player.id} className="d-flex align-items-center gap-2 mt-2">
+                        {/* Participant */}
+                        <div className="d-flex align-items-center flex-grow-1 edition-players-name">
+                            <Badge bg="secondary" className="me-1">
+                                {player.points}
+                            </Badge>
+                            {player.name}
+                        </div>
 
-                          {/* Supression */}
-                          {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                              <Button
-                                  onClick={isSubmitting ? null : () => showPlayerModal(player, 'delete')}
-                                  className="edition-players-button"
-                                  style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                              >
-                                  <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                              </Button>
-                          )}
+                        {/* Supression */}
+                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                            <Button
+                                onClick={isSubmitting ? null : () => showPlayerModal(player, 'delete')}
+                                className="edition-players-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                            </Button>
+                        )}
 
-                          {/* Modification */}
-                          {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                              <Button
-                                  onClick={isSubmitting ? null : () => showPlayerModal(player, 'update')}
-                                  className="edition-players-button"
-                                  style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                              >
-                                  <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                              </Button>
-                          )}
-                      </div>
-                  ))
-                : t('edition.noPlayers')}
+                        {/* Modification */}
+                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                            <Button
+                                onClick={isSubmitting ? null : () => showPlayerModal(player, 'update')}
+                                className="edition-players-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
+                            </Button>
+                        )}
+                    </div>
+                ))
+            ) : (
+                <div className="text-white">{t('edition.noPlayers')}</div>
+            )}
         </>
     );
 };

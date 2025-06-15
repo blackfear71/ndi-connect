@@ -13,13 +13,17 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     const yearInputRef = useRef(null);
 
     /**
-     * Met le focus sur le champ "année" à l'ouverture de la modale quand on est pas connecté
+     * Met le focus sur le champ "année" à l'ouverture de la modale
      */
     useEffect(() => {
-        if (modalOptions.isOpen && yearInputRef.current) {
-            yearInputRef.current.focus();
+        if (modalOptions?.isOpen) {
+            // Réinitialisation du message
+            setMessage(null);
+
+            // Focus
+            yearInputRef.current?.focus();
         }
-    }, [modalOptions.isOpen]);
+    }, [modalOptions?.isOpen]);
 
     /**
      * Met à jour le formulaire à la saisie (création)

@@ -3,6 +3,7 @@
         "creationFailed": "Création échouée",
         "deletionFailed": "Suppression échouée",
         "editionNotFound": "Edition non trouvée",
+        "editionsNotFound": "Editions non trouvées",
         "invalidAuth": "Authentification invalide",
         "invalidLogin": "L'identifiant est invalide",
         "invalidName": "Le nom est invalide",

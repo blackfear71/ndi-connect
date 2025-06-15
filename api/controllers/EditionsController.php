@@ -26,10 +26,20 @@ class EditionsController
     public function getAllEditions()
     {
         try {
+            // Lecture de tous les enregistrements
             $editions = $this->service->getAllEditions();
 
-            // Réponse en cas de succès
-            ResponseHelper::success($editions);
+            if ($editions !== null) {
+                // Succès
+                ResponseHelper::success($editions);
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_EDITIONS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des éditions'
+                );
+            }
         } catch (Exception $e) {
             // Gestion des erreurs
             ResponseHelper::error(
@@ -75,10 +85,20 @@ class EditionsController
     public function getSearchEditions($search)
     {
         try {
+            // Lecture de tous les enregistrements recherchés
             $editions = $this->service->getSearchEditions($search);
 
-            // Réponse en cas de succès
-            ResponseHelper::success($editions);
+            if ($editions !== null) {
+                // Succès
+                ResponseHelper::success($editions);
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_EDITIONS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des éditions pour la recherche : ' . $search
+                );
+            }
         } catch (Exception $e) {
             // Gestion des erreurs
             ResponseHelper::error(

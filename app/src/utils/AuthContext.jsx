@@ -160,7 +160,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authError, login, logout }}>
+        <AuthContext.Provider value={{ auth, authError, setAuthError, login, logout }}>
             {authLoading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" variant="light" />

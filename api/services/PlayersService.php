@@ -82,6 +82,6 @@ class PlayersService
         $name = trim($data['name'] ?? '');
         $points = $data['points'] ?? null;
 
-        return $name && $points && is_numeric($points) && ($userLevel == UserRole::SUPERADMIN->value || $points >= 0);
+        return $name && is_numeric($points) && ($userLevel == UserRole::SUPERADMIN->value || $points >= 0);
     }
 }

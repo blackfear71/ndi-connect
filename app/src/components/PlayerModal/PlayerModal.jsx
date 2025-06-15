@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,16 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
 
     // Traductions
     const { t } = useTranslation();
+
+    /**
+     * Réinitialise le message à l'ouverture de la modale
+     */
+    useEffect(() => {
+        if (modalOptions?.isOpen) {
+            // Réinitialisation du message
+            setMessage(null);
+        }
+    }, [modalOptions?.isOpen]);
 
     /**
      * Met à jour le formulaire à la saisie (création)

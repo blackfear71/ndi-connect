@@ -42,7 +42,7 @@ class PlayersController
             // Insertion d'un enregistrement
             $players = $this->service->createPlayer($idEdition, $user, $data);
 
-            if ($players) {
+            if ($players !== null) {
                 // Succès
                 ResponseHelper::success($players, 'MSG_CREATION_SUCCESS');
             } else {
@@ -85,7 +85,7 @@ class PlayersController
             // Modification d'un enregistrement
             $players = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
 
-            if ($players) {
+            if ($players !== null) {
                 // Succès
                 ResponseHelper::success($players, 'MSG_UPDATE_SUCCESS');
             } else {
@@ -128,7 +128,7 @@ class PlayersController
             // Suppression logique d'un enregistrement
             $players = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
 
-            if ($players) {
+            if ($players !== null) {
                 // Succès
                 ResponseHelper::success($players, 'MSG_DELETION_SUCCESS');
             } else {

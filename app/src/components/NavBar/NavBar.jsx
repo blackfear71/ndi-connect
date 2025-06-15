@@ -33,11 +33,21 @@ const NavBar = () => {
      * Ouverture/fermeture de la modale de connexion
      */
     const openCloseConnectionModal = () => {
+        // Ouverture ou fermeture
+        setModalOptions({ isOpen: !modalOptions.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptions.isOpen && resetFormConnection();
+    };
+
+    /**
+     * Réinitialisation formulaire
+     */
+    const resetFormConnection = () => {
         setFormConnection({
             login: '',
             password: ''
         });
-        setModalOptions({ isOpen: !modalOptions.isOpen });
     };
 
     /**
@@ -81,8 +91,7 @@ const NavBar = () => {
                 <ConnectionModal
                     formData={formConnection}
                     setFormData={setFormConnection}
-                    isOpen={modalOptions.isOpen}
-                    isLoggedIn={auth.isLoggedIn}
+                    modalOptions={modalOptions}
                     message={message || authError}
                     setMessage={setMessage}
                     onClose={openCloseConnectionModal}

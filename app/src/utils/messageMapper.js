@@ -8,6 +8,7 @@ export const getMessageTranslationKey = (code) => {
         ERR_CREATION_FAILED: 'errors.creationFailed',
         ERR_DELETION_FAILED: 'errors.deletionFailed',
         ERR_EDITION_NOT_FOUND: 'errors.editionNotFound',
+        ERR_EDITIONS_NOT_FOUND: 'errors.editionsNotFound',
         ERR_INVALID_AUTH: 'errors.invalidAuth',
         ERR_LOGIN_FAILED: 'errors.loginFailed',
         ERR_LOGOUT_FAILED: 'errors.logoutFailed',

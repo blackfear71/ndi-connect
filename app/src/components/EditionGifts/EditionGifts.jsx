@@ -12,7 +12,7 @@ const EditionGifts = ({ gifts }) => {
     // TODO : ajouter une action pour rayer un cadeau si plus disponible
 
     return (
-        <div style={{ color: 'white' }}>
+        <div className="text-white">
             {gifts && gifts.length > 0 ? gifts.map((gift) => <div key={gift.id}>{gift.name}</div>) : t('edition.noGifts')}
         </div>
     );
