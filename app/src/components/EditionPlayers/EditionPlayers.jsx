@@ -3,6 +3,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { Badge, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaAngleRight, FaCheck, FaTrashCan } from 'react-icons/fa6';
+import { FaTimes } from 'react-icons/fa';
 
 import UserRole from '../../enums/UserRole';
 
@@ -138,7 +139,7 @@ const EditionPlayers = ({
                                     className="edition-players-button"
                                     style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                                 >
-                                    <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                                    <FaTimes color={isSubmitting ? 'gray' : 'white'} />
                                 </Button>
                                 <Button
                                     type="submit"
