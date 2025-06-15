@@ -148,7 +148,7 @@ const Edition = () => {
         setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition();
+        modalOptionsEdition.isOpen && resetFormEdition(edition);
     };
 
     /**
