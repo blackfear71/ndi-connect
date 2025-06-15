@@ -70,6 +70,8 @@ class EditionsService {
 
     /**
      * Suppression édition
+     * @param {*} id Identifiant édition
+     * @returns
      */
     deleteEdition = (id) => {
         const url = `${API_URL}/editions/delete/${id}`;

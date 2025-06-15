@@ -169,7 +169,7 @@ const Home = () => {
     };
 
     return (
-        <div>
+        <>
             {isLoading ? (
                 <div className="layout-spinner-centered">
                     <Spinner animation="border" role="status" variant="light" />
@@ -239,7 +239,7 @@ const Home = () => {
                     )}
                 </>
             )}
-        </div>
+        </>
     );
 };
 

@@ -6,16 +6,18 @@ import { FaComputer, FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icon
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
+import PlayersService from '../../api/playersService';
 
 import EditionAbout from '../../components/EditionAbout/EditionAbout';
 import EditionGifts from '../../components/EditionGifts/EditionGifts';
 import EditionModal from '../../components/EditionModal/EditionModal';
 import EditionPlayers from '../../components/EditionPlayers/EditionPlayers';
 import Message from '../../components/Message/Message';
+import PlayerModal from '../../components/PlayerModal/PlayerModal';
 
 import UserRole from '../../enums/UserRole';
 
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
@@ -39,13 +41,21 @@ const Edition = () => {
 
     // Local states
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
+    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
-    const [messageModal, setMessageModal] = useState(null);
-    const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
+    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         year: '',
         place: ''
+    });
+    const [formPlayer, setFormPlayer] = useState({
+        id: null,
+        name: '',
+        points: 0
     });
     const [showActions, setShowActions] = useState(true);
 
@@ -91,17 +101,17 @@ const Edition = () => {
     }, [id]);
 
     /**
-     * Modification
+     * Modification de l'édition
      */
-    const handleSubmit = () => {
-        setMessageModal(null);
+    const handleSubmitEdition = () => {
+        setMessageModalEdition(null);
         setMessagePage(null);
-        setIsSubmitting(true);
+        setIsSubmittingEdition(true);
 
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         const subscriptionEdition =
-            modalOptions.action === 'delete'
+            modalOptionsEdition.action === 'delete'
                 ? editionsService.deleteEdition(edition.id)
                 : editionsService.updateEdition(edition.id, formEdition);
 
@@ -109,22 +119,22 @@ const Edition = () => {
             .pipe(
                 map(([dataEdition]) => {
                     // Redirection ou fermeture modale
-                    if (modalOptions.action === 'delete') {
+                    if (modalOptionsEdition.action === 'delete') {
                         navigate('/');
                     } else {
                         openCloseEditionModal('');
-                        resetFormEdition(dataEdition.response.data);
-                        setEdition(dataEdition.response.data);
+                        resetFormEdition(dataEdition.response.data.edition);
+                        setEdition(dataEdition.response.data.edition);
                         setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
                     }
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
+                    setMessageModalEdition({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmitting(false);
+                    setIsSubmittingEdition(false);
                 })
             )
             .subscribe();
@@ -134,16 +144,107 @@ const Edition = () => {
      * Ouverture/fermeture de la modale de modification d'édition
      */
     const openCloseEditionModal = (openAction) => {
-        setModalOptions({ action: openAction, isOpen: !modalOptions.isOpen });
+        setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
     };
 
     /**
-     * Réinitialisation formulaire (modification)
+     * Réinitialisation formulaire (modification édition)
      */
     const resetFormEdition = (data) => {
         setFormEdition({
             year: data.year,
             place: data.place
+        });
+    };
+
+    /**
+     * Création de participant
+     */
+    const handleCreatePlayer = () => {
+        setIsSubmittingPlayer(true);
+        setMessagePage(null);
+
+        const body = {
+            id_edition: edition.id,
+            name: formPlayer.name
+        };
+
+        const token = localStorage.getItem('token');
+        const playersService = new PlayersService(token);
+
+        playersService
+            .insertPlayer(edition.id, body)
+            .pipe(
+                map((dataPlayer) => {
+                    setPlayers(dataPlayer.response.data);
+                    setMessagePage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmittingPlayer(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Ouverture/fermeture de la modale de modification de participant
+     */
+    const openClosePlayerModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsPlayer({ action: openAction, isOpen: !modalOptionsPlayer.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsPlayer.isOpen && resetFormPlayer();
+    };
+
+    /**
+     * Modification d'un participant
+     */
+    const handleSubmitPlayer = () => {
+        setMessageModalPlayer(null);
+        setMessagePage(null);
+        setIsSubmittingPlayer(true);
+
+        const playersService = new PlayersService(localStorage.getItem('token'));
+
+        const subscriptionPlayers =
+            modalOptionsPlayer.action === 'delete'
+                ? playersService.deletePlayer(edition.id, formPlayer.id)
+                : playersService.updatePlayer(edition.id, formPlayer.id, { name: formPlayer.name, points: formPlayer.points });
+
+        combineLatest([subscriptionPlayers])
+            .pipe(
+                map(([dataPlayers]) => {
+                    openClosePlayerModal('');
+                    resetFormPlayer();
+                    setPlayers(dataPlayers.response.data);
+                    setMessagePage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmittingPlayer(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Réinitialisation formulaire (modification participant)
+     */
+    const resetFormPlayer = () => {
+        setFormPlayer({
+            id: null,
+            name: '',
+            points: 0
         });
     };
 
@@ -224,7 +325,16 @@ const Edition = () => {
                     >
                         {/* Participants */}
                         <Tab eventKey="players" title={t('edition.players')}>
-                            <EditionPlayers players={players} />
+                            <EditionPlayers
+                                players={players}
+                                formData={formPlayer}
+                                setFormData={setFormPlayer}
+                                resetFormPlayer={resetFormPlayer}
+                                setModalOptions={setModalOptionsPlayer}
+                                setMessage={setMessagePage}
+                                onSubmit={handleCreatePlayer}
+                                isSubmitting={isSubmittingEdition || isSubmittingPlayer}
+                            />
                         </Tab>
 
                         {/* Cadeaux */}
@@ -239,16 +349,30 @@ const Edition = () => {
                     </Tabs>
 
                     {/* Modale de modification/suppression d'édition */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
                         <EditionModal
                             formData={formEdition}
                             setFormData={setFormEdition}
-                            modalOptions={modalOptions}
-                            message={messageModal}
-                            setMessage={setMessageModal}
+                            modalOptions={modalOptionsEdition}
+                            message={messageModalEdition}
+                            setMessage={setMessageModalEdition}
                             onClose={openCloseEditionModal}
-                            onSubmit={handleSubmit}
-                            isSubmitting={isSubmitting}
+                            onSubmit={handleSubmitEdition}
+                            isSubmitting={isSubmittingEdition}
+                        />
+                    )}
+
+                    {/* Modale de modification/suppression de participant */}
+                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
+                        <PlayerModal
+                            formData={formPlayer}
+                            setFormData={setFormPlayer}
+                            modalOptions={modalOptionsPlayer}
+                            message={messageModalPlayer}
+                            setMessage={setMessageModalPlayer}
+                            onClose={openClosePlayerModal}
+                            onSubmit={handleSubmitPlayer}
+                            isSubmitting={isSubmittingPlayer}
                         />
                     )}
                 </>

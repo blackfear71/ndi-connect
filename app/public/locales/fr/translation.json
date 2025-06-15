@@ -5,8 +5,10 @@
         "editionNotFound": "Edition non trouvée",
         "invalidAuth": "Authentification invalide",
         "invalidLogin": "L'identifiant est invalide",
+        "invalidName": "Le nom est invalide",
         "invalidPassword": "Le mot de passe est invalide",
         "invalidPlace": "Le lieu est invalide",
+        "invalidPoints": "Le nombre de points est invalide",
         "invalidYear": "L'année est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
@@ -30,20 +32,30 @@
         "home": "Accueil",
         "return": "Retour",
         "update": "Modifier",
-        "unknownLabel": "Libellé inconnu"
+        "unknownLabel": "Libellé inconnu",
+        "validate": "Valider"
     },
     "edition": {
         "about": "A propos",
+        "addGift": "Ajouter un cadeau",
+        "addPlayer": "Ajouter un participant",
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
+        "deletePlayer": "Supprimer le participant",
+        "deletePlayerMessage": "Voulez-vous vraiment supprimer le participant \"{{name}}\" ?",
         "editionResult": "Edition {{year}}",
         "editionTitle": "Edition {{year}} - {{place}}",
+        "editPlayer": "Modifier le participant",
         "gifts": "Cadeaux",
+        "givePoints": "Attribuer des points",
+        "name": "Nom",
+        "noGifts": "Aucun cadeau",
+        "noPlayers": "Aucun participant",
         "players": "Participants",
         "place": "Lieu",
+        "points": "Points",
         "updateEdition": "Modifier l'édition",
         "year": "Année"
-
     },
     "home": {
         "addEdition": "Ajouter une édition",

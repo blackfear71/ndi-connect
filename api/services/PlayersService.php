@@ -27,5 +27,62 @@ class PlayersService
     public function deletePlayers($id, $login)
     {
         return $this->repository->deletePlayers($id, $login);
-    }    
+    }
+
+    /**
+     * Création d'un participant
+     */
+    public function createPlayer($idEdition, $login, $data)
+    {
+        // Contrôle des données
+        if (!$this->isValidPlayerData($data)) {
+            return null;
+        }
+
+        // Insertion et récupération des participants de l'édition
+        if ($this->repository->create($login, $data)) {
+            return $this->getEditionPlayers($idEdition);
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updatePlayer($idEdition, $idPlayer, $login, $data)
+    {
+        // Contrôle des données
+        if (!$this->isValidPlayerData($data)) {
+            return null;
+        }
+
+        // TODO : attention avec la mise à jour des points, actuellement ça écrase la valeur alors qu'il faut incrémenter la valeur
+
+        // Modification et récupération des participants de l'édition
+        if ($this->repository->update($idPlayer, $login, $data)) {
+            return $this->getEditionPlayers($idEdition);
+        }
+    }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deletePlayer($idEdition, $idPlayer, $login)
+    {
+        // Suppression logique du participant et récupération des participants de l'édition
+        if ($this->repository->logicalDelete($idPlayer, $login)) {
+            return $this->getEditionPlayers($idEdition);
+        }
+    }
+
+    /**
+     * Contrôle des données saisies (création / modification)
+     */
+    private function isValidPlayerData($data)
+    {
+        $name = trim($data['name'] ?? '');
+
+        // TODO : si admin contrôler points >= 0, si superadmin contrôler points non vides
+
+        return $name;
+    }
 }
