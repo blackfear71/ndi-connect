@@ -1,6 +1,6 @@
 {
   "name": "ndi-connect",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "homepage": "/",
   "private": true,
   "dependencies": {

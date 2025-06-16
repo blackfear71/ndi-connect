@@ -34,7 +34,7 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
             setFormData({
                 id: gift.id,
                 name: gift.name,
-                points: gift.value
+                value: gift.value
             });
         }
 
