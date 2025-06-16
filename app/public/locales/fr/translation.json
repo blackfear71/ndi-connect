@@ -10,6 +10,7 @@
         "invalidPassword": "Le mot de passe est invalide",
         "invalidPlace": "Le lieu est invalide",
         "invalidPoints": "Le nombre de points est invalide",
+        "invalidValue": "La valeur est invalide",
         "invalidYear": "L'année est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
@@ -42,6 +43,8 @@
         "addPlayer": "Ajouter un participant",
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
+        "deleteGift": "Supprimer le cadeau",
+        "deleteGiftMessage": "Voulez-vous vraiment supprimer le cadeau \"{{name}}\" ?",
         "deletePlayer": "Supprimer le participant",
         "deletePlayerMessage": "Voulez-vous vraiment supprimer le participant \"{{name}}\" ?",
         "editionResult": "Edition {{year}}",
@@ -55,7 +58,9 @@
         "players": "Participants",
         "place": "Lieu",
         "points": "Points",
+        "setGiftValue": "Définir le cadeau",
         "updateEdition": "Modifier l'édition",
+        "value": "Valeur",
         "year": "Année"
     },
     "home": {

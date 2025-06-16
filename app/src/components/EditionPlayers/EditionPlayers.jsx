@@ -61,9 +61,11 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
     };
 
     /**
-     * Valide la création d'un participant
+     * Gère le comportement du formulaire à la soumission
+     * @param {*} e Evènement
+     * @param {*} action Action à réaliser
      */
-    const handleSubmit = (e) => {
+    const handleSubmit = (e, action) => {
         // Empêche le rechargement de la page
         e.preventDefault();
 
@@ -77,21 +79,24 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
         setShowEntry(false);
 
         // Soumets le formulaire
-        onSubmit();
+        onSubmit(action);
     };
 
     /**
      * Affiche la modale de modification/suppression d'un participant
      * @param {*} player Données participant
+     * @param {*} action Action à réaliser
      */
     const showPlayerModal = (player, action) => {
         setShowEntry(false);
 
-        setFormData({
-            id: player.id,
-            name: player.name,
-            points: player.points
-        });
+        if (player) {
+            setFormData({
+                id: player.id,
+                name: player.name,
+                points: player.points
+            });
+        }
 
         setModalOptions({
             action: action,
@@ -113,7 +118,7 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
                     {/* Saisie */}
                     {showEntry && (
                         <fieldset disabled={isSubmitting}>
-                            <Form onSubmit={handleSubmit} className="d-flex align-items-center gap-2">
+                            <Form onSubmit={(event) => handleSubmit(event, 'create')} className="d-flex align-items-center gap-2">
                                 <Form.Control
                                     ref={nameInputRef}
                                     type="text"

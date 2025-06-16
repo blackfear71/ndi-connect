@@ -1,11 +1,11 @@
 import { ajax } from 'rxjs/ajax';
 
-const API_URL = process.env.REACT_APP_API_URL + '/players';
+const API_URL = process.env.REACT_APP_API_URL + '/gifts';
 
 /**
- * Service appel API participants
+ * Service appel API cadeaux
  */
-class PlayersService {
+class GiftsService {
     /**
      * Constructeur du service
      * @param {*} token Token de connexion
@@ -19,38 +19,38 @@ class PlayersService {
     }
 
     /**
-     * Création d'un nouveau participant
+     * Création d'un nouveau cadeau
      * @param {*} idEdition Identifiant édition
-     * @param {*} body Données participant
+     * @param {*} body Données cadeau
      * @returns
      */
-    createPlayer = (idEdition, body) => {
+    createGift = (idEdition, body) => {
         const url = `${this.apiUrl}/create/${idEdition}`;
         return ajax.post(url, body, this.headers);
     };
 
     /**
-     * Mise à jour participant
+     * Mise à jour cadeau
      * @param {*} idEdition Identifiant édition
-     * @param {*} idPlayer Identifiant participant
-     * @param {*} body Données participant
+     * @param {*} idGift Identifiant cadeau
+     * @param {*} body Données cadeau
      * @returns
      */
-    updatePlayer = (idEdition, idPlayer, body) => {
-        const url = `${this.apiUrl}/update/${idEdition}/${idPlayer}`;
+    updateGift = (idEdition, idGift, body) => {
+        const url = `${this.apiUrl}/update/${idEdition}/${idGift}`;
         return ajax.patch(url, body, this.headers);
     };
 
     /**
      * Suppression d'un participant
      * @param {*} idEdition Identifiant édition
-     * @param {*} idPlayer Identifiant participant
+     * @param {*} idGift Identifiant participant
      * @returns
      */
-    deletePlayer = (idEdition, idPlayer) => {
-        const url = `${this.apiUrl}/delete/${idEdition}/${idPlayer}`;
+    deleteGift = (idEdition, idGift) => {
+        const url = `${this.apiUrl}/delete/${idEdition}/${idGift}`;
         return ajax.delete(url, this.headers);
     };
 }
 
-export default PlayersService;
+export default GiftsService;

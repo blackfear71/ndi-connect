@@ -6,12 +6,14 @@ import { FaComputer, FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icon
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
+import GiftsService from '../../api/giftsService';
 import PlayersService from '../../api/playersService';
 
 import EditionAbout from '../../components/EditionAbout/EditionAbout';
 import EditionGifts from '../../components/EditionGifts/EditionGifts';
 import EditionModal from '../../components/EditionModal/EditionModal';
 import EditionPlayers from '../../components/EditionPlayers/EditionPlayers';
+import GiftModal from '../../components/GiftModal/GiftModal';
 import Message from '../../components/Message/Message';
 import PlayerModal from '../../components/PlayerModal/PlayerModal';
 
@@ -40,17 +42,26 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
+    // TODO : messageModal et modalOptions peuvent être mis en commun ?
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
+    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
     const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
     const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messageModalGift, setMessageModalGift] = useState(null);
     const [messageModalPlayer, setMessageModalPlayer] = useState(null);
     const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
+    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         year: '',
         place: ''
+    });
+    const [formGift, setFormGift] = useState({
+        id: null,
+        name: '',
+        value: 0
     });
     const [formPlayer, setFormPlayer] = useState({
         id: null,
@@ -162,39 +173,55 @@ const Edition = () => {
     };
 
     /**
-     * Création de participant
+     * Création/modification/suppression d'un participant
      */
-    const handleCreatePlayer = () => {
-        setIsSubmittingPlayer(true);
+    const handleSubmitPlayer = (action) => {
+        setMessageModalPlayer(null);
         setMessagePage(null);
+        setIsSubmittingPlayer(true);
 
-        const body = {
-            id_edition: edition.id,
-            name: formPlayer.name,
-            points: 0
-        };
+        const playersService = new PlayersService(localStorage.getItem('token'));
 
-        const token = localStorage.getItem('token');
-        const playersService = new PlayersService(token);
+        let subscriptionPlayers = null;
 
-        playersService
-            .insertPlayer(edition.id, body)
-            .pipe(
-                map((dataPlayer) => {
-                    resetFormPlayer();
-                    setPlayers(dataPlayer.response.data);
-                    setMessagePage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingPlayer(false);
-                })
-            )
-            .subscribe();
+        switch (action) {
+            case 'create':
+                subscriptionPlayers = playersService.createPlayer(edition.id, {
+                    id_edition: edition.id,
+                    name: formPlayer.name,
+                    points: formPlayer.points
+                });
+                break;
+            case 'delete':
+                subscriptionPlayers = playersService.deletePlayer(edition.id, formPlayer.id);
+                break;
+            case 'update':
+                subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
+                    name: formPlayer.name,
+                    points: formPlayer.points
+                });
+                break;
+        }
+
+        if (subscriptionPlayers) {
+            combineLatest([subscriptionPlayers])
+                .pipe(
+                    map(([dataPlayers]) => {
+                        action === 'create' ? resetFormPlayer() : openClosePlayerModal('');
+                        setPlayers(dataPlayers.response.data);
+                        setMessagePage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+                    }),
+                    take(1),
+                    catchError((err) => {
+                        setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
+                        return of();
+                    }),
+                    finalize(() => {
+                        setIsSubmittingPlayer(false);
+                    })
+                )
+                .subscribe();
+        }
     };
 
     /**
@@ -209,41 +236,6 @@ const Edition = () => {
     };
 
     /**
-     * Modification d'un participant
-     */
-    const handleSubmitPlayer = () => {
-        setMessageModalPlayer(null);
-        setMessagePage(null);
-        setIsSubmittingPlayer(true);
-
-        const playersService = new PlayersService(localStorage.getItem('token'));
-
-        const subscriptionPlayers =
-            modalOptionsPlayer.action === 'delete'
-                ? playersService.deletePlayer(edition.id, formPlayer.id)
-                : playersService.updatePlayer(edition.id, formPlayer.id, { name: formPlayer.name, points: formPlayer.points });
-
-        combineLatest([subscriptionPlayers])
-            .pipe(
-                map(([dataPlayers]) => {
-                    openClosePlayerModal('');
-                    resetFormPlayer();
-                    setPlayers(dataPlayers.response.data);
-                    setMessagePage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingPlayer(false);
-                })
-            )
-            .subscribe();
-    };
-
-    /**
      * Réinitialisation formulaire (modification participant)
      */
     const resetFormPlayer = () => {
@@ -251,6 +243,78 @@ const Edition = () => {
             id: null,
             name: '',
             points: 0
+        });
+    };
+
+    /**
+     * Création/modification/suppression d'un cadeau
+     */
+    const handleSubmitGift = (action) => {
+        setMessageModalGift(null);
+        setMessagePage(null);
+        setIsSubmittingGift(true);
+
+        const giftsService = new GiftsService(localStorage.getItem('token'));
+
+        let subscriptionGifts = null;
+
+        switch (action) {
+            case 'create':
+                subscriptionGifts = giftsService.createGift(edition.id, {
+                    id_edition: edition.id,
+                    name: formGift.name,
+                    value: formGift.value
+                });
+                break;
+            case 'delete':
+                subscriptionGifts = giftsService.deleteGift(edition.id, formGift.id);
+                break;
+            case 'update':
+                subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, { name: formGift.name, value: formGift.value });
+                break;
+        }
+
+        if (subscriptionGifts) {
+            combineLatest([subscriptionGifts])
+                .pipe(
+                    map(([dataGifts]) => {
+                        openCloseGiftModal('');
+                        resetFormGift();
+                        setGifts(dataGifts.response.data);
+                        setMessagePage({ code: dataGifts.response.message, type: dataGifts.response.status });
+                    }),
+                    take(1),
+                    catchError((err) => {
+                        setMessageModalGift({ code: err?.response?.message, type: err?.response?.status });
+                        return of();
+                    }),
+                    finalize(() => {
+                        setIsSubmittingGift(false);
+                    })
+                )
+                .subscribe();
+        }
+    };
+
+    /**
+     * Ouverture/fermeture de la modale de modification de cadeau
+     */
+    const openCloseGiftModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsGift({ action: openAction, isOpen: !modalOptionsGift.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsGift.isOpen && resetFormGift();
+    };
+
+    /**
+     * Réinitialisation formulaire (création/modification cadeau)
+     */
+    const resetFormGift = () => {
+        setFormGift({
+            id: null,
+            name: '',
+            value: 0
         });
     };
 
@@ -332,14 +396,19 @@ const Edition = () => {
                                 resetFormPlayer={resetFormPlayer}
                                 setModalOptions={setModalOptionsPlayer}
                                 setMessage={setMessagePage}
-                                onSubmit={handleCreatePlayer}
-                                isSubmitting={isSubmittingEdition || isSubmittingPlayer}
+                                onSubmit={handleSubmitPlayer}
+                                isSubmitting={isSubmittingEdition || isSubmittingGift || isSubmittingPlayer}
                             />
                         </Tab>
 
                         {/* Cadeaux */}
                         <Tab eventKey="gifts" title={t('edition.gifts')}>
-                            <EditionGifts gifts={gifts} />
+                            <EditionGifts
+                                gifts={gifts}
+                                setFormData={setFormGift}
+                                setModalOptions={setModalOptionsGift}
+                                isSubmitting={isSubmittingEdition || isSubmittingGift || isSubmittingPlayer}
+                            />
                         </Tab>
 
                         {/* A propos */}
@@ -359,6 +428,20 @@ const Edition = () => {
                             onClose={openCloseEditionModal}
                             onSubmit={handleSubmitEdition}
                             isSubmitting={isSubmittingEdition}
+                        />
+                    )}
+
+                    {/* Modale de création/modification/suppression de cadeau */}
+                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
+                        <GiftModal
+                            formData={formGift}
+                            setFormData={setFormGift}
+                            modalOptions={modalOptionsGift}
+                            message={messageModalGift}
+                            setMessage={setMessageModalGift}
+                            onClose={openCloseGiftModal}
+                            onSubmit={handleSubmitGift}
+                            isSubmitting={isSubmittingGift}
                         />
                     )}
 

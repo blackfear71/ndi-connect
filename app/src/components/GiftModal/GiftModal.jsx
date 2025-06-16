@@ -1,17 +1,11 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
-import UserRole from '../../enums/UserRole';
-
-import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
 
-const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
-    // Contexte
-    const { auth } = useContext(AuthContext);
-
+const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -35,7 +29,6 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // TODO : à voir si toujours nécessaire avec les +/-
     /**
      * Met à jour le formulaire à la saisie d'un numérique
      * @param {*} e Evènement
@@ -44,7 +37,7 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
         // Autorise uniquement les chiffres (négatifs compris)
         const { name, value } = e.target;
 
-        if (/^-?\d*$/.test(value)) {
+        if (/^\d*$/.test(value)) {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
     };
@@ -60,11 +53,11 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
 
         // Contrôles si pas de suppression
         if (action !== 'delete') {
-            // Contrôle que les points sont > 0
-            const points = parseInt(formData.points, 10);
+            // Contrôle que la valeur est > 0
+            const value = parseInt(formData.value, 10);
 
-            if (!formData.points || isNaN(points) || (auth.level < UserRole.SUPERADMIN && points < 0)) {
-                setMessage({ code: 'errors.invalidPoints', type: 'error' });
+            if (!formData.value || isNaN(value) || value <= 0) {
+                setMessage({ code: 'errors.invalidValue', type: 'error' });
                 return;
             }
 
@@ -84,6 +77,7 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
      */
     const getButtonFromAction = (action) =>
         ({
+            create: 'common.validate',
             delete: 'common.delete',
             update: 'common.validate'
         })[action] || 'common.unknownLabel';
@@ -95,43 +89,21 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
                     {modalOptions.action === 'delete' ? (
                         <>
                             <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.deletePlayer')}</Modal.Title>
+                                <Modal.Title>{t('edition.deleteGift')}</Modal.Title>
                             </Modal.Header>
 
-                            <Modal.Body>{t('edition.deletePlayerMessage', { name: formData.name })}</Modal.Body>
+                            <Modal.Body>{t('edition.deleteGiftMessage', { name: formData.name })}</Modal.Body>
                         </>
                     ) : (
                         <>
                             <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.givePoints')}</Modal.Title>
+                                <Modal.Title>{t('edition.setGiftValue')}</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body>
                                 {/* Message */}
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
-                                {/* Formulaire */}
-                                {/* TODO : adapter avec des +/-, réafficher le nombre de points courant, initialiser la saisie à 0, le min doit être 0 sauf pour un super admin qui peut retirer des points */}
-                                <Form.Group controlId="points">
-                                    <Form.Label>{t('edition.points')}</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="points"
-                                        placeholder={t('edition.points')}
-                                        value={formData.points}
-                                        onChange={handleChangeNumeric}
-                                        inputMode="numeric"
-                                        pattern="-?[0-9]*"
-                                        required
-                                    />
-                                </Form.Group>
-                            </Modal.Body>
-
-                            <Modal.Header>
-                                <Modal.Title>{t('edition.editPlayer')}</Modal.Title>
-                            </Modal.Header>
-
-                            <Modal.Body>
                                 {/* Formulaire */}
                                 <Form.Group controlId="name">
                                     <Form.Label>{t('edition.name')}</Form.Label>
@@ -142,6 +114,21 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
                                         value={formData.name}
                                         onChange={handleChange}
                                         maxLength={100}
+                                        required
+                                    />
+                                </Form.Group>
+
+                                {/* TODO : réafficher la valeur courante, le min doit être > 0 pour tous */}
+                                <Form.Group controlId="value">
+                                    <Form.Label>{t('edition.value')}</Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        name="value"
+                                        placeholder={t('edition.value')}
+                                        value={formData.value}
+                                        onChange={handleChangeNumeric}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         required
                                     />
                                 </Form.Group>
@@ -164,4 +151,4 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
     );
 };
 
-export default PlayerModal;
+export default GiftModal;
