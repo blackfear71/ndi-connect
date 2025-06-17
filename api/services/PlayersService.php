@@ -43,10 +43,12 @@ class PlayersService
         if ($this->repository->create($user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
+
+        return null;
     }
 
     /**
-     * Modification d'un enregistrement
+     * Modification d'un participant
      */
     public function updatePlayer($idEdition, $idPlayer, $user, $data)
     {
@@ -55,16 +57,18 @@ class PlayersService
             return null;
         }
 
-        // TODO : attention avec la mise à jour des points, actuellement ça écrase la valeur alors qu'il faut incrémenter la valeur
+        // TODO : attention avec la mise à jour des points, actuellement ça écrase la valeur alors qu'il faut incrémenter la valeur existante en base
 
         // Modification et récupération des participants de l'édition
         if ($this->repository->update($idPlayer, $user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
+
+        return null;
     }
 
     /**
-     * Suppression logique d'un enregistrement
+     * Suppression logique d'un participant
      */
     public function deletePlayer($idEdition, $idPlayer, $login)
     {
@@ -72,6 +76,8 @@ class PlayersService
         if ($this->repository->logicalDelete($idPlayer, $login)) {
             return $this->getEditionPlayers($idEdition);
         }
+
+        return null;
     }
 
     /**

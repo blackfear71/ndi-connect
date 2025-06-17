@@ -19,6 +19,14 @@
     background-color: white;
     border-radius: 5px;
     height: 36px;
+    min-width: 0;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+.edition-gifts-ellipsis-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
 }

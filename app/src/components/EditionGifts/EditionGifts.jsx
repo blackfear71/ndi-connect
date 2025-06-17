@@ -3,6 +3,8 @@ import { useContext } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
+import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
+import { GrMoney } from 'react-icons/gr';
 
 import UserRole from '../../enums/UserRole';
 
@@ -10,9 +12,7 @@ import { AuthContext } from '../../utils/AuthContext';
 
 import './EditionGifts.css';
 
-// TODO : ajouter des actions pour ajouter/modifier/supprimer un cadeau
-// TODO : ajouter des actions pour donner des cadeaux à un participant
-// TODO : ajouter une action pour rayer un cadeau si plus disponible
+// TODO : ajouter des actions pour donner des cadeaux à un participant (que si quantité > 0 et si le participant est dans l'édition)
 
 /**
  * Liste des cadeaux
@@ -34,7 +34,8 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
             setFormData({
                 id: gift.id,
                 name: gift.name,
-                value: gift.value
+                value: gift.value,
+                quantity: gift.quantity
             });
         }
 
@@ -59,12 +60,24 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
             {gifts && gifts.length > 0 ? (
                 gifts.map((gift) => (
                     <div key={gift.id} className="d-flex align-items-center gap-2 mt-2">
-                        {/* Participant */}
+                        {/* Cadeau */}
                         <div className="d-flex align-items-center flex-grow-1 edition-gifts-name">
-                            <Badge bg="secondary" className="me-1">
-                                {gift.value}
+                            <Badge bg="success" className="me-1 d-flex align-items-center">
+                                <GrMoney size={18} className="me-1" /> {gift.value}
                             </Badge>
-                            {gift.name}
+                            <Badge bg="primary" className="me-1 d-flex align-items-center">
+                                {gift.quantity === 0 ? (
+                                    <GiCardboardBoxClosed size={18} className="me-1" />
+                                ) : (
+                                    <GiCardboardBox size={18} className="me-1" />
+                                )}{' '}
+                                {gift.quantity}
+                            </Badge>
+                            <span
+                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${gift.quantity === 0 ? 'text-decoration-line-through' : ''}`}
+                            >
+                                {gift.name}
+                            </span>
                         </div>
 
                         {/* Supression */}

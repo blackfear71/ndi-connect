@@ -4,6 +4,7 @@ import { Badge, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
+import { GiTwoCoins } from 'react-icons/gi';
 
 import UserRole from '../../enums/UserRole';
 
@@ -156,10 +157,11 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
                     <div key={player.id} className="d-flex align-items-center gap-2 mt-2">
                         {/* Participant */}
                         <div className="d-flex align-items-center flex-grow-1 edition-players-name">
-                            <Badge bg="secondary" className="me-1">
+                            <Badge bg="success" className="me-1 d-flex align-items-center">
+                                <GiTwoCoins size={18} className="me-1" />
                                 {player.points}
                             </Badge>
-                            {player.name}
+                            <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{player.name}</span>
                         </div>
 
                         {/* Supression */}

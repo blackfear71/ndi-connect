@@ -61,7 +61,8 @@ const Edition = () => {
     const [formGift, setFormGift] = useState({
         id: null,
         name: '',
-        value: 0
+        value: '',
+        quantity: ''
     });
     const [formPlayer, setFormPlayer] = useState({
         id: null,
@@ -263,14 +264,19 @@ const Edition = () => {
                 subscriptionGifts = giftsService.createGift(edition.id, {
                     id_edition: edition.id,
                     name: formGift.name,
-                    value: formGift.value
+                    value: formGift.value,
+                    quantity: formGift.quantity
                 });
                 break;
             case 'delete':
                 subscriptionGifts = giftsService.deleteGift(edition.id, formGift.id);
                 break;
             case 'update':
-                subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, { name: formGift.name, value: formGift.value });
+                subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
+                    name: formGift.name,
+                    value: formGift.value,
+                    quantity: formGift.quantity
+                });
                 break;
         }
 
@@ -314,7 +320,8 @@ const Edition = () => {
         setFormGift({
             id: null,
             name: '',
-            value: 0
+            value: '',
+            quantity: ''
         });
     };
 

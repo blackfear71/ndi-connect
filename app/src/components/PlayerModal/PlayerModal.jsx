@@ -2,6 +2,8 @@ import { useContext, useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { GiTwoCoins } from 'react-icons/gi';
+import { PiUserListFill } from 'react-icons/pi';
 
 import UserRole from '../../enums/UserRole';
 
@@ -112,8 +114,8 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
 
                                 {/* Formulaire */}
                                 {/* TODO : adapter avec des +/-, réafficher le nombre de points courant, initialiser la saisie à 0, le min doit être 0 sauf pour un super admin qui peut retirer des points */}
-                                <Form.Group controlId="points">
-                                    <Form.Label>{t('edition.points')}</Form.Label>
+                                <Form.Group controlId="points" className="d-flex align-items-center">
+                                    <GiTwoCoins size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
                                         name="points"
@@ -133,8 +135,8 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
 
                             <Modal.Body>
                                 {/* Formulaire */}
-                                <Form.Group controlId="name">
-                                    <Form.Label>{t('edition.name')}</Form.Label>
+                                <Form.Group controlId="name" className="d-flex align-items-center">
+                                    <PiUserListFill size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
                                         name="name"

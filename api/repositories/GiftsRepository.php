@@ -10,7 +10,7 @@ class GiftsRepository extends Model
      */
     public function getEditionGifts($id)
     {
-        $sql = "SELECT id, name, value FROM {$this->table} WHERE id_edition = :id AND is_active = 1 ORDER BY name ASC";
+        $sql = "SELECT id, name, value, quantity FROM {$this->table} WHERE id_edition = :id AND is_active = 1 ORDER BY name ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

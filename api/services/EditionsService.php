@@ -99,6 +99,8 @@ class EditionsService
         if ($this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
+
+        return null;
     }
 
     /**

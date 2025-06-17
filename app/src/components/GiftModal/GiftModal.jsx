@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { GiCardboardBox } from 'react-icons/gi';
+import { GrMoney } from 'react-icons/gr';
+import { IoGiftSharp } from 'react-icons/io5';
 
 import Message from '../Message/Message';
 
@@ -34,7 +37,7 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
      * @param {*} e Evènement
      */
     const handleChangeNumeric = (e) => {
-        // Autorise uniquement les chiffres (négatifs compris)
+        // Autorise uniquement les chiffres
         const { name, value } = e.target;
 
         if (/^\d*$/.test(value)) {
@@ -53,6 +56,12 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
 
         // Contrôles si pas de suppression
         if (action !== 'delete') {
+            // Contrôle le nom renseigné
+            if (!formData.name) {
+                setMessage({ code: 'errors.invalidName', type: 'error' });
+                return;
+            }
+
             // Contrôle que la valeur est > 0
             const value = parseInt(formData.value, 10);
 
@@ -61,9 +70,11 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                 return;
             }
 
-            // Contrôle le nom renseigné
-            if (!formData.name) {
-                setMessage({ code: 'errors.invalidName', type: 'error' });
+            // Contrôle que la quantité est > 0
+            const quantity = parseInt(formData.quantity, 10);
+
+            if (!formData.quantity || isNaN(quantity) || quantity < 0) {
+                setMessage({ code: 'errors.invalidQuantity', type: 'error' });
                 return;
             }
         }
@@ -105,8 +116,8 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
                                 {/* Formulaire */}
-                                <Form.Group controlId="name">
-                                    <Form.Label>{t('edition.name')}</Form.Label>
+                                <Form.Group controlId="name" className="mb-2 d-flex align-items-center">
+                                    <IoGiftSharp size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
                                         name="name"
@@ -118,14 +129,27 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                                     />
                                 </Form.Group>
 
-                                {/* TODO : réafficher la valeur courante, le min doit être > 0 pour tous */}
-                                <Form.Group controlId="value">
-                                    <Form.Label>{t('edition.value')}</Form.Label>
+                                <Form.Group controlId="value" className="mb-2 d-flex align-items-center">
+                                    <GrMoney size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
                                         name="value"
                                         placeholder={t('edition.value')}
                                         value={formData.value}
+                                        onChange={handleChangeNumeric}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        required
+                                    />
+                                </Form.Group>
+
+                                <Form.Group controlId="quantity" className="mb-2 d-flex align-items-center">
+                                    <GiCardboardBox size={30} className="me-3" />
+                                    <Form.Control
+                                        type="text"
+                                        name="quantity"
+                                        placeholder={t('edition.quantity')}
+                                        value={formData.quantity}
                                         onChange={handleChangeNumeric}
                                         inputMode="numeric"
                                         pattern="[0-9]*"
