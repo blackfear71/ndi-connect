@@ -55,8 +55,10 @@ const Edition = () => {
     const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
+        location: '',
         startDate: '',
-        location: ''
+        startTime: '',
+        endTime: ''
     });
     const [formGift, setFormGift] = useState({
         id: null,
@@ -72,7 +74,6 @@ const Edition = () => {
     const [showActions, setShowActions] = useState(true);
 
     // API states
-    const [about, setAbout] = useState();
     const [edition, setEdition] = useState();
     const [gifts, setGifts] = useState([]);
     const [players, setPlayers] = useState([]);
@@ -88,15 +89,19 @@ const Edition = () => {
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
-                    setAbout(dataEdition.response.data.about);
                     setEdition(dataEdition.response.data.edition);
                     setGifts(dataEdition.response.data.gifts);
                     setPlayers(dataEdition.response.data.players);
 
+                    const [startDate, startTime] = dataEdition.response.data.edition.startDate.split(' ');
+                    const [endDate, endTime] = dataEdition.response.data.edition.endDate.split(' ');
+
                     setFormEdition({
                         ...formEdition,
-                        startDate: dataEdition.response.data.edition.startDate,
-                        location: dataEdition.response.data.edition.location
+                        location: dataEdition.response.data.edition.location,
+                        startDate: startDate.slice(0, 10),
+                        startTime: startTime.slice(0, 5),
+                        endTime: endTime.slice(0, 5)
                     });
                 }),
                 take(1),
@@ -167,9 +172,14 @@ const Edition = () => {
      * Réinitialisation formulaire (modification édition)
      */
     const resetFormEdition = (data) => {
+        const [startDate, startTime] = data.startDate.split(' ');
+        const [endDate, endTime] = data.endDate.split(' ');
+
         setFormEdition({
-            startDate: data.startDate,
-            location: data.location
+            location: data.location,
+            startDate: startDate.slice(0, 10),
+            startTime: startTime.slice(0, 5),
+            endTime: endTime.slice(0, 5)
         });
     };
 
@@ -420,7 +430,7 @@ const Edition = () => {
 
                         {/* A propos */}
                         <Tab eventKey="about" title={t('edition.about')}>
-                            <EditionAbout about={about} />
+                            <EditionAbout edition={edition} />
                         </Tab>
                     </Tabs>
 

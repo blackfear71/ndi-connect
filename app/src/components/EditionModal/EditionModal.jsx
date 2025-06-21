@@ -30,8 +30,19 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type } = e.target;
+
+        let formattedValue = value;
+
+        // Si c'est un champ time, on ne garde que HH:mm
+        if (type === 'time' && value.length >= 5) {
+            formattedValue = value.slice(0, 5);
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: formattedValue
+        }));
     };
 
     /**
@@ -47,6 +58,18 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
             // Contrôle la date renseignée
             if (!formData.startDate) {
                 setMessage({ code: 'errors.invalidStartDate', type: 'error' });
+                return;
+            }
+
+            // Contrôle l'heure de début renseignée
+            if (!formData.startTime) {
+                setMessage({ code: 'errors.invalidStartTime', type: 'error' });
+                return;
+            }
+
+            // Contrôle l'heure de fin renseignée
+            if (!formData.endTime) {
+                setMessage({ code: 'errors.invalidEndTime', type: 'error' });
                 return;
             }
 
@@ -97,9 +120,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                         {modalOptions.action === 'delete' ? (
                             <>{t('edition.deleteEditionMessage')}</>
                         ) : (
-                            <div className="d-flex align-items-end">
-                                {/* TODO : prendre toute la largeur */}
-                                <Form.Group className="me-2" controlId="location">
+                            <>
+                                <Form.Group className="me-2 w-100" controlId="location">
                                     <Form.Label>{t('edition.location')}</Form.Label>
                                     <Form.Control
                                         ref={locationInputRef}
@@ -113,17 +135,41 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                     />
                                 </Form.Group>
 
-                                <Form.Group className="me-2" controlId="startDate">
-                                    <Form.Label>{t('edition.startDate')}</Form.Label>
-                                    <Form.Control
-                                        type="date"
-                                        name="startDate"
-                                        value={formData.startDate?.substring(0, 10) || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
-                            </div>
+                                <div className="d-flex align-items-end mt-3">
+                                    <Form.Group className="flex-fill me-2" controlId="startDate">
+                                        <Form.Label>{t('edition.startDate')}</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name="startDate"
+                                            value={formData.startDate || ''}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </Form.Group>
+
+                                    <Form.Group className="flex-fill me-2" controlId="startTime">
+                                        <Form.Label>{t('edition.startTime')}</Form.Label>
+                                        <Form.Control
+                                            type="time"
+                                            name="startTime"
+                                            value={formData.startTime || ''}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </Form.Group>
+
+                                    <Form.Group className="flex-fill" controlId="endTime">
+                                        <Form.Label>{t('edition.endTime')}</Form.Label>
+                                        <Form.Control
+                                            type="time"
+                                            name="endTime"
+                                            value={formData.endTime || ''}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </Form.Group>
+                                </div>
+                            </>
                         )}
                     </Modal.Body>
 

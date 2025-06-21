@@ -46,9 +46,6 @@ class EditionsService
             // Récupération des données édition
             $edition['edition'] = $data;
 
-            // Récupération des données à propos
-            $edition['about'] = $data;
-
             // Récupération des données cadeaux
             $edition['gifts'] = $this->giftsService->getEditionGifts($id);
 
@@ -82,9 +79,7 @@ class EditionsService
         }
 
         // Insertion
-        $data['start_date'] = $data['startDate'];
-        unset($data['startDate']);
-
+        $data = $this->processData($data);
         return $this->repository->create($login, $data);
     }
 
@@ -99,9 +94,8 @@ class EditionsService
         }
 
         // Modification
-        $data['start_date'] = $data['startDate'];
-        unset($data['startDate']);
-
+        $data = $this->processData($data);
+        
         if ($this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
@@ -129,12 +123,41 @@ class EditionsService
      */
     private function isValidEditionData($data)
     {
-        $startDate = $data['startDate'] ?? null;
         $location = trim($data['location'] ?? '');
+        $startDate = $data['startDate'] ?? null;
+        $startTime = $data['startTime'] ?? null;
+        $endTime = $data['endTime'] ?? null;
 
-        $format = 'Y-m-d';
-        $d = DateTime::createFromFormat($format, $startDate);
+        // Contrôle date
+        $formatD = 'Y-m-d';
+        $d = DateTime::createFromFormat($formatD, $startDate);
 
-        return $d && $d->format($format) === $startDate && $location;
+        // Contrôle heures
+        $formatH = 'H:i';
+        $h1 = DateTime::createFromFormat($formatH, $startTime);
+        $h2 = DateTime::createFromFormat($formatH, $endTime);
+
+        return $location
+            && $d && $d->format($formatD) === $startDate
+            && $h1 && $h1->format($formatH) === $startTime
+            && $h2 && $h2->format($formatH) === $endTime;
+    }
+
+    /**
+     * Formate les données avant traitement SQL
+     */
+    private function processData($data)
+    {
+        $startDate = new DateTime($data['startDate'] . ' ' . $data['startTime']);
+        $endDate = new DateTime($data['startDate'] . ' ' . $data['endTime']);
+        $endDate->modify('+1 day');
+
+        $sqlData = [
+            'location' => $data['location'],
+            'start_date' => $startDate->format('Y-m-d H:i:s'),
+            'end_date' => $endDate->format('Y-m-d H:i:s')
+        ];
+
+        return $sqlData;
     }
 }

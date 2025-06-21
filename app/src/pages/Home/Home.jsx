@@ -36,8 +36,10 @@ const Home = () => {
     const [messageModal, setMessageModal] = useState(null);
     const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
+        location: '',
         startDate: '',
-        location: ''
+        startTime: '',
+        endTime: ''
     });
 
     // API states
@@ -120,8 +122,10 @@ const Home = () => {
      */
     const resetFormEdition = () => {
         setFormEdition({
+            location: '',
             startDate: '',
-            location: ''
+            startTime: '',
+            endTime: ''
         });
     };
 
