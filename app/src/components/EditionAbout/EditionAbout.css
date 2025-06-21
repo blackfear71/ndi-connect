@@ -1,5 +1,10 @@
+.edition-about-progress {
+    color: white;
+}
+
 .edition-about-card {
     padding: 0 !important;
     border: none !important;
     overflow: hidden !important;
+    white-space: pre-line;
 }

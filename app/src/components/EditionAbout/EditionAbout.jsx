@@ -69,15 +69,11 @@ const EditionAbout = ({ edition }) => {
         return t('edition.editionDate', { date: `${day}/${month}/${year}`, time: `${hours}:${minutes}` });
     };
 
-    // TODO : compléter avec :
-    // - thème/sujet des étudiants
-    // - défi CGI
-
     return (
-        <div style={{ color: 'white' }}>
+        <>
             {/* Progression */}
             {progress.isActive && (
-                <div className="mb-3">
+                <div className="edition-about-progress mb-3">
                     <div>{t('edition.progress')}</div>
                     <div className="d-flex align-items-center mt-2">
                         <Badge bg="success" className="me-2">
@@ -97,43 +93,45 @@ const EditionAbout = ({ edition }) => {
             <Card className="edition-about-card">
                 <Card.Body className="p-0">
                     <Card.Title className="bg-warning p-3 mb-0">{t('edition.informations')}</Card.Title>
-                    <Card.Text>
-                        <Table className="mb-0">
-                            <tbody>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.location')}</td>
-                                    <td>{edition.location}</td>
-                                </tr>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.start')}</td>
-                                    <td>{formatDate(edition.startDate)}</td>
-                                </tr>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.end')}</td>
-                                    <td>{formatDate(edition.endDate)}</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-                    </Card.Text>
+                    <Table className="mb-0">
+                        <tbody>
+                            <tr>
+                                <td className="fw-bold">{t('edition.location')}</td>
+                                <td>{edition.location}</td>
+                            </tr>
+                            <tr>
+                                <td className="fw-bold">{t('edition.start')}</td>
+                                <td>{formatDate(edition.startDate)}</td>
+                            </tr>
+                            <tr>
+                                <td className="fw-bold">{t('edition.end')}</td>
+                                <td>{formatDate(edition.endDate)}</td>
+                            </tr>
+                        </tbody>
+                    </Table>
                 </Card.Body>
             </Card>
 
             {/* Thème */}
-            <Card className="edition-about-card mt-3">
-                <Card.Body className="p-0">
-                    <Card.Title className="bg-info p-3 mb-0">{t('edition.theme')}</Card.Title>
-                    <Card.Text className="p-2">TODO : thème</Card.Text>
-                </Card.Body>
-            </Card>
+            {edition.theme && (
+                <Card className="edition-about-card mt-3">
+                    <Card.Body className="p-0">
+                        <Card.Title className="bg-info p-3 mb-0">{t('edition.theme')}</Card.Title>
+                        <Card.Text className="p-2">{edition.theme}</Card.Text>
+                    </Card.Body>
+                </Card>
+            )}
 
             {/* Défi */}
-            <Card className="edition-about-card mt-3">
-                <Card.Body className="p-0">
-                    <Card.Title className="bg-danger p-3 mb-0">{t('edition.challenge')}</Card.Title>
-                    <Card.Text className="p-2">TODO : défi</Card.Text>
-                </Card.Body>
-            </Card>
-        </div>
+            {edition.challenge && (
+                <Card className="edition-about-card mt-3">
+                    <Card.Body className="p-0">
+                        <Card.Title className="bg-danger p-3 mb-0">{t('edition.challenge')}</Card.Title>
+                        <Card.Text className="p-2">{edition.challenge}</Card.Text>
+                    </Card.Body>
+                </Card>
+            )}
+        </>
     );
 };
 

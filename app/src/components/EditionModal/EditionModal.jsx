@@ -121,6 +121,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                             <>{t('edition.deleteEditionMessage')}</>
                         ) : (
                             <>
+                                {/* Lieu */}
                                 <Form.Group className="me-2 w-100" controlId="location">
                                     <Form.Label>{t('edition.location')}</Form.Label>
                                     <Form.Control
@@ -135,18 +136,20 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                     />
                                 </Form.Group>
 
-                                <div className="d-flex align-items-end mt-3">
-                                    <Form.Group className="flex-fill me-2" controlId="startDate">
-                                        <Form.Label>{t('edition.startDate')}</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            name="startDate"
-                                            value={formData.startDate || ''}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
+                                {/* Date */}
+                                <Form.Group className="mt-2" controlId="startDate">
+                                    <Form.Label>{t('edition.startDate')}</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        name="startDate"
+                                        value={formData.startDate || ''}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
 
+                                {/* Heures */}
+                                <div className="d-flex align-items-end mt-2">
                                     <Form.Group className="flex-fill me-2" controlId="startTime">
                                         <Form.Label>{t('edition.startTime')}</Form.Label>
                                         <Form.Control
@@ -169,6 +172,18 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                         />
                                     </Form.Group>
                                 </div>
+
+                                {/* Thème */}
+                                <Form.Group className="mt-2" controlId="theme">
+                                    <Form.Label>{t('edition.theme')}</Form.Label>
+                                    <Form.Control as="textarea" name="theme" value={formData.theme} onChange={handleChange} />
+                                </Form.Group>
+
+                                {/* Challenge */}
+                                <Form.Group className="mt-2" controlId="challenge">
+                                    <Form.Label>{t('edition.challenge')}</Form.Label>
+                                    <Form.Control as="textarea" name="challenge" value={formData.challenge} onChange={handleChange} />
+                                </Form.Group>
                             </>
                         )}
                     </Modal.Body>

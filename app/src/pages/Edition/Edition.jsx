@@ -58,7 +58,9 @@ const Edition = () => {
         location: '',
         startDate: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        theme: '',
+        challenge: ''
     });
     const [formGift, setFormGift] = useState({
         id: null,
@@ -101,7 +103,9 @@ const Edition = () => {
                         location: dataEdition.response.data.edition.location,
                         startDate: startDate.slice(0, 10),
                         startTime: startTime.slice(0, 5),
-                        endTime: endTime.slice(0, 5)
+                        endTime: endTime.slice(0, 5),
+                        theme: dataEdition.response.data.edition.theme,
+                        challenge: dataEdition.response.data.edition.challenge
                     });
                 }),
                 take(1),
@@ -179,7 +183,9 @@ const Edition = () => {
             location: data.location,
             startDate: startDate.slice(0, 10),
             startTime: startTime.slice(0, 5),
-            endTime: endTime.slice(0, 5)
+            endTime: endTime.slice(0, 5),
+            theme: data.theme,
+            challenge: data.challenge
         });
     };
 

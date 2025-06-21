@@ -39,7 +39,9 @@ const Home = () => {
         location: '',
         startDate: '',
         startTime: '',
-        endTime: ''
+        endTime: '',
+        theme: '',
+        challenge: ''
     });
 
     // API states
@@ -125,7 +127,9 @@ const Home = () => {
             location: '',
             startDate: '',
             startTime: '',
-            endTime: ''
+            endTime: '',
+            theme: '',
+            challenge: ''
         });
     };
 

@@ -38,10 +38,6 @@ class EditionsService
         $edition = null;
         $data = $this->repository->getEdition($id);
 
-        // TODO : à remanier une fois les données à remonter déterminées :
-        // - date/horaires
-        // - thème/sujet des étudiants
-        // - défi CGI
         if ($data) {
             // Récupération des données édition
             $edition['edition'] = $data;
@@ -95,7 +91,7 @@ class EditionsService
 
         // Modification
         $data = $this->processData($data);
-        
+
         if ($this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
@@ -153,9 +149,11 @@ class EditionsService
         $endDate->modify('+1 day');
 
         $sqlData = [
-            'location' => $data['location'],
+            'location'   => $data['location'],
             'start_date' => $startDate->format('Y-m-d H:i:s'),
-            'end_date' => $endDate->format('Y-m-d H:i:s')
+            'end_date'   => $endDate->format('Y-m-d H:i:s'),
+            'theme'      => $data['theme'],
+            'challenge'  => $data['challenge']
         ];
 
         return $sqlData;
