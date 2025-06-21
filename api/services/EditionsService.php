@@ -82,6 +82,9 @@ class EditionsService
         }
 
         // Insertion
+        $data['start_date'] = $data['startDate'];
+        unset($data['startDate']);
+
         return $this->repository->create($login, $data);
     }
 
@@ -96,6 +99,9 @@ class EditionsService
         }
 
         // Modification
+        $data['start_date'] = $data['startDate'];
+        unset($data['startDate']);
+
         if ($this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
@@ -123,9 +129,12 @@ class EditionsService
      */
     private function isValidEditionData($data)
     {
-        $year = $data['year'] ?? null;
+        $startDate = $data['startDate'] ?? null;
         $location = trim($data['location'] ?? '');
 
-        return is_numeric($year) && $year >= 1901 && $year <= 2155 && $location;
+        $format = 'Y-m-d';
+        $d = DateTime::createFromFormat($format, $startDate);
+
+        return $d && $d->format($format) === $startDate && $location;
     }
 }

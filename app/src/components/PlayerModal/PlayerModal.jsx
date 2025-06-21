@@ -32,7 +32,6 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
-        // Autorise uniquement les chiffres
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };

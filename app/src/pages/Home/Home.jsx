@@ -36,7 +36,7 @@ const Home = () => {
     const [messageModal, setMessageModal] = useState(null);
     const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
-        year: '',
+        startDate: '',
         location: ''
     });
 
@@ -120,7 +120,7 @@ const Home = () => {
      */
     const resetFormEdition = () => {
         setFormEdition({
-            year: '',
+            startDate: '',
             location: ''
         });
     };
@@ -134,10 +134,12 @@ const Home = () => {
         const grouped = {};
 
         editions.forEach((item) => {
-            const year = item.year;
+            const year = new Date(item.startDate).getFullYear();
+
             if (!grouped[year]) {
                 grouped[year] = [];
             }
+
             grouped[year].push(item);
         });
 
@@ -146,7 +148,7 @@ const Home = () => {
             grouped[year].sort((a, b) => a.location.localeCompare(b.location));
         }
 
-        // Trie les années par ordre décroissant et retourne un array
+        // Trie les années par ordre décroissant
         const sortedArray = Object.keys(grouped)
             .sort((a, b) => b - a)
             .map((year) => ({

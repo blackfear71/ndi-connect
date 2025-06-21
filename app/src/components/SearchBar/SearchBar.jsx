@@ -70,7 +70,12 @@ const SearchBar = ({ placeholder }) => {
                             setSearchMessage('messages.noResults');
                         }
 
-                        setResults(dataEditions.response.data);
+                        setResults(
+                            dataEditions.response.data.map((item) => ({
+                                ...item,
+                                year: new Date(item.startDate).getFullYear()
+                            }))
+                        );
                         setShowResults(true);
                     }),
                     take(1),

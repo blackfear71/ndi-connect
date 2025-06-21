@@ -11,8 +11,8 @@
         "invalidPassword": "Le mot de passe est invalide",
         "invalidPoints": "Le nombre de points est invalide",
         "invalidQuantity": "La quantité est invalide",
+        "invalidStartDate": "La date est invalide",
         "invalidValue": "La valeur est invalide",
-        "invalidYear": "L'année est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
         "routeNotFound": "Route non trouvée",
@@ -61,6 +61,7 @@
         "points": "Points",
         "quantity": "Quantité",
         "setGiftValue": "Définir le cadeau",
+        "startDate": "Date de début",
         "updateEdition": "Modifier l'édition",
         "value": "Valeur",
         "year": "Année"

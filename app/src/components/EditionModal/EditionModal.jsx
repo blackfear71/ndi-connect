@@ -10,10 +10,10 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     const { t } = useTranslation();
 
     // Local states
-    const yearInputRef = useRef(null);
+    const locationInputRef = useRef(null);
 
     /**
-     * Met le focus sur le champ "année" à l'ouverture de la modale
+     * Met le focus sur le champ "lieu" à l'ouverture de la modale
      */
     useEffect(() => {
         if (modalOptions?.isOpen) {
@@ -21,7 +21,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
             setMessage(null);
 
             // Focus
-            yearInputRef.current?.focus();
+            locationInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
@@ -30,22 +30,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
-        // Autorise uniquement les chiffres
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Met à jour le formulaire à la saisie d'un numérique (création)
-     * @param {*} e Evènement
-     */
-    const handleChangeNumeric = (e) => {
-        // Autorise uniquement les chiffres
-        const { name, value } = e.target;
-
-        if (/^\d*$/.test(value)) {
-            setFormData((prev) => ({ ...prev, [name]: value }));
-        }
     };
 
     /**
@@ -58,11 +44,9 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
         // Contrôles si pas de suppression
         if (modalOptions.action !== 'delete') {
-            // Contrôle que la valeur de l'année est comprise entre 1901 et 2155
-            const year = parseInt(formData.year, 10);
-
-            if (!formData.year || isNaN(year) || year < 1901 || year > 2155) {
-                setMessage({ code: 'errors.invalidYear', type: 'error' });
+            // Contrôle la date renseignée
+            if (!formData.startDate) {
+                setMessage({ code: 'errors.invalidStartDate', type: 'error' });
                 return;
             }
 
@@ -114,31 +98,28 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                             <>{t('edition.deleteEditionMessage')}</>
                         ) : (
                             <div className="d-flex align-items-end">
-                                <Form.Group className="me-2" controlId="year">
-                                    <Form.Label>{t('edition.year')}</Form.Label>
-                                    <Form.Control
-                                        ref={yearInputRef}
-                                        type="text"
-                                        name="year"
-                                        placeholder={t('edition.year')}
-                                        value={formData.year}
-                                        onChange={handleChangeNumeric}
-                                        maxLength={4}
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        required
-                                    />
-                                </Form.Group>
-
+                                {/* TODO : prendre toute la largeur */}
                                 <Form.Group className="me-2" controlId="location">
                                     <Form.Label>{t('edition.location')}</Form.Label>
                                     <Form.Control
+                                        ref={locationInputRef}
                                         type="text"
                                         name="location"
                                         placeholder={t('edition.location')}
                                         value={formData.location}
                                         onChange={handleChange}
                                         maxLength={100}
+                                        required
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className="me-2" controlId="startDate">
+                                    <Form.Label>{t('edition.startDate')}</Form.Label>
+                                    <Form.Control
+                                        type="date"
+                                        name="startDate"
+                                        value={formData.startDate?.substring(0, 10) || ''}
+                                        onChange={handleChange}
                                         required
                                     />
                                 </Form.Group>

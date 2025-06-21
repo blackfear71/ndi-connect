@@ -12,7 +12,14 @@ const EditionAbout = ({ about }) => {
     // - thème/sujet des étudiants
     // - défi CGI
 
-    return <div style={{ color: 'white' }}>{about.location}</div>;
+    return (
+        <>
+            {/* TODO : tableau */}
+            <div style={{ color: 'white' }}>Lieu : {about.location}</div>
+            <div style={{ color: 'white' }}>Date de début : {about.startDate}</div>
+            <div style={{ color: 'white' }}>Date de fin : {about.startDate}</div>
+        </>
+    );
 };
 
 export default EditionAbout;
