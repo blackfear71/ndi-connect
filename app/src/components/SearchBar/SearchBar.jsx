@@ -171,7 +171,7 @@ const SearchBar = ({ placeholder }) => {
                 <div className="search-results-dropdown">
                     {results.map((item, idx) => (
                         <div key={idx} className="search-result-item" onClick={() => handleResultClick(item.id)}>
-                            <div className="search-result-item-left">{item.place}</div>
+                            <div className="search-result-item-left">{item.location}</div>
                             <div className="search-result-item-right">{t('edition.editionResult', { year: item.year })}</div>
                         </div>
                     ))}

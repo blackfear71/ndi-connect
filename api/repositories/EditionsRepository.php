@@ -10,7 +10,7 @@ class EditionsRepository extends Model
      */
     public function getAllEditions()
     {
-        $sql = "SELECT id, year, place FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
+        $sql = "SELECT id, year, location FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -20,7 +20,7 @@ class EditionsRepository extends Model
      */
     public function getEdition($id)
     {
-        $sql = "SELECT id, year, place FROM {$this->table} WHERE id = :id AND is_active = 1";
+        $sql = "SELECT id, year, location FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -31,7 +31,7 @@ class EditionsRepository extends Model
      */
     public function getSearchEditions($search)
     {
-        $sql = "SELECT id, year, place FROM {$this->table} WHERE (CAST(year AS CHAR) LIKE :search OR place LIKE :search) AND is_active = 1 ORDER BY id ASC";
+        $sql = "SELECT id, year, location FROM {$this->table} WHERE (CAST(year AS CHAR) LIKE :search OR location LIKE :search) AND is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['search' => "%$search%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -12,7 +12,7 @@ const EditionAbout = ({ about }) => {
     // - thème/sujet des étudiants
     // - défi CGI
 
-    return <div style={{ color: 'white' }}>{about.place}</div>;
+    return <div style={{ color: 'white' }}>{about.location}</div>;
 };
 
 export default EditionAbout;

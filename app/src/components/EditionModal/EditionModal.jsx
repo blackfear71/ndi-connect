@@ -67,8 +67,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
             }
 
             // Contrôle le lieu renseigné
-            if (!formData.place) {
-                setMessage({ code: 'errors.invalidPlace', type: 'error' });
+            if (!formData.location) {
+                setMessage({ code: 'errors.invalidLocation', type: 'error' });
                 return;
             }
         }
@@ -130,13 +130,13 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                     />
                                 </Form.Group>
 
-                                <Form.Group className="me-2" controlId="place">
-                                    <Form.Label>{t('edition.place')}</Form.Label>
+                                <Form.Group className="me-2" controlId="location">
+                                    <Form.Label>{t('edition.location')}</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="place"
-                                        placeholder={t('edition.place')}
-                                        value={formData.place}
+                                        name="location"
+                                        placeholder={t('edition.location')}
+                                        value={formData.location}
                                         onChange={handleChange}
                                         maxLength={100}
                                         required

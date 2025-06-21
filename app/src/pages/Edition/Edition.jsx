@@ -56,7 +56,7 @@ const Edition = () => {
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         year: '',
-        place: ''
+        location: ''
     });
     const [formGift, setFormGift] = useState({
         id: null,
@@ -96,7 +96,7 @@ const Edition = () => {
                     setFormEdition({
                         ...formEdition,
                         year: dataEdition.response.data.edition.year,
-                        place: dataEdition.response.data.edition.place
+                        location: dataEdition.response.data.edition.location
                     });
                 }),
                 take(1),
@@ -169,7 +169,7 @@ const Edition = () => {
     const resetFormEdition = (data) => {
         setFormEdition({
             year: data.year,
-            place: data.place
+            location: data.location
         });
     };
 
@@ -387,7 +387,7 @@ const Edition = () => {
                         <div>
                             <h1>
                                 <FaComputer size={30} />
-                                {t('edition.editionTitle', { year: edition.year, place: edition.place })}
+                                {t('edition.editionTitle', { year: edition.year, location: edition.location })}
                             </h1>
                         </div>
                     )}

@@ -37,7 +37,7 @@ const Home = () => {
     const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         year: '',
-        place: ''
+        location: ''
     });
 
     // API states
@@ -121,7 +121,7 @@ const Home = () => {
     const resetFormEdition = () => {
         setFormEdition({
             year: '',
-            place: ''
+            location: ''
         });
     };
 
@@ -143,7 +143,7 @@ const Home = () => {
 
         // Trie les lieux dans chaque groupe d'année
         for (const year in grouped) {
-            grouped[year].sort((a, b) => a.place.localeCompare(b.place));
+            grouped[year].sort((a, b) => a.location.localeCompare(b.location));
         }
 
         // Trie les années par ordre décroissant et retourne un array
@@ -210,7 +210,7 @@ const Home = () => {
                                 {/* Editions */}
                                 {editionsByYear.map((edition) => (
                                     <Button key={edition.id} variant="edition" href={`/edition/${edition.id}`}>
-                                        {edition.place}
+                                        {edition.location}
                                     </Button>
                                 ))}
                             </div>
