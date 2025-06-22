@@ -1,5 +1,6 @@
 <?php
 require_once 'core/Database.php';
+
 require_once 'controllers/UsersController.php';
 
 $database = new Database();
