@@ -3,14 +3,12 @@ import { useEffect, useRef } from 'react';
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaMapLocationDot } from 'react-icons/fa6';
-import { FaRegLightbulb } from 'react-icons/fa6';
 import { GoGoal } from 'react-icons/go';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
+import { MdOutlineLightbulb } from 'react-icons/md';
 import { WiTime4, WiTime8 } from 'react-icons/wi';
 
 import Message from '../Message/Message';
-
-import './EditionModal.css';
 
 const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
@@ -119,9 +117,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                             <>
                                 {/* Lieu */}
                                 <Form.Group className="d-flex align-items-center" controlId="location">
-                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
-                                        <FaMapLocationDot size={30} />
-                                    </div>
+                                    <FaMapLocationDot size={30} className="me-3" />
                                     <Form.Control
                                         ref={locationInputRef}
                                         type="text"
@@ -136,9 +132,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
                                 {/* Date */}
                                 <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
-                                    <div style={{ width: '30px' }} className="d-flex align-items-center me-3">
-                                        <IoCalendarNumberOutline size={30} />
-                                    </div>
+                                    <IoCalendarNumberOutline size={30} className="me-3" />
                                     <Form.Control
                                         type="date"
                                         name="startDate"
@@ -149,39 +143,31 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                 </Form.Group>
 
                                 {/* Heures */}
-                                <div className="d-flex align-items-center mt-2">
-                                    <Form.Group className="d-flex align-items-center flex-fill me-3" controlId="startTime">
-                                        <div className="d-flex align-items-center me-3 edition-modal-icon">
-                                            <WiTime4 size={30} />
-                                        </div>
-                                        <Form.Control
-                                            type="time"
-                                            name="startTime"
-                                            value={formData.startTime || ''}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
+                                <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
+                                    <WiTime4 size={30} className="me-3" />
+                                    <Form.Control
+                                        type="time"
+                                        name="startTime"
+                                        value={formData.startTime || ''}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
 
-                                    <Form.Group className="d-flex align-items-center flex-fill" controlId="endTime">
-                                        <div className="d-flex align-items-center me-3 edition-modal-icon">
-                                            <WiTime8 size={30} />
-                                        </div>
-                                        <Form.Control
-                                            type="time"
-                                            name="endTime"
-                                            value={formData.endTime || ''}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
-                                </div>
+                                <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
+                                    <WiTime8 size={30} className="me-3" />
+                                    <Form.Control
+                                        type="time"
+                                        name="endTime"
+                                        value={formData.endTime || ''}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </Form.Group>
 
                                 {/* Thème */}
                                 <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
-                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
-                                        <FaRegLightbulb size={30} />
-                                    </div>
+                                    <MdOutlineLightbulb size={30} className="me-3" />
                                     <Form.Control
                                         as="textarea"
                                         name="theme"
@@ -193,9 +179,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
                                 {/* Challenge */}
                                 <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
-                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
-                                        <GoGoal size={30} />
-                                    </div>
+                                    <GoGoal size={30} className="me-3" />
                                     <Form.Control
                                         as="textarea"
                                         name="challenge"
