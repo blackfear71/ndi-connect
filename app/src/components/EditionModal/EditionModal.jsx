@@ -2,8 +2,15 @@ import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaMapLocationDot } from 'react-icons/fa6';
+import { FaRegLightbulb } from 'react-icons/fa6';
+import { GoGoal } from 'react-icons/go';
+import { IoCalendarNumberOutline } from 'react-icons/io5';
+import { WiTime4, WiTime8 } from 'react-icons/wi';
 
 import Message from '../Message/Message';
+
+import './EditionModal.css';
 
 const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
@@ -111,8 +118,10 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                         ) : (
                             <>
                                 {/* Lieu */}
-                                <Form.Group className="me-2 w-100" controlId="location">
-                                    <Form.Label>{t('edition.location')}</Form.Label>
+                                <Form.Group className="d-flex align-items-center" controlId="location">
+                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
+                                        <FaMapLocationDot size={30} />
+                                    </div>
                                     <Form.Control
                                         ref={locationInputRef}
                                         type="text"
@@ -126,12 +135,13 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                 </Form.Group>
 
                                 {/* Date */}
-                                <Form.Group className="mt-2" controlId="startDate">
-                                    <Form.Label>{t('edition.startDate')}</Form.Label>
+                                <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
+                                    <div style={{ width: '30px' }} className="d-flex align-items-center me-3">
+                                        <IoCalendarNumberOutline size={30} />
+                                    </div>
                                     <Form.Control
                                         type="date"
                                         name="startDate"
-                                        placeholder="JJ/MM/AAAA"
                                         value={formData.startDate || ''}
                                         onChange={handleChange}
                                         required
@@ -139,25 +149,27 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                 </Form.Group>
 
                                 {/* Heures */}
-                                <div className="d-flex align-items-end mt-2">
-                                    <Form.Group className="flex-fill me-2" controlId="startTime">
-                                        <Form.Label>{t('edition.startTime')}</Form.Label>
+                                <div className="d-flex align-items-center mt-2">
+                                    <Form.Group className="d-flex align-items-center flex-fill me-3" controlId="startTime">
+                                        <div className="d-flex align-items-center me-3 edition-modal-icon">
+                                            <WiTime4 size={30} />
+                                        </div>
                                         <Form.Control
                                             type="time"
                                             name="startTime"
-                                            placeholder="HH:MM"
                                             value={formData.startTime || ''}
                                             onChange={handleChange}
                                             required
                                         />
                                     </Form.Group>
 
-                                    <Form.Group className="flex-fill" controlId="endTime">
-                                        <Form.Label>{t('edition.endTime')}</Form.Label>
+                                    <Form.Group className="d-flex align-items-center flex-fill" controlId="endTime">
+                                        <div className="d-flex align-items-center me-3 edition-modal-icon">
+                                            <WiTime8 size={30} />
+                                        </div>
                                         <Form.Control
                                             type="time"
                                             name="endTime"
-                                            placeholder="HH:MM"
                                             value={formData.endTime || ''}
                                             onChange={handleChange}
                                             required
@@ -166,15 +178,31 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                 </div>
 
                                 {/* Thème */}
-                                <Form.Group className="mt-2" controlId="theme">
-                                    <Form.Label>{t('edition.theme')}</Form.Label>
-                                    <Form.Control as="textarea" name="theme" value={formData.theme} onChange={handleChange} />
+                                <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
+                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
+                                        <FaRegLightbulb size={30} />
+                                    </div>
+                                    <Form.Control
+                                        as="textarea"
+                                        name="theme"
+                                        placeholder={t('edition.theme')}
+                                        value={formData.theme}
+                                        onChange={handleChange}
+                                    />
                                 </Form.Group>
 
                                 {/* Challenge */}
-                                <Form.Group className="mt-2" controlId="challenge">
-                                    <Form.Label>{t('edition.challenge')}</Form.Label>
-                                    <Form.Control as="textarea" name="challenge" value={formData.challenge} onChange={handleChange} />
+                                <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
+                                    <div className="d-flex align-items-center me-3 edition-modal-icon">
+                                        <GoGoal size={30} />
+                                    </div>
+                                    <Form.Control
+                                        as="textarea"
+                                        name="challenge"
+                                        placeholder={t('edition.challenge')}
+                                        value={formData.challenge}
+                                        onChange={handleChange}
+                                    />
                                 </Form.Group>
                             </>
                         )}

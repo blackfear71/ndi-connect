@@ -115,7 +115,7 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
                                 {/* Formulaire */}
-                                <Form.Group controlId="name" className="mb-2 d-flex align-items-center">
+                                <Form.Group controlId="name" className="d-flex align-items-center mb-2">
                                     <IoGiftSharp size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
@@ -128,7 +128,7 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                                     />
                                 </Form.Group>
 
-                                <Form.Group controlId="value" className="mb-2 d-flex align-items-center">
+                                <Form.Group controlId="value" className="d-flex align-items-center mb-2">
                                     <GrMoney size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
@@ -142,7 +142,7 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                                     />
                                 </Form.Group>
 
-                                <Form.Group controlId="quantity" className="mb-2 d-flex align-items-center">
+                                <Form.Group controlId="quantity" className="d-flex align-items-center">
                                     <GiCardboardBox size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
