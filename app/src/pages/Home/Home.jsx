@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaMapLocationDot } from 'react-icons/fa6';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
 
 import EditionsService from '../../api/editionsService';
@@ -195,7 +196,11 @@ const Home = () => {
 
                     {/* Titre */}
                     <h1>
-                        <IoCalendarNumberOutline size={30} />
+                        {editionsByYear && editionsByYear.length > 0 ? (
+                            <FaMapLocationDot size={30} />
+                        ) : (
+                            <IoCalendarNumberOutline size={30} />
+                        )}
                         {t('home.editions')}
                     </h1>
 
