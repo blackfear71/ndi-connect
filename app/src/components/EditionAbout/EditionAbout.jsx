@@ -92,7 +92,7 @@ const EditionAbout = ({ edition }) => {
             {/* Informations */}
             <Card className="edition-about-card">
                 <Card.Body className="p-0">
-                    <Card.Title className="bg-warning p-3 mb-0">{t('edition.informations')}</Card.Title>
+                    <Card.Title className="bg-warning p-3 mb-0 text-white">{t('edition.informations')}</Card.Title>
                     <Table className="mb-0">
                         <tbody>
                             <tr>
@@ -116,7 +116,7 @@ const EditionAbout = ({ edition }) => {
             {edition.theme && (
                 <Card className="edition-about-card mt-3">
                     <Card.Body className="p-0">
-                        <Card.Title className="bg-info p-3 mb-0">{t('edition.theme')}</Card.Title>
+                        <Card.Title className="bg-success p-3 mb-0 text-white">{t('edition.theme')}</Card.Title>
                         <Card.Text className="p-2">{edition.theme}</Card.Text>
                     </Card.Body>
                 </Card>
@@ -126,7 +126,7 @@ const EditionAbout = ({ edition }) => {
             {edition.challenge && (
                 <Card className="edition-about-card mt-3">
                     <Card.Body className="p-0">
-                        <Card.Title className="bg-danger p-3 mb-0">{t('edition.challenge')}</Card.Title>
+                        <Card.Title className="bg-danger p-3 mb-0 text-white">{t('edition.challenge')}</Card.Title>
                         <Card.Text className="p-2">{edition.challenge}</Card.Text>
                     </Card.Body>
                 </Card>
