@@ -43,7 +43,6 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
-    // TODO : messageModal et modalOptions peuvent être mis en commun ?
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
     const [isSubmittingGift, setIsSubmittingGift] = useState(false);
