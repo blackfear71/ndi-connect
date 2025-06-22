@@ -142,6 +142,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                     <Form.Control
                                         type="date"
                                         name="startDate"
+                                        placeholder="JJ/MM/AAAA"
                                         value={formData.startDate || ''}
                                         onChange={handleChange}
                                         required
@@ -155,6 +156,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                         <Form.Control
                                             type="time"
                                             name="startTime"
+                                            placeholder="HH:MM"
                                             value={formData.startTime || ''}
                                             onChange={handleChange}
                                             required
@@ -166,6 +168,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                                         <Form.Control
                                             type="time"
                                             name="endTime"
+                                            placeholder="HH:MM"
                                             value={formData.endTime || ''}
                                             onChange={handleChange}
                                             required
