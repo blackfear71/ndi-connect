@@ -30,19 +30,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
-        const { name, value, type } = e.target;
-
-        let formattedValue = value;
-
-        // Si c'est un champ time, on ne garde que HH:mm
-        if (type === 'time' && value.length >= 5) {
-            formattedValue = value.slice(0, 5);
-        }
-
-        setFormData((prev) => ({
-            ...prev,
-            [name]: formattedValue
-        }));
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     /**

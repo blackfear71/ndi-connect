@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Badge, Card, ProgressBar, Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+import { getFrenchDate, getTimeFromDate } from '../../utils/dateHelper';
+
 import './EditionAbout.css';
 
 /**
@@ -52,23 +54,6 @@ const EditionAbout = ({ edition }) => {
         });
     };
 
-    /**
-     * Formate une date au format "JJ/MM/YYYY à HH:MM"
-     * @param {*} dateInput
-     */
-    const formatDate = (dateInput) => {
-        const date = new Date(dateInput);
-
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-
-        return t('edition.editionDate', { date: `${day}/${month}/${year}`, time: `${hours}:${minutes}` });
-    };
-
     return (
         <>
             {/* Progression */}
@@ -77,13 +62,13 @@ const EditionAbout = ({ edition }) => {
                     <div>{t('edition.progress')}</div>
                     <div className="d-flex align-items-center mt-2">
                         <Badge bg="success" className="me-2">
-                            {edition.startDate.split(' ')[1]?.slice(0, 5)}
+                            {getTimeFromDate(edition.startDate)}
                         </Badge>
                         <div className="flex-fill">
                             <ProgressBar now={progress.value} />
                         </div>
                         <Badge bg="danger" className="ms-2">
-                            {edition.endDate.split(' ')[1]?.slice(0, 5)}
+                            {getTimeFromDate(edition.endDate)}
                         </Badge>
                     </div>
                 </div>
@@ -101,11 +86,21 @@ const EditionAbout = ({ edition }) => {
                             </tr>
                             <tr>
                                 <td className="fw-bold">{t('edition.start')}</td>
-                                <td>{formatDate(edition.startDate)}</td>
+                                <td>
+                                    {t('edition.editionDate', {
+                                        date: getFrenchDate(edition.startDate),
+                                        time: getTimeFromDate(edition.startDate)
+                                    })}
+                                </td>
                             </tr>
                             <tr>
                                 <td className="fw-bold">{t('edition.end')}</td>
-                                <td>{formatDate(edition.endDate)}</td>
+                                <td>
+                                    {t('edition.editionDate', {
+                                        date: getFrenchDate(edition.endDate),
+                                        time: getTimeFromDate(edition.endDate)
+                                    })}
+                                </td>
                             </tr>
                         </tbody>
                     </Table>

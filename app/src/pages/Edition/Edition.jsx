@@ -23,6 +23,7 @@ import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
+import { getDayFromDate, getTimeFromDate } from '../../utils/dateHelper';
 
 import './Edition.css';
 
@@ -95,15 +96,12 @@ const Edition = () => {
                     setGifts(dataEdition.response.data.gifts);
                     setPlayers(dataEdition.response.data.players);
 
-                    const [startDate, startTime] = dataEdition.response.data.edition.startDate.split(' ');
-                    const [endDate, endTime] = dataEdition.response.data.edition.endDate.split(' ');
-
                     setFormEdition({
                         ...formEdition,
                         location: dataEdition.response.data.edition.location,
-                        startDate: startDate.slice(0, 10),
-                        startTime: startTime.slice(0, 5),
-                        endTime: endTime.slice(0, 5),
+                        startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
+                        startTime: getTimeFromDate(dataEdition.response.data.edition.startDate),
+                        endTime: getTimeFromDate(dataEdition.response.data.edition.endDate),
                         theme: dataEdition.response.data.edition.theme,
                         challenge: dataEdition.response.data.edition.challenge
                     });
@@ -176,14 +174,11 @@ const Edition = () => {
      * Réinitialisation formulaire (modification édition)
      */
     const resetFormEdition = (data) => {
-        const [startDate, startTime] = data.startDate.split(' ');
-        const [endDate, endTime] = data.endDate.split(' ');
-
         setFormEdition({
             location: data.location,
-            startDate: startDate.slice(0, 10),
-            startTime: startTime.slice(0, 5),
-            endTime: endTime.slice(0, 5),
+            startDate: getDayFromDate(data.startDate),
+            startTime: getTimeFromDate(data.startDate),
+            endTime: getTimeFromDate(data.endDate),
             theme: data.theme,
             challenge: data.challenge
         });
