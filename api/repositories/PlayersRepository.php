@@ -35,4 +35,41 @@ class PlayersRepository extends Model
         $data['id'] = $id;
         return $stmt->execute($data);
     }
+
+    /**
+     * Insertion d'un joueur
+     */
+    public function createPlayer($login, $data)
+    {
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $data['created_by'] = $login;
+
+        $sql = "INSERT INTO {$this->table} (id_edition, name, points, created_at, created_by) VALUES (:id_edition, :name, :delta, :created_at, :created_by)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($data);
+
+        return $this->db->lastInsertId();
+    }
+
+    /**
+     * Modification d'un joueur par Id
+     */
+    public function updatePlayer($id, $login, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_by'] = $login;
+
+        $fields = [];
+
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE {$this->table} SET name = :name, points = points + :delta, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        $data['id'] = $id;
+
+        return $stmt->execute($data);
+    }
 }

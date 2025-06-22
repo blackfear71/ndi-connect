@@ -94,7 +94,7 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
             setFormData({
                 id: player.id,
                 name: player.name,
-                points: player.points
+                delta: 0
             });
         }
 

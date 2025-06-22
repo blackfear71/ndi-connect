@@ -10,7 +10,7 @@ import UserRole from '../../enums/UserRole';
 import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
 
-const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const PlayerModal = ({ player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -36,17 +36,36 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // TODO : à voir si toujours nécessaire avec les +/-
     /**
      * Met à jour le formulaire à la saisie d'un numérique
      * @param {*} e Evènement
      */
-    const handleChangeNumeric = (e) => {
-        // Autorise uniquement les chiffres (négatifs compris)
-        const { name, value } = e.target;
+    const handleChangeIncrement = (action) => {
+        // Ajoute ou retire des points selon les droits
+        switch (action) {
+            case 'add':
+                setFormData((prev) => {
+                    const currentDelta = parseInt(prev.delta) || 0;
+                    const nextDelta = currentDelta < 0 ? (auth.level >= UserRole.SUPERADMIN ? currentDelta + 1 : 0) : currentDelta + 1;
 
-        if (/^-?\d*$/.test(value)) {
-            setFormData((prev) => ({ ...prev, [name]: value }));
+                    return {
+                        ...prev,
+                        delta: nextDelta
+                    };
+                });
+                break;
+            case 'remove':
+                setFormData((prev) => {
+                    const currentDelta = parseInt(prev.delta) || 0;
+                    const nextDelta =
+                        auth.level >= UserRole.SUPERADMIN && currentDelta <= 0 ? currentDelta - 1 : Math.max(0, currentDelta - 1);
+
+                    return {
+                        ...prev,
+                        delta: Math.max(-player.points, nextDelta)
+                    };
+                });
+                break;
         }
     };
 
@@ -62,9 +81,9 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
         // Contrôles si pas de suppression
         if (action !== 'delete') {
             // Contrôle que les points sont > 0
-            const points = parseInt(formData.points, 10);
+            const delta = parseInt(formData.delta, 10);
 
-            if (!formData.points || isNaN(points) || (auth.level < UserRole.SUPERADMIN && points < 0)) {
+            if (!formData.delta || isNaN(delta) || (auth.level < UserRole.SUPERADMIN && delta < 0)) {
                 setMessage({ code: 'errors.invalidPoints', type: 'error' });
                 return;
             }
@@ -111,20 +130,36 @@ const PlayerModal = ({ formData, setFormData, modalOptions, message, setMessage,
                                 {/* Message */}
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
+                                {/* Nombre de points */}
+                                <div>
+                                    {t('edition.currentPoints')} {player.points}
+                                </div>
+
                                 {/* Formulaire */}
-                                {/* TODO : adapter avec des +/-, réafficher le nombre de points courant, initialiser la saisie à 0, le min doit être 0 sauf pour un super admin qui peut retirer des points */}
-                                <Form.Group controlId="points" className="d-flex align-items-center">
-                                    <GiTwoCoins size={30} className="me-3" />
-                                    <Form.Control
-                                        type="text"
-                                        name="points"
-                                        placeholder={t('edition.points')}
-                                        value={formData.points}
-                                        onChange={handleChangeNumeric}
-                                        inputMode="numeric"
-                                        pattern="-?[0-9]*"
-                                        required
-                                    />
+                                <Form.Group controlId="points" className="d-flex align-items-center mt-3 gap-3">
+                                    <GiTwoCoins size={30} />
+
+                                    <div className="d-flex align-items-center w-100">
+                                        <Button
+                                            className="flex-fill"
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            onClick={() => handleChangeIncrement('remove')}
+                                        >
+                                            –
+                                        </Button>
+
+                                        <div className="flex-fill px-3 text-center">{formData.delta || 0}</div>
+
+                                        <Button
+                                            className="flex-fill"
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            onClick={() => handleChangeIncrement('add')}
+                                        >
+                                            +
+                                        </Button>
+                                    </div>
                                 </Form.Group>
                             </Modal.Body>
 

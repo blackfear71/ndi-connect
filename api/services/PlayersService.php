@@ -40,7 +40,7 @@ class PlayersService
         }
 
         // Insertion et récupération des participants de l'édition
-        if ($this->repository->create($user['login'], $data)) {
+        if ($this->repository->createPlayer($user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
 
@@ -57,10 +57,8 @@ class PlayersService
             return null;
         }
 
-        // TODO : attention avec la mise à jour des points, actuellement ça écrase la valeur alors qu'il faut incrémenter la valeur existante en base
-
         // Modification et récupération des participants de l'édition
-        if ($this->repository->update($idPlayer, $user['login'], $data)) {
+        if ($this->repository->updatePlayer($idPlayer, $user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
 
@@ -86,8 +84,8 @@ class PlayersService
     private function isValidPlayerData($userLevel, $data)
     {
         $name = trim($data['name'] ?? '');
-        $points = $data['points'] ?? null;
+        $delta = $data['delta'] ?? null;
 
-        return $name && is_numeric($points) && ($userLevel == UserRole::SUPERADMIN->value || $points >= 0);
+        return $name && is_numeric($delta) && ($userLevel == UserRole::SUPERADMIN->value || $delta >= 0);
     }
 }

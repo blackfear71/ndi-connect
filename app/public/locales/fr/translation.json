@@ -45,6 +45,7 @@
         "addGift": "Ajouter un cadeau",
         "addPlayer": "Ajouter un participant",
         "challenge": "Défi CGI",
+        "currentPoints": "Nombre de points courants :",
         "deleteEdition": "Supprimer l'édition",
         "deleteEditionMessage": "Voulez-vous vraiment supprimer l'édition ?",
         "deleteGift": "Supprimer le cadeau",
