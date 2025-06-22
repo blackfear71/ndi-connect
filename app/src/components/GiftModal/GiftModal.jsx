@@ -107,7 +107,7 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
                     ) : (
                         <>
                             <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.setGiftValue')}</Modal.Title>
+                                <Modal.Title>{t('edition.setGift')}</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body>

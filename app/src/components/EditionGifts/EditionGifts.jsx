@@ -12,8 +12,6 @@ import { AuthContext } from '../../utils/AuthContext';
 
 import './EditionGifts.css';
 
-// TODO : ajouter des actions pour donner des cadeaux à un participant (que si quantité > 0 et si le participant est dans l'édition)
-
 /**
  * Liste des cadeaux
  */
