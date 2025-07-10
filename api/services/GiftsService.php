@@ -1,8 +1,13 @@
 <?php
+require_once 'services/RewardsService.php';
+
 require_once 'repositories/GiftsRepository.php';
 
 class GiftsService
 {
+    private $rewardsService = null;
+
+    private $db;
     private $repository;
 
     /**
@@ -10,7 +15,19 @@ class GiftsService
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->repository = new GiftsRepository($db);
+    }
+
+    /**
+     * Instancie le RewardsService si besoin
+     */
+    private function getRewardsService()
+    {
+        if ($this->rewardsService === null) {
+            $this->rewardsService = new RewardsService($this->db);
+        }
+        return $this->rewardsService;
     }
 
     /**
@@ -18,7 +35,24 @@ class GiftsService
      */
     public function getEditionGifts($id)
     {
-        return $this->repository->getEditionGifts($id);
+        // Récupération des cadeaux
+        $gifts = $this->repository->getEditionGifts($id);
+
+        // Calcul du nombre de cadeaux restants
+        foreach ($gifts as &$gift) {
+            $gift['remainingQuantity'] = $gift['quantity'] - $gift['giftAttribution'];
+        }
+        unset($gift);
+
+        return $gifts;
+    }
+
+    /**
+     * Lecture d'un enregistrement
+     */
+    public function getGift($id)
+    {
+        return $this->repository->find($id);
     }
 
     /**
@@ -52,8 +86,11 @@ class GiftsService
      */
     public function updateGift($idEdition, $idGift, $user, $data)
     {
+        // Récupération du nombre d'attributions du cadeau
+        $giftAttribution = $this->getRewardsService()->getGiftAttribution($idGift);
+
         // Contrôle des données
-        if (!$this->isValidGiftData($user['level'], $data)) {
+        if (!$this->isValidGiftData($user['level'], $data, $giftAttribution)) {
             return null;
         }
 
@@ -81,12 +118,12 @@ class GiftsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData($userLevel, $data)
+    private function isValidGiftData($userLevel, $data, $giftAttribution = null)
     {
         $name = trim($data['name'] ?? '');
         $value = $data['value'] ?? null;
         $quantity = $data['quantity'] ?? null;
 
-        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && $quantity >= 0;
+        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && ($giftAttribution != null ? $quantity >= $giftAttribution : $quantity >= 0);
     }
 }

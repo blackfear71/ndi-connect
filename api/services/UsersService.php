@@ -3,6 +3,7 @@ require_once 'repositories/UsersRepository.php';
 
 class UsersService
 {
+    private $db;
     private $repository;
 
     /**
@@ -10,6 +11,7 @@ class UsersService
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->repository = new UsersRepository($db);
     }
 

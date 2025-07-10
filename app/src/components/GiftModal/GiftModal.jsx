@@ -8,7 +8,7 @@ import { IoGiftSharp } from 'react-icons/io5';
 
 import Message from '../Message/Message';
 
-const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -74,6 +74,12 @@ const GiftModal = ({ formData, setFormData, modalOptions, message, setMessage, o
 
             if (!formData.quantity || isNaN(quantity) || quantity < 0) {
                 setMessage({ code: 'errors.invalidQuantity', type: 'error' });
+                return;
+            }
+
+            // Contrôle que la quantité est > quantité déjà attribuée
+            if (quantity < gift.giftAttribution) {
+                setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
                 return;
             }
         }

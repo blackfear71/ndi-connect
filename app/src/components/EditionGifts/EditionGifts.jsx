@@ -64,15 +64,15 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
                                 <GrMoney size={18} className="me-1" /> {gift.value}
                             </Badge>
                             <Badge bg="primary" className="me-1 d-flex align-items-center">
-                                {gift.quantity === 0 ? (
+                                {gift.remainingQuantity === 0 ? (
                                     <GiCardboardBoxClosed size={18} className="me-1" />
                                 ) : (
                                     <GiCardboardBox size={18} className="me-1" />
                                 )}{' '}
-                                {gift.quantity}
+                                {gift.remainingQuantity}
                             </Badge>
                             <span
-                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${gift.quantity === 0 ? 'text-decoration-line-through' : ''}`}
+                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${gift.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}
                             >
                                 {gift.name}
                             </span>

@@ -4,15 +4,23 @@ require_once 'core/Model.php';
 class GiftsRepository extends Model
 {
     protected $table = 'gifts';
+    protected $rewardsTable = 'rewards';
 
     /**
      * Lecture des enregistrements d'une édition
      */
     public function getEditionGifts($id)
     {
-        $sql = "SELECT id, name, value, quantity FROM {$this->table} WHERE id_edition = :id AND is_active = 1 ORDER BY name ASC";
+        // TODO : voir si on peut faire plus joli comme requête
+        $sql = "SELECT g.id, g.name, g.value, g.quantity, COUNT(r.id) AS giftAttribution FROM {$this->table} AS g
+        LEFT JOIN {$this->rewardsTable} AS r ON r.id_gift = g.id AND r.is_active = 1
+        WHERE g.id_edition = :id AND g.is_active = 1
+        GROUP BY g.id, g.name, g.value, g.quantity
+        ORDER BY g.name ASC";
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

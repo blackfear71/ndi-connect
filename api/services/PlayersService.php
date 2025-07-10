@@ -3,6 +3,7 @@ require_once 'repositories/PlayersRepository.php';
 
 class PlayersService
 {
+    private $db;
     private $repository;
 
     /**
@@ -10,6 +11,7 @@ class PlayersService
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->repository = new PlayersRepository($db);
     }
 
@@ -19,6 +21,14 @@ class PlayersService
     public function getEditionPlayers($id)
     {
         return $this->repository->getEditionPlayers($id);
+    }
+
+    /**
+     * Lecture d'un enregistrement
+     */
+    public function getPlayer($id)
+    {
+        return $this->repository->find($id);
     }
 
     /**
@@ -63,6 +73,15 @@ class PlayersService
         }
 
         return null;
+    }
+
+    /**
+     * Modification des points d'un participant
+     */
+    public function updatePlayerPoints($idPlayer, $login, $data)
+    {
+        // Modification des points d'un participant
+        return $this->repository->updatePlayerPoints($idPlayer, $login, $data);
     }
 
     /**

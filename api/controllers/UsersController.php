@@ -5,6 +5,7 @@ require_once 'services/UsersService.php';
 
 class UsersController
 {
+    private $db;
     private $service;
 
     /**
@@ -12,6 +13,7 @@ class UsersController
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->service = new UsersService($db);
     }
 

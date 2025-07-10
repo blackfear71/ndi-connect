@@ -8,16 +8,29 @@ require_once 'services/UsersService.php';
 
 class GiftsController
 {
+    private $usersService = null;
+
+    private $db;
     private $service;
-    private $usersService;
 
     /**
      * Constructeur par défaut
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->service = new GiftsService($db);
-        $this->usersService = new UsersService($db);
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService()
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+        return $this->usersService;
     }
 
     /**
@@ -27,7 +40,7 @@ class GiftsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::ADMIN->value) {
                 // Accès refusé
@@ -70,7 +83,7 @@ class GiftsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::ADMIN->value) {
                 // Accès refusé
@@ -113,7 +126,7 @@ class GiftsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé

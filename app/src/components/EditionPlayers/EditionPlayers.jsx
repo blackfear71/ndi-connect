@@ -4,6 +4,7 @@ import { Badge, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
+import { FaGift } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
 
 import UserRole from '../../enums/UserRole';
@@ -12,17 +13,32 @@ import { AuthContext } from '../../utils/AuthContext';
 
 import './EditionPlayers.css';
 
-// TODO : - ajouter des actions pour donner des cadeaux à un participant (que si quantité > 0 et si le participant est dans l'édition)
-//        - nouvelle modale pour donner un cadeau à un participant
-//        - passer la liste des cadeaux en param de la nouvelle modale
-//        - nombre de cadeaux à attribuer avec +/- (initialisé à 1 et impossible de saisir moins que 1 ou plus que la quantité totale) => récupérer le cadeau dans le back, contrôler que c'est possible et calculer la valeur en points
-//        - possibilité pour un participant de faire un don de points
-//        - prévoir de pouvoir diminuer la quantité d'un cadeau donné comme ça (utiliser un player_id générique dans la table d'assignement ?)
+// TODO : OK - ajouter des actions pour donner des cadeaux à un participant (que si quantité > 0 et si le participant est dans l'édition)
+//        OK - nouvelle modale pour donner un cadeau à un participant
+//        OK - passer la liste des cadeaux en param de la nouvelle modale
+//        OK - récupérer le cadeau dans le back, contrôler que c'est attribuable en comparant sa valeur avec les points de l'utilisateur
+//        OK - quand on modifie la quantité initiale, ne peux pas être < à assigments
+//        ?? - afficher le nombre de cadeaux restants dans la modale de modification de cadeaux (remainingQuantity)
+//        ?? - style de la modale attribution à finir avec des icônes
+//        ?? - possibilité pour un participant de faire un don de points via la modale de modification de participant
 
 /**
  * Liste des participants
  */
-const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setModalOptions, setMessage, onSubmit, isSubmitting }) => {
+const EditionPlayers = ({
+    players,
+    formPlayer,
+    setFormPlayer,
+    resetFormPlayer,
+    setModalOptionsPlayer,
+    gifts,
+    formReward,
+    setFormReward,
+    setModalOptionsReward,
+    setMessage,
+    onSubmit,
+    isSubmitting
+}) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -53,7 +69,7 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
      */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        setFormPlayer((prev) => ({ ...prev, [name]: value }));
     };
 
     /**
@@ -77,7 +93,7 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
         e.preventDefault();
 
         // Contrôle que le nom est renseigné
-        if (!formData.name) {
+        if (!formPlayer.name) {
             setMessage({ code: 'errors.invalidName', type: 'error' });
             return;
         }
@@ -98,15 +114,34 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
         setShowEntry(false);
 
         if (player) {
-            setFormData({
+            setFormPlayer({
                 id: player.id,
                 name: player.name,
                 delta: 0
             });
         }
 
-        setModalOptions({
+        setModalOptionsPlayer({
             action: action,
+            isOpen: true
+        });
+    };
+
+    /**
+     * Affiche la modale d'attribution d'un cadeau à un participant
+     * @param {*} player Données participant
+     */
+    const showRewardModal = (player) => {
+        setShowEntry(false);
+
+        if (player) {
+            setFormReward({
+                ...formReward,
+                idPlayer: player.id
+            });
+        }
+
+        setModalOptionsReward({
             isOpen: true
         });
     };
@@ -132,7 +167,7 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
                                     name="name"
                                     placeholder={t('edition.name')}
                                     className="edition-players-entry"
-                                    value={formData.name}
+                                    value={formPlayer.name}
                                     onChange={handleChange}
                                     maxLength={100}
                                     required
@@ -169,6 +204,17 @@ const EditionPlayers = ({ players, formData, setFormData, resetFormPlayer, setMo
                             </Badge>
                             <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{player.name}</span>
                         </div>
+
+                        {/* Cadeau */}
+                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && gifts.length > 0 && (
+                            <Button
+                                onClick={isSubmitting ? null : () => showRewardModal(player)}
+                                className="edition-players-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                <FaGift color={isSubmitting ? 'gray' : 'white'} />
+                            </Button>
+                        )}
 
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (

@@ -8,16 +8,29 @@ require_once 'services/UsersService.php';
 
 class EditionsController
 {
+    private $usersService = null;
+
+    private $db;
     private $service;
-    private $usersService;
 
     /**
      * Constructeur par défaut
      */
     public function __construct($db)
     {
+        $this->db = $db;
         $this->service = new EditionsService($db);
-        $this->usersService = new UsersService($db);
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService()
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+        return $this->usersService;
     }
 
     /**
@@ -116,7 +129,7 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
@@ -159,7 +172,7 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé
@@ -202,7 +215,7 @@ class EditionsController
     {
         try {
             // Contrôle autorisation
-            $user = $this->usersService->checkAuth($token);
+            $user = $this->getUsersService()->checkAuth($token);
 
             if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
                 // Accès refusé

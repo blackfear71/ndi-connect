@@ -83,7 +83,12 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
             // Contrôle que les points sont > 0
             const delta = parseInt(formData.delta, 10);
 
-            if (!formData.delta || isNaN(delta) || (auth.level < UserRole.SUPERADMIN && delta < 0)) {
+            if (
+                formData.delta === null ||
+                formData.delta === undefined ||
+                isNaN(delta) ||
+                (auth.level < UserRole.SUPERADMIN && delta < 0)
+            ) {
                 setMessage({ code: 'errors.invalidPoints', type: 'error' });
                 return;
             }

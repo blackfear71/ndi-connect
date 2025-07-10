@@ -18,6 +18,7 @@ export const getMessageTranslationKey = (code) => {
         ERR_UPDATE_FAILED: 'errors.updateFailed',
         MSG_CREATION_SUCCESS: 'messages.creationSuccess',
         MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
+        MSG_REWARD_SUCCESS: 'messages.rewardSuccess',
         MSG_UPDATE_SUCCESS: 'messages.updateSuccess'
     };
 

@@ -59,13 +59,23 @@ class PlayersRepository extends Model
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
 
-        $fields = [];
-
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
-        }
-
         $sql = "UPDATE {$this->table} SET name = :name, points = points + :delta, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        $data['id'] = $id;
+
+        return $stmt->execute($data);
+    }
+
+    /**
+     * Modification des points d'un joueur par Id
+     */
+    public function updatePlayerPoints($id, $login, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_by'] = $login;
+
+        $sql = "UPDATE {$this->table} SET points = :points, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
         $data['id'] = $id;

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { Button, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import EditionsService from '../../api/editionsService';
 import GiftsService from '../../api/giftsService';
 import PlayersService from '../../api/playersService';
+import RewardsService from '../../api/rewardsService';
 
 import EditionAbout from '../../components/EditionAbout/EditionAbout';
 import EditionGifts from '../../components/EditionGifts/EditionGifts';
@@ -16,6 +17,7 @@ import EditionPlayers from '../../components/EditionPlayers/EditionPlayers';
 import GiftModal from '../../components/GiftModal/GiftModal';
 import Message from '../../components/Message/Message';
 import PlayerModal from '../../components/PlayerModal/PlayerModal';
+import RewardModal from '../../components/RewardModal/RewardModal';
 
 import UserRole from '../../enums/UserRole';
 
@@ -47,13 +49,16 @@ const Edition = () => {
     const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
     const [isSubmittingGift, setIsSubmittingGift] = useState(false);
     const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
+    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
     const [messageModalEdition, setMessageModalEdition] = useState(null);
     const [messageModalGift, setMessageModalGift] = useState(null);
     const [messageModalPlayer, setMessageModalPlayer] = useState(null);
+    const [messageModalReward, setMessageModalReward] = useState(null);
     const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
+    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -72,6 +77,10 @@ const Edition = () => {
         id: null,
         name: '',
         delta: 0
+    });
+    const [formReward, setFormReward] = useState({
+        idPlayer: null,
+        idGift: 0
     });
     const [showActions, setShowActions] = useState(true);
 
@@ -117,6 +126,13 @@ const Edition = () => {
             )
             .subscribe();
     }, [id]);
+
+    /**
+     * Contrôle soumission en cours
+     */
+    const isSubmitting = useMemo(() => {
+        return isSubmittingEdition || isSubmittingGift || isSubmittingPlayer || isSubmittingReward;
+    }, [isSubmittingEdition, isSubmittingGift, isSubmittingPlayer, isSubmittingReward]);
 
     /**
      * Modification de l'édition
@@ -290,6 +306,7 @@ const Edition = () => {
                 break;
         }
 
+        // TODO : si on supprime un cadeau, contrôler qu'il n'est pas déjà attribué dans le back => supprimer aussi la poubelle si quantité attribuée > 0
         if (subscriptionGifts) {
             combineLatest([subscriptionGifts])
                 .pipe(
@@ -332,6 +349,59 @@ const Edition = () => {
             name: '',
             value: '',
             quantity: ''
+        });
+    };
+
+    /**
+     * Attribution d'un cadeau à un participant
+     */
+    const handleSubmitReward = () => {
+        setMessageModalReward(null);
+        setMessagePage(null);
+        setIsSubmittingReward(true);
+
+        const rewardsService = new RewardsService(localStorage.getItem('token'));
+
+        const subscriptionRewards = rewardsService.postReward(edition.id, formReward);
+
+        combineLatest([subscriptionRewards])
+            .pipe(
+                map(([dataRewards]) => {
+                    openCloseRewardModal();
+                    setGifts(dataRewards.response.data.gifts);
+                    setPlayers(dataRewards.response.data.players);
+                    setMessagePage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalReward({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmittingReward(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Ouverture/fermeture de la modale d'attribution de cadeau
+     */
+    const openCloseRewardModal = () => {
+        // Ouverture ou fermeture
+        setModalOptionsReward({ isOpen: !modalOptionsReward.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsReward.isOpen && resetFormReward();
+    };
+
+    /**
+     * Réinitialisation formulaire (attribution cadeau)
+     */
+    const resetFormReward = () => {
+        setFormReward({
+            idPlayer: null,
+            idGift: 0
         });
     };
 
@@ -408,13 +478,17 @@ const Edition = () => {
                         <Tab eventKey="players" title={t('edition.players')}>
                             <EditionPlayers
                                 players={players}
-                                formData={formPlayer}
-                                setFormData={setFormPlayer}
+                                formPlayer={formPlayer}
+                                setFormPlayer={setFormPlayer}
                                 resetFormPlayer={resetFormPlayer}
-                                setModalOptions={setModalOptionsPlayer}
+                                setModalOptionsPlayer={setModalOptionsPlayer}
+                                gifts={gifts}
+                                formReward={formReward}
+                                setFormReward={setFormReward}
+                                setModalOptionsReward={setModalOptionsReward}
                                 setMessage={setMessagePage}
                                 onSubmit={handleSubmitPlayer}
-                                isSubmitting={isSubmittingEdition || isSubmittingGift || isSubmittingPlayer}
+                                isSubmitting={isSubmitting}
                             />
                         </Tab>
 
@@ -424,7 +498,7 @@ const Edition = () => {
                                 gifts={gifts}
                                 setFormData={setFormGift}
                                 setModalOptions={setModalOptionsGift}
-                                isSubmitting={isSubmittingEdition || isSubmittingGift || isSubmittingPlayer}
+                                isSubmitting={isSubmitting}
                             />
                         </Tab>
 
@@ -451,6 +525,7 @@ const Edition = () => {
                     {/* Modale de création/modification/suppression de cadeau */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
                         <GiftModal
+                            gift={gifts.find((g) => g.id === formGift.id)}
                             formData={formGift}
                             setFormData={setFormGift}
                             modalOptions={modalOptionsGift}
@@ -474,6 +549,22 @@ const Edition = () => {
                             onClose={openClosePlayerModal}
                             onSubmit={handleSubmitPlayer}
                             isSubmitting={isSubmittingPlayer}
+                        />
+                    )}
+
+                    {/* Modale d'attribution de cadeau à un participant */}
+                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && gifts.length > 0 && modalOptionsReward.isOpen && (
+                        <RewardModal
+                            player={players.find((p) => p.id === formReward.idPlayer)}
+                            gifts={gifts}
+                            formData={formReward}
+                            setFormData={setFormReward}
+                            modalOptions={modalOptionsReward}
+                            message={messageModalReward}
+                            setMessage={setMessageModalReward}
+                            onClose={openCloseRewardModal}
+                            onSubmit={handleSubmitReward}
+                            isSubmitting={isSubmittingReward}
                         />
                     )}
                 </>

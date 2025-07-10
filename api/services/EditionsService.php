@@ -6,9 +6,10 @@ require_once 'repositories/EditionsRepository.php';
 
 class EditionsService
 {
-    private $giftsService;
-    private $playersService;
+    private $giftsService = null;
+    private $playersService = null;
 
+    private $db;
     private $repository;
 
     /**
@@ -16,10 +17,30 @@ class EditionsService
      */
     public function __construct($db)
     {
-        $this->giftsService = new GiftsService($db);
-        $this->playersService = new PlayersService($db);
-
+        $this->db = $db;
         $this->repository = new EditionsRepository($db);
+    }
+
+    /**
+     * Instancie le GiftsService si besoin
+     */
+    private function getGiftsService()
+    {
+        if ($this->giftsService === null) {
+            $this->giftsService = new GiftsService($this->db);
+        }
+        return $this->giftsService;
+    }
+
+    /**
+     * Instancie le PlayersService si besoin
+     */
+    private function getPlayersService()
+    {
+        if ($this->playersService === null) {
+            $this->playersService = new PlayersService($this->db);
+        }
+        return $this->playersService;
     }
 
     /**
@@ -43,10 +64,10 @@ class EditionsService
             $edition['edition'] = $data;
 
             // Récupération des données cadeaux
-            $edition['gifts'] = $this->giftsService->getEditionGifts($id);
+            $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
 
             // Récupération des données participants
-            $edition['players'] = $this->playersService->getEditionPlayers($id);
+            $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
         }
 
         return $edition;
@@ -105,10 +126,10 @@ class EditionsService
     public function deleteEdition($id, $login)
     {
         // Suppression logique des cadeaux
-        $this->giftsService->deleteGifts($id, $login);
+        $this->getGiftsService()->deleteGifts($id, $login);
 
         // Suppression logique des participants
-        $this->playersService->deletePlayers($id, $login);
+        $this->getPlayersService()->deletePlayers($id, $login);
 
         // Suppression logique de l'édition
         return $this->repository->logicalDelete($id, $login);
