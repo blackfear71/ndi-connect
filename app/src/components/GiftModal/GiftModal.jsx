@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { GiCardboardBox } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
@@ -77,8 +77,8 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
                 return;
             }
 
-            // Contrôle que la quantité est > quantité déjà attribuée
-            if (quantity < gift.giftAttribution) {
+            // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
+            if (gift && quantity < gift.giftAttribution) {
                 setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
                 return;
             }
@@ -161,6 +161,14 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
                                         required
                                     />
                                 </Form.Group>
+
+                                {/* Cadeaux restants */}
+                                {gift && (
+                                    <div className="d-flex align-items-center bg-light rounded p-2 mt-2">
+                                        <Badge className="bg-warning fs-6 me-2">{t('edition.remainingGifts')}</Badge>
+                                        {gift.remainingQuantity}
+                                    </div>
+                                )}
                             </Modal.Body>
                         </>
                     )}

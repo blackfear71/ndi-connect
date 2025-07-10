@@ -11,7 +11,6 @@ class GiftsRepository extends Model
      */
     public function getEditionGifts($id)
     {
-        // TODO : voir si on peut faire plus joli comme requête
         $sql = "SELECT g.id, g.name, g.value, g.quantity, COUNT(r.id) AS giftAttribution FROM {$this->table} AS g
         LEFT JOIN {$this->rewardsTable} AS r ON r.id_gift = g.id AND r.is_active = 1
         WHERE g.id_edition = :id AND g.is_active = 1

@@ -80,7 +80,8 @@ const Edition = () => {
     });
     const [formReward, setFormReward] = useState({
         idPlayer: null,
-        idGift: 0
+        idGift: 0,
+        points: 0
     });
     const [showActions, setShowActions] = useState(true);
 
@@ -306,7 +307,6 @@ const Edition = () => {
                 break;
         }
 
-        // TODO : si on supprime un cadeau, contrôler qu'il n'est pas déjà attribué dans le back => supprimer aussi la poubelle si quantité attribuée > 0
         if (subscriptionGifts) {
             combineLatest([subscriptionGifts])
                 .pipe(
@@ -401,7 +401,8 @@ const Edition = () => {
     const resetFormReward = () => {
         setFormReward({
             idPlayer: null,
-            idGift: 0
+            idGift: 0,
+            points: 0
         });
     };
 

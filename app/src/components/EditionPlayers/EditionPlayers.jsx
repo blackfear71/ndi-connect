@@ -13,15 +13,6 @@ import { AuthContext } from '../../utils/AuthContext';
 
 import './EditionPlayers.css';
 
-// TODO : OK - ajouter des actions pour donner des cadeaux à un participant (que si quantité > 0 et si le participant est dans l'édition)
-//        OK - nouvelle modale pour donner un cadeau à un participant
-//        OK - passer la liste des cadeaux en param de la nouvelle modale
-//        OK - récupérer le cadeau dans le back, contrôler que c'est attribuable en comparant sa valeur avec les points de l'utilisateur
-//        OK - quand on modifie la quantité initiale, ne peux pas être < à assigments
-//        ?? - afficher le nombre de cadeaux restants dans la modale de modification de cadeaux (remainingQuantity)
-//        ?? - style de la modale attribution à finir avec des icônes
-//        ?? - possibilité pour un participant de faire un don de points via la modale de modification de participant
-
 /**
  * Liste des participants
  */

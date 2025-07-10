@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { GiTwoCoins } from 'react-icons/gi';
 import { PiUserListFill } from 'react-icons/pi';
@@ -9,6 +9,8 @@ import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
+
+import './PlayerModal.css';
 
 const PlayerModal = ({ player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
@@ -136,8 +138,9 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
                                 {/* Nombre de points */}
-                                <div>
-                                    {t('edition.currentPoints')} {player.points}
+                                <div className="d-flex align-items-center bg-light rounded p-2">
+                                    <Badge className="bg-warning fs-6 me-2">{t('edition.points')}</Badge>
+                                    {player.points}
                                 </div>
 
                                 {/* Formulaire */}
@@ -167,6 +170,8 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
                                     </div>
                                 </Form.Group>
                             </Modal.Body>
+
+                            <div className="player-modal-separator"></div>
 
                             <Modal.Header>
                                 <Modal.Title>{t('edition.editPlayer')}</Modal.Title>
