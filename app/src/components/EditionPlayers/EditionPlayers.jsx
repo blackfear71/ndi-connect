@@ -106,6 +106,7 @@ const EditionPlayers = ({
 
         if (player) {
             setFormPlayer({
+                ...formPlayer,
                 id: player.id,
                 name: player.name,
                 delta: 0

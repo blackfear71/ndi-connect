@@ -12,12 +12,15 @@ import Message from '../Message/Message';
 
 import './PlayerModal.css';
 
-const PlayerModal = ({ player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const PlayerModal = ({ players, player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
+
+    // Constantes
+    const availablePlayers = players.filter((p) => p.id !== player.id);
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -72,6 +75,47 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
     };
 
     /**
+     * Met à jour le formulaire à la saisie d'un numérique
+     * @param {*} e Evènement
+     */
+    const handleChangeGiveaway = (action) => {
+        // Donne des points à un autre participant
+        switch (action) {
+            case 'add':
+                setFormData((prev) => {
+                    const currentGiveaway = parseInt(prev.giveaway) || 0;
+
+                    return {
+                        ...prev,
+                        giveaway: currentGiveaway >= player.points ? currentGiveaway : currentGiveaway + 1
+                    };
+                });
+                break;
+            case 'remove':
+                setFormData((prev) => {
+                    const currentGiveaway = parseInt(prev.giveaway) || 0;
+
+                    return {
+                        ...prev,
+                        giveaway: currentGiveaway <= 0 ? 0 : currentGiveaway - 1
+                    };
+                });
+                break;
+        }
+    };
+
+    /**
+     * Met à jour le formulaire à la saisie
+     * @param {*} e Evènement
+     */
+    const handleChangeSelect = (e) => {
+        setFormData((prev) => ({
+            ...prev,
+            giveawayId: parseInt(e.target.value)
+        }));
+    };
+
+    /**
      * Gère le comportement du formulaire à la soumission
      * @param {*} e Evènement
      * @param {*} action Action à réaliser
@@ -98,6 +142,23 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
             // Contrôle le nom renseigné
             if (!formData.name) {
                 setMessage({ code: 'errors.invalidName', type: 'error' });
+                return;
+            }
+
+            // Contrôle le don de points
+            if (
+                (formData.giveawayId !== null && formData.giveawayId !== undefined && formData.giveawayId !== 0 && !formData.giveaway) ||
+                (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayId)
+            ) {
+                setMessage({ code: 'errors.invalidGiveaway', type: 'error' });
+                return;
+            }
+
+            // Contrôle les points restants
+            const giveaway = parseInt(formData.giveaway, 10);
+
+            if (player.points + delta - giveaway < 0) {
+                setMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
                 return;
             }
         }
@@ -190,6 +251,56 @@ const PlayerModal = ({ player, formData, setFormData, modalOptions, message, set
                                         maxLength={100}
                                         required
                                     />
+                                </Form.Group>
+                            </Modal.Body>
+
+                            <div className="player-modal-separator"></div>
+
+                            <Modal.Header>
+                                <Modal.Title>{t('edition.giveParticipant')}</Modal.Title>
+                            </Modal.Header>
+
+                            <Modal.Body>
+                                {/* Formulaire */}
+                                <Form.Group controlId="points" className="d-flex align-items-center gap-3">
+                                    <GiTwoCoins size={30} />
+
+                                    <div className="d-flex align-items-center w-100">
+                                        <Button
+                                            className="flex-fill"
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            onClick={() => handleChangeGiveaway('remove')}
+                                        >
+                                            –
+                                        </Button>
+
+                                        <div className="flex-fill px-3 text-center">{formData.giveaway || 0}</div>
+
+                                        <Button
+                                            className="flex-fill"
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            onClick={() => handleChangeGiveaway('add')}
+                                        >
+                                            +
+                                        </Button>
+                                    </div>
+                                </Form.Group>
+
+                                <Form.Group controlId="name" className="d-flex align-items-center mt-3">
+                                    <PiUserListFill size={30} className="me-3" />
+
+                                    <Form.Select value={formData.giveawayId} onChange={handleChangeSelect}>
+                                        <option key={0} value={0}>
+                                            {t('edition.chooseParticipant')}
+                                        </option>
+                                        {availablePlayers.map((p) => (
+                                            <option key={p.id} value={p.id}>
+                                                {p.name} - {p.points} {t('edition.points').toLowerCase()}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
                                 </Form.Group>
                             </Modal.Body>
                         </>

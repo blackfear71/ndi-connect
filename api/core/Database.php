@@ -15,14 +15,15 @@ class Database
 
         $sql = [
             'host'     => $env['DB_HOST'] ?? 'localhost',
+            'port'     => $env['DB_PORT'] ?? '',
             'database' => $env['DB_NAME'] ?? 'ndi_connect_db',
             'username' => $env['DB_USER'] ?? 'root',
-            'password' => $env['DB_PASS'] ?? 'root',
+            'password' => $env['DB_PASS'] ?? '',
         ];
 
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $sql['host'] . ";dbname=" . $sql['database'] . ";charset=utf8mb4",
+                "mysql:host=" . $sql['host'] . ";port=" . $sql['port'] . ";dbname=" . $sql['database'] . ";charset=utf8mb4",
                 $sql['username'],
                 $sql['password']
             );

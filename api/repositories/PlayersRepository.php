@@ -68,6 +68,23 @@ class PlayersRepository extends Model
     }
 
     /**
+     * Modification d'un joueur par Id (don de points)
+     */
+    public function updatePlayerGiveaway($id, $login, $giveaway)
+    {
+        $data['giveaway'] = $giveaway;
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_by'] = $login;
+
+        $sql = "UPDATE {$this->table} SET points = points + :giveaway, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        $data['id'] = $id;
+
+        return $stmt->execute($data);
+    }
+
+    /**
      * Modification des points d'un joueur par Id
      */
     public function updatePlayerPoints($id, $login, $data)

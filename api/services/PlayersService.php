@@ -45,7 +45,7 @@ class PlayersService
     public function createPlayer($idEdition, $user, $data)
     {
         // Contrôle des données
-        if (!$this->isValidPlayerData($user['level'], $data)) {
+        if (!$this->isValidPlayerData($user['level'], $data, true)) {
             return null;
         }
 
@@ -63,12 +63,19 @@ class PlayersService
     public function updatePlayer($idEdition, $idPlayer, $user, $data)
     {
         // Contrôle des données
-        if (!$this->isValidPlayerData($user['level'], $data)) {
+        if (!$this->isValidPlayerData($user['level'], $data, false)) {
             return null;
         }
 
-        // Modification et récupération des participants de l'édition
-        if ($this->repository->updatePlayer($idPlayer, $user['login'], $data)) {
+        // Modifications et récupération des participants de l'édition
+        $dataPlayer = $this->processDataPlayer($data);
+
+        if ($this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
+            // Don de points
+            if ($data['giveaway'] > 0 && $data['giveawayId'] != 0) {
+                $this->repository->updatePlayerGiveaway($data['giveawayId'], $user['login'], $data['giveaway']);
+            }
+
             return $this->getEditionPlayers($idEdition);
         }
 
@@ -100,11 +107,29 @@ class PlayersService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData($userLevel, $data)
+    private function isValidPlayerData($userLevel, $data, $isCreate)
     {
         $name = trim($data['name'] ?? '');
         $delta = $data['delta'] ?? null;
+        $giveaway = $data['giveaway'] ?? null;
+        $giveawayId = $data['giveawayId'] ?? null;
 
-        return $name && is_numeric($delta) && ($userLevel == UserRole::SUPERADMIN->value || $delta >= 0);
+        $isDeltaValid = is_numeric($delta) && ($userLevel == UserRole::SUPERADMIN->value || $delta >= 0);
+        $isGiveawayValid = $isCreate || (is_numeric($giveaway) && is_numeric($giveawayId) && (($giveaway > 0 && $giveawayId != 0) || ($giveaway == 0 && $giveawayId == 0)));
+
+        return $name && $isDeltaValid && $isGiveawayValid;
+    }
+
+    /**
+     * Formate les données avant traitement SQL (participant)
+     */
+    private function processDataPlayer($data)
+    {
+        $sqlData = [
+            'name' => $data['name'],
+            'delta' => $data['delta'] - $data['giveaway']
+        ];
+
+        return $sqlData;
     }
 }

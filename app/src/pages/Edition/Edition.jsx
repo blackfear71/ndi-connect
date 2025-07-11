@@ -76,12 +76,13 @@ const Edition = () => {
     const [formPlayer, setFormPlayer] = useState({
         id: null,
         name: '',
-        delta: 0
+        delta: 0,
+        giveaway: 0,
+        giveawayId: 0
     });
     const [formReward, setFormReward] = useState({
         idPlayer: null,
-        idGift: 0,
-        points: 0
+        idGift: 0
     });
     const [showActions, setShowActions] = useState(true);
 
@@ -226,7 +227,9 @@ const Edition = () => {
             case 'update':
                 subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
                     name: formPlayer.name,
-                    delta: formPlayer.delta
+                    delta: formPlayer.delta,
+                    giveaway: formPlayer.giveaway,
+                    giveawayId: formPlayer.giveawayId
                 });
                 break;
         }
@@ -270,7 +273,9 @@ const Edition = () => {
         setFormPlayer({
             id: null,
             name: '',
-            delta: 0
+            delta: 0,
+            giveaway: 0,
+            giveawayId: 0
         });
     };
 
@@ -401,8 +406,7 @@ const Edition = () => {
     const resetFormReward = () => {
         setFormReward({
             idPlayer: null,
-            idGift: 0,
-            points: 0
+            idGift: 0
         });
     };
 
@@ -541,6 +545,7 @@ const Edition = () => {
                     {/* Modale de modification/suppression de participant */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
                         <PlayerModal
+                            players={players}
                             player={players.find((p) => p.id === formPlayer.id)}
                             formData={formPlayer}
                             setFormData={setFormPlayer}
