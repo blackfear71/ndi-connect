@@ -1,3 +1,24 @@
 .reward-modal-badge {
     width: 100px;
 }
+
+.reward-modal-separator {
+    border-top: 1px solid #dee2e6;
+}
+
+.reward-modal-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #163c76 !important;
+    color: white !important;
+    border: none !important;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.reward-modal-button:hover,
+.reward-modal-button:active {
+    background-color: #0a2f68 !important;
+}

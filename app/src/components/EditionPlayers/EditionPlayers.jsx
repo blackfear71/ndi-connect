@@ -6,6 +6,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 import { FaGift } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
+import { IoGiftSharp } from 'react-icons/io5';
 
 import UserRole from '../../enums/UserRole';
 
@@ -186,21 +187,25 @@ const EditionPlayers = ({
 
             {/* Liste */}
             {players && players.length > 0 ? (
-                players.map((player) => (
-                    <div key={player.id} className="d-flex align-items-center gap-2 mt-2">
+                players.map((p) => (
+                    <div key={p.id} className="d-flex align-items-center gap-2 mt-2">
                         {/* Participant */}
                         <div className="d-flex align-items-center flex-grow-1 edition-players-name">
                             <Badge bg="success" className="me-1 d-flex align-items-center">
                                 <GiTwoCoins size={18} className="me-1" />
-                                {player.points}
+                                {p.points}
                             </Badge>
-                            <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{player.name}</span>
+                            <Badge bg="primary" className="me-1 d-flex align-items-center">
+                                <IoGiftSharp size={16} className="me-1" />
+                                {p?.gifts.length}
+                            </Badge>
+                            <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{p.name}</span>
                         </div>
 
                         {/* Cadeau */}
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && gifts.length > 0 && (
+                        {gifts.length > 0 && (
                             <Button
-                                onClick={isSubmitting ? null : () => showRewardModal(player)}
+                                onClick={isSubmitting ? null : () => showRewardModal(p)}
                                 className="edition-players-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
@@ -211,7 +216,7 @@ const EditionPlayers = ({
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showPlayerModal(player, 'delete')}
+                                onClick={isSubmitting ? null : () => showPlayerModal(p, 'delete')}
                                 className="edition-players-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
@@ -222,7 +227,7 @@ const EditionPlayers = ({
                         {/* Modification */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showPlayerModal(player, 'update')}
+                                onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
                                 className="edition-players-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >

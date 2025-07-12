@@ -56,32 +56,32 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
 
             {/* Liste */}
             {gifts && gifts.length > 0 ? (
-                gifts.map((gift) => (
-                    <div key={gift.id} className="d-flex align-items-center gap-2 mt-2">
+                gifts.map((g) => (
+                    <div key={g.id} className="d-flex align-items-center gap-2 mt-2">
                         {/* Cadeau */}
                         <div className="d-flex align-items-center flex-grow-1 edition-gifts-name">
                             <Badge bg="success" className="me-1 d-flex align-items-center">
-                                <GrMoney size={18} className="me-1" /> {gift.value}
+                                <GrMoney size={18} className="me-1" /> {g.value}
                             </Badge>
                             <Badge bg="primary" className="me-1 d-flex align-items-center">
-                                {gift.remainingQuantity === 0 ? (
+                                {g.remainingQuantity === 0 ? (
                                     <GiCardboardBoxClosed size={18} className="me-1" />
                                 ) : (
                                     <GiCardboardBox size={18} className="me-1" />
                                 )}{' '}
-                                {gift.remainingQuantity}
+                                {g.remainingQuantity}
                             </Badge>
                             <span
-                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${gift.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}
+                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${g.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}
                             >
-                                {gift.name}
+                                {g.name}
                             </span>
                         </div>
 
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showGiftModal(gift, 'delete')}
+                                onClick={isSubmitting ? null : () => showGiftModal(g, 'delete')}
                                 className="edition-gifts-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
@@ -92,7 +92,7 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
                         {/* Modification */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showGiftModal(gift, 'update')}
+                                onClick={isSubmitting ? null : () => showGiftModal(g, 'update')}
                                 className="edition-gifts-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >

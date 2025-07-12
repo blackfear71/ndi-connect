@@ -559,7 +559,7 @@ const Edition = () => {
                     )}
 
                     {/* Modale d'attribution de cadeau à un participant */}
-                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && gifts.length > 0 && modalOptionsReward.isOpen && (
+                    {gifts.length > 0 && modalOptionsReward.isOpen && (
                         <RewardModal
                             player={players.find((p) => p.id === formReward.idPlayer)}
                             gifts={gifts}

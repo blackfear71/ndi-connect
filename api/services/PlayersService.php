@@ -1,8 +1,12 @@
 <?php
+require_once 'services/RewardsService.php';
+
 require_once 'repositories/PlayersRepository.php';
 
 class PlayersService
 {
+    private $rewardsService = null;
+
     private $db;
     private $repository;
 
@@ -16,11 +20,30 @@ class PlayersService
     }
 
     /**
+     * Instancie le RewardsService si besoin
+     */
+    private function getRewardsService()
+    {
+        if ($this->rewardsService === null) {
+            $this->rewardsService = new RewardsService($this->db);
+        }
+        return $this->rewardsService;
+    }
+
+    /**
      * Lecture des enregistrements d'une édition
      */
     public function getEditionPlayers($id)
     {
-        return $this->repository->getEditionPlayers($id);
+        // Liste des participants
+        $players = $this->repository->getEditionPlayers($id);
+
+        // Cadeaux obtenus
+        foreach ($players as &$player) {
+            $player['gifts'] = $this->getRewardsService()->getPlayerGifts($player['id']);
+        }
+
+        return $players;
     }
 
     /**

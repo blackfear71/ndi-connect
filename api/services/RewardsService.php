@@ -52,6 +52,14 @@ class RewardsService
     }
 
     /**
+     * Récupération des cadeaux d'un participant
+     */
+    public function getPlayerGifts($id)
+    {
+        return $this->repository->getPlayerGifts($id);
+    }
+
+    /**
      * Attribution d'un cadeau
      */
     public function createReward($login, $idEdition, $idGift, $idPlayer)
