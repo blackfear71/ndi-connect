@@ -3,6 +3,8 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import HttpBackend from 'i18next-http-backend';
 import { initReactI18next } from 'react-i18next';
 
+const version = process.env.REACT_APP_VERSION || Date.now(); // fallback si absent
+
 /**
  * Charge les fichiers de traduction, détecte la langue du navigateur et connecte à React
  */
@@ -16,7 +18,7 @@ i18n.use(HttpBackend)
             escapeValue: false
         },
         backend: {
-            loadPath: '/locales/{{lng}}/{{ns}}.json'
+            loadPath: `/locales/{{lng}}/{{ns}}.json?v=${version}`
         }
     });
 

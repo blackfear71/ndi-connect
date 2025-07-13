@@ -7,13 +7,15 @@ const envFiles = [
     {
         path: path.resolve('.env.development'),
         label: 'Front (dev)',
-        content: `REACT_APP_API_URL=http://localhost/ndi-connect/api
+        content: `REACT_APP_VERSION=0.0.0
+REACT_APP_API_URL=http://localhost/ndi-connect/api
 `
     },
     {
         path: path.resolve('.env.production'),
         label: 'Front (prod)',
-        content: `REACT_APP_API_URL=/api
+        content: `REACT_APP_VERSION=0.0.0
+REACT_APP_API_URL=/api
 `
     },
     {
