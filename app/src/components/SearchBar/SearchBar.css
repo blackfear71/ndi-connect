@@ -55,7 +55,7 @@
     width: calc(100% - 40px);
     max-height: calc(100vh - 150px);
     overflow-y: auto;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .search-result-message {

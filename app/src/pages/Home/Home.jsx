@@ -240,7 +240,7 @@ const Home = () => {
                             </div>
                         )
                     ) : (
-                        <div className="text-white">{t('home.noEdition')}</div>
+                        <div className="home-empty">{t('home.noEdition')}</div>
                     )}
 
                     {/* Modale de création d'édition */}
