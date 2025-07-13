@@ -10,6 +10,7 @@ import GiftsService from '../../api/giftsService';
 import PlayersService from '../../api/playersService';
 import RewardsService from '../../api/rewardsService';
 
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import EditionAbout from '../../components/EditionAbout/EditionAbout';
 import EditionGifts from '../../components/EditionGifts/EditionGifts';
 import EditionModal from '../../components/EditionModal/EditionModal';
@@ -46,15 +47,18 @@ const Edition = () => {
 
     // Local states
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
     const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
     const [isSubmittingGift, setIsSubmittingGift] = useState(false);
     const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
     const [isSubmittingReward, setIsSubmittingReward] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
+    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
     const [messageModalEdition, setMessageModalEdition] = useState(null);
     const [messageModalGift, setMessageModalGift] = useState(null);
     const [messageModalPlayer, setMessageModalPlayer] = useState(null);
     const [messageModalReward, setMessageModalReward] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', isOpen: false });
     const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
@@ -81,6 +85,7 @@ const Edition = () => {
         giveawayId: 0
     });
     const [formReward, setFormReward] = useState({
+        idReward: null,
         idPlayer: null,
         idGift: 0
     });
@@ -133,8 +138,8 @@ const Edition = () => {
      * Contrôle soumission en cours
      */
     const isSubmitting = useMemo(() => {
-        return isSubmittingEdition || isSubmittingGift || isSubmittingPlayer || isSubmittingReward;
-    }, [isSubmittingEdition, isSubmittingGift, isSubmittingPlayer, isSubmittingReward]);
+        return isSubmittingConfirm || isSubmittingEdition || isSubmittingGift || isSubmittingPlayer || isSubmittingReward;
+    }, [isSubmittingConfirm, isSubmittingEdition, isSubmittingGift, isSubmittingPlayer, isSubmittingReward]);
 
     /**
      * Modification de l'édition
@@ -405,8 +410,52 @@ const Edition = () => {
      */
     const resetFormReward = () => {
         setFormReward({
+            idReward: null,
             idPlayer: null,
             idGift: 0
+        });
+    };
+
+    /**
+     * Suppression d'un cadeau d'un participant
+     */
+    const handleDeletePlayerGift = () => {
+        setMessageModalConfirm(null);
+        setMessagePage(null);
+        setIsSubmittingConfirm(true);
+
+        const rewardsService = new RewardsService(localStorage.getItem('token'));
+
+        const subscriptionRewards = rewardsService.deleteReward(edition.id, formReward);
+
+        combineLatest([subscriptionRewards])
+            .pipe(
+                map(([dataRewards]) => {
+                    openCloseConfirmModal();
+                    setGifts(dataRewards.response.data.gifts);
+                    setPlayers(dataRewards.response.data.players);
+                    setMessagePage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmittingConfirm(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Ouverture/fermeture de la modale de confirmation de suppression
+     */
+    const openCloseConfirmModal = (content) => {
+        // Ouverture ou fermeture
+        setModalOptionsConfirm({
+            content: content,
+            isOpen: !modalOptionsConfirm.isOpen
         });
     };
 
@@ -566,11 +615,24 @@ const Edition = () => {
                             formData={formReward}
                             setFormData={setFormReward}
                             modalOptions={modalOptionsReward}
+                            setModalOptions={setModalOptionsReward}
                             message={messageModalReward}
                             setMessage={setMessageModalReward}
                             onClose={openCloseRewardModal}
+                            onConfirm={openCloseConfirmModal}
                             onSubmit={handleSubmitReward}
                             isSubmitting={isSubmittingReward}
+                        />
+                    )}
+
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                        <ConfirmModal
+                            modalOptions={modalOptionsConfirm}
+                            message={messageModalConfirm}
+                            setMessage={setMessageModalConfirm}
+                            onClose={openCloseConfirmModal}
+                            onSubmit={handleDeletePlayerGift}
+                            isSubmitting={isSubmittingConfirm}
                         />
                     )}
                 </>

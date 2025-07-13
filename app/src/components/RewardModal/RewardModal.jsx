@@ -2,7 +2,7 @@ import { useContext, useEffect } from 'react';
 
 import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaTimes } from 'react-icons/fa';
+import { FaTrashCan } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
 
 import UserRole from '../../enums/UserRole';
@@ -12,7 +12,20 @@ import Message from '../Message/Message';
 
 import './RewardModal.css';
 
-const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const RewardModal = ({
+    player,
+    gifts,
+    formData,
+    setFormData,
+    modalOptions,
+    setModalOptions,
+    message,
+    setMessage,
+    onClose,
+    onConfirm,
+    onSubmit,
+    isSubmitting
+}) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -46,7 +59,6 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, messa
     /**
      * Gère le comportement du formulaire à la soumission
      * @param {*} e Evènement
-     * @param {*} action Action à réaliser
      */
     const handleSubmit = (e) => {
         // Empêche le rechargement de la page
@@ -70,10 +82,21 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, messa
         onSubmit();
     };
 
-    /**
-     * TODO
-     */
-    const handleDelete = () => {};
+    const handleDelete = (reward) => {
+        // Inversion de l'état de la modale (fermeture de la modale du joueur si elle était ouverte, ouverture sinon)
+        setModalOptions({
+            ...modalOptions,
+            isOpen: !modalOptions.isOpen
+        });
+
+        // Ouverture de la modale de confirmation
+        setFormData((prev) => ({
+            ...prev,
+            idReward: reward.id
+        }));
+
+        onConfirm(t('edition.deletePlayerGift', { gift: reward.name, player: player.name }));
+    };
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
@@ -135,26 +158,25 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, messa
                                 className="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center"
                                 style={{ width: '30px', height: '30px', fontSize: '14px' }}
                             >
-                                {player?.gifts.length ?? 0}
+                                {player?.rewards.length ?? 0}
                             </Badge>
                         </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         {/* Cadeaux obtenus */}
-                        {/* TODO : pour un super admin, afficher une croix qui ouvre une modale de confirmation (composant générique à faire) */}
-                        {player?.gifts.length > 0 ? (
+                        {player?.rewards.length > 0 ? (
                             <div className="d-flex flex-column gap-2">
-                                {player.gifts.map((g) => (
-                                    <div key={g.id} className="d-flex align-items-center gap-2">
-                                        <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{g.name}</div>
+                                {player.rewards.map((r) => (
+                                    <div key={r.id} className="d-flex align-items-center gap-2">
+                                        <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
                                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                             <Button
-                                                onClick={handleDelete}
+                                                onClick={() => handleDelete(r)}
                                                 className="reward-modal-button"
                                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                                             >
-                                                <FaTimes color={isSubmitting ? 'gray' : 'white'} />
+                                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
                                             </Button>
                                         )}
                                     </div>

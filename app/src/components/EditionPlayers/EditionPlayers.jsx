@@ -197,7 +197,7 @@ const EditionPlayers = ({
                             </Badge>
                             <Badge bg="primary" className="me-1 d-flex align-items-center">
                                 <IoGiftSharp size={16} className="me-1" />
-                                {p?.gifts.length}
+                                {p?.rewards.length}
                             </Badge>
                             <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{p.name}</span>
                         </div>

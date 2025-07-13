@@ -78,7 +78,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
             }
 
             // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
-            if (gift && quantity < gift.giftAttribution) {
+            if (gift && quantity < gift.rewardCount) {
                 setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
                 return;
             }

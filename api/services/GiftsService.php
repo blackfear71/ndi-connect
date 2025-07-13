@@ -40,7 +40,7 @@ class GiftsService
 
         // Calcul du nombre de cadeaux restants
         foreach ($gifts as &$gift) {
-            $gift['remainingQuantity'] = $gift['quantity'] - $gift['giftAttribution'];
+            $gift['remainingQuantity'] = $gift['quantity'] - $gift['rewardCount'];
         }
         unset($gift);
 
@@ -87,10 +87,10 @@ class GiftsService
     public function updateGift($idEdition, $idGift, $user, $data)
     {
         // Récupération du nombre d'attributions du cadeau
-        $giftAttribution = $this->getRewardsService()->getGiftAttribution($idGift);
+        $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
 
         // Contrôle des données
-        if (!$this->isValidGiftData($user['level'], $data, $giftAttribution)) {
+        if (!$this->isValidGiftData($user['level'], $data, $rewardCount)) {
             return null;
         }
 
@@ -118,12 +118,12 @@ class GiftsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData($userLevel, $data, $giftAttribution = null)
+    private function isValidGiftData($userLevel, $data, $rewardCount = null)
     {
         $name = trim($data['name'] ?? '');
         $value = $data['value'] ?? null;
         $quantity = $data['quantity'] ?? null;
 
-        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && ($giftAttribution != null ? $quantity >= $giftAttribution : $quantity >= 0);
+        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
     }
 }

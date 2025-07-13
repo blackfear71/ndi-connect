@@ -46,17 +46,17 @@ class RewardsService
     /**
      * Récupération du nombre d'attributions d'un cadeau
      */
-    public function getGiftAttribution($idGift)
+    public function getRewardCount($idGift)
     {
-        return $this->repository->getGiftAttribution($idGift);
+        return $this->repository->getRewardCount($idGift);
     }
 
     /**
      * Récupération des cadeaux d'un participant
      */
-    public function getPlayerGifts($id)
+    public function getPlayerRewards($id)
     {
-        return $this->repository->getPlayerGifts($id);
+        return $this->repository->getPlayerRewards($id);
     }
 
     /**
@@ -79,10 +79,10 @@ class RewardsService
         }
 
         // Récupération du nombre d'attributions du cadeau
-        $giftAttribution = $this->getGiftAttribution($idGift);
+        $rewardCount = $this->getRewardCount($idGift);
 
         // Contrôle attribution autorisée
-        if (!$this->isValidRewardData($gift, $giftAttribution, $player)) {
+        if (!$this->isValidRewardData($gift, $rewardCount, $player)) {
             return null;
         }
 
@@ -108,12 +108,37 @@ class RewardsService
     }
 
     /**
+     * Suppression logique de l'attribution d'un cadeau
+     */
+    public function deleteReward($login, $idEdition, $idReward)
+    {
+        // Récupération de l'attribution du cadeau du participant
+        $reward = $this->repository->find($idReward);
+
+        // Suppression logique de l'attribution
+        if ($reward && $this->repository->deleteReward($idReward, $login)) {
+            // Récupération des points pour le participant
+            if ($this->getPlayersService()->updatePlayerDelta($reward['id_player'], $login, $reward['points'])) {
+                // Récupération des données cadeaux
+                $data['gifts'] = $this->getGiftsService()->getEditionGifts($idEdition);
+
+                // Récupération des données participants
+                $data['players'] = $this->getPlayersService()->getEditionPlayers($idEdition);
+
+                return $data;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Contrôle de cohérence des données
      */
-    private function isValidRewardData($gift, $giftAttribution, $player)
+    private function isValidRewardData($gift, $rewardCount, $player)
     {
         // Contrôle quantité restante
-        $remainingQuantity = $gift['quantity'] - $giftAttribution;
+        $remainingQuantity = $gift['quantity'] - $rewardCount;
 
         // Contrôle points participant
         $enoughPoints = $player['points'] >= $gift['value'];

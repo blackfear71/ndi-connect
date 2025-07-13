@@ -75,4 +75,47 @@ class RewardsController
             );
         }
     }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteReward($token, $idEdition, $data)
+    {
+        try {
+            // Contrôle autorisation
+            $user = $this->getUsersService()->checkAuth($token);
+
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
+                // Accès refusé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Action non autorisée dans deleteReward de RewardsController'
+                );
+                exit;
+            }
+
+            // Suppression logique d'un enregistrement
+            $playersAndGifts = $this->service->deleteReward($user['login'], $idEdition, $data['idReward']);
+
+            if ($playersAndGifts) {
+                // Succès
+                ResponseHelper::success($playersAndGifts, 'MSG_DELETION_SUCCESS');
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_DELETION_FAILED',
+                    400,
+                    'Erreur lors de la suppression du cadeau du participant : ' . json_encode($data)
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans deleteReward de RewardsController : ' . $e->getMessage()
+            );
+        }
+    }
 }

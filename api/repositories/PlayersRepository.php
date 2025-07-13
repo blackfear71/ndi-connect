@@ -68,15 +68,15 @@ class PlayersRepository extends Model
     }
 
     /**
-     * Modification d'un joueur par Id (don de points)
+     * Modification d'un joueur par Id (don ou récupération de points)
      */
-    public function updatePlayerGiveaway($id, $login, $giveaway)
+    public function updatePlayerDelta($id, $login, $delta)
     {
-        $data['giveaway'] = $giveaway;
+        $data['delta'] = $delta;
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
 
-        $sql = "UPDATE {$this->table} SET points = points + :giveaway, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
+        $sql = "UPDATE {$this->table} SET points = points + :delta, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
         $data['id'] = $id;

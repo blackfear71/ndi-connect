@@ -38,7 +38,9 @@
     },
     "common": {
         "add": "Ajouter",
+        "cancel": "Annuler",
         "close": "Fermer",
+        "confirm": "Confirmer",
         "delete": "Supprimer",
         "home": "Accueil",
         "return": "Retour",
@@ -59,6 +61,7 @@
         "deleteGift": "Supprimer le cadeau",
         "deleteGiftMessage": "Voulez-vous vraiment supprimer le cadeau \"{{name}}\" ?",
         "deletePlayer": "Supprimer le participant",
+        "deletePlayerGift": "Voulez-vous vraiment supprimer le cadeau \"{{gift}}\" du participant \"{{player}}\" ?",
         "deletePlayerMessage": "Voulez-vous vraiment supprimer le participant \"{{name}}\" ?",
         "editionResult": "Edition {{year}}",
         "editionDate": "{{date}} à {{time}}",

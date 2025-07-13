@@ -40,7 +40,7 @@ class PlayersService
 
         // Cadeaux obtenus
         foreach ($players as &$player) {
-            $player['gifts'] = $this->getRewardsService()->getPlayerGifts($player['id']);
+            $player['rewards'] = $this->getRewardsService()->getPlayerRewards($player['id']);
         }
 
         return $players;
@@ -52,14 +52,6 @@ class PlayersService
     public function getPlayer($id)
     {
         return $this->repository->find($id);
-    }
-
-    /**
-     * Suppression logique des participants d'une édition
-     */
-    public function deletePlayers($id, $login)
-    {
-        return $this->repository->deletePlayers($id, $login);
     }
 
     /**
@@ -96,7 +88,7 @@ class PlayersService
         if ($this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
             // Don de points
             if ($data['giveaway'] > 0 && $data['giveawayId'] != 0) {
-                $this->repository->updatePlayerGiveaway($data['giveawayId'], $user['login'], $data['giveaway']);
+                $this->updatePlayerDelta($data['giveawayId'], $user['login'], $data['giveaway']);
             }
 
             return $this->getEditionPlayers($idEdition);
@@ -112,6 +104,23 @@ class PlayersService
     {
         // Modification des points d'un participant
         return $this->repository->updatePlayerPoints($idPlayer, $login, $data);
+    }
+
+    /**
+     * Modification des points d'un participant par ajout
+     */
+    public function updatePlayerDelta($idPlayer, $login, $delta)
+    {
+        // Modification des points d'un participant
+        return $this->repository->updatePlayerDelta($idPlayer, $login, $delta);
+    }
+
+    /**
+     * Suppression logique des participants d'une édition
+     */
+    public function deletePlayers($id, $login)
+    {
+        return $this->repository->deletePlayers($id, $login);
     }
 
     /**
