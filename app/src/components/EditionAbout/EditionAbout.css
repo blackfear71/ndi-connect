@@ -2,9 +2,19 @@
     color: white;
 }
 
-.edition-about-card {
-    padding: 0 !important;
-    border: none !important;
-    overflow: hidden !important;
+.edition-about-title {
+    color: white;
+    font-size: x-large;
+    font-style: italic;
+}
+
+.edition-about-table {
+    border-radius: 5px;
+    overflow: hidden;
     white-space: pre-line;
+}
+
+.edition-about-text {
+    color: white;
+    text-align: justify;
 }

@@ -102,7 +102,7 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
                     </div>
                 ))
             ) : (
-                <div className="edition-empty">{t('edition.noGifts')}</div>
+                <div className="edition-empty mt-2">{t('edition.noGifts')}</div>
             )}
         </>
     );

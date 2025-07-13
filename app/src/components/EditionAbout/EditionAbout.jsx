@@ -58,8 +58,8 @@ const EditionAbout = ({ edition }) => {
         <>
             {/* Progression */}
             {progress.isActive && (
-                <div className="edition-about-progress mb-3">
-                    <div>{t('edition.progress')}</div>
+                <div className="mb-3">
+                    <div className="edition-about-title">{t('edition.progress')}</div>
                     <div className="d-flex align-items-center mt-2">
                         <Badge bg="success" className="me-2">
                             {getTimeFromDate(edition.startDate)}
@@ -75,56 +75,50 @@ const EditionAbout = ({ edition }) => {
             )}
 
             {/* Informations */}
-            <Card className="edition-about-card">
-                <Card.Body className="p-0">
-                    <Card.Title className="bg-warning p-3 mb-0 text-white">{t('edition.informations')}</Card.Title>
-                    <Table className="mb-0">
-                        <tbody>
-                            <tr>
-                                <td className="fw-bold">{t('edition.location')}</td>
-                                <td>{edition.location}</td>
-                            </tr>
-                            <tr>
-                                <td className="fw-bold">{t('edition.start')}</td>
-                                <td>
-                                    {t('edition.editionDate', {
-                                        date: getFrenchDate(edition.startDate),
-                                        time: getTimeFromDate(edition.startDate)
-                                    })}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="fw-bold">{t('edition.end')}</td>
-                                <td>
-                                    {t('edition.editionDate', {
-                                        date: getFrenchDate(edition.endDate),
-                                        time: getTimeFromDate(edition.endDate)
-                                    })}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </Table>
-                </Card.Body>
-            </Card>
+            <div className="edition-about-title">{t('edition.informations')}</div>
+            <div className="edition-about-table mt-2">
+                <Table className="mb-0">
+                    <tbody>
+                        <tr>
+                            <td className="fw-bold">{t('edition.location')}</td>
+                            <td>{edition.location}</td>
+                        </tr>
+                        <tr>
+                            <td className="fw-bold">{t('edition.start')}</td>
+                            <td>
+                                {t('edition.editionDate', {
+                                    date: getFrenchDate(edition.startDate),
+                                    time: getTimeFromDate(edition.startDate)
+                                })}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="fw-bold">{t('edition.end')}</td>
+                            <td>
+                                {t('edition.editionDate', {
+                                    date: getFrenchDate(edition.endDate),
+                                    time: getTimeFromDate(edition.endDate)
+                                })}
+                            </td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
 
             {/* Thème */}
             {edition.theme && (
-                <Card className="edition-about-card mt-3">
-                    <Card.Body className="p-0">
-                        <Card.Title className="bg-success p-3 mb-0 text-white">{t('edition.theme')}</Card.Title>
-                        <Card.Text className="p-2">{edition.theme}</Card.Text>
-                    </Card.Body>
-                </Card>
+                <div className="mt-3">
+                    <div className="edition-about-title">{t('edition.theme')}</div>
+                    <div className="edition-about-text">{edition.theme}</div>
+                </div>
             )}
 
             {/* Défi */}
             {edition.challenge && (
-                <Card className="edition-about-card mt-3">
-                    <Card.Body className="p-0">
-                        <Card.Title className="bg-danger p-3 mb-0 text-white">{t('edition.challenge')}</Card.Title>
-                        <Card.Text className="p-2">{edition.challenge}</Card.Text>
-                    </Card.Body>
-                </Card>
+                <div className="mt-3">
+                    <div className="edition-about-title mt-3">{t('edition.challenge')}</div>
+                    <div className="edition-about-text">{edition.challenge}</div>
+                </div>
             )}
         </>
     );

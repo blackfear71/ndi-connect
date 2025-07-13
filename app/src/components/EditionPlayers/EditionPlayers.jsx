@@ -237,7 +237,7 @@ const EditionPlayers = ({
                     </div>
                 ))
             ) : (
-                <div className="edition-empty">{t('edition.noPlayers')}</div>
+                <div className="edition-empty mt-2">{t('edition.noPlayers')}</div>
             )}
         </>
     );
