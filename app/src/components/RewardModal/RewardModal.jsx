@@ -104,7 +104,7 @@ const RewardModal = ({
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.giveGift') : t('edition.informations')}
+                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
@@ -112,16 +112,21 @@ const RewardModal = ({
                         {/* Message */}
                         {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
+                        {/* Attribuer un cadeau / Informations */}
+                        <div className="modal-section-title">
+                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.giveGift') : t('edition.player')}
+                        </div>
+
                         {/* Participant */}
-                        <div className="d-flex align-items-center bg-light rounded p-2">
+                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-3">
                             <Badge className="reward-modal-badge bg-warning fs-6 me-2">{t('edition.player')}</Badge>
-                            {player.name}
+                            <span className="me-1">{player.name}</span>
                         </div>
 
                         {/* Nombre de points */}
-                        <div className="d-flex align-items-center bg-light rounded p-2 mt-2">
+                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
                             <Badge className="reward-modal-badge bg-warning fs-6 me-2">{t('edition.points')}</Badge>
-                            {player.points}
+                            <Badge className="reward-modal-count bg-danger">{player?.points ?? 0}</Badge>
                         </div>
 
                         {/* Formulaire */}
@@ -147,26 +152,16 @@ const RewardModal = ({
                                 )}
                             </>
                         )}
-                    </Modal.Body>
 
-                    <div className="reward-modal-separator"></div>
+                        {/* Cadeaux obtenus */}
+                        <div className="modal-section-title mt-3 d-flex align-items-center justify-content-between">
+                            {t('edition.obtainedGifts')}
+                            <Badge className="reward-modal-count bg-danger">{player?.rewards.length ?? 0}</Badge>
+                        </div>
 
-                    <Modal.Header>
-                        <Modal.Title className="w-100 d-flex align-items-center justify-content-between">
-                            {t('edition.obtainedGifts')}{' '}
-                            <Badge
-                                className="rounded-circle bg-danger text-white d-flex justify-content-center align-items-center"
-                                style={{ width: '30px', height: '30px', fontSize: '14px' }}
-                            >
-                                {player?.rewards.length ?? 0}
-                            </Badge>
-                        </Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body>
                         {/* Cadeaux obtenus */}
                         {player?.rewards.length > 0 ? (
-                            <div className="d-flex flex-column gap-2">
+                            <div className="d-flex flex-column gap-2 mt-3">
                                 {player.rewards.map((r) => (
                                     <div key={r.id} className="d-flex align-items-center gap-2">
                                         <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
@@ -183,7 +178,7 @@ const RewardModal = ({
                                 ))}
                             </div>
                         ) : (
-                            <div className="bg-light rounded p-2">{t('edition.noObtainedGifts')}</div>
+                            <div className="bg-light rounded p-2 mt-3">{t('edition.noObtainedGifts')}</div>
                         )}
                     </Modal.Body>
 

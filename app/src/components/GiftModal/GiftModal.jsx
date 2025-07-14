@@ -8,6 +8,8 @@ import { IoGiftSharp } from 'react-icons/io5';
 
 import Message from '../Message/Message';
 
+import './GiftModal.css';
+
 const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
@@ -98,6 +100,8 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
             update: 'common.validate'
         })[action] || 'common.unknownLabel';
 
+    // TODO : remplacer les modales "voulez-vous..." de confirmation par la confirm modal
+
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
@@ -164,9 +168,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
 
                                 {/* Cadeaux restants */}
                                 {gift && (
-                                    <div className="d-flex align-items-center bg-light rounded p-2 mt-2">
+                                    <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
                                         <Badge className="bg-warning fs-6 me-2">{t('edition.remainingGifts')}</Badge>
-                                        {gift.remainingQuantity}
+                                        <Badge className="gift-modal-count bg-danger">{gift?.remainingQuantity ?? 0}</Badge>
                                     </div>
                                 )}
                             </Modal.Body>

@@ -5,3 +5,18 @@
 .container {
     padding: 0 !important;
 }
+
+.modal-header {
+    background-color: #163c76;
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.modal-section-title {
+    background: #e3e3e3;
+    padding: 10px;
+    border-radius: 5px;
+}

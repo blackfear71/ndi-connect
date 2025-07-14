@@ -74,6 +74,8 @@
         "givePoints": "Attribuer des points",
         "informations": "Informations",
         "location": "Lieu",
+        "managePlayer": "Gérer le participant",
+        "manageGifts": "Gérer les cadeaux",
         "name": "Nom",
         "noAvailableGifts": "Pas assez de points pour les cadeaux",
         "noGifts": "Aucun cadeau",

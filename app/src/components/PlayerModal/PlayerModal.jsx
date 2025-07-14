@@ -10,8 +10,6 @@ import UserRole from '../../enums/UserRole';
 import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
 
-import './PlayerModal.css';
-
 const PlayerModal = ({ players, player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
@@ -182,7 +180,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
                     {modalOptions.action === 'delete' ? (
                         <>
-                            <Modal.Header closeButton>
+                            <Modal.Header className="modal-header" closeButton>
                                 <Modal.Title>{t('edition.deletePlayer')}</Modal.Title>
                             </Modal.Header>
 
@@ -191,15 +189,18 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
                     ) : (
                         <>
                             <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.givePoints')}</Modal.Title>
+                                <Modal.Title>{t('edition.managePlayer')}</Modal.Title>
                             </Modal.Header>
 
                             <Modal.Body>
                                 {/* Message */}
                                 {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
+                                {/* Attribuer des points */}
+                                <div className="modal-section-title">{t('edition.givePoints')}</div>
+
                                 {/* Nombre de points */}
-                                <div className="d-flex align-items-center bg-light rounded p-2">
+                                <div className="d-flex align-items-center bg-light rounded p-2 mt-3">
                                     <Badge className="bg-warning fs-6 me-2">{t('edition.points')}</Badge>
                                     {player.points}
                                 </div>
@@ -230,17 +231,12 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
                                         </Button>
                                     </div>
                                 </Form.Group>
-                            </Modal.Body>
 
-                            <div className="player-modal-separator"></div>
+                                {/* Modifier le participant */}
+                                <div className="modal-section-title mt-3">{t('edition.editPlayer')}</div>
 
-                            <Modal.Header>
-                                <Modal.Title>{t('edition.editPlayer')}</Modal.Title>
-                            </Modal.Header>
-
-                            <Modal.Body>
                                 {/* Formulaire */}
-                                <Form.Group controlId="name" className="d-flex align-items-center">
+                                <Form.Group controlId="name" className="d-flex align-items-center mt-3">
                                     <PiUserListFill size={30} className="me-3" />
                                     <Form.Control
                                         type="text"
@@ -252,17 +248,12 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
                                         required
                                     />
                                 </Form.Group>
-                            </Modal.Body>
 
-                            <div className="player-modal-separator"></div>
+                                {/* Donner des points */}
+                                <div className="modal-section-title mt-3">{t('edition.giveParticipant')}</div>
 
-                            <Modal.Header>
-                                <Modal.Title>{t('edition.giveParticipant')}</Modal.Title>
-                            </Modal.Header>
-
-                            <Modal.Body>
                                 {/* Formulaire */}
-                                <Form.Group controlId="points" className="d-flex align-items-center gap-3">
+                                <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
                                     <GiTwoCoins size={30} />
 
                                     <div className="d-flex align-items-center w-100">
