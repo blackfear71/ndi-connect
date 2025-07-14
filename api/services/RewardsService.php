@@ -116,7 +116,7 @@ class RewardsService
         $reward = $this->repository->find($idReward);
 
         // Suppression logique de l'attribution
-        if ($reward && $this->repository->deleteReward($idReward, $login)) {
+        if ($reward && $this->repository->logicalDelete($idReward, $login)) {
             // Récupération des points pour le participant
             if ($this->getPlayersService()->updatePlayerDelta($reward['id_player'], $login, $reward['points'])) {
                 // Récupération des données cadeaux

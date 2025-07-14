@@ -23,12 +23,12 @@ const EditionPlayers = ({
     setFormPlayer,
     resetFormPlayer,
     setModalOptionsPlayer,
-    gifts,
     formReward,
     setFormReward,
     setModalOptionsReward,
     setMessage,
     onSubmit,
+    onConfirm,
     isSubmitting
 }) => {
     // Contexte
@@ -139,6 +139,19 @@ const EditionPlayers = ({
         });
     };
 
+    /**
+     * Ouvre la modale de suppression de participant
+     * @param {*} player Participant
+     */
+    const handleDelete = (player) => {
+        // Ouverture de la modale de confirmation
+        onConfirm({
+            content: t('edition.deletePlayer', { name: player.name }),
+            action: 'deletePlayer',
+            data: player.id
+        });
+    };
+
     return (
         <>
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
@@ -202,21 +215,19 @@ const EditionPlayers = ({
                             <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{p.name}</span>
                         </div>
 
-                        {/* Cadeau */}
-                        {gifts.length > 0 && (
-                            <Button
-                                onClick={isSubmitting ? null : () => showRewardModal(p)}
-                                className="edition-players-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaGift color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-                        )}
+                        {/* Cadeaux */}
+                        <Button
+                            onClick={isSubmitting ? null : () => showRewardModal(p)}
+                            className="edition-players-button"
+                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                        >
+                            <FaGift color={isSubmitting ? 'gray' : 'white'} />
+                        </Button>
 
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showPlayerModal(p, 'delete')}
+                                onClick={isSubmitting ? null : () => handleDelete(p)}
                                 className="edition-players-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >

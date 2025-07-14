@@ -79,7 +79,7 @@ class RewardsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward($token, $idEdition, $data)
+    public function deleteReward($token, $idEdition, $idReward)
     {
         try {
             // Contrôle autorisation
@@ -96,7 +96,7 @@ class RewardsController
             }
 
             // Suppression logique d'un enregistrement
-            $playersAndGifts = $this->service->deleteReward($user['login'], $idEdition, $data['idReward']);
+            $playersAndGifts = $this->service->deleteReward($user['login'], $idEdition, $idReward);
 
             if ($playersAndGifts) {
                 // Succès
@@ -106,7 +106,7 @@ class RewardsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du cadeau du participant : ' . json_encode($data)
+                    'Erreur lors de la suppression du cadeau du participant : ' . $idReward
                 );
             }
         } catch (Exception $e) {

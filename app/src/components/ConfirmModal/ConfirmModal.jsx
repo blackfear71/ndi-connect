@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Message from '../Message/Message';
 
-const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAction, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onSubmit, is
         e.preventDefault();
 
         // Soumets le formulaire
-        onSubmit();
+        onConfirmAction();
     };
 
     return (
@@ -51,10 +51,12 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onSubmit, is
                         <Button type="button" variant="secondary" onClick={() => onClose()}>
                             {t('common.cancel')}
                         </Button>
-                        <Button type="submit" variant="primary">
-                            {t('common.validate')}
-                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {onConfirmAction && (
+                            <Button type="submit" variant="primary">
+                                {t('common.validate')}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        )}
                     </Modal.Footer>
                 </Form>
             </fieldset>

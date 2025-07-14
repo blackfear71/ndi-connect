@@ -84,7 +84,6 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     const getTitleFromAction = (action) =>
         ({
             create: 'home.addEdition',
-            delete: 'edition.deleteEdition',
             update: 'edition.updateEdition'
         })[action] || 'common.unknownLabel';
 
@@ -94,7 +93,6 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     const getButtonFromAction = (action) =>
         ({
             create: 'common.add',
-            delete: 'common.delete',
             update: 'common.update'
         })[action] || 'common.unknownLabel';
 
@@ -110,86 +108,61 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                         {/* Message */}
                         {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
-                        {/* Formulaire */}
-                        {modalOptions.action === 'delete' ? (
-                            <>{t('edition.deleteEditionMessage')}</>
-                        ) : (
-                            <>
-                                {/* Lieu */}
-                                <Form.Group className="d-flex align-items-center" controlId="location">
-                                    <FaMapLocationDot size={30} className="me-3" />
-                                    <Form.Control
-                                        ref={locationInputRef}
-                                        type="text"
-                                        name="location"
-                                        placeholder={t('edition.location')}
-                                        value={formData.location}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required
-                                    />
-                                </Form.Group>
+                        {/* Lieu */}
+                        <Form.Group className="d-flex align-items-center" controlId="location">
+                            <FaMapLocationDot size={30} className="me-3" />
+                            <Form.Control
+                                ref={locationInputRef}
+                                type="text"
+                                name="location"
+                                placeholder={t('edition.location')}
+                                value={formData.location}
+                                onChange={handleChange}
+                                maxLength={100}
+                                required
+                            />
+                        </Form.Group>
 
-                                {/* Date */}
-                                <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
-                                    <IoCalendarNumberOutline size={30} className="me-3" />
-                                    <Form.Control
-                                        type="date"
-                                        name="startDate"
-                                        value={formData.startDate || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+                        {/* Date */}
+                        <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
+                            <IoCalendarNumberOutline size={30} className="me-3" />
+                            <Form.Control type="date" name="startDate" value={formData.startDate || ''} onChange={handleChange} required />
+                        </Form.Group>
 
-                                {/* Heures */}
-                                <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
-                                    <WiTime4 size={30} className="me-3" />
-                                    <Form.Control
-                                        type="time"
-                                        name="startTime"
-                                        value={formData.startTime || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+                        {/* Heures */}
+                        <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
+                            <WiTime4 size={30} className="me-3" />
+                            <Form.Control type="time" name="startTime" value={formData.startTime || ''} onChange={handleChange} required />
+                        </Form.Group>
 
-                                <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
-                                    <WiTime8 size={30} className="me-3" />
-                                    <Form.Control
-                                        type="time"
-                                        name="endTime"
-                                        value={formData.endTime || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </Form.Group>
+                        <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
+                            <WiTime8 size={30} className="me-3" />
+                            <Form.Control type="time" name="endTime" value={formData.endTime || ''} onChange={handleChange} required />
+                        </Form.Group>
 
-                                {/* Thème */}
-                                <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
-                                    <MdOutlineLightbulb size={30} className="me-3" />
-                                    <Form.Control
-                                        as="textarea"
-                                        name="theme"
-                                        placeholder={t('edition.theme')}
-                                        value={formData.theme}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
+                        {/* Thème */}
+                        <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
+                            <MdOutlineLightbulb size={30} className="me-3" />
+                            <Form.Control
+                                as="textarea"
+                                name="theme"
+                                placeholder={t('edition.theme')}
+                                value={formData.theme}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
 
-                                {/* Challenge */}
-                                <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
-                                    <GoGoal size={30} className="me-3" />
-                                    <Form.Control
-                                        as="textarea"
-                                        name="challenge"
-                                        placeholder={t('edition.challenge')}
-                                        value={formData.challenge}
-                                        onChange={handleChange}
-                                    />
-                                </Form.Group>
-                            </>
-                        )}
+                        {/* Challenge */}
+                        <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
+                            <GoGoal size={30} className="me-3" />
+                            <Form.Control
+                                as="textarea"
+                                name="challenge"
+                                placeholder={t('edition.challenge')}
+                                value={formData.challenge}
+                                onChange={handleChange}
+                            />
+                        </Form.Group>
                     </Modal.Body>
 
                     <Modal.Footer>

@@ -55,134 +55,107 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
         // Empêche le rechargement de la page
         e.preventDefault();
 
-        // Contrôles si pas de suppression
-        if (action !== 'delete') {
-            // Contrôle le nom renseigné
-            if (!formData.name) {
-                setMessage({ code: 'errors.invalidName', type: 'error' });
-                return;
-            }
+        // Contrôle le nom renseigné
+        if (!formData.name) {
+            setMessage({ code: 'errors.invalidName', type: 'error' });
+            return;
+        }
 
-            // Contrôle que la valeur est > 0
-            const value = parseInt(formData.value, 10);
+        // Contrôle que la valeur est > 0
+        const value = parseInt(formData.value, 10);
 
-            if (!formData.value || isNaN(value) || value <= 0) {
-                setMessage({ code: 'errors.invalidValue', type: 'error' });
-                return;
-            }
+        if (!formData.value || isNaN(value) || value <= 0) {
+            setMessage({ code: 'errors.invalidValue', type: 'error' });
+            return;
+        }
 
-            // Contrôle que la quantité est > 0
-            const quantity = parseInt(formData.quantity, 10);
+        // Contrôle que la quantité est > 0
+        const quantity = parseInt(formData.quantity, 10);
 
-            if (!formData.quantity || isNaN(quantity) || quantity < 0) {
-                setMessage({ code: 'errors.invalidQuantity', type: 'error' });
-                return;
-            }
+        if (!formData.quantity || isNaN(quantity) || quantity < 0) {
+            setMessage({ code: 'errors.invalidQuantity', type: 'error' });
+            return;
+        }
 
-            // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
-            if (gift && quantity < gift.rewardCount) {
-                setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
-                return;
-            }
+        // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
+        if (gift && quantity < gift.rewardCount) {
+            setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
+            return;
         }
 
         // Soumets le formulaire
         onSubmit(action);
     };
 
-    /**
-     * Détermination du bouton selon l'action à réaliser
-     */
-    const getButtonFromAction = (action) =>
-        ({
-            create: 'common.validate',
-            delete: 'common.delete',
-            update: 'common.validate'
-        })[action] || 'common.unknownLabel';
-
-    // TODO : remplacer les modales "voulez-vous..." de confirmation par la confirm modal
-
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
-                    {modalOptions.action === 'delete' ? (
-                        <>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.deleteGift')}</Modal.Title>
-                            </Modal.Header>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{t('edition.setGift')}</Modal.Title>
+                    </Modal.Header>
 
-                            <Modal.Body>{t('edition.deleteGiftMessage', { name: formData.name })}</Modal.Body>
-                        </>
-                    ) : (
-                        <>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{t('edition.setGift')}</Modal.Title>
-                            </Modal.Header>
+                    <Modal.Body>
+                        {/* Message */}
+                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
-                            <Modal.Body>
-                                {/* Message */}
-                                {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {/* Formulaire */}
+                        <Form.Group controlId="name" className="d-flex align-items-center mb-2">
+                            <IoGiftSharp size={30} className="me-3" />
+                            <Form.Control
+                                type="text"
+                                name="name"
+                                placeholder={t('edition.name')}
+                                value={formData.name}
+                                onChange={handleChange}
+                                maxLength={100}
+                                required
+                            />
+                        </Form.Group>
 
-                                {/* Formulaire */}
-                                <Form.Group controlId="name" className="d-flex align-items-center mb-2">
-                                    <IoGiftSharp size={30} className="me-3" />
-                                    <Form.Control
-                                        type="text"
-                                        name="name"
-                                        placeholder={t('edition.name')}
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required
-                                    />
-                                </Form.Group>
+                        <Form.Group controlId="value" className="d-flex align-items-center mb-2">
+                            <GrMoney size={30} className="me-3" />
+                            <Form.Control
+                                type="text"
+                                name="value"
+                                placeholder={t('edition.value')}
+                                value={formData.value}
+                                onChange={handleChangeNumeric}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                required
+                            />
+                        </Form.Group>
 
-                                <Form.Group controlId="value" className="d-flex align-items-center mb-2">
-                                    <GrMoney size={30} className="me-3" />
-                                    <Form.Control
-                                        type="text"
-                                        name="value"
-                                        placeholder={t('edition.value')}
-                                        value={formData.value}
-                                        onChange={handleChangeNumeric}
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        required
-                                    />
-                                </Form.Group>
+                        <Form.Group controlId="quantity" className="d-flex align-items-center">
+                            <GiCardboardBox size={30} className="me-3" />
+                            <Form.Control
+                                type="text"
+                                name="quantity"
+                                placeholder={t('edition.quantity')}
+                                value={formData.quantity}
+                                onChange={handleChangeNumeric}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                required
+                            />
+                        </Form.Group>
 
-                                <Form.Group controlId="quantity" className="d-flex align-items-center">
-                                    <GiCardboardBox size={30} className="me-3" />
-                                    <Form.Control
-                                        type="text"
-                                        name="quantity"
-                                        placeholder={t('edition.quantity')}
-                                        value={formData.quantity}
-                                        onChange={handleChangeNumeric}
-                                        inputMode="numeric"
-                                        pattern="[0-9]*"
-                                        required
-                                    />
-                                </Form.Group>
-
-                                {/* Cadeaux restants */}
-                                {gift && (
-                                    <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
-                                        <Badge className="bg-warning fs-6 me-2">{t('edition.remainingGifts')}</Badge>
-                                        <Badge className="gift-modal-count bg-danger">{gift?.remainingQuantity ?? 0}</Badge>
-                                    </div>
-                                )}
-                            </Modal.Body>
-                        </>
-                    )}
+                        {/* Cadeaux restants */}
+                        {gift && (
+                            <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
+                                <Badge className="bg-warning fs-6 me-2">{t('edition.remainingGifts')}</Badge>
+                                <Badge className="gift-modal-count bg-danger">{gift?.remainingQuantity ?? 0}</Badge>
+                            </div>
+                        )}
+                    </Modal.Body>
 
                     <Modal.Footer>
                         <Button type="button" variant="secondary" onClick={() => onClose()}>
                             {t('common.close')}
                         </Button>
                         <Button type="submit" variant="primary">
-                            {t(getButtonFromAction(modalOptions.action))}
+                            {t('common.validate')}
                             {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Footer>

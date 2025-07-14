@@ -34,24 +34,4 @@ class RewardsRepository extends Model
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
-    /**
-     * Suppression logique de l'attribution d'un cadeau à un participant
-     */
-    public function deleteReward($id, $login)
-    {
-        $data['deleted_at'] = date('Y-m-d H:i:s');
-        $data['deleted_by'] = $login;
-        $data['is_active'] = 0;
-
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
-        }
-
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = :id";
-        $stmt = $this->db->prepare($sql);
-
-        $data['id'] = $id;
-        return $stmt->execute($data);
-    }
 }

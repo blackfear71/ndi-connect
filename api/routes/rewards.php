@@ -18,14 +18,11 @@ $router->post('/rewards/reward/:idEdition', function ($params) use ($db) {
     (new RewardsController($db))->createReward($token, $params['idEdition'], $data);
 });
 
-$router->patch('/rewards/delete/:id', function ($params) use ($db) {
+$router->delete('/rewards/delete/:idEdition/:idReward', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
     $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
 
-    // Données d'entrée
-    $data = json_decode(file_get_contents('php://input'), true);
-
     // Appel contrôleur
-    (new RewardsController($db))->deleteReward($token, $params['id'], $data);
+    (new RewardsController($db))->deleteReward($token, $params['idEdition'], $params['idReward']);
 });

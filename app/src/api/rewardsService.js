@@ -35,9 +35,9 @@ class RewardsService {
      * @param {*} body Données participant et cadeau
      * @returns
      */
-    deleteReward = (idEdition, body) => {
-        const url = `${this.apiUrl}/delete/${idEdition}`;
-        return ajax.patch(url, body, this.headers);
+    deleteReward = (idEdition, idReward) => {
+        const url = `${this.apiUrl}/delete/${idEdition}/${idReward}`;
+        return ajax.delete(url, this.headers);
     };
 }
 

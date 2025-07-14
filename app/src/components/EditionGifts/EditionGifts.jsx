@@ -15,7 +15,7 @@ import './EditionGifts.css';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => {
+const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -40,6 +40,19 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
         setModalOptions({
             action: action,
             isOpen: true
+        });
+    };
+
+    /**
+     * Ouvre la modale de suppression de cadeau
+     * @param {*} gift Cadeau
+     */
+    const handleDelete = (gift) => {
+        // Ouverture de la modale de confirmation
+        onConfirm({
+            content: t('edition.deleteGift', { name: gift.name }),
+            action: 'deleteGift',
+            data: gift.id
         });
     };
 
@@ -81,7 +94,7 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, isSubmitting }) => 
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
-                                onClick={isSubmitting ? null : () => showGiftModal(g, 'delete')}
+                                onClick={isSubmitting ? null : () => handleDelete(g)}
                                 className="edition-gifts-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >

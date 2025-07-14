@@ -18,12 +18,11 @@ const RewardModal = ({
     formData,
     setFormData,
     modalOptions,
-    setModalOptions,
     message,
     setMessage,
     onClose,
-    onConfirm,
     onSubmit,
+    onConfirm,
     isSubmitting
 }) => {
     // Contexte
@@ -82,20 +81,20 @@ const RewardModal = ({
         onSubmit();
     };
 
+    /**
+     * Ouvre la modale de suppression d'attribution de cadeau
+     * @param {*} reward Cadeau du participant
+     */
     const handleDelete = (reward) => {
-        // Inversion de l'état de la modale (fermeture de la modale du joueur si elle était ouverte, ouverture sinon)
-        setModalOptions({
-            ...modalOptions,
-            isOpen: !modalOptions.isOpen
-        });
+        // Fermeture de la modale des cadeaux du joueur
+        onClose();
 
         // Ouverture de la modale de confirmation
-        setFormData((prev) => ({
-            ...prev,
-            idReward: reward.id
-        }));
-
-        onConfirm(t('edition.deletePlayerGift', { gift: reward.name, player: player.name }));
+        onConfirm({
+            content: t('edition.deleteReward', { gift: reward.name, player: player.name }),
+            action: 'deleteReward',
+            data: reward.id
+        });
     };
 
     return (
@@ -132,21 +131,25 @@ const RewardModal = ({
                         {/* Formulaire */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                             <>
-                                {obtainableGifts.length > 0 ? (
-                                    <Form.Group controlId="name" className="d-flex align-items-center mt-2">
-                                        <PiListStarBold size={30} className="me-3" />
-                                        <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
-                                            <option key={0} value={0} disabled>
-                                                {t('edition.chooseGift')}
-                                            </option>
-                                            {obtainableGifts.map((g) => (
-                                                <option key={g.id} value={g.id}>
-                                                    {g.name} - {g.value} {t('edition.points').toLowerCase()} ({g.remainingQuantity}{' '}
-                                                    {g.remainingQuantity === 1 ? t('edition.remaining') : t('edition.remainings')})
+                                {gifts.length > 0 ? (
+                                    obtainableGifts.length > 0 ? (
+                                        <Form.Group controlId="name" className="d-flex align-items-center mt-2">
+                                            <PiListStarBold size={30} className="me-3" />
+                                            <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
+                                                <option key={0} value={0} disabled>
+                                                    {t('edition.chooseGift')}
                                                 </option>
-                                            ))}
-                                        </Form.Select>
-                                    </Form.Group>
+                                                {obtainableGifts.map((g) => (
+                                                    <option key={g.id} value={g.id}>
+                                                        {g.name} - {g.value} {t('edition.points').toLowerCase()} ({g.remainingQuantity}{' '}
+                                                        {g.remainingQuantity === 1 ? t('edition.remaining') : t('edition.remainings')})
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+                                        </Form.Group>
+                                    ) : (
+                                        <div className="bg-light rounded p-2 mt-2">{t('edition.notEnoughPoints')}</div>
+                                    )
                                 ) : (
                                     <div className="bg-light rounded p-2 mt-2">{t('edition.noAvailableGifts')}</div>
                                 )}
@@ -167,7 +170,7 @@ const RewardModal = ({
                                         <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
                                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                             <Button
-                                                onClick={() => handleDelete(r)}
+                                                onClick={isSubmitting ? null : () => handleDelete(r)}
                                                 className="reward-modal-button"
                                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                                             >

@@ -34,8 +34,8 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
-    const [messageModal, setMessageModal] = useState(null);
-    const [modalOptions, setModalOptions] = useState({ action: '', isOpen: false });
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -79,17 +79,17 @@ const Home = () => {
      */
     const openCloseEditionModal = (openAction) => {
         // Ouverture ou fermeture
-        setModalOptions({ action: openAction, isOpen: !modalOptions.isOpen });
+        setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptions.isOpen && resetFormEdition();
+        modalOptionsEdition.isOpen && resetFormEdition();
     };
 
     /**
      * Création
      */
     const handleSubmit = () => {
-        setMessageModal(null);
+        setMessageModalEdition(null);
         setMessagePage(null);
         setIsSubmitting(true);
 
@@ -110,7 +110,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModal({ code: err?.response?.message, type: err?.response?.status });
+                    setMessageModalEdition({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -244,13 +244,13 @@ const Home = () => {
                     )}
 
                     {/* Modale de création d'édition */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptions.isOpen && (
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
                         <EditionModal
                             formData={formEdition}
                             setFormData={setFormEdition}
-                            modalOptions={modalOptions}
-                            message={messageModal}
-                            setMessage={setMessageModal}
+                            modalOptions={modalOptionsEdition}
+                            message={messageModalEdition}
+                            setMessage={setMessageModalEdition}
                             onClose={openCloseEditionModal}
                             onSubmit={handleSubmit}
                             isSubmitting={isSubmitting}
