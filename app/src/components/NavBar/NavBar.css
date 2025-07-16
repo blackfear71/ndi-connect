@@ -35,3 +35,42 @@
     bottom: -1px;
     right: -2px;
 }
+
+.navbar-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 5px;
+    background-color: white;
+    border: 1px solid #cccccc;
+    border-top: none;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 50%;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+    border-radius: 5px;
+    padding: 0 !important;
+}
+
+.navbar-dropdown-item {
+    padding: 10px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    cursor: pointer;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+.navbar-dropdown-item:active {
+    background-color: transparent !important;
+    color: black !important;
+}
+
+.navbar-dropdown-item-first {
+    font-weight: bold !important;
+    background-color: #e3e3e3 !important;
+}
+
+.navbar-dropdown-badge {
+    font-size: 14px !important;
+}

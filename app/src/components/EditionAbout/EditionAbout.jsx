@@ -61,13 +61,13 @@ const EditionAbout = ({ edition }) => {
                 <div className="mb-3">
                     <div className="edition-about-title">{t('edition.progress')}</div>
                     <div className="d-flex align-items-center mt-2">
-                        <Badge bg="success" className="me-2">
+                        <Badge pill bg="success" className="me-2">
                             {getTimeFromDate(edition.startDate)}
                         </Badge>
                         <div className="flex-fill">
                             <ProgressBar now={progress.value} />
                         </div>
-                        <Badge bg="danger" className="ms-2">
+                        <Badge pill bg="danger" className="ms-2">
                             {getTimeFromDate(edition.endDate)}
                         </Badge>
                     </div>

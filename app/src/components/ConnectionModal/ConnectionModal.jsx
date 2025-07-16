@@ -8,7 +8,7 @@ import Message from '../Message/Message';
 
 const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
-    const { auth, setAuthError } = useContext(AuthContext);
+    const { setAuthError } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -26,9 +26,9 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
             setAuthError(null);
 
             // Focus
-            !auth.isLoggedIn && loginInputRef.current?.focus();
+            loginInputRef.current?.focus();
         }
-    }, [modalOptions?.isOpen, auth.isLoggedIn]);
+    }, [modalOptions?.isOpen]);
 
     /**
      * Met à jour le formulaire à la saisie (création)
@@ -48,16 +48,14 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
         e.preventDefault();
 
         // Contrôle que l'identifiant et le mot de passe sont renseignés
-        if (!auth.isLoggedIn) {
-            if (!formData.login) {
-                setMessage({ code: 'errors.invalidLogin', type: 'error' });
-                return;
-            }
+        if (!formData.login) {
+            setMessage({ code: 'errors.invalidLogin', type: 'error' });
+            return;
+        }
 
-            if (!formData.password) {
-                setMessage({ code: 'errors.invalidPassword', type: 'error' });
-                return;
-            }
+        if (!formData.password) {
+            setMessage({ code: 'errors.invalidPassword', type: 'error' });
+            return;
         }
 
         // Soumets le formulaire
@@ -69,7 +67,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
             <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{auth.isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}</Modal.Title>
+                        <Modal.Title>{t('navbar.connect')}</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
@@ -77,38 +75,34 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                         {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
 
                         {/* Formulaire */}
-                        {auth.isLoggedIn ? (
-                            <>{t('navbar.disconnectMessage')}</>
-                        ) : (
-                            <div className="d-flex align-items-end">
-                                <Form.Group className="me-2" controlId="login">
-                                    <Form.Label>{t('navbar.login')}</Form.Label>
-                                    <Form.Control
-                                        ref={loginInputRef}
-                                        type="text"
-                                        name="login"
-                                        placeholder={t('navbar.login')}
-                                        value={formData.login}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required
-                                    />
-                                </Form.Group>
+                        <div className="d-flex align-items-end">
+                            <Form.Group className="me-2" controlId="login">
+                                <Form.Label>{t('navbar.login')}</Form.Label>
+                                <Form.Control
+                                    ref={loginInputRef}
+                                    type="text"
+                                    name="login"
+                                    placeholder={t('navbar.login')}
+                                    value={formData.login}
+                                    onChange={handleChange}
+                                    maxLength={100}
+                                    required
+                                />
+                            </Form.Group>
 
-                                <Form.Group className="me-2" controlId="password">
-                                    <Form.Label>{t('navbar.password')}</Form.Label>
-                                    <Form.Control
-                                        type="password"
-                                        name="password"
-                                        placeholder={t('navbar.password')}
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required
-                                    />
-                                </Form.Group>
-                            </div>
-                        )}
+                            <Form.Group className="me-2" controlId="password">
+                                <Form.Label>{t('navbar.password')}</Form.Label>
+                                <Form.Control
+                                    type="password"
+                                    name="password"
+                                    placeholder={t('navbar.password')}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    maxLength={100}
+                                    required
+                                />
+                            </Form.Group>
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>
@@ -116,7 +110,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                             {t('common.close')}
                         </Button>
                         <Button type="submit" variant="primary">
-                            {auth.isLoggedIn ? <>{t('navbar.disconnect')}</> : <>{t('navbar.connect')}</>}
+                            {t('navbar.connect')}
                             {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Footer>

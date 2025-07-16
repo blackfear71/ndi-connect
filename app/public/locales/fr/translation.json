@@ -103,8 +103,8 @@
     },
     "navbar": {
         "connect": "Connexion",
+        "connectedMessage": "Connecté en tant que",
         "disconnect": "Déconnexion",
-        "disconnectMessage": "Vous êtes connecté, vous pouvez vous déconnecter avec le bouton ci-dessous",
         "login": "Identifiant",
         "password": "Mot de passe",
         "search": "Rechercher..."
