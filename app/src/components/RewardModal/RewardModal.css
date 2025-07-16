@@ -3,10 +3,11 @@
 }
 
 .reward-modal-count {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     height: 30px;
-    line-height: 30px;
     color: white;
-    text-align: center;
     font-size: medium !important;
     border-radius: 30px !important;
 }
