@@ -10,6 +10,8 @@ import UserRole from '../../enums/UserRole';
 import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
 
+import './PlayerModal.css';
+
 const PlayerModal = ({ players, player, formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
@@ -173,9 +175,9 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
                         <div className="modal-section-title">{t('edition.givePoints')}</div>
 
                         {/* Nombre de points */}
-                        <div className="d-flex align-items-center bg-light rounded p-2 mt-3">
+                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
                             <Badge className="bg-warning fs-6 me-2">{t('edition.points')}</Badge>
-                            {player.points}
+                            <Badge className="player-modal-count bg-danger">{player?.points ?? 0}</Badge>
                         </div>
 
                         {/* Formulaire */}
