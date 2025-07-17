@@ -43,7 +43,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
 
     /**
      * Met à jour le formulaire à la saisie d'un numérique
-     * @param {*} e Evènement
+     * @param {*} action Action à réaliser
      */
     const handleChangeIncrement = (action) => {
         // Ajoute ou retire des points selon les droits
@@ -76,7 +76,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
 
     /**
      * Met à jour le formulaire à la saisie d'un numérique
-     * @param {*} e Evènement
+     * @param {*} action Action à réaliser
      */
     const handleChangeGiveaway = (action) => {
         // Donne des points à un autre participant

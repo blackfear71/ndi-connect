@@ -156,7 +156,7 @@ Copy-Item -Path (Join-Path $FRONT_SRC_DIR "build\*") -Destination $DEPLOY_APP_DI
 # Copie du backend PHP (sans .env)
 Write-Color "Copie du backend PHP (sans .env)..." Blue
 
-Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object { $_.Name -ne '.env' } | ForEach-Object {
+Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object { $_.Name -ne '.env' } | Where-Object { $_.Name -ne '.env.production' } | ForEach-Object {
     $relativePath = Get-RelativePath $BACK_SRC_DIR $_.FullName
     $destPath = Join-Path $DEPLOY_API_DIR $relativePath
     $destDir = Split-Path $destPath
@@ -164,6 +164,17 @@ Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object { $_.Name -ne '.
         New-Item -ItemType Directory -Path $destDir -Force | Out-Null
     }
     Copy-Item -Path $_.FullName -Destination $destPath -Force
+}
+
+# Copie du .env.production en .env dans le dossier de déploiement
+$envProdPath = Join-Path $BACK_SRC_DIR ".env.production"
+$envDestPath = Join-Path $DEPLOY_API_DIR ".env"
+
+if (Test-Path $envProdPath) {
+    Copy-Item -Path $envProdPath -Destination $envDestPath -Force
+    Write-Color ".env.production copié dans le dossier de déploiement sous le nom .env" Blue
+} else {
+    Write-Color "Fichier .env.production introuvable !" Red
 }
 
 # Déploiement terminé
