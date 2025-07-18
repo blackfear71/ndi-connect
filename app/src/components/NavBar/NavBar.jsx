@@ -115,6 +115,7 @@ const NavBar = () => {
 
                 {auth.isLoggedIn && (
                     <Dropdown show={showDropdown} align="end">
+                        {showDropdown && <div className="navbar-dropdown-triangle"></div>}
                         <Dropdown.Menu className="navbar-dropdown">
                             <Dropdown.Item className="navbar-dropdown-item navbar-dropdown-item-first" style={{ cursor: 'inherit' }}>
                                 {t('navbar.connectedMessage')}

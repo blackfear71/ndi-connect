@@ -38,10 +38,10 @@
 
 .navbar-dropdown {
     position: absolute;
-    top: calc(100% + 5px);
-    right: 5px;
+    top: calc(100% + 10px);
+    right: 10px;
     background-color: white;
-    border: 1px solid #cccccc;
+    border: none !important;
     border-top: none;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -50,6 +50,19 @@
     overflow-y: auto;
     border-radius: 5px;
     padding: 0 !important;
+}
+
+.navbar-dropdown-triangle {
+    content: '';
+    position: absolute;
+    top: 1px;
+    right: 31px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #e3e3e3;
+    z-index: 1000;
 }
 
 .navbar-dropdown-item {
@@ -68,6 +81,10 @@
 
 .navbar-dropdown-item-first {
     font-weight: bold !important;
+    background-color: #e3e3e3 !important;
+}
+
+.navbar-dropdown-item-first:active {
     background-color: #e3e3e3 !important;
 }
 
