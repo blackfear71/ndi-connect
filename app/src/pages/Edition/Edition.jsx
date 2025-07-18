@@ -600,7 +600,7 @@ const Edition = () => {
                             <Button
                                 variant="outline-action"
                                 size="sm"
-                                href="/"
+                                onClick={() => navigate('/')}
                                 className="d-flex align-items-center justify-content-center gap-2 w-100 btn-yellow"
                             >
                                 <FaHouse size={15} className="outline-action-icon" />

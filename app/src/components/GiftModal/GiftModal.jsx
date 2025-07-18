@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
     // Traductions
     const { t } = useTranslation();
 
+    // Local states
+    const nameInputRef = useRef(null);
+
     /**
      * Réinitialise le message à l'ouverture de la modale
      */
@@ -21,6 +24,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
             setMessage(null);
+
+            // Focus à la création
+            modalOptions.action === 'create' && nameInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
@@ -103,6 +109,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
                         <Form.Group controlId="name" className="d-flex align-items-center mb-2">
                             <IoGiftSharp size={30} className="me-3" />
                             <Form.Control
+                                ref={nameInputRef}
                                 type="text"
                                 name="name"
                                 placeholder={t('edition.name')}

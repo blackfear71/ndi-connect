@@ -4,6 +4,7 @@ import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaMapLocationDot } from 'react-icons/fa6';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
@@ -24,6 +25,9 @@ import './Home.css';
  * @returns
  */
 const Home = () => {
+    // Router
+    const navigate = useNavigate();
+
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -224,7 +228,7 @@ const Home = () => {
 
                                 {/* Editions */}
                                 {editionsByYear.map((edition) => (
-                                    <Button key={edition.id} variant="edition" href={`/edition/${edition.id}`}>
+                                    <Button key={edition.id} variant="edition" onClick={() => navigate(`/edition/${edition.id}`)}>
                                         {edition.location}
                                     </Button>
                                 ))}
