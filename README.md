@@ -40,6 +40,7 @@ ndi-connect/
 │   ├── package-lock.json
 │   ├── package.json
 ├── dist/                 # Dossier de déploiement
+├── .gitignore
 ├── deploy.ps1            # Script de déploiement
 ├── README.md
 ```
