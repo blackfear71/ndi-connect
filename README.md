@@ -1,70 +1,129 @@
-# Getting Started with Create React App
+# NDI-Connect
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+NDI-Connect est une application web permettant la gestion d'éditions, des joueurs, des récompenses et des cadeaux dans le cadre de la **Nuit de l'Info**. Elle propose une interface moderne basée sur React pour le front-end et PHP pour le back-end.
 
-## Available Scripts
+## Fonctionnalités
 
-In the project directory, you can run:
+- Gestion des éditions (création, modification, suppression)
+- Gestion des joueurs et de leurs informations
+- Attribution et gestion des récompenses et cadeaux
+- Authentification et gestion des utilisateurs
+- Interface responsive adaptée aux mobiles et ordinateurs
+- API RESTful sécurisée
 
-### `npm start`
+## Structure du projet
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+ndi-connect/
+├── api/                # Back-end PHP (API)
+│   ├── controllers/
+│   ├── core/
+│   ├── enums/
+│   ├── logs/
+│   ├── repositories/
+│   ├── routes/
+│   ├── services/
+│   ├── .env
+│   ├── .env.production
+│   ├── .htaccess
+│   ├── index.php
+├── app/                # Front-end React
+│   ├── build/
+│   ├── node_modules/
+│   ├── public/
+│   ├── scripts/
+│   ├── src/
+│   ├── .env.development
+│   ├── .env.production
+│   ├── .prettierrc
+│   ├── eslint.config.mjs
+│   ├── package-lock.json
+│   ├── package.json
+├── dist/               # Dossier de déploiement
+├── deploy.ps1          # Script de déploiement
+├── README.md
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+### Prérequis
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js >= 18
+- PHP >= 8.0
+- MySQL/MariaDB
+- Serveur web (Apache, Nginx...)
 
-### `npm run build`
+### 1. Installation du front-end
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+cd app
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Installation du back-end
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base de données :
 
-### `npm run eject`
+```
+DB_HOST=localhost
+DB_PORT=
+DB_NAME=ndi_connect_db
+DB_USER=root
+DB_PASS=
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3. Lancement en développement
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<u>Front-end :</u>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+cd app
+npm run start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<u>Back-end :</u>
 
-## Learn More
+Déployer le dossier api sur votre serveur local PHP (ex: WAMP, XAMPP, etc.).
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4. Déploiement
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Configurer le fichier _.env.production_ dans le dossier api avec les identifiants de base de données de production :
 
-### Code Splitting
+```
+DB_HOST=localhost
+DB_PORT=
+DB_NAME=ndi_connect_db
+DB_USER=prod_login
+DB_PASS=prod_password
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deploy.ps1**. Dans une console lancer la commande puis faire le choix de version :
 
-### Analyzing the Bundle Size
+```
+.\deploy.ps1
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+A la fin du déploiment le dossier est ouvert dans l'explorateur, il faut supprimer le dossier existant sur le serveur puis coller le nouveau.
 
-### Making a Progressive Web App
+## Scripts disponibles dans le dossier app :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- npm start : lance l'application en mode développement
+- npm run build : construit l'application pour la production
+- npm test : lance les tests unitaires
+- npm run eject : supprime le build de l'application
+- npm run lint : vérifie la qualité du code
+- npm run lint:fix : corrige automatiquement les erreurs de lint
+- npm run init:env : génère les fichiers d'environnement .env
+- npm install : installe les dépendances de l'application
 
-### Advanced Configuration
+Configuration :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Les fichiers .env permettent de configurer les URLs de l'API et la version de l'application côté front, ainsi que les accès à la base de données côté back.
 
-### Deployment
+Contact :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub ou à contacter le mainteneur du projet.
 
-### `npm run build` fails to minify
+## Documentation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[Create React App](https://github.com/facebook/create-react-app)
+[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+[React documentation](https://reactjs.org/)
