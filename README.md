@@ -13,8 +13,9 @@ NDI-Connect est une application web permettant la gestion d'éditions, des joueu
 
 ## Structure du projet
 
+```bash
 ndi-connect/
-├── api/                # Back-end PHP (API)
+├── api/                  # Back-end PHP (API)
 │   ├── controllers/
 │   ├── core/
 │   ├── enums/
@@ -26,7 +27,7 @@ ndi-connect/
 │   ├── .env.production
 │   ├── .htaccess
 │   ├── index.php
-├── app/                # Front-end React
+├── app/                  # Front-end React
 │   ├── build/
 │   ├── node_modules/
 │   ├── public/
@@ -38,9 +39,10 @@ ndi-connect/
 │   ├── eslint.config.mjs
 │   ├── package-lock.json
 │   ├── package.json
-├── dist/               # Dossier de déploiement
-├── deploy.ps1          # Script de déploiement
+├── dist/                 # Dossier de déploiement
+├── deploy.ps1            # Script de déploiement
 ├── README.md
+```
 
 ## Installation
 
@@ -58,7 +60,13 @@ cd app
 npm install
 ```
 
-### 2. Installation du back-end
+### 2. Initialisation des fichiers d'environnements :
+
+```
+npm run init:env
+```
+
+### 3. Configuration du back-end
 
 Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base de données :
 
@@ -70,18 +78,18 @@ DB_USER=root
 DB_PASS=
 ```
 
-### 3. Lancement en développement
+### 4. Lancement en développement
+
+<u>Back-end :</u>
+
+Déployer le dossier api sur votre serveur local PHP (ex: WAMP, XAMPP, etc.).
 
 <u>Front-end :</u>
 
 ```
 cd app
-npm run start
+npm start
 ```
-
-<u>Back-end :</u>
-
-Déployer le dossier api sur votre serveur local PHP (ex: WAMP, XAMPP, etc.).
 
 ### 4. Déploiement
 
@@ -101,29 +109,48 @@ Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deplo
 .\deploy.ps1
 ```
 
-A la fin du déploiment le dossier est ouvert dans l'explorateur, il faut supprimer le dossier existant sur le serveur puis coller le nouveau.
+A la fin du déploiement le dossier est ouvert dans l'explorateur, il faut supprimer le dossier existant sur le serveur puis coller le nouveau.
 
-## Scripts disponibles dans le dossier app :
+## Scripts disponibles dans le dossier app
 
-- npm start : lance l'application en mode développement
-- npm run build : construit l'application pour la production
-- npm test : lance les tests unitaires
-- npm run eject : supprime le build de l'application
-- npm run lint : vérifie la qualité du code
-- npm run lint:fix : corrige automatiquement les erreurs de lint
-- npm run init:env : génère les fichiers d'environnement .env
-- npm install : installe les dépendances de l'application
+### `npm start`
 
-Configuration :
+Lance l'application en mode développement.
 
-Les fichiers .env permettent de configurer les URLs de l'API et la version de l'application côté front, ainsi que les accès à la base de données côté back.
+### `npm run build`
 
-Contact :
+Construit l'application pour la production.
+
+### `npm test`
+
+Lance les tests unitaires.
+
+### `npm run eject`
+
+Sort l'application de la configuration CRA initiale. A ne pas utiliser.
+
+### `npm run lint`
+
+Vérifie la qualité du code.
+
+### `npm run lint:fix`
+
+Corrige automatiquement les erreurs de lint.
+
+### `npm run init:env`
+
+Génère les fichiers d'environnement .env.
+
+### `npm install`
+
+Installe les dépendances de l'application.
+
+## Contact
 
 Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub ou à contacter le mainteneur du projet.
 
 ## Documentation
 
-[Create React App](https://github.com/facebook/create-react-app)
-[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+[Create React App](https://github.com/facebook/create-react-app)  
+[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)  
 [React documentation](https://reactjs.org/)
