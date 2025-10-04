@@ -154,9 +154,13 @@ Copy-Item -Path (Join-Path $FRONT_SRC_DIR "build\*") -Destination $DEPLOY_APP_DI
 #Copy-Item -Path (Join-Path $BACK_SRC_DIR "*") -Destination $DEPLOY_API_DIR -Recurse -Force
 
 # Copie du backend PHP (sans .env)
-Write-Color "Copie du backend PHP (sans .env)..." Blue
+Write-Color "Copie du backend PHP (sans .env, .log)..." Blue
 
-Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object { $_.Name -ne '.env' } | Where-Object { $_.Name -ne '.env.production' } | ForEach-Object {
+Get-ChildItem -Path $BACK_SRC_DIR -Recurse -File | Where-Object {
+    $_.Name -ne '.env' -and
+    $_.Name -ne '.env.production' -and
+    $_.Extension -ne '.log'
+} | ForEach-Object {
     $relativePath = Get-RelativePath $BACK_SRC_DIR $_.FullName
     $destPath = Join-Path $DEPLOY_API_DIR $relativePath
     $destDir = Split-Path $destPath
