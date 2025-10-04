@@ -1,8 +1,7 @@
 <?php
-
 class Logger
 {
-    private static string $logDir = __DIR__ . '/../logs';
+    private static $env = null;
 
     /**
      * Enregistre un message dans le fichier de log journalier
@@ -11,28 +10,37 @@ class Logger
      */
     public static function log(string $message, string $level = 'ERROR')
     {
-        // Contrôle que le dossier de logs existe
-        if (!file_exists(self::$logDir)) {
-            mkdir(self::$logDir, 0775, true);
+        // Récupération du dossier de logs depuis le fichier .env
+        if (self::$env === null) {
+            self::$env = Environment::loadEnv(__DIR__ . '/../.env');
         }
 
-        // Nom du fichier, ex : logs/error_logs_2025-06-06.log
-        switch ($level) {
-            case 'ERROR':
-                $filename = self::$logDir . '/error_logs_' . date('Y-m-d') . '.log';
-                break;
-            case 'INFO':
-                $filename = self::$logDir . '/info_logs_' . date('Y-m-d') . '.log';
-                break;
-            case 'WARNING':
-                $filename = self::$logDir . '/warning_logs_' . date('Y-m-d') . '.log';
-                break;
+        if (isset(self::$env['LOG_DIR']) && !empty(self::$env['LOG_DIR'])) {
+            $logDir = self::$env['LOG_DIR'];
+
+            // Contrôle que le dossier de logs existe
+            if (!file_exists($logDir)) {
+                mkdir($logDir, 0775, true);
+            }
+
+            // Nom du fichier, ex : logs/error_logs_2025-06-06.log
+            switch ($level) {
+                case 'ERROR':
+                    $filename = $logDir . '/error_logs_' . date('Y-m-d') . '.log';
+                    break;
+                case 'INFO':
+                    $filename = $logDir . '/info_logs_' . date('Y-m-d') . '.log';
+                    break;
+                case 'WARNING':
+                    $filename = $logDir . '/warning_logs_' . date('Y-m-d') . '.log';
+                    break;
+            }
+
+            // Format : [2025-06-06 14:55:02] [ERROR] Message
+            $date = date('Y-m-d H:i:s');
+            $formatted = "[$date] [$level] $message\n";
+
+            error_log($formatted, 3, $filename);
         }
-
-        // Format : [2025-06-06 14:55:02] [ERROR] Message
-        $date = date('Y-m-d H:i:s');
-        $formatted = "[$date] [$level] $message\n";
-
-        error_log($formatted, 3, $filename);
     }
 }

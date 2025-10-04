@@ -19,7 +19,6 @@ ndi-connect/
 │   ├── controllers/
 │   ├── core/
 │   ├── enums/
-│   ├── logs/
 │   ├── repositories/
 │   ├── routes/
 │   ├── services/
@@ -40,6 +39,7 @@ ndi-connect/
 │   ├── package-lock.json
 │   ├── package.json
 ├── dist/                 # Dossier de déploiement
+├── logs/                 # Dossier de logs
 ├── .gitignore
 ├── deploy.ps1            # Script de déploiement
 ├── README.md

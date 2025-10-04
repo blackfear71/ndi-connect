@@ -1,15 +1,15 @@
 <?php
 require_once 'core/Logger.php';
 
-ini_set('display_errors', 0);                                                 // Ne pas afficher les erreurs à l'écran
-ini_set('log_errors', 1);                                                     // Activer le logging
-ini_set('error_log', __DIR__ . '/logs/error_logs_' . date('Y-m-d') . '.log'); // Chemin vers le fichier de log
-error_reporting(E_ALL);                                                       // Reporter toutes les erreurs
+// ini_set('display_errors', 0);                                                    // Ne pas afficher les erreurs à l'écran
+// ini_set('log_errors', 1);                                                        // Activer le logging
+// ini_set('error_log', __DIR__ . '/../logs/error_logs_' . date('Y-m-d') . '.log'); // Chemin vers le fichier de log
+// error_reporting(E_ALL);                                                          // Reporter toutes les erreurs
 
 $allowedOrigins = [
     'http://localhost:3000',
-    'http://ndi-connect.ddns.net:8080',
-    'https://ndi-connect.ddns.net:8443',
+    'http://ndi-connect.ddns.net',
+    'https://ndi-connect.ddns.net',
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
