@@ -201,11 +201,16 @@ const Home = () => {
                     {/* Titre */}
                     <h1>
                         {editionsByYear && editionsByYear.length > 0 ? (
-                            <FaMapLocationDot size={30} />
+                            <>
+                                <FaMapLocationDot size={30} />
+                                {t('home.editionsTitle', { year: new Date(editionsByYear[0].startDate).getFullYear() })}
+                            </>
                         ) : (
-                            <IoCalendarNumberOutline size={30} />
+                            <>
+                                <IoCalendarNumberOutline size={30} />
+                                {t('home.editions')}
+                            </>
                         )}
-                        {t('home.editions')}
                     </h1>
 
                     {/* Ajout */}

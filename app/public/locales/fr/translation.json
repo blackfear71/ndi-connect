@@ -99,6 +99,7 @@
         "addEdition": "Ajouter une édition",
         "creationEdition": "Edition créée",
         "editions": "Editions",
+        "editionsTitle": "Editions {{year}}",
         "noEdition": "Aucune édition"
     },
     "navbar": {
