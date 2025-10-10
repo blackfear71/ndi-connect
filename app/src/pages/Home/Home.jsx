@@ -35,11 +35,6 @@ const Home = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -48,6 +43,11 @@ const Home = () => {
         theme: '',
         challenge: ''
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [messagePage, setMessagePage] = useState(null);
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
 
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);

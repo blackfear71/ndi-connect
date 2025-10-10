@@ -46,23 +46,6 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
-    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
-    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
-    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
-    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
-    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [messageModalGift, setMessageModalGift] = useState(null);
-    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
-    const [messageModalReward, setMessageModalReward] = useState(null);
-    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
-    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
-    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
-    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -89,6 +72,23 @@ const Edition = () => {
         idPlayer: null,
         idGift: 0
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
+    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
+    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
+    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
+    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
+    const [messagePage, setMessagePage] = useState(null);
+    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messageModalGift, setMessageModalGift] = useState(null);
+    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
+    const [messageModalReward, setMessageModalReward] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
+    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
+    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
+    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
     const [showActions, setShowActions] = useState(true);
 
     // API states

@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 
 import { Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 import UsersService from '../api/usersService';
 
@@ -15,6 +16,9 @@ export const AuthContext = createContext(null);
  * @returns
  */
 export const AuthProvider = ({ children }) => {
+    // Router
+    const navigate = useNavigate();
+
     // Local states
     const [auth, setAuth] = useState({
         isLoggedIn: false,
@@ -108,8 +112,11 @@ export const AuthProvider = ({ children }) => {
 
             combineLatest([subscriptionUser])
                 .pipe(
-                    map(([dataUser]) => {
+                    map(() => {
                         resolve();
+
+                        // Retour à l'accueil
+                        navigate('/');
                     }),
                     take(1),
                     catchError((err) => {

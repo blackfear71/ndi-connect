@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 
 import './assets/fonts/fonts.css';
 
-import { AuthProvider } from './utils/AuthContext';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -16,9 +15,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <AuthProvider>
-            <App />
-        </AuthProvider>
+        <App />
     </React.StrictMode>
 );
 

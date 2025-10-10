@@ -22,6 +22,8 @@
         "invalidValue": "La valeur est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
+        "passwordIdentical": "Le nouveau mot de passe doit être différent de l'ancien",
+        "passwordMatch": "Les mots de passe ne correspondent pas",
         "routeNotFound": "Route non trouvée",
         "unauthorizedAction": "Action non autorisée",
         "unknownEndpoint": "Endpoint inconnu",
@@ -108,6 +110,15 @@
         "disconnect": "Déconnexion",
         "login": "Identifiant",
         "password": "Mot de passe",
-        "search": "Rechercher..."
+        "search": "Rechercher...",
+        "settings": "Paramètres"
+    },
+    "settings": {
+        "confirmPassword": "Confirmer le mot de passe",
+        "createUser": "Créer un utilisateur",
+        "manageUsers": "Gestion des utilisateurs",
+        "newPassword": "Nouveau mot de passe",
+        "oldPassword": "Ancien mot de passe",
+        "password": "Mot de passe"
     }
 }
