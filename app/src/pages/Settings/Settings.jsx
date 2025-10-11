@@ -1,8 +1,8 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { Badge, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
 import UsersService from '../../api/usersService';
@@ -10,6 +10,7 @@ import UsersService from '../../api/usersService';
 import Message from '../../components/Message/Message';
 import SettingsCreateUser from '../../components/SettingsCreateUser/SettingsCreateUser';
 import SettingsPassword from '../../components/SettingsPassword/SettingsPassword';
+import SettingsUsers from '../../components/SettingsUsers/SettingsUsers';
 
 import UserRole from '../../enums/UserRole';
 
@@ -47,9 +48,13 @@ const Settings = () => {
         level: ''
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmittingCreateUser, setIsSubmittingCreateUser] = useState(false);
-    const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [messagePage, setMessagePage] = useState(null);
+    const [showCreateUserForm, setShowCreateUserForm] = useState(false);
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+    // API states
+    const [users, setUsers] = useState([]);
 
     /**
      * Lancement initial de la page
@@ -57,24 +62,44 @@ const Settings = () => {
     useEffect(() => {
         if (!auth.isLoggedIn) {
             navigate('/');
+        } else if (auth.level >= UserRole.SUPERADMIN) {
+            const usersService = new UsersService(localStorage.getItem('token'));
+
+            const subscriptionUsers = usersService.getAllUsers();
+
+            combineLatest([subscriptionUsers])
+                .pipe(
+                    map(([dataUsers]) => {
+                        setUsers(dataUsers.response.data);
+                    }),
+                    take(1),
+                    catchError((err) => {
+                        setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                        return of();
+                    }),
+                    finalize(() => {
+                        setIsLoading(false);
+                    })
+                )
+                .subscribe();
         } else {
             setIsLoading(false);
         }
     }, []);
 
     /**
-     * Contrôle soumission en cours
+     * Affiche ou masque la saisie de mot de passe
      */
-    const isSubmitting = useMemo(() => {
-        return isSubmittingPassword || isSubmittingCreateUser;
-    }, [isSubmittingPassword, isSubmittingCreateUser]);
+    const showHidePasswordForm = () => {
+        setShowPasswordForm((prev) => !prev);
+    };
 
     /**
      * Modification du mot de passe
      */
     const handleSubmitPassword = () => {
         setMessagePage(null);
-        setIsSubmittingPassword(true);
+        setIsSubmitting(true);
 
         const usersService = new UsersService(localStorage.getItem('token'));
 
@@ -83,6 +108,7 @@ const Settings = () => {
         combineLatest([subscriptionUsers])
             .pipe(
                 map(([dataUsers]) => {
+                    showHidePasswordForm();
                     setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -91,10 +117,17 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmittingPassword(false);
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
+    };
+
+    /**
+     * Affiche ou masque la saisie de nouvel utilisateur
+     */
+    const showHideCreateUserForm = () => {
+        setShowCreateUserForm((prev) => !prev);
     };
 
     /**
@@ -102,7 +135,7 @@ const Settings = () => {
      */
     const handleSubmitCreateUser = () => {
         setMessagePage(null);
-        setIsSubmittingCreateUser(true);
+        setIsSubmitting(true);
 
         const usersService = new UsersService(localStorage.getItem('token'));
 
@@ -111,6 +144,7 @@ const Settings = () => {
         combineLatest([subscriptionUsers])
             .pipe(
                 map(([dataUsers]) => {
+                    showHideCreateUserForm();
                     setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -119,7 +153,7 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmittingCreateUser(false);
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -141,7 +175,10 @@ const Settings = () => {
                         <>
                             {/* Niveau */}
                             <Badge bg="warning" text="dark" className="fs-6 p-2 d-inline-flex align-items-center">
-                                <FaStar size={18} className="me-2" /> {t(`settings.level${auth.level}`)}
+                                {auth.level === UserRole.USER && <FaUser size={18} className="me-2" />}
+                                {auth.level === UserRole.ADMIN && <FaUserPlus size={18} className="me-2" />}
+                                {auth.level === UserRole.SUPERADMIN && <FaStar size={18} className="me-2" />}
+                                {t(`settings.level${auth.level}`)}
                             </Badge>
 
                             {/* Gestion mot de passe */}
@@ -149,6 +186,8 @@ const Settings = () => {
                                 <SettingsPassword
                                     formPassword={formPassword}
                                     setFormPassword={setFormPassword}
+                                    showForm={showPasswordForm}
+                                    showFormMethod={showHidePasswordForm}
                                     setMessage={setMessagePage}
                                     onSubmit={handleSubmitPassword}
                                     isSubmitting={isSubmitting}
@@ -163,6 +202,8 @@ const Settings = () => {
                                         <SettingsCreateUser
                                             formCreateUser={formCreateUser}
                                             setFormCreateUser={setFormCreateUser}
+                                            showForm={showCreateUserForm}
+                                            showFormMethod={showHideCreateUserForm}
                                             setMessage={setMessagePage}
                                             onSubmit={handleSubmitCreateUser}
                                             isSubmitting={isSubmitting}
@@ -171,7 +212,7 @@ const Settings = () => {
 
                                     {/* Gestion utilisateurs */}
                                     <div className="settings-form mt-3">
-                                        <h1>{t('settings.manageUsers')}</h1>
+                                        <SettingsUsers users={users} isSubmitting={isSubmitting} />
                                     </div>
                                 </>
                             )}

@@ -24,6 +24,14 @@ class UsersService
     }
 
     /**
+     * Lecture de tous les enregistrements
+     */
+    public function getAllUsers()
+    {
+        return $this->repository->getAllUsers();
+    }
+
+    /**
      * Connexion utilisateur
      */
     public function connect($data)

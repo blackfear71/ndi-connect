@@ -227,7 +227,7 @@ const Home = () => {
                         editionsByYear && editionsByYear.length > 0 ? (
                             <div className="d-grid gap-2">
                                 {/* Retour */}
-                                <Button variant="outline-edition" className="btn-yellow" onClick={() => showYearsOfEditions()}>
+                                <Button variant="outline-edition" className="btn-yellow" onClick={showYearsOfEditions}>
                                     {t('common.return')}
                                 </Button>
 

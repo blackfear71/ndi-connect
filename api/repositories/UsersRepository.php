@@ -19,6 +19,16 @@ class UsersRepository extends Model
     }
 
     /**
+     * Lecture de tous les enregistrements
+     */
+    public function getAllUsers()
+    {
+        $sql = "SELECT id, login, level FROM {$this->table} WHERE is_active = 1 ORDER BY login ASC";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupération données utilisateur
      */
     public function getUserData($login)

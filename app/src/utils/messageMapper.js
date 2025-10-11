@@ -16,6 +16,7 @@ export const getMessageTranslationKey = (code) => {
         ERR_UNAUTHORIZED_ACTION: 'errors.unauthorizedAction',
         ERR_UNKNOWN_ENDPOINT: 'errors.unknownEndpoint',
         ERR_UPDATE_FAILED: 'errors.updateFailed',
+        ERR_USERS_NOT_FOUND: 'errors.usersNotFound',
         MSG_CREATION_SUCCESS: 'messages.creationSuccess',
         MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
         MSG_REWARD_SUCCESS: 'messages.rewardSuccess',

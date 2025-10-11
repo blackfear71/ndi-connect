@@ -9,10 +9,19 @@ $db = $database->getConnection();
 $router->get('/users/checkAuth', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new UsersController($db))->checkAuth($token);
+});
+
+$router->get('/users/all', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->getAllUsers($token);
 });
 
 $router->post('/users/connect', function () use ($db) {
@@ -26,7 +35,7 @@ $router->post('/users/connect', function () use ($db) {
 $router->post('/users/disconnect', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new UsersController($db))->disconnect($token);

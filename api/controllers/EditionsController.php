@@ -46,7 +46,7 @@ class EditionsController
                 // Succès
                 ResponseHelper::success($editions);
             } else {
-                // Échec de la suppression
+                // Échec de la lecture
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,
@@ -105,7 +105,7 @@ class EditionsController
                 // Succès
                 ResponseHelper::success($editions);
             } else {
-                // Échec de la suppression
+                // Échec de la lecture
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,

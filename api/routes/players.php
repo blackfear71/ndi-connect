@@ -9,7 +9,7 @@ $db = $database->getConnection();
 $router->post('/players/create/:idEdition', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -21,7 +21,7 @@ $router->post('/players/create/:idEdition', function ($params) use ($db) {
 $router->patch('/players/update/:idEdition/:idPlayer', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -33,7 +33,7 @@ $router->patch('/players/update/:idEdition/:idPlayer', function ($params) use ($
 $router->delete('/players/delete/:idEdition/:idPlayer', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new PlayersController($db))->deletePlayer($token, $params['idEdition'], $params['idPlayer']);

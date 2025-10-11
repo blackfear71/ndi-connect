@@ -10,27 +10,19 @@ import './SettingsCreateUser.css';
 /**
  * Liste des participants
  */
-const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, setMessage, onSubmit, isSubmitting }) => {
+const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const createUserInputRef = useRef(null);
-    const [showCreateUserEntry, setShowCreateUserEntry] = useState(false);
 
     /**
      * Met le curseur sur la zone de saisie à l'ouverture
      */
     useEffect(() => {
-        showCreateUserEntry && createUserInputRef.current?.focus();
-    }, [showCreateUserEntry]);
-
-    /**
-     * Affiche ou masque la saisie
-     */
-    const showHideCreateUserEntry = () => {
-        setShowCreateUserEntry((prev) => !prev);
-    };
+        showForm && createUserInputRef.current?.focus();
+    }, [showForm]);
 
     /**
      * Met à jour le formulaire à la saisie
@@ -94,8 +86,8 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, setMessage, onS
             <h1>{t('settings.createUser')}</h1>
 
             {/* Saisie */}
-            {!showCreateUserEntry ? (
-                <Button className="settings-create-user-button me-2" onClick={showHideCreateUserEntry}>
+            {!showForm ? (
+                <Button className="settings-create-user-button me-2" onClick={showFormMethod}>
                     {t('settings.showCreateUserForm')}
                 </Button>
             ) : (
@@ -135,14 +127,10 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, setMessage, onS
                             ))}
                         </Form.Select>
                         <div className="d-flex align-items-center mt-2">
-                            <Button type="button" className="settings-password-button me-2" onClick={() => showHideCreateUserEntry()}>
+                            <Button type="button" className="settings-password-button me-2" onClick={showFormMethod}>
                                 {t('common.cancel')}
                             </Button>
-                            <Button
-                                type="submit"
-                                className="settings-create-user-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
+                            <Button type="submit" className="settings-create-user-button">
                                 {t('common.validate')}
                             </Button>
                         </div>

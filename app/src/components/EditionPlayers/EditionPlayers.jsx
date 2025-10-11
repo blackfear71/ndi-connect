@@ -172,19 +172,11 @@ const EditionPlayers = ({
                                     maxLength={100}
                                     required
                                 />
-                                <Button
-                                    onClick={() => showHidePlayerEntry(false)}
-                                    className="edition-players-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaTimes color={isSubmitting ? 'gray' : 'white'} />
+                                <Button onClick={() => showHidePlayerEntry(false)} className="edition-players-button">
+                                    <FaTimes />
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    className="edition-players-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaCheck color={isSubmitting ? 'gray' : 'white'} />
+                                <Button type="submit" className="edition-players-button">
+                                    <FaCheck />
                                 </Button>
                             </Form>
                         </fieldset>

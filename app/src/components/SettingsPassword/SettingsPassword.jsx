@@ -10,27 +10,19 @@ import './SettingsPassword.css';
 /**
  * Liste des participants
  */
-const SettingsPassword = ({ formPassword, setFormPassword, setMessage, onSubmit, isSubmitting }) => {
+const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const passwordInputRef = useRef(null);
-    const [showPasswordEntry, setShowPasswordEntry] = useState(false);
 
     /**
      * Met le curseur sur la zone de saisie à l'ouverture
      */
     useEffect(() => {
-        showPasswordEntry && passwordInputRef.current?.focus();
-    }, [showPasswordEntry]);
-
-    /**
-     * Affiche ou masque la saisie
-     */
-    const showHidePasswordEntry = () => {
-        setShowPasswordEntry((prev) => !prev);
-    };
+        showForm && passwordInputRef.current?.focus();
+    }, [showForm]);
 
     /**
      * Met à jour le formulaire à la saisie
@@ -77,8 +69,8 @@ const SettingsPassword = ({ formPassword, setFormPassword, setMessage, onSubmit,
             <h1>{t('settings.password')}</h1>
 
             {/* Saisie */}
-            {!showPasswordEntry ? (
-                <Button className="settings-password-button me-2" onClick={showHidePasswordEntry}>
+            {!showForm ? (
+                <Button className="settings-password-button me-2" onClick={showFormMethod}>
                     {t('settings.showPasswordForm')}
                 </Button>
             ) : (
@@ -104,14 +96,10 @@ const SettingsPassword = ({ formPassword, setFormPassword, setMessage, onSubmit,
                             handleChange={handleChange}
                         />
                         <div className="d-flex align-items-center mt-2">
-                            <Button type="button" className="settings-password-button me-2" onClick={() => showHidePasswordEntry()}>
+                            <Button type="button" className="settings-password-button me-2" onClick={showFormMethod}>
                                 {t('common.cancel')}
                             </Button>
-                            <Button
-                                type="submit"
-                                className="settings-password-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
+                            <Button type="submit" className="settings-password-button">
                                 {t('common.validate')}
                             </Button>
                         </div>

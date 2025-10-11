@@ -30,7 +30,8 @@
         "unauthorizedAction": "Action non autorisée",
         "unknownEndpoint": "Endpoint inconnu",
         "unknownError": "Une erreur inconnue est survenue",
-        "updateFailed": "Modification échouée"
+        "updateFailed": "Modification échouée",
+        "usersNotFound": "Utilisateurs non trouvés"
     },
     "messages": {
         "creationSuccess": "Création réussie",
@@ -125,6 +126,7 @@
         "login": "Identifiant",
         "manageUsers": "Gestion des utilisateurs",
         "newPassword": "Nouveau mot de passe",
+        "noUsers": "Aucun utilisateur",
         "oldPassword": "Ancien mot de passe",
         "password": "Mot de passe",
         "showCreateUserForm": "Créer un utilisateur",

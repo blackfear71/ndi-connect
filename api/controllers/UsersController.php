@@ -1,6 +1,8 @@
 <?php
 require_once 'core/ResponseHelper.php';
 
+require_once 'enums/UserRole.php';
+
 require_once 'services/UsersService.php';
 
 class UsersController
@@ -41,6 +43,49 @@ class UsersController
             // Exception levée
             Logger::log('Exception levée dans checkAuth de UsersController : ' . $e->getMessage(), 'ERROR');
             ResponseHelper::error($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Lecture de tous les enregistrements
+     */
+    public function getAllUsers($token)
+    {
+        try {
+            // Contrôle autorisation
+            $user = $this->service->checkAuth($token);
+
+            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
+                // Accès refusé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Action non autorisée dans getAllUsers de UsersController'
+                );
+                exit;
+            }
+
+            // Lecture de tous les enregistrements
+            $users = $this->service->getAllUsers();
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users);
+            } else {
+                // Échec de la lecture
+                ResponseHelper::error(
+                    'ERR_USERS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des utilisateurs'
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage()
+            );
         }
     }
 

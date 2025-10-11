@@ -9,7 +9,7 @@ $db = $database->getConnection();
 $router->post('/rewards/reward/:idEdition', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -21,7 +21,7 @@ $router->post('/rewards/reward/:idEdition', function ($params) use ($db) {
 $router->delete('/rewards/delete/:idEdition/:idReward', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new RewardsController($db))->deleteReward($token, $params['idEdition'], $params['idReward']);

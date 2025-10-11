@@ -28,6 +28,15 @@ class UsersService {
     };
 
     /**
+     * Récupération des utilisateurs
+     * @returns Liste des utilisateurs
+     */
+    getAllUsers = () => {
+        const url = `${this.apiUrl}/all`;
+        return ajax.get(url, this.headers);
+    };
+
+    /**
      * Connexion utilisateur
      * @param {*} body Informations d'identification
      * @returns Token de connexion
