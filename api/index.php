@@ -1,6 +1,4 @@
 <?php
-require_once 'core/Logger.php';
-
 // ini_set('display_errors', 0);                                                    // Ne pas afficher les erreurs à l'écran
 // ini_set('log_errors', 1);                                                        // Activer le logging
 // ini_set('error_log', __DIR__ . '/../logs/error_logs_' . date('Y-m-d') . '.log'); // Chemin vers le fichier de log
@@ -20,7 +18,11 @@ if (in_array($origin, $allowedOrigins)) {
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 }
 
-require_once __DIR__ . '/core/Router.php';
+require_once __DIR__ . '/core/functions/Database.php';
+require_once __DIR__ . '/core/functions/Router.php';
+require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
+require_once __DIR__ . '/core/helpers/LoggerHelper.php';
+require_once __DIR__ . '/core/helpers/ResponseHelper.php';
 
 $router = new Router();
 
@@ -42,9 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else if (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {
-    Logger::log("Endpoint inconnu : " . $uri, 'ERROR');
-    http_response_code(404);
-    echo json_encode(['error' => 'ERR_UNKNOWN_ENDPOINT']);
+    ResponseHelper::error(
+        'ERR_UNKNOWN_ENDPOINT',
+        404,
+        'Endpoint inconnu : ' . $uri
+    );
     exit;
 }
 

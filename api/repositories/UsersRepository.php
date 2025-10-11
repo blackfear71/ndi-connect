@@ -1,5 +1,5 @@
 <?php
-require_once 'core/Model.php';
+require_once 'core/functions/Model.php';
 
 class UsersRepository extends Model
 {

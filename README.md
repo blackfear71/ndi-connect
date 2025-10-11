@@ -18,6 +18,8 @@ ndi-connect/
 ├── api/                  # Back-end PHP (API)
 │   ├── controllers/
 │   ├── core/
+│   │   ├── functions/
+│   │   ├── helpers/
 │   ├── enums/
 │   ├── repositories/
 │   ├── routes/
@@ -32,6 +34,21 @@ ndi-connect/
 │   ├── public/
 │   ├── scripts/
 │   ├── src/
+│   │   ├── api/
+│   │   ├── assets/
+│   │   │   ├── fonts/
+│   │   │   ├── images/
+│   │   ├── components/
+│   │   ├── enums/
+│   │   ├── pages/
+│   │   ├── utils/
+│   ├── App.css
+│   ├── App.jsx
+│   ├── App.test.jsx
+│   ├── index.css
+│   ├── index.jsx
+│   ├── reportWebVitals.js
+│   ├── setupTests.js
 │   ├── .env.development
 │   ├── .env.production
 │   ├── .prettierrc
@@ -50,7 +67,7 @@ ndi-connect/
 ### Prérequis
 
 - Node.js >= 18
-- PHP >= 8.0
+- PHP >= 8.2
 - MySQL/MariaDB
 - Serveur web (Apache, Nginx...)
 
@@ -69,7 +86,7 @@ npm run init:env
 
 ### 3. Configuration du back-end
 
-Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base de données :
+Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base de données locale :
 
 ```
 DB_HOST=localhost

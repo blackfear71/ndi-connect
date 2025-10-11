@@ -284,7 +284,9 @@ const Edition = () => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
+                        action === 'create'
+                            ? setMessagePage({ code: err?.response?.message, type: err?.response?.status })
+                            : setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {

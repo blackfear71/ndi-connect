@@ -1,6 +1,4 @@
 <?php
-require_once 'core/Database.php';
-
 require_once 'controllers/PlayersController.php';
 
 $database = new Database();

@@ -19,7 +19,7 @@ class ResponseHelper
     public static function error($message, $code = 500, $logMessage = null)
     {
         if ($logMessage) {
-            Logger::log($logMessage, 'ERROR');
+            LoggerHelper::log($logMessage, 'ERROR');
         }
 
         http_response_code($code);

@@ -1,5 +1,5 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
@@ -7,7 +7,10 @@ require_once 'services/UsersService.php';
 
 class UsersController
 {
+    private const controllerName = 'UsersController';
+
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -16,6 +19,7 @@ class UsersController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new UsersService($db);
     }
 
@@ -30,7 +34,11 @@ class UsersController
 
             if (!$user) {
                 // Authentification incorrecte
-                ResponseHelper::error('ERR_INVALID_AUTH', 401, 'Authentification incorrecte');
+                ResponseHelper::error(
+                    'ERR_INVALID_AUTH',
+                    401,
+                    'Authentification incorrecte'
+                );
                 exit;
             }
 
@@ -41,8 +49,11 @@ class UsersController
             ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans checkAuth de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 
@@ -52,18 +63,8 @@ class UsersController
     public function getAllUsers($token)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->service->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans getAllUsers de UsersController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Lecture de tous les enregistrements
             $users = $this->service->getAllUsers();
@@ -84,7 +85,7 @@ class UsersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -100,15 +101,22 @@ class UsersController
 
             if (!$user) {
                 // Utilisateur non trouvé
-                ResponseHelper::error('ERR_LOGIN_FAILED', 401, 'Utilisateur non trouvé (connect) : ' . $data['login']);
+                ResponseHelper::error(
+                    'ERR_LOGIN_FAILED',
+                    401,
+                    'Utilisateur non trouvé (connect) : ' . $data['login']
+                );
                 exit;
             }
 
             ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans connect de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 
@@ -123,7 +131,11 @@ class UsersController
 
             if (!$user) {
                 // Utilisateur non trouvé
-                ResponseHelper::error('ERR_UNAUTHORIZED_ACTION', 401, 'Utilisateur non trouvé (disconnect)');
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Utilisateur non trouvé (disconnect)'
+                );
                 exit;
             }
 
@@ -134,12 +146,19 @@ class UsersController
                 ResponseHelper::success(['disconnected' => $disconnected]);
             } else {
                 // Échec de la déconnexion
-                ResponseHelper::error('ERR_LOGOUT_FAILED', 401, 'Erreur lors de la déconnexion de : ' . $user['login']);
+                ResponseHelper::error(
+                    'ERR_LOGOUT_FAILED',
+                    401,
+                    'Erreur lors de la déconnexion de : ' . $user['login']
+                );
             }
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans disconnect de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 }

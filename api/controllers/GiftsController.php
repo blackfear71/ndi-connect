@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/GiftsService.php';
-require_once 'services/UsersService.php';
 
 class GiftsController
 {
-    private $usersService = null;
+    private const controllerName = 'GiftsController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class GiftsController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new GiftsService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -39,18 +29,8 @@ class GiftsController
     public function createGift($token, $idEdition, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $gifts = $this->service->createGift($idEdition, $user, $data);
@@ -82,18 +62,8 @@ class GiftsController
     public function updateGift($token, $idEdition, $idGift, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans updateGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $gifts = $this->service->updateGift($idEdition, $idGift, $user, $data);
@@ -125,18 +95,8 @@ class GiftsController
     public function deleteGift($token, $idEdition, $idGift)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deleteGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $gifts = $this->service->deleteGift($idEdition, $idGift, $user['login']);

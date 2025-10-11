@@ -1,5 +1,5 @@
 <?php
-class Logger
+class LoggerHelper
 {
     private static $env = null;
 
@@ -12,14 +12,14 @@ class Logger
     {
         // Récupération du dossier de logs depuis le fichier .env
         if (self::$env === null) {
-            self::$env = Environment::loadEnv(__DIR__ . '/../.env');
+            self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
         if (isset(self::$env['LOG_DIR']) && !empty(self::$env['LOG_DIR'])) {
             $logDir = self::$env['LOG_DIR'];
 
             // Contrôle que le dossier de logs existe
-            if (!file_exists($logDir)) {
+            if (!is_dir($logDir)) {
                 mkdir($logDir, 0775, true);
             }
 

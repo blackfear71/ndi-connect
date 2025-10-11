@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/EditionsService.php';
-require_once 'services/UsersService.php';
 
 class EditionsController
 {
-    private $usersService = null;
+    private const controllerName = 'EditionsController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class EditionsController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new EditionsService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -128,18 +118,8 @@ class EditionsController
     public function createEdition($token, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $created = $this->service->createEdition($user['login'], $data);
@@ -171,18 +151,8 @@ class EditionsController
     public function updateEdition($token, $id, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans updateEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $edition = $this->service->updateEdition($id, $user['login'], $data);
@@ -214,18 +184,8 @@ class EditionsController
     public function deleteEdition($token, $id)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deleteEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteEdition($id, $user['login']);

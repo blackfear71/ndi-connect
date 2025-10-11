@@ -1,7 +1,5 @@
 <?php
-require_once __DIR__ . '/Environment.php';
-
-class Environment
+class EnvironmentHelper
 {
     /**
      * Chargement du fichier d'environnement

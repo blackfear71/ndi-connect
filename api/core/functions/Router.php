@@ -81,8 +81,10 @@ class Router
         }
 
         // Si aucune route ne correspond
-        Logger::log("Route non trouvée : " . $uri, 'ERROR');
-        http_response_code(404);
-        echo json_encode(['error' => 'ERR_ROUTE_NOT_FOUND']);
+        ResponseHelper::error(
+            'ERR_ROUTE_NOT_FOUND',
+            404,
+            'Route non trouvée : ' . $uri
+        );
     }
 }
