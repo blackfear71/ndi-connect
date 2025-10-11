@@ -1,6 +1,8 @@
 import { Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+import PasswordInput from '../PasswordInput/PasswordInput';
+
 import './SettingsPassword.css';
 
 /**
@@ -57,35 +59,23 @@ const SettingsPassword = ({ formPassword, setFormPassword, setMessage, onSubmit,
             {/* Saisie */}
             <fieldset disabled={isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event)}>
-                    <Form.Control
-                        type="text"
-                        name="oldPassword"
+                    <PasswordInput
+                        name={'oldPassword'}
                         placeholder={t('settings.oldPassword')}
-                        className="mt-2"
                         value={formPassword.oldPassword}
-                        onChange={handleChange}
-                        maxLength={100}
-                        required
+                        handleChange={handleChange}
                     />
-                    <Form.Control
-                        type="text"
-                        name="newPassword"
+                    <PasswordInput
+                        name={'newPassword'}
                         placeholder={t('settings.newPassword')}
-                        className="mt-2"
                         value={formPassword.newPassword}
-                        onChange={handleChange}
-                        maxLength={100}
-                        required
+                        handleChange={handleChange}
                     />
-                    <Form.Control
-                        type="text"
-                        name="confirmPassword"
+                    <PasswordInput
+                        name={'confirmPassword'}
                         placeholder={t('settings.confirmPassword')}
-                        className="mt-2"
                         value={formPassword.confirmPassword}
-                        onChange={handleChange}
-                        maxLength={100}
-                        required
+                        handleChange={handleChange}
                     />
                     <Button
                         type="submit"
