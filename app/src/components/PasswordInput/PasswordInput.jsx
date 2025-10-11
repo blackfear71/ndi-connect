@@ -8,7 +8,7 @@ import './PasswordInput.css';
 /**
  * Liste des participants
  */
-const PasswordInput = ({ name, placeholder, value, handleChange }) => {
+const PasswordInput = ({ ref = null, name, placeholder, value, handleChange }) => {
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 
@@ -20,23 +20,22 @@ const PasswordInput = ({ name, placeholder, value, handleChange }) => {
     };
 
     return (
-        <>
-            <InputGroup className="mt-2">
-                <Form.Control
-                    type={showPassword ? 'text' : 'password'}
-                    name={name}
-                    placeholder={placeholder}
-                    className="password-input"
-                    value={value}
-                    onChange={handleChange}
-                    maxLength={100}
-                    required
-                />
-                <Button onClick={() => toggleVisibility()} tabIndex={-1} className="password-input-button">
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </Button>
-            </InputGroup>
-        </>
+        <InputGroup className="mt-2">
+            <Form.Control
+                ref={ref}
+                type={showPassword ? 'text' : 'password'}
+                name={name}
+                placeholder={placeholder}
+                className="password-input"
+                value={value}
+                onChange={handleChange}
+                maxLength={100}
+                required
+            />
+            <Button onClick={() => toggleVisibility()} tabIndex={-1} className="password-input-button">
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </Button>
+        </InputGroup>
     );
 };
 

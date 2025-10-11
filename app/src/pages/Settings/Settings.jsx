@@ -1,7 +1,8 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 
-import { Spinner } from 'react-bootstrap';
+import { Badge, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 import UsersService from '../../api/usersService';
@@ -138,8 +139,13 @@ const Settings = () => {
                     {/* Paramètres */}
                     {auth.isLoggedIn && (
                         <>
+                            {/* Niveau */}
+                            <Badge bg="warning" text="dark" className="fs-6 p-2 d-inline-flex align-items-center">
+                                <FaStar size={18} className="me-2" /> {t(`settings.level${auth.level}`)}
+                            </Badge>
+
                             {/* Gestion mot de passe */}
-                            <div className="settings-form">
+                            <div className="settings-form mt-3">
                                 <SettingsPassword
                                     formPassword={formPassword}
                                     setFormPassword={setFormPassword}

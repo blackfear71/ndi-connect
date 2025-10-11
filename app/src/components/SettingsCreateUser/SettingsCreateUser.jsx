@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import { Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +13,24 @@ import './SettingsCreateUser.css';
 const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
+
+    // Local states
+    const createUserInputRef = useRef(null);
+    const [showCreateUserEntry, setShowCreateUserEntry] = useState(false);
+
+    /**
+     * Met le curseur sur la zone de saisie à l'ouverture
+     */
+    useEffect(() => {
+        showCreateUserEntry && createUserInputRef.current?.focus();
+    }, [showCreateUserEntry]);
+
+    /**
+     * Affiche ou masque la saisie
+     */
+    const showHideCreateUserEntry = () => {
+        setShowCreateUserEntry((prev) => !prev);
+    };
 
     /**
      * Met à jour le formulaire à la saisie
@@ -74,49 +94,61 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, setMessage, onS
             <h1>{t('settings.createUser')}</h1>
 
             {/* Saisie */}
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={(event) => handleSubmit(event)}>
-                    <Form.Control
-                        type="text"
-                        name="login"
-                        placeholder={t('settings.login')}
-                        className="mt-2"
-                        value={formCreateUser.login}
-                        onChange={handleChange}
-                        maxLength={100}
-                        required
-                    />
-                    <PasswordInput
-                        name={'password'}
-                        placeholder={t('settings.password')}
-                        value={formCreateUser.password}
-                        handleChange={handleChange}
-                    />
-                    <PasswordInput
-                        name={'confirmPassword'}
-                        placeholder={t('settings.confirmPassword')}
-                        value={formCreateUser.confirmPassword}
-                        handleChange={handleChange}
-                    />
-                    <Form.Select value={formCreateUser.level} onChange={handleChangeSelect} className="mt-2" required>
-                        <option key="" value="" disabled>
-                            {t('settings.chooseLevel')}
-                        </option>
-                        {[0, 1, 2].map((level) => (
-                            <option key={level} value={level}>
-                                {t(`settings.level${level}`)}
+            {!showCreateUserEntry ? (
+                <Button className="settings-create-user-button me-2" onClick={showHideCreateUserEntry}>
+                    {t('settings.showCreateUserForm')}
+                </Button>
+            ) : (
+                <fieldset disabled={isSubmitting}>
+                    <Form onSubmit={(event) => handleSubmit(event)}>
+                        <Form.Control
+                            ref={createUserInputRef}
+                            type="text"
+                            name="login"
+                            placeholder={t('settings.login')}
+                            className="mt-2"
+                            value={formCreateUser.login}
+                            onChange={handleChange}
+                            maxLength={100}
+                            required
+                        />
+                        <PasswordInput
+                            name={'password'}
+                            placeholder={t('settings.password')}
+                            value={formCreateUser.password}
+                            handleChange={handleChange}
+                        />
+                        <PasswordInput
+                            name={'confirmPassword'}
+                            placeholder={t('settings.confirmPassword')}
+                            value={formCreateUser.confirmPassword}
+                            handleChange={handleChange}
+                        />
+                        <Form.Select value={formCreateUser.level} onChange={handleChangeSelect} className="mt-2" required>
+                            <option key="" value="" disabled>
+                                {t('settings.chooseLevel')}
                             </option>
-                        ))}
-                    </Form.Select>
-                    <Button
-                        type="submit"
-                        className="settings-create-user-button mt-2"
-                        style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                    >
-                        Valider
-                    </Button>
-                </Form>
-            </fieldset>
+                            {[0, 1, 2].map((level) => (
+                                <option key={level} value={level}>
+                                    {t(`settings.level${level}`)}
+                                </option>
+                            ))}
+                        </Form.Select>
+                        <div className="d-flex align-items-center mt-2">
+                            <Button type="button" className="settings-password-button me-2" onClick={() => showHideCreateUserEntry()}>
+                                {t('common.cancel')}
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="settings-create-user-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                {t('common.validate')}
+                            </Button>
+                        </div>
+                    </Form>
+                </fieldset>
+            )}
         </>
     );
 };

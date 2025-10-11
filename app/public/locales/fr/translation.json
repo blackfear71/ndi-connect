@@ -126,6 +126,8 @@
         "manageUsers": "Gestion des utilisateurs",
         "newPassword": "Nouveau mot de passe",
         "oldPassword": "Ancien mot de passe",
-        "password": "Mot de passe"
+        "password": "Mot de passe",
+        "showCreateUserForm": "Créer un utilisateur",
+        "showPasswordForm": "Modifier le mot de passe"
     }
 }
