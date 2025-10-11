@@ -42,10 +42,10 @@ ndi-connect/
 │   │   ├── enums/
 │   │   ├── pages/
 │   │   ├── utils/
-│   ├── App.css
-│   ├── App.jsx
-│   ├── index.css
-│   ├── index.jsx
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   ├── index.jsx
 │   ├── .env.development
 │   ├── .env.production
 │   ├── .prettierrc
