@@ -44,11 +44,8 @@ ndi-connect/
 │   │   ├── utils/
 │   ├── App.css
 │   ├── App.jsx
-│   ├── App.test.jsx
 │   ├── index.css
 │   ├── index.jsx
-│   ├── reportWebVitals.js
-│   ├── setupTests.js
 │   ├── .env.development
 │   ├── .env.production
 │   ├── .prettierrc
@@ -138,10 +135,6 @@ Lance l'application en mode développement.
 ### `npm run build`
 
 Construit l'application pour la production.
-
-### `npm test`
-
-Lance les tests unitaires.
 
 ### `npm run eject`
 
