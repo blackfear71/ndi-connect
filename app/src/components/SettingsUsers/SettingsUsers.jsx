@@ -10,7 +10,7 @@ import './SettingsUsers.css';
 /**
  * Liste des participants
  */
-const SettingsUsers = ({ login, users, onConfirm, isSubmitting }) => {
+const SettingsUsers = ({ login, users, formUpdateUser, setFormUpdateUser, setModalOptionsUpdateUser, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -44,6 +44,24 @@ const SettingsUsers = ({ login, users, onConfirm, isSubmitting }) => {
         });
     };
 
+    /**
+     * Affiche la modale de modification d'un utilisateur
+     * @param {*} user Données utilisateur
+     */
+    const showUpdateUserModal = (user) => {
+        if (user) {
+            setFormUpdateUser({
+                ...formUpdateUser,
+                id: user.id,
+                level: user.level
+            });
+        }
+
+        setModalOptionsUpdateUser({
+            isOpen: true
+        });
+    };
+
     return (
         <>
             {/* Titre */}
@@ -72,8 +90,7 @@ const SettingsUsers = ({ login, users, onConfirm, isSubmitting }) => {
 
                         {/* Modification */}
                         <Button
-                            // TODO
-                            // onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
+                            onClick={isSubmitting ? null : () => showUpdateUserModal(u)}
                             className="settings-users-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >

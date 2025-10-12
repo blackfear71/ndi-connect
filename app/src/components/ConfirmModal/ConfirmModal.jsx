@@ -41,7 +41,7 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAct
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Contenu */}
                         {modalOptions.content}

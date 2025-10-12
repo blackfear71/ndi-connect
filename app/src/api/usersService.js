@@ -66,12 +66,32 @@ class UsersService {
     };
 
     /**
+     * Réinitialisation mot de passe
+     * @param {*} id Identifiant utilisateur
+     * @returns
+     */
+    resetPassword = (id) => {
+        const url = `${this.apiUrl}/reset/${id}`;
+        return ajax.patch(url, null, this.headers);
+    };
+
+    /**
      * Mise à jour mot de passe
      * @param {*} body Données mot de passe
      * @returns
      */
     updatePassword = (body) => {
         const url = `${this.apiUrl}/password`;
+        return ajax.patch(url, body, this.headers);
+    };
+
+    /**
+     * Mise à jour utilisateur
+     * @param {*} body Données utilisateur
+     * @returns
+     */
+    updateUser = (body) => {
+        const url = `${this.apiUrl}/update`;
         return ajax.patch(url, body, this.headers);
     };
 

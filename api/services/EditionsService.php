@@ -111,7 +111,7 @@ class EditionsService
         }
 
         // Modification
-        $data = $this->processData($data);
+        $data = $this->processDataEdition($data);
 
         if ($id && $this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);

@@ -11,6 +11,7 @@ import UsersService from '../../api/usersService';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Message from '../../components/Message/Message';
 import SettingsCreateUser from '../../components/SettingsCreateUser/SettingsCreateUser';
+import SettingsModal from '../../components/SettingsModal/SettingsModal';
 import SettingsPassword from '../../components/SettingsPassword/SettingsPassword';
 import SettingsUsers from '../../components/SettingsUsers/SettingsUsers';
 
@@ -48,11 +49,17 @@ const Settings = () => {
         confirmPassword: '',
         level: ''
     });
+    const [formUpdateUser, setFormUpdateUser] = useState({
+        id: null,
+        level: ''
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [messageModalConfirm, setMessageModalConfirm] = useState(null);
+    const [messageModalUpdateUser, setMessageModalUpdateUser] = useState(null);
     const [messagePage, setMessagePage] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', data: null, isOpen: false });
+    const [modalOptionsUpdateUser, setModalOptionsUpdateUser] = useState({ isOpen: false });
     const [showCreateUserForm, setShowCreateUserForm] = useState(false);
     const [showPasswordForm, setShowPasswordForm] = useState(false);
 
@@ -229,6 +236,92 @@ const Settings = () => {
     };
 
     /**
+     * Réinitialisation du mot de passe
+     * @param {*} id Identifiant utilisateur
+     */
+    const handleResetPassword = (id) => {
+        setMessageModalUpdateUser(null);
+        setMessagePage(null);
+        setIsSubmitting(true);
+
+        const usersService = new UsersService(localStorage.getItem('token'));
+
+        const subscriptionUsers = usersService.resetPassword(id);
+
+        combineLatest([subscriptionUsers])
+            .pipe(
+                map(([dataUsers]) => {
+                    setMessageModalUpdateUser({
+                        code: dataUsers.response.message,
+                        params: { password: dataUsers.response.data },
+                        type: dataUsers.response.status
+                    });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalUpdateUser({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Ouverture/fermeture de la modale de modification d'utilisateur
+     */
+    const openCloseUpdateUserModal = () => {
+        // Ouverture ou fermeture
+        setModalOptionsUpdateUser({ isOpen: !modalOptionsUpdateUser.isOpen });
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsUpdateUser.isOpen && resetFormUpdateUser();
+    };
+
+    /**
+     * Réinitialisation formulaire (modification utilisateur)
+     */
+    const resetFormUpdateUser = () => {
+        setFormUpdateUser({
+            id: null,
+            level: ''
+        });
+    };
+
+    /**
+     * Modification d'un utilisateur
+     */
+    const handleSubmitUpdateUser = () => {
+        setMessageModalUpdateUser(null);
+        setMessagePage(null);
+        setIsSubmitting(true);
+
+        const usersService = new UsersService(localStorage.getItem('token'));
+
+        const subscriptionUsers = usersService.updateUser(formUpdateUser);
+
+        combineLatest([subscriptionUsers])
+            .pipe(
+                map(([dataUsers]) => {
+                    openCloseUpdateUserModal('');
+                    setUsers(dataUsers.response.data);
+                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalUpdateUser({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
      * Ouverture/fermeture de la modale de confirmation
      */
     const openCloseConfirmModal = (confirmOptions) => {
@@ -288,7 +381,9 @@ const Settings = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
+                    {messagePage && (
+                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
+                    )}
 
                     {/* Paramètres */}
                     {auth.isLoggedIn && (
@@ -317,8 +412,8 @@ const Settings = () => {
                                     {/* Création utilisateur */}
                                     <div className="settings-form mt-3">
                                         <SettingsCreateUser
-                                            formCreateUser={formCreateUser}
-                                            setFormCreateUser={setFormCreateUser}
+                                            formData={formCreateUser}
+                                            setFormData={setFormCreateUser}
                                             showForm={showCreateUserForm}
                                             showFormMethod={showHideCreateUserForm}
                                             setMessage={setMessagePage}
@@ -332,6 +427,9 @@ const Settings = () => {
                                         <SettingsUsers
                                             login={auth.login}
                                             users={users}
+                                            formUpdateUser={formUpdateUser}
+                                            setFormUpdateUser={setFormUpdateUser}
+                                            setModalOptionsUpdateUser={setModalOptionsUpdateUser}
                                             onConfirm={openCloseConfirmModal}
                                             isSubmitting={isSubmitting}
                                         />
@@ -339,6 +437,23 @@ const Settings = () => {
                                 </>
                             )}
                         </>
+                    )}
+
+                    {/* Modale de modification d'utilisateur' */}
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUpdateUser.isOpen && (
+                        <SettingsModal
+                            user={users.find((u) => u.id === formUpdateUser.id)}
+                            getUserRole={getUserRole}
+                            formData={formUpdateUser}
+                            setFormData={setFormUpdateUser}
+                            modalOptions={modalOptionsUpdateUser}
+                            message={messageModalUpdateUser}
+                            setMessage={setMessageModalUpdateUser}
+                            onReset={handleResetPassword}
+                            onClose={openCloseUpdateUserModal}
+                            onSubmit={handleSubmitUpdateUser}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
 
                     {/* Modale de confirmation */}

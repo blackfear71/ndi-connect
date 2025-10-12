@@ -5,12 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 import PasswordInput from '../PasswordInput/PasswordInput';
 
-import './SettingsCreateUser.css';
-
 /**
  * Liste des participants
  */
-const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
+const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -30,7 +28,7 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
      */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormCreateUser((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     /**
@@ -38,7 +36,7 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
      * @param {*} e Evènement
      */
     const handleChangeSelect = (e) => {
-        setFormCreateUser((prev) => ({
+        setFormData((prev) => ({
             ...prev,
             level: parseInt(e.target.value)
         }));
@@ -53,25 +51,19 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
         e.preventDefault();
 
         // Contrôle que les données sont renseignées
-        if (
-            !formCreateUser.login ||
-            !formCreateUser.password ||
-            !formCreateUser.confirmPassword ||
-            formCreateUser.level === '' ||
-            isNaN(formCreateUser.level)
-        ) {
+        if (!formData.login || !formData.password || !formData.confirmPassword || formData.level === '' || isNaN(formData.level)) {
             setMessage({ code: 'errors.invalidUserData', type: 'error' });
             return;
         }
 
         // Contrôle que les nouveaux mots de passe correspondent
-        if (formCreateUser.password !== formCreateUser.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             setMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
 
         // Contrôle que le niveau est correct
-        if (formCreateUser.level < 0 || formCreateUser.level > 2) {
+        if (formData.level < 0 || formData.level > 2) {
             setMessage({ code: 'errors.invalidLevel', type: 'error' });
             return;
         }
@@ -87,7 +79,7 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
 
             {/* Saisie */}
             {!showForm ? (
-                <Button className="settings-create-user-button me-2" onClick={showFormMethod}>
+                <Button className="settings-button" onClick={showFormMethod}>
                     {t('settings.showCreateUserForm')}
                 </Button>
             ) : (
@@ -99,7 +91,7 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
                             name="login"
                             placeholder={t('settings.login')}
                             className="mt-2"
-                            value={formCreateUser.login}
+                            value={formData.login}
                             onChange={handleChange}
                             maxLength={100}
                             required
@@ -107,16 +99,16 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
                         <PasswordInput
                             name={'password'}
                             placeholder={t('settings.password')}
-                            value={formCreateUser.password}
+                            value={formData.password}
                             handleChange={handleChange}
                         />
                         <PasswordInput
                             name={'confirmPassword'}
                             placeholder={t('settings.confirmPassword')}
-                            value={formCreateUser.confirmPassword}
+                            value={formData.confirmPassword}
                             handleChange={handleChange}
                         />
-                        <Form.Select value={formCreateUser.level} onChange={handleChangeSelect} className="mt-2" required>
+                        <Form.Select value={formData.level} onChange={handleChangeSelect} className="mt-2" required>
                             <option key="" value="" disabled>
                                 {t('settings.chooseLevel')}
                             </option>
@@ -127,10 +119,10 @@ const SettingsCreateUser = ({ formCreateUser, setFormCreateUser, showForm, showF
                             ))}
                         </Form.Select>
                         <div className="d-flex align-items-center mt-2">
-                            <Button type="button" className="settings-password-button me-2" onClick={showFormMethod}>
+                            <Button type="button" className="settings-button me-2" onClick={showFormMethod}>
                                 {t('common.cancel')}
                             </Button>
-                            <Button type="submit" className="settings-create-user-button">
+                            <Button type="submit" className="settings-button">
                                 {t('common.validate')}
                             </Button>
                         </div>

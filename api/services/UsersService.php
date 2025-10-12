@@ -92,6 +92,25 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
+    public function resetPassword($login, $id)
+    {
+        // Récupération de l'utilisateur
+        $user = $this->repository->getUserData($login);
+
+        // Modification
+        $newPassword = $this->generatePassword(15);
+        $data = $this->processDataPassword($newPassword);
+
+        if ($this->repository->update($id, $login, $data)) {
+            return $newPassword;
+        }
+
+        return null;
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
     public function updatePassword($login, $data)
     {
         // Contrôle des données
@@ -107,11 +126,30 @@ class UsersService
             return null;
         }
 
-        // Hashage du nouveau mot de passe
-        $hashedPassword = password_hash($data['newPassword'], PASSWORD_DEFAULT);
-
         // Modification
-        return $this->repository->updatePassword($login, $hashedPassword);
+        $data = $this->processDataPassword($data['newPassword']);
+        return $this->repository->update($user['id'], $login, $data);
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updateUser($login, $data)
+    {
+        // Contrôle des données
+        if (!$this->isValidUpdateUserData($data)) {
+            return null;
+        }
+
+        // Modification et récupération des utilisateurs
+        $id = $data['id'];
+        unset($data['id']);
+
+        if ($this->repository->update($id, $login, $data)) {
+            return $this->getAllUsers();
+        }
+
+        return null;
     }
 
     /**
@@ -166,6 +204,44 @@ class UsersService
         return $oldPassword && $newPassword && $confirmPassword
             && $oldPassword !== $newPassword
             && $newPassword === $confirmPassword;
+    }
+
+    /**
+     * Contrôle des données saisies (modification utilisateur)
+     */
+    private function isValidUpdateUserData($data)
+    {
+        $level = $data['level'] ?? null;
+
+        return is_numeric($level) && $level >= UserRole::USER->value && $level <= UserRole::SUPERADMIN->value;
+    }
+
+    /**
+     * Génère un mot de passe aléatoire
+     */
+    private function generatePassword($length = 12)
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $charactersLength = strlen($characters);
+        $password = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return $password;
+    }
+
+    /**
+     * Formate les données avant traitement SQL
+     */
+    private function processDataPassword($password)
+    {
+        $sqlData = [
+            'password' => password_hash($password, PASSWORD_DEFAULT)
+        ];
+
+        return $sqlData;
     }
 
     /**

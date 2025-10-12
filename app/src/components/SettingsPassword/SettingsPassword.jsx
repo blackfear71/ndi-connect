@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import PasswordInput from '../PasswordInput/PasswordInput';
 
-import './SettingsPassword.css';
-
 /**
  * Liste des participants
  */
@@ -70,8 +68,8 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
 
             {/* Saisie */}
             {!showForm ? (
-                <Button className="settings-password-button me-2" onClick={showFormMethod}>
-                    {t('settings.showPasswordForm')}
+                <Button className="settings-button" onClick={showFormMethod}>
+                    {t('settings.updatePassword')}
                 </Button>
             ) : (
                 <fieldset disabled={isSubmitting}>
@@ -96,10 +94,10 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
                             handleChange={handleChange}
                         />
                         <div className="d-flex align-items-center mt-2">
-                            <Button type="button" className="settings-password-button me-2" onClick={showFormMethod}>
+                            <Button type="button" className="settings-button me-2" onClick={showFormMethod}>
                                 {t('common.cancel')}
                             </Button>
-                            <Button type="submit" className="settings-password-button">
+                            <Button type="submit" className="settings-button">
                                 {t('common.validate')}
                             </Button>
                         </div>

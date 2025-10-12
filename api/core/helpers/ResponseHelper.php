@@ -14,6 +14,18 @@ class ResponseHelper
     }
 
     /**
+     * Gestion du retour en cas de succès
+     */
+    public static function info($data = null, $message = '')
+    {
+        echo json_encode([
+            'status' => 'info',
+            'message' => $message,
+            'data' => $data
+        ]);
+    }
+
+    /**
      * Gestion du retour en cas d'erreur
      */
     public static function error($message, $code = 500, $logMessage = null)

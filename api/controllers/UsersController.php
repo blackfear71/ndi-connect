@@ -29,7 +29,7 @@ class UsersController
     public function checkAuth($token)
     {
         try {
-            // Contrôle autorisation
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
@@ -126,7 +126,7 @@ class UsersController
     public function disconnect($token)
     {
         try {
-            // Contrôle autorisation
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
@@ -198,9 +198,43 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
+    public function resetPassword($token, $id)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Modification d'un enregistrement
+            $newPassword = $this->service->resetPassword($user['login'], $id);
+
+            if ($newPassword) {
+                // Succès
+                ResponseHelper::info($newPassword, 'MSG_RESET_PASSWORD_SUCCESS');
+            } else {
+                // Échec de la création
+                ResponseHelper::error(
+                    'ERR_CREATION_FAILED',
+                    400,
+                    'Erreur lors de la réinitialisation du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
     public function updatePassword($token, $data)
     {
         try {
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
@@ -225,6 +259,39 @@ class UsersController
                     'ERR_UPDATE_FAILED',
                     400,
                     'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updateUser($token, $data)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Suppression logique d'un enregistrement
+            $users = $this->service->updateUser($user['login'], $data);
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users, 'MSG_UPDATE_SUCCESS');
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_UPDATE_FAILED',
+                    400,
+                    'Erreur lors de la modification de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $data['id']
                 );
             }
         } catch (Exception $e) {

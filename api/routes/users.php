@@ -63,6 +63,27 @@ $router->patch('/users/password', function () use ($db) {
     (new UsersController($db))->updatePassword($token, $data);
 });
 
+$router->patch('/users/reset/:id', function ($params) use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->resetPassword($token, $params['id']);
+});
+
+$router->patch('/users/update', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Données d'entrée
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Appel contrôleur
+    (new UsersController($db))->updateUser($token, $data);
+});
+
 $router->delete('/users/delete/:id', function ($params) use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];

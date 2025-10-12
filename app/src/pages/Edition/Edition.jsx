@@ -592,7 +592,9 @@ const Edition = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
+                    {messagePage && (
+                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
+                    )}
 
                     {/* Actions */}
                     <div className="row g-2 mb-2">
@@ -701,7 +703,7 @@ const Edition = () => {
                         />
                     )}
 
-                    {/* Modale de création/modification/suppression de cadeau */}
+                    {/* Modale de création/modification de cadeau */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
                         <GiftModal
                             gift={gifts.find((g) => g.id === formGift.id)}
@@ -716,7 +718,7 @@ const Edition = () => {
                         />
                     )}
 
-                    {/* Modale de modification/suppression de participant */}
+                    {/* Modale de modification de participant */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
                         <PlayerModal
                             players={players}

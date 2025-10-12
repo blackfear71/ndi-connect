@@ -109,7 +109,7 @@ const RewardModal = ({
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Attribuer un cadeau / Informations */}
                         <div className="modal-section-title">

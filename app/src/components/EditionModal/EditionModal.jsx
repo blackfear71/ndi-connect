@@ -106,7 +106,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Lieu */}
                         <Form.Group className="d-flex align-items-center" controlId="location">

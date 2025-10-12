@@ -33,7 +33,7 @@ class UsersRepository extends Model
      */
     public function getUserData($login)
     {
-        $sql = "SELECT login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,28 +46,6 @@ class UsersRepository extends Model
     {
         $data['token'] = $token;
         $data['token_expires_at'] = $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL;
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = $login;
-
-        $fields = [];
-
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
-        }
-
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE login = :login";
-        $stmt = $this->db->prepare($sql);
-
-        $data['login'] = $login;
-        return $stmt->execute($data);
-    }
-
-    /**
-     * Mise à jour mot de passe
-     */
-    public function updatePassword($login, $password)
-    {
-        $data['password'] = $password;
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
 

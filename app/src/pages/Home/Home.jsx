@@ -195,7 +195,9 @@ const Home = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
+                    {messagePage && (
+                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
+                    )}
 
                     {/* Titre */}
                     <h1>

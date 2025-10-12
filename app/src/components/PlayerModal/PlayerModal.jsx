@@ -169,7 +169,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, mes
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Attribuer des points */}
                         <div className="modal-section-title">{t('edition.givePoints')}</div>

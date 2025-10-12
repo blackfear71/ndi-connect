@@ -38,6 +38,7 @@
         "deletionSuccess": "Suppression réussie",
         "noResults": "Aucun résultat ne correspond à la recherche",
         "searchMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
+        "resetPasswordSuccess": "Le mot de passe a été réinitialisé pour : {{password}}, il est conseillé de le changer immédiatement",
         "rewardSuccess": "Cadeau attribué",
         "updateSuccess": "Modification réussie"
     },
@@ -125,13 +126,16 @@
         "level1": "Administrateur",
         "level2": "Super administrateur",
         "login": "Identifiant",
+        "manageUser": "Gérer l'utilisateur",
         "manageUsers": "Gestion des utilisateurs",
         "newPassword": "Nouveau mot de passe",
         "noUsers": "Aucun utilisateur",
         "oldPassword": "Ancien mot de passe",
         "password": "Mot de passe",
+        "resetPassword": "Réinitialiser le mot de passe",
         "showCreateUserForm": "Créer un utilisateur",
-        "showPasswordForm": "Modifier le mot de passe",
-        "unknownLevel": "Rôle inconnu"
+        "unknownLevel": "Rôle inconnu",
+        "updateLevel": "Modifier le rôle",
+        "updatePassword": "Modifier le mot de passe"
     }
 }

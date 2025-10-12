@@ -23,7 +23,7 @@ class Auth
     public function checkAuthAndLevel($token, $minimumLevel, $method, $controller)
     {
         try {
-            // Contrôle autorisation
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
