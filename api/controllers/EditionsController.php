@@ -40,7 +40,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,
-                    'Erreur lors de la récupération des éditions'
+                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
             }
         } catch (Exception $e) {
@@ -69,7 +69,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_EDITION_NOT_FOUND',
                     404,
-                    'Edition non trouvée pour l\'id : ' . $id
+                    'Edition non trouvée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
                 );
             }
         } catch (Exception $e) {
@@ -99,7 +99,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,
-                    'Erreur lors de la récupération des éditions pour la recherche : ' . $search
+                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour la recherche : ' . $search
                 );
             }
         } catch (Exception $e) {
@@ -132,7 +132,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création de l\'édition : ' . json_encode($data)
+                    'Erreur lors de la création de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -165,7 +165,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification de l\'édition : ' . $id . ' - ' . json_encode($data)
+                    'Erreur lors de la modification de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -198,7 +198,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression de l\'édition : ' . $id
+                    'Erreur lors de la suppression de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
                 );
             }
         } catch (Exception $e) {

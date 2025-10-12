@@ -43,7 +43,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création du cadeau : ' . json_encode($data)
+                    'Erreur lors de la création du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -76,7 +76,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du cadeau : ' . $idGift . ' - ' . json_encode($data)
+                    'Erreur lors de la modification du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idGift . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -109,7 +109,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du cadeau : ' . $idGift
+                    'Erreur lors de la suppression du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idGift
                 );
             }
         } catch (Exception $e) {

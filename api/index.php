@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     ResponseHelper::error(
         'ERR_UNKNOWN_ENDPOINT',
         404,
-        'Endpoint inconnu : ' . $uri
+        "Endpoint inconnu dans index.php : $uri"
     );
     exit;
 }

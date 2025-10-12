@@ -37,7 +37,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_INVALID_AUTH',
                     401,
-                    'Authentification incorrecte'
+                    'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
                 exit;
             }
@@ -77,7 +77,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_USERS_NOT_FOUND',
                     400,
-                    'Erreur lors de la récupération des utilisateurs'
+                    'Erreur lors de la récupération des utilisateurs dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
             }
         } catch (Exception $e) {
@@ -104,7 +104,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_LOGIN_FAILED',
                     401,
-                    'Utilisateur non trouvé (connect) : ' . $data['login']
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
                 );
                 exit;
             }
@@ -149,7 +149,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_LOGOUT_FAILED',
                     401,
-                    'Erreur lors de la déconnexion de : ' . $user['login']
+                    'Erreur lors de la déconnexion dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
                 );
             }
         } catch (Exception $e) {
@@ -182,7 +182,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création de l\'utilisateur : ' . $data['login'] . ' (utilisateur niveau ' . $data['level'] . ')'
+                    'Erreur lors de la création de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login'] . ' (utilisateur niveau ' . $data['level'] . ')'
                 );
             }
         } catch (Exception $e) {
@@ -224,7 +224,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du mot de passe de l\'utilisateur : ' . $user['login']
+                    'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
                 );
             }
         } catch (Exception $e) {

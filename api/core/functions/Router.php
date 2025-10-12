@@ -84,7 +84,7 @@ class Router
         ResponseHelper::error(
             'ERR_ROUTE_NOT_FOUND',
             404,
-            'Route non trouvée : ' . $uri
+            "Route non trouvée dans Router.php : $uri"
         );
     }
 }

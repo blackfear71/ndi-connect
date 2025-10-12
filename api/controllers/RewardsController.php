@@ -43,7 +43,7 @@ class RewardsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de l\'attribution du cadeau : ' . json_encode($data)
+                    'Erreur lors de l\'attribution du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -76,7 +76,7 @@ class RewardsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du cadeau du participant : ' . $idReward
+                    'Erreur lors de la suppression du cadeau du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idReward
                 );
             }
         } catch (Exception $e) {

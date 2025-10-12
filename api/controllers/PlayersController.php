@@ -43,7 +43,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création du participant : ' . json_encode($data)
+                    'Erreur lors de la création du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -76,7 +76,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du participant : ' . $idPlayer . ' - ' . json_encode($data)
+                    'Erreur lors de la modification du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -109,7 +109,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du participant : ' . $idPlayer
+                    'Erreur lors de la suppression du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer
                 );
             }
         } catch (Exception $e) {
