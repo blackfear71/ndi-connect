@@ -66,15 +66,15 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift($idEdition, $user, $data)
+    public function createGift($idEdition, $login, $data)
     {
         // Contrôle des données
-        if (!$this->isValidGiftData($user['level'], $data)) {
+        if (!$this->isValidGiftData($data)) {
             return null;
         }
 
         // Insertion et récupération des cadeaux de l'édition
-        if ($this->repository->create($user['login'], $data)) {
+        if ($idEdition && $this->repository->create($login, $data)) {
             return $this->getEditionGifts($idEdition);
         }
 
@@ -84,18 +84,18 @@ class GiftsService
     /**
      * Modification d'un cadeau
      */
-    public function updateGift($idEdition, $idGift, $user, $data)
+    public function updateGift($idEdition, $idGift, $login, $data)
     {
         // Récupération du nombre d'attributions du cadeau
         $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
 
         // Contrôle des données
-        if (!$this->isValidGiftData($user['level'], $data, $rewardCount)) {
+        if (!$this->isValidGiftData($data, $rewardCount)) {
             return null;
         }
 
         // Modification et récupération des cadeaux de l'édition
-        if ($this->repository->update($idGift, $user['login'], $data)) {
+        if ($idEdition && $idGift && $this->repository->update($idGift, $login, $data)) {
             return $this->getEditionGifts($idEdition);
         }
 
@@ -108,7 +108,7 @@ class GiftsService
     public function deleteGift($idEdition, $idGift, $login)
     {
         // Suppression logique du cadeau et récupération des cadeaux de l'édition
-        if ($this->repository->logicalDelete($idGift, $login)) {
+        if ($idEdition && $idGift && $this->repository->logicalDelete($idGift, $login)) {
             return $this->getEditionGifts($idEdition);
         }
 
@@ -118,12 +118,14 @@ class GiftsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData($userLevel, $data, $rewardCount = null)
+    private function isValidGiftData($data, $rewardCount = null)
     {
         $name = trim($data['name'] ?? '');
         $value = $data['value'] ?? null;
         $quantity = $data['quantity'] ?? null;
 
-        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
+        return $name
+            && is_numeric($value) && $value > 0
+            && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
     }
 }

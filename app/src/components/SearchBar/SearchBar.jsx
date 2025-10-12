@@ -16,8 +16,6 @@ import './SearchBar.css';
 
 /**
  * Barre de recherche
- * @param {*} param0
- * @returns
  */
 const SearchBar = ({ placeholder }) => {
     // Router
@@ -166,7 +164,7 @@ const SearchBar = ({ placeholder }) => {
             {message && (
                 <div className="search-results-dropdown">
                     <div className="search-result-message search-result-message-no-margin-bottom">
-                        <Message code={message.code} type={message.type} setMessage={setMessage} />
+                        <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />
                     </div>
                 </div>
             )}

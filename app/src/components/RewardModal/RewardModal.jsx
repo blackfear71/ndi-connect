@@ -109,7 +109,7 @@ const RewardModal = ({
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Attribuer un cadeau / Informations */}
                         <div className="modal-section-title">
@@ -169,12 +169,8 @@ const RewardModal = ({
                                     <div key={r.id} className="d-flex align-items-center gap-2">
                                         <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
                                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                                            <Button
-                                                onClick={isSubmitting ? null : () => handleDelete(r)}
-                                                className="reward-modal-button"
-                                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                            >
-                                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                                            <Button onClick={isSubmitting ? null : () => handleDelete(r)} className="reward-modal-button">
+                                                <FaTrashCan />
                                             </Button>
                                         )}
                                     </div>

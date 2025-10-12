@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/GiftsService.php';
-require_once 'services/UsersService.php';
 
 class GiftsController
 {
-    private $usersService = null;
+    private const controllerName = 'GiftsController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class GiftsController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new GiftsService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -39,21 +29,11 @@ class GiftsController
     public function createGift($token, $idEdition, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $gifts = $this->service->createGift($idEdition, $user, $data);
+            $gifts = $this->service->createGift($idEdition, $user['login'], $data);
 
             if ($gifts !== null) {
                 // Succès
@@ -63,7 +43,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création du cadeau : ' . json_encode($data)
+                    'Erreur lors de la création du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -71,7 +51,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -82,21 +62,11 @@ class GiftsController
     public function updateGift($token, $idEdition, $idGift, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans updateGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
-            $gifts = $this->service->updateGift($idEdition, $idGift, $user, $data);
+            $gifts = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
 
             if ($gifts !== null) {
                 // Succès
@@ -106,7 +76,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du cadeau : ' . $idGift . ' - ' . json_encode($data)
+                    'Erreur lors de la modification du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idGift . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -114,7 +84,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updateGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -125,18 +95,8 @@ class GiftsController
     public function deleteGift($token, $idEdition, $idGift)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deleteGift de GiftsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $gifts = $this->service->deleteGift($idEdition, $idGift, $user['login']);
@@ -149,7 +109,7 @@ class GiftsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du cadeau : ' . $idGift
+                    'Erreur lors de la suppression du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idGift
                 );
             }
         } catch (Exception $e) {
@@ -157,7 +117,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

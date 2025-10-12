@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/EditionsService.php';
-require_once 'services/UsersService.php';
 
 class EditionsController
 {
-    private $usersService = null;
+    private const controllerName = 'EditionsController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class EditionsController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new EditionsService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -46,11 +36,11 @@ class EditionsController
                 // Succès
                 ResponseHelper::success($editions);
             } else {
-                // Échec de la suppression
+                // Échec de la lecture
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,
-                    'Erreur lors de la récupération des éditions'
+                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
             }
         } catch (Exception $e) {
@@ -58,7 +48,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -79,7 +69,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_EDITION_NOT_FOUND',
                     404,
-                    'Edition non trouvée pour l\'id : ' . $id
+                    'Edition non trouvée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
                 );
             }
         } catch (Exception $e) {
@@ -87,7 +77,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -105,11 +95,11 @@ class EditionsController
                 // Succès
                 ResponseHelper::success($editions);
             } else {
-                // Échec de la suppression
+                // Échec de la lecture
                 ResponseHelper::error(
                     'ERR_EDITIONS_NOT_FOUND',
                     400,
-                    'Erreur lors de la récupération des éditions pour la recherche : ' . $search
+                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour la recherche : ' . $search
                 );
             }
         } catch (Exception $e) {
@@ -117,7 +107,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getSearchEditions de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -128,18 +118,8 @@ class EditionsController
     public function createEdition($token, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $created = $this->service->createEdition($user['login'], $data);
@@ -152,7 +132,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création de l\'édition : ' . json_encode($data)
+                    'Erreur lors de la création de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -160,7 +140,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -171,18 +151,8 @@ class EditionsController
     public function updateEdition($token, $id, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans updateEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $edition = $this->service->updateEdition($id, $user['login'], $data);
@@ -195,7 +165,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification de l\'édition : ' . $id . ' - ' . json_encode($data)
+                    'Erreur lors de la modification de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -203,7 +173,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updateEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -214,18 +184,8 @@ class EditionsController
     public function deleteEdition($token, $id)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deleteEdition de EditionsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteEdition($id, $user['login']);
@@ -238,7 +198,7 @@ class EditionsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression de l\'édition : ' . $id
+                    'Erreur lors de la suppression de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
                 );
             }
         } catch (Exception $e) {
@@ -246,7 +206,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

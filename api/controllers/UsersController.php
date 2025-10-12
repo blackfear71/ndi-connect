@@ -1,11 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
+
+require_once 'enums/UserRole.php';
 
 require_once 'services/UsersService.php';
 
 class UsersController
 {
+    private const controllerName = 'UsersController';
+
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -14,6 +19,7 @@ class UsersController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new UsersService($db);
     }
 
@@ -23,12 +29,16 @@ class UsersController
     public function checkAuth($token)
     {
         try {
-            // Contrôle autorisation
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
                 // Authentification incorrecte
-                ResponseHelper::error('ERR_INVALID_AUTH', 401, 'Authentification incorrecte');
+                ResponseHelper::error(
+                    'ERR_INVALID_AUTH',
+                    401,
+                    'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
                 exit;
             }
 
@@ -39,8 +49,44 @@ class UsersController
             ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans checkAuth de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Lecture de tous les enregistrements
+     */
+    public function getAllUsers($token)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Lecture de tous les enregistrements
+            $users = $this->service->getAllUsers();
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users);
+            } else {
+                // Échec de la lecture
+                ResponseHelper::error(
+                    'ERR_USERS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des utilisateurs dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 
@@ -55,15 +101,22 @@ class UsersController
 
             if (!$user) {
                 // Utilisateur non trouvé
-                ResponseHelper::error('ERR_LOGIN_FAILED', 401, 'Utilisateur non trouvé (connect) : ' . $data['login']);
+                ResponseHelper::error(
+                    'ERR_LOGIN_FAILED',
+                    401,
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
+                );
                 exit;
             }
 
             ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans connect de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 
@@ -73,12 +126,16 @@ class UsersController
     public function disconnect($token)
     {
         try {
-            // Contrôle autorisation
+            // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if (!$user) {
                 // Utilisateur non trouvé
-                ResponseHelper::error('ERR_UNAUTHORIZED_ACTION', 401, 'Utilisateur non trouvé (disconnect)');
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
                 exit;
             }
 
@@ -89,12 +146,194 @@ class UsersController
                 ResponseHelper::success(['disconnected' => $disconnected]);
             } else {
                 // Échec de la déconnexion
-                ResponseHelper::error('ERR_LOGOUT_FAILED', 401, 'Erreur lors de la déconnexion de : ' . $user['login']);
+                ResponseHelper::error(
+                    'ERR_LOGOUT_FAILED',
+                    401,
+                    'Erreur lors de la déconnexion dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
+                );
             }
         } catch (Exception $e) {
             // Exception levée
-            Logger::log('Exception levée dans disconnect de UsersController : ' . $e->getMessage(), 'ERROR');
-            ResponseHelper::error($e->getMessage(), 500);
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Insertion d'un enregistrement
+     */
+    public function createUser($token, $data)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Insertion d'un enregistrement
+            $created = $this->service->createUser($user['login'], $data);
+
+            if ($created) {
+                // Succès
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+            } else {
+                // Échec de la création
+                ResponseHelper::error(
+                    'ERR_CREATION_FAILED',
+                    400,
+                    'Erreur lors de la création de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login'] . ' (utilisateur niveau ' . $data['level'] . ')'
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function resetPassword($token, $id)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Modification d'un enregistrement
+            $newPassword = $this->service->resetPassword($user['login'], $id);
+
+            if ($newPassword) {
+                // Succès
+                ResponseHelper::info($newPassword, 'MSG_RESET_PASSWORD_SUCCESS');
+            } else {
+                // Échec de la création
+                ResponseHelper::error(
+                    'ERR_CREATION_FAILED',
+                    400,
+                    'Erreur lors de la réinitialisation du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updatePassword($token, $data)
+    {
+        try {
+            // Contrôle authentification
+            $user = $this->service->checkAuth($token);
+
+            if (!$user) {
+                // Utilisateur non trouvé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
+                exit;
+            }
+
+            // Modification d'un enregistrement
+            $updated = $this->service->updatePassword($user['login'], $data);
+
+            if ($updated) {
+                // Succès
+                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+            } else {
+                // Échec de la modification
+                ResponseHelper::error(
+                    'ERR_UPDATE_FAILED',
+                    400,
+                    'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updateUser($token, $data)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Suppression logique d'un enregistrement
+            $users = $this->service->updateUser($user['login'], $data);
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users, 'MSG_UPDATE_SUCCESS');
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_UPDATE_FAILED',
+                    400,
+                    'Erreur lors de la modification de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $data['id']
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteUser($token, $id)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Suppression logique d'un enregistrement
+            $users = $this->service->deleteUser($id, $user['login']);
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users, 'MSG_DELETION_SUCCESS');
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_DELETION_FAILED',
+                    400,
+                    'Erreur lors de la suppression de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
         }
     }
 }

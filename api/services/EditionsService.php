@@ -59,7 +59,7 @@ class EditionsService
         $edition = null;
         $data = $this->repository->getEdition($id);
 
-        if ($data) {
+        if ($id && $data) {
             // Récupération des données édition
             $edition['edition'] = $data;
 
@@ -96,7 +96,7 @@ class EditionsService
         }
 
         // Insertion
-        $data = $this->processData($data);
+        $data = $this->processDataEdition($data);
         return $this->repository->create($login, $data);
     }
 
@@ -111,9 +111,9 @@ class EditionsService
         }
 
         // Modification
-        $data = $this->processData($data);
+        $data = $this->processDataEdition($data);
 
-        if ($this->repository->update($id, $login, $data)) {
+        if ($id && $this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
 
@@ -163,7 +163,7 @@ class EditionsService
     /**
      * Formate les données avant traitement SQL
      */
-    private function processData($data)
+    private function processDataEdition($data)
     {
         $startDate = new DateTime($data['startDate'] . ' ' . $data['startTime']);
         $endDate = new DateTime($data['startDate'] . ' ' . $data['endTime']);

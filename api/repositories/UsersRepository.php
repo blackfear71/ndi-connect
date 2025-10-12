@@ -1,5 +1,5 @@
 <?php
-require_once 'core/Model.php';
+require_once 'core/functions/Model.php';
 
 class UsersRepository extends Model
 {
@@ -19,11 +19,21 @@ class UsersRepository extends Model
     }
 
     /**
+     * Lecture de tous les enregistrements
+     */
+    public function getAllUsers()
+    {
+        $sql = "SELECT id, login, level FROM {$this->table} WHERE is_active = 1 ORDER BY login ASC";
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupération données utilisateur
      */
     public function getUserData($login)
     {
-        $sql = "SELECT login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

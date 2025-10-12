@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/PlayersService.php';
-require_once 'services/UsersService.php';
 
 class PlayersController
 {
-    private $usersService = null;
+    private const controllerName = 'PlayersController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class PlayersController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new PlayersService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -39,18 +29,8 @@ class PlayersController
     public function createPlayer($token, $idEdition, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createPlayer de PlayersController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $players = $this->service->createPlayer($idEdition, $user, $data);
@@ -63,7 +43,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de la création du participant : ' . json_encode($data)
+                    'Erreur lors de la création du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -71,7 +51,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createPlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -82,18 +62,8 @@ class PlayersController
     public function updatePlayer($token, $idEdition, $idPlayer, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans updatePlayer de PlayersController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $players = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
@@ -106,7 +76,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
-                    'Erreur lors de la modification du participant : ' . $idPlayer . ' - ' . json_encode($data)
+                    'Erreur lors de la modification du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer . ' - ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -114,7 +84,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updatePlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -125,18 +95,8 @@ class PlayersController
     public function deletePlayer($token, $idEdition, $idPlayer)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deletePlayer de PlayersController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $players = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
@@ -149,7 +109,7 @@ class PlayersController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du participant : ' . $idPlayer
+                    'Erreur lors de la suppression du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer
                 );
             }
         } catch (Exception $e) {
@@ -157,7 +117,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deletePlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

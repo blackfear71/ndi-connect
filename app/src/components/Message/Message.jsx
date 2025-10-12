@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { getMessageTranslationKey } from '../../utils/messageMapper';
 
-const Message = ({ code, type = 'error', setMessage }) => {
+const Message = ({ code, params = {}, type = 'error', setMessage }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -52,12 +52,9 @@ const Message = ({ code, type = 'error', setMessage }) => {
 
     return (
         show && (
-            <Alert
-                variant={getVariantFromType(type)}
-                onClose={!autoClose && handleClose}
-                dismissible={!['success', 'warning', 'info'].includes(type)}
-            >
-                {i18next.exists(code) ? t(code) : t(getMessageTranslationKey(code))}
+            <Alert variant={getVariantFromType(type)} onClose={!autoClose && handleClose} dismissible={type !== 'success'}>
+                {/* Message FRONT ou BACK */}
+                {i18next.exists(code) ? t(code, params) : getMessageTranslationKey(code, params)}
             </Alert>
         )
     );

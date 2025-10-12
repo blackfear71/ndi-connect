@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Badge, Card, ProgressBar, Table } from 'react-bootstrap';
+import { Badge, ProgressBar, Table } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import { getFrenchDate, getTimeFromDate } from '../../utils/dateHelper';

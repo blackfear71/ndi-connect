@@ -49,10 +49,15 @@ const EditionPlayers = ({
     }, [showEntry]);
 
     /**
-     * Affiche la saisie de participant
+     * Affiche ou masque la saisie de participant
+     * @param {*} show Indicateur d'affichage
      */
-    const showPlayerEntry = () => {
-        setShowEntry(true);
+    const showHidePlayerEntry = (show) => {
+        // Affiche ou masque la saisie
+        setShowEntry(show);
+
+        // Réinitialise le formulaire
+        !show && resetFormPlayer();
     };
 
     /**
@@ -62,17 +67,6 @@ const EditionPlayers = ({
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormPlayer((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Annule la création d'un participant
-     */
-    const handleCancel = () => {
-        // Masque la saisie
-        setShowEntry(false);
-
-        // Réinitialise le formulaire
-        resetFormPlayer();
     };
 
     /**
@@ -158,7 +152,7 @@ const EditionPlayers = ({
                 <>
                     {/* Ajout */}
                     <div className="d-grid mb-2">
-                        <Button variant="outline-edition" onClick={showPlayerEntry}>
+                        <Button variant="outline-edition" onClick={() => showHidePlayerEntry(true)}>
                             {t('edition.addPlayer')}
                         </Button>
                     </div>
@@ -178,19 +172,11 @@ const EditionPlayers = ({
                                     maxLength={100}
                                     required
                                 />
-                                <Button
-                                    onClick={handleCancel}
-                                    className="edition-players-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaTimes color={isSubmitting ? 'gray' : 'white'} />
+                                <Button onClick={() => showHidePlayerEntry(false)} className="edition-players-button">
+                                    <FaTimes />
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    className="edition-players-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaCheck color={isSubmitting ? 'gray' : 'white'} />
+                                <Button type="submit" className="edition-players-button">
+                                    <FaCheck />
                                 </Button>
                             </Form>
                         </fieldset>

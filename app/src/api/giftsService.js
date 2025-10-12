@@ -22,7 +22,7 @@ class GiftsService {
      * Création d'un nouveau cadeau
      * @param {*} idEdition Identifiant édition
      * @param {*} body Données cadeau
-     * @returns
+     * @returns Données cadeau créé
      */
     createGift = (idEdition, body) => {
         const url = `${this.apiUrl}/create/${idEdition}`;
@@ -34,7 +34,7 @@ class GiftsService {
      * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant cadeau
      * @param {*} body Données cadeau
-     * @returns
+     * @returns Données cadeau à jour
      */
     updateGift = (idEdition, idGift, body) => {
         const url = `${this.apiUrl}/update/${idEdition}/${idGift}`;
@@ -45,7 +45,7 @@ class GiftsService {
      * Suppression d'un participant
      * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant participant
-     * @returns
+     * @returns Message retour
      */
     deleteGift = (idEdition, idGift) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idGift}`;

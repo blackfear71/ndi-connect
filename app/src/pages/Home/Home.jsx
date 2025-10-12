@@ -22,7 +22,6 @@ import './Home.css';
 
 /**
  * Page d'accueil
- * @returns
  */
 const Home = () => {
     // Router
@@ -35,11 +34,6 @@ const Home = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -48,6 +42,11 @@ const Home = () => {
         theme: '',
         challenge: ''
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messagePage, setMessagePage] = useState(null);
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
 
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
@@ -100,7 +99,7 @@ const Home = () => {
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
-            .insertEdition(formEdition)
+            .createEdition(formEdition)
             .pipe(
                 map((dataEdition) => {
                     setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
@@ -196,7 +195,9 @@ const Home = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
+                    {messagePage && (
+                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
+                    )}
 
                     {/* Titre */}
                     <h1>
@@ -227,7 +228,7 @@ const Home = () => {
                         editionsByYear && editionsByYear.length > 0 ? (
                             <div className="d-grid gap-2">
                                 {/* Retour */}
-                                <Button variant="outline-edition" className="btn-yellow" onClick={() => showYearsOfEditions()}>
+                                <Button variant="outline-edition" className="btn-yellow" onClick={showYearsOfEditions}>
                                     {t('common.return')}
                                 </Button>
 

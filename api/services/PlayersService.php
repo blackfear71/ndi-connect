@@ -65,7 +65,7 @@ class PlayersService
         }
 
         // Insertion et récupération des participants de l'édition
-        if ($this->repository->createPlayer($user['login'], $data)) {
+        if ($idEdition && $this->repository->createPlayer($user['login'], $data)) {
             return $this->getEditionPlayers($idEdition);
         }
 
@@ -85,7 +85,7 @@ class PlayersService
         // Modifications et récupération des participants de l'édition
         $dataPlayer = $this->processDataPlayer($data);
 
-        if ($this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
+        if ($idEdition && $idPlayer && $this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
             // Don de points
             if ($data['giveaway'] > 0 && $data['giveawayId'] != 0) {
                 $this->updatePlayerDelta($data['giveawayId'], $user['login'], $data['giveaway']);
@@ -129,7 +129,7 @@ class PlayersService
     public function deletePlayer($idEdition, $idPlayer, $login)
     {
         // Suppression logique du participant et récupération des participants de l'édition
-        if ($this->repository->logicalDelete($idPlayer, $login)) {
+        if ($idEdition && $idPlayer && $this->repository->logicalDelete($idPlayer, $login)) {
             return $this->getEditionPlayers($idEdition);
         }
 
@@ -149,7 +149,9 @@ class PlayersService
         $isDeltaValid = is_numeric($delta) && ($userLevel == UserRole::SUPERADMIN->value || $delta >= 0);
         $isGiveawayValid = $isCreate || (is_numeric($giveaway) && is_numeric($giveawayId) && (($giveaway > 0 && $giveawayId != 0) || ($giveaway == 0 && $giveawayId == 0)));
 
-        return $name && $isDeltaValid && $isGiveawayValid;
+        return $name
+            && $isDeltaValid
+            && $isGiveawayValid;
     }
 
     /**
@@ -158,7 +160,7 @@ class PlayersService
     private function processDataPlayer($data)
     {
         $sqlData = [
-            'name' => $data['name'],
+            'name'  => $data['name'],
             'delta' => $data['delta'] - $data['giveaway']
         ];
 

@@ -32,7 +32,6 @@ import './Edition.css';
 
 /**
  * Page détail édition
- * @returns
  */
 const Edition = () => {
     // Router
@@ -46,23 +45,6 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
-    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
-    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
-    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
-    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
-    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [messageModalGift, setMessageModalGift] = useState(null);
-    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
-    const [messageModalReward, setMessageModalReward] = useState(null);
-    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
-    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
-    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
-    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
     const [formEdition, setFormEdition] = useState({
         location: '',
         startDate: '',
@@ -89,6 +71,23 @@ const Edition = () => {
         idPlayer: null,
         idGift: 0
     });
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
+    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
+    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
+    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
+    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
+    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
+    const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messageModalGift, setMessageModalGift] = useState(null);
+    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
+    const [messageModalReward, setMessageModalReward] = useState(null);
+    const [messagePage, setMessagePage] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
+    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
+    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
+    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
     const [showActions, setShowActions] = useState(true);
 
     // API states
@@ -284,7 +283,9 @@ const Edition = () => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
+                        action === 'create'
+                            ? setMessagePage({ code: err?.response?.message, type: err?.response?.status })
+                            : setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {
@@ -591,7 +592,9 @@ const Edition = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && <Message code={messagePage.code} type={messagePage.type} setMessage={setMessagePage} />}
+                    {messagePage && (
+                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
+                    )}
 
                     {/* Actions */}
                     <div className="row g-2 mb-2">
@@ -700,7 +703,7 @@ const Edition = () => {
                         />
                     )}
 
-                    {/* Modale de création/modification/suppression de cadeau */}
+                    {/* Modale de création/modification de cadeau */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
                         <GiftModal
                             gift={gifts.find((g) => g.id === formGift.id)}
@@ -715,7 +718,7 @@ const Edition = () => {
                         />
                     )}
 
-                    {/* Modale de modification/suppression de participant */}
+                    {/* Modale de modification de participant */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
                         <PlayerModal
                             players={players}
@@ -748,6 +751,7 @@ const Edition = () => {
                         />
                     )}
 
+                    {/* Modale de confirmation */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}

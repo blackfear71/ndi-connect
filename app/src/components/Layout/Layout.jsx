@@ -7,7 +7,6 @@ import './Layout.css';
 
 /**
  * Composant zone d'affichage globale
- * @returns
  */
 const Layout = () => {
     return (

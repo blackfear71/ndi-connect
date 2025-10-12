@@ -4,7 +4,8 @@ import { Badge, Dropdown } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { FcApproval } from 'react-icons/fc';
-import { Link } from 'react-router-dom';
+import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
+import { Link, useNavigate } from 'react-router-dom';
 
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
@@ -16,9 +17,11 @@ import './NavBar.css';
 
 /**
  * Barre de navigation
- * @returns
  */
 const NavBar = () => {
+    // Router
+    const navigate = useNavigate();
+
     // Contexte
     const { auth, authError, login, logout } = useContext(AuthContext);
 
@@ -27,11 +30,11 @@ const NavBar = () => {
 
     // Local states
     const dropdownRef = useRef(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formConnection, setFormConnection] = useState({
         login: '',
         password: ''
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
     const [modalOptions, setModalOptions] = useState({ isOpen: false });
     const [showDropdown, setShowDropdown] = useState(false);
@@ -45,13 +48,21 @@ const NavBar = () => {
     }, []);
 
     /**
-     * Ferme la zone de recherche au clic en dehors
+     * Ferme le menu utilisateur au clic en dehors
      * @param {*} e Evènement
      */
     const handleClickOutside = (e) => {
         if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
             setShowDropdown(false);
         }
+    };
+
+    /**
+     * Ferme le menu utilisateur à la redirection
+     */
+    const handleRedirect = (page) => {
+        setShowDropdown(false);
+        navigate(`/${page}`);
     };
 
     /**
@@ -123,8 +134,14 @@ const NavBar = () => {
                                     {auth.login}
                                 </Badge>
                             </Dropdown.Item>
-                            <Dropdown.Item className="navbar-dropdown-item" onClick={logout}>
-                                {t('navbar.disconnect')}
+                            <Dropdown.Item
+                                className="navbar-dropdown-item d-flex align-items-center"
+                                onClick={() => handleRedirect('settings')}
+                            >
+                                <IoSettingsOutline className="me-2" /> {t('navbar.settings')}
+                            </Dropdown.Item>
+                            <Dropdown.Item className="navbar-dropdown-item d-flex align-items-center" onClick={logout}>
+                                <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>

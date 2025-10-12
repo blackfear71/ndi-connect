@@ -22,7 +22,7 @@ class PlayersService {
      * Création d'un nouveau participant
      * @param {*} idEdition Identifiant édition
      * @param {*} body Données participant
-     * @returns
+     * @returns Données participant créé
      */
     createPlayer = (idEdition, body) => {
         const url = `${this.apiUrl}/create/${idEdition}`;
@@ -34,7 +34,7 @@ class PlayersService {
      * @param {*} idEdition Identifiant édition
      * @param {*} idPlayer Identifiant participant
      * @param {*} body Données participant
-     * @returns
+     * @returns Données participant à jour
      */
     updatePlayer = (idEdition, idPlayer, body) => {
         const url = `${this.apiUrl}/update/${idEdition}/${idPlayer}`;
@@ -45,7 +45,7 @@ class PlayersService {
      * Suppression d'un participant
      * @param {*} idEdition Identifiant édition
      * @param {*} idPlayer Identifiant participant
-     * @returns
+     * @returns Message retour
      */
     deletePlayer = (idEdition, idPlayer) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idPlayer}`;

@@ -1,6 +1,4 @@
 <?php
-require_once 'core/Database.php';
-
 require_once 'controllers/UsersController.php';
 
 $database = new Database();
@@ -9,10 +7,19 @@ $db = $database->getConnection();
 $router->get('/users/checkAuth', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new UsersController($db))->checkAuth($token);
+});
+
+$router->get('/users/all', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->getAllUsers($token);
 });
 
 $router->post('/users/connect', function () use ($db) {
@@ -26,8 +33,62 @@ $router->post('/users/connect', function () use ($db) {
 $router->post('/users/disconnect', function () use ($db) {
     // Headers
     $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? null));
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
 
     // Appel contrôleur
     (new UsersController($db))->disconnect($token);
+});
+
+$router->post('/users/create', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Données d'entrée
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Appel contrôleur
+    (new UsersController($db))->createUser($token, $data);
+});
+
+$router->patch('/users/password', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Données d'entrée
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Appel contrôleur
+    (new UsersController($db))->updatePassword($token, $data);
+});
+
+$router->patch('/users/reset/:id', function ($params) use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->resetPassword($token, $params['id']);
+});
+
+$router->patch('/users/update', function () use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Données d'entrée
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Appel contrôleur
+    (new UsersController($db))->updateUser($token, $data);
+});
+
+$router->delete('/users/delete/:id', function ($params) use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->deleteUser($token, $params['id']);
 });

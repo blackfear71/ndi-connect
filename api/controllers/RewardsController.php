@@ -1,16 +1,16 @@
 <?php
-require_once 'core/ResponseHelper.php';
+require_once 'core/functions/Auth.php';
 
 require_once 'enums/UserRole.php';
 
 require_once 'services/RewardsService.php';
-require_once 'services/UsersService.php';
 
 class RewardsController
 {
-    private $usersService = null;
+    private const controllerName = 'RewardsController';
 
     private $db;
+    private $auth;
     private $service;
 
     /**
@@ -19,18 +19,8 @@ class RewardsController
     public function __construct($db)
     {
         $this->db = $db;
+        $this->auth = new Auth($db);
         $this->service = new RewardsService($db);
-    }
-
-    /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService()
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-        return $this->usersService;
     }
 
     /**
@@ -39,18 +29,8 @@ class RewardsController
     public function createReward($token, $idEdition, $data)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::ADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans createReward de RewardsController'
-                );
-                exit;
-            }
+            // Contrôle autorisation et niveau
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $playersAndGifts = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
@@ -63,7 +43,7 @@ class RewardsController
                 ResponseHelper::error(
                     'ERR_CREATION_FAILED',
                     400,
-                    'Erreur lors de l\'attribution du cadeau : ' . json_encode($data)
+                    'Erreur lors de l\'attribution du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
                 );
             }
         } catch (Exception $e) {
@@ -71,7 +51,7 @@ class RewardsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createReward de RewardsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -82,18 +62,8 @@ class RewardsController
     public function deleteReward($token, $idEdition, $idReward)
     {
         try {
-            // Contrôle autorisation
-            $user = $this->getUsersService()->checkAuth($token);
-
-            if (!$user || $user['level'] < UserRole::SUPERADMIN->value) {
-                // Accès refusé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Action non autorisée dans deleteReward de RewardsController'
-                );
-                exit;
-            }
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $playersAndGifts = $this->service->deleteReward($user['login'], $idEdition, $idReward);
@@ -106,7 +76,7 @@ class RewardsController
                 ResponseHelper::error(
                     'ERR_DELETION_FAILED',
                     400,
-                    'Erreur lors de la suppression du cadeau du participant : ' . $idReward
+                    'Erreur lors de la suppression du cadeau du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idReward
                 );
             }
         } catch (Exception $e) {
@@ -114,7 +84,7 @@ class RewardsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteReward de RewardsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

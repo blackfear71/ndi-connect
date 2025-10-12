@@ -103,7 +103,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, message, setMess
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} type={message.type} setMessage={setMessage} />}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                         {/* Formulaire */}
                         <Form.Group controlId="name" className="d-flex align-items-center mb-2">

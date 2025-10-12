@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/Environment.php';
-
 class Database
 {
     private static $env = null;
@@ -16,7 +14,7 @@ class Database
 
         // Récupération du fichier .env
         if (self::$env === null) {
-            self::$env = Environment::loadEnv(__DIR__ . '/../.env');
+            self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
         $sql = [
