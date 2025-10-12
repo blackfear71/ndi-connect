@@ -17,7 +17,6 @@ import './NavBar.css';
 
 /**
  * Barre de navigation
- * @returns
  */
 const NavBar = () => {
     // Router

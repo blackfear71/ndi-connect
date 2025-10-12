@@ -62,18 +62,6 @@ class UsersService
     }
 
     /**
-     * Contrôle des données saisies
-     */
-    private function isValidConnectionData($data)
-    {
-        $login = trim($data['login'] ?? '');
-        $password = trim($data['password'] ?? '');
-
-        return $login
-            && $password;
-    }
-
-    /**
      * Déconnexion utilisateur
      */
     public function disconnect($login)
@@ -102,35 +90,6 @@ class UsersService
     }
 
     /**
-     * Contrôle des données saisies (création utilisateur)
-     */
-    private function isValidCreateUserData($data)
-    {
-        $login = trim($data['login'] ?? '');
-        $password = trim($data['password'] ?? '');
-        $confirmPassword = trim($data['confirmPassword'] ?? '');
-        $level = $data['level'] ?? null;
-
-        return $login && $password && $confirmPassword
-            && $password === $confirmPassword
-            && is_numeric($level) && $level >= UserRole::USER->value && $level <= UserRole::SUPERADMIN->value;
-    }
-
-    /**
-     * Formate les données avant traitement SQL
-     */
-    private function processDataUser($data)
-    {
-        $sqlData = [
-            'login'   => $data['login'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            'level'   => $data['level']
-        ];
-
-        return $sqlData;
-    }
-
-    /**
      * Modification d'un enregistrement
      */
     public function updatePassword($login, $data)
@@ -156,6 +115,46 @@ class UsersService
     }
 
     /**
+     * Suppression logique d'un utilisateur
+     */
+    public function deleteUser($id, $login)
+    {
+        // Suppression logique de l'utilisateur et récupération des utilisateurs restants
+        if ($id && $this->repository->logicalDelete($id, $login)) {
+            return $this->getAllUsers();
+        }
+
+        return null;
+    }
+
+    /**
+     * Contrôle des données saisies (connexion)
+     */
+    private function isValidConnectionData($data)
+    {
+        $login = trim($data['login'] ?? '');
+        $password = trim($data['password'] ?? '');
+
+        return $login
+            && $password;
+    }
+
+    /**
+     * Contrôle des données saisies (création utilisateur)
+     */
+    private function isValidCreateUserData($data)
+    {
+        $login = trim($data['login'] ?? '');
+        $password = trim($data['password'] ?? '');
+        $confirmPassword = trim($data['confirmPassword'] ?? '');
+        $level = $data['level'] ?? null;
+
+        return $login && $password && $confirmPassword
+            && $password === $confirmPassword
+            && is_numeric($level) && $level >= UserRole::USER->value && $level <= UserRole::SUPERADMIN->value;
+    }
+
+    /**
      * Contrôle des données saisies (modification mot de passe)
      */
     private function isValidPasswordData($data)
@@ -167,5 +166,19 @@ class UsersService
         return $oldPassword && $newPassword && $confirmPassword
             && $oldPassword !== $newPassword
             && $newPassword === $confirmPassword;
+    }
+
+    /**
+     * Formate les données avant traitement SQL
+     */
+    private function processDataUser($data)
+    {
+        $sqlData = [
+            'login'    => $data['login'],
+            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'level'    => $data['level']
+        ];
+
+        return $sqlData;
     }
 }

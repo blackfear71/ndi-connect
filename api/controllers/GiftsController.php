@@ -33,7 +33,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $gifts = $this->service->createGift($idEdition, $user, $data);
+            $gifts = $this->service->createGift($idEdition, $user['login'], $data);
 
             if ($gifts !== null) {
                 // Succès
@@ -66,7 +66,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
-            $gifts = $this->service->updateGift($idEdition, $idGift, $user, $data);
+            $gifts = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
 
             if ($gifts !== null) {
                 // Succès

@@ -12,8 +12,6 @@ export const AuthContext = createContext(null);
 
 /**
  * Contexte d'authentification global
- * @param {*} param0
- * @returns
  */
 export const AuthProvider = ({ children }) => {
     // Router

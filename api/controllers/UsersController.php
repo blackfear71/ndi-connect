@@ -236,4 +236,37 @@ class UsersController
             );
         }
     }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteUser($token, $id)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Suppression logique d'un enregistrement
+            $users = $this->service->deleteUser($id, $user['login']);
+
+            if ($users !== null) {
+                // Succès
+                ResponseHelper::success($users, 'MSG_DELETION_SUCCESS');
+            } else {
+                // Échec de la suppression
+                ResponseHelper::error(
+                    'ERR_DELETION_FAILED',
+                    400,
+                    'Erreur lors de la suppression de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
 }

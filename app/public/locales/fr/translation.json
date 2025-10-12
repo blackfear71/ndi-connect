@@ -120,6 +120,7 @@
         "chooseLevel": "Choisir le niveau",
         "confirmPassword": "Confirmer le mot de passe",
         "createUser": "Créer un utilisateur",
+        "deleteUser": "Voulez-vous vraiment supprimer l'utilisateur \"{{name}}\" ?",
         "level0": "Utilisateur",
         "level1": "Administrateur",
         "level2": "Super administrateur",
@@ -130,6 +131,7 @@
         "oldPassword": "Ancien mot de passe",
         "password": "Mot de passe",
         "showCreateUserForm": "Créer un utilisateur",
-        "showPasswordForm": "Modifier le mot de passe"
+        "showPasswordForm": "Modifier le mot de passe",
+        "unknownLevel": "Rôle inconnu"
     }
 }

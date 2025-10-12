@@ -74,6 +74,16 @@ class UsersService {
         const url = `${this.apiUrl}/password`;
         return ajax.patch(url, body, this.headers);
     };
+
+    /**
+     * Suppression utilisateur
+     * @param {*} id Identifiant utilisateur
+     * @returns Liste des utilisateurs
+     */
+    deleteUser = (id) => {
+        const url = `${this.apiUrl}/delete/${id}`;
+        return ajax.delete(url, this.headers);
+    };
 }
 
 export default UsersService;

@@ -1,6 +1,7 @@
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaAngleRight, FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
+import { FaQuestionCircle } from 'react-icons/fa';
+import { FaAngleRight, FaStar, FaTrashCan, FaUser, FaUserPlus } from 'react-icons/fa6';
 
 import UserRole from '../../enums/UserRole';
 
@@ -9,9 +10,39 @@ import './SettingsUsers.css';
 /**
  * Liste des participants
  */
-const SettingsUsers = ({ users, isSubmitting }) => {
+const SettingsUsers = ({ login, users, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
+
+    /**
+     * Affiche l'icône du rôle
+     * @param {*} level Niveau utilisateur
+     * @returns Icône
+     */
+    const getUserRoleIcon = (level) => {
+        switch (level) {
+            case UserRole.USER:
+                return <FaUser size={18} className="ms-1 me-2" />;
+            case UserRole.ADMIN:
+                return <FaUserPlus size={18} className="ms-1 me-2" />;
+            case UserRole.SUPERADMIN:
+                return <FaStar size={18} className="ms-1 me-2" />;
+            default:
+                return <FaQuestionCircle size={18} className="ms-1 me-2" />;
+        }
+    };
+
+    /**
+     * Ouvre la modale de suppression d'utilisateur
+     * @param {*} user Utilisateur
+     */
+    const handleDelete = (user) => {
+        // Ouverture de la modale de confirmation
+        onConfirm({
+            content: t('settings.deleteUser', { name: user.login }),
+            data: user.id
+        });
+    };
 
     return (
         <>
@@ -24,15 +55,25 @@ const SettingsUsers = ({ users, isSubmitting }) => {
                     <div key={u.id} className="d-flex align-items-center gap-2 mt-2">
                         {/* Identifiant */}
                         <div className="d-flex align-items-center flex-grow-1 settings-users-name">
-                            {u.level === UserRole.USER && <FaUser size={18} className="ms-1 me-2" />}
-                            {u.level === UserRole.ADMIN && <FaUserPlus size={18} className="ms-1 me-2" />}
-                            {u.level === UserRole.SUPERADMIN && <FaStar size={18} className="ms-1 me-2" />}
+                            {getUserRoleIcon(u.level)}
                             <span className="d-inline-block flex-grow-1 settings-users-ellipsis-text">{u.login}</span>
                         </div>
 
+                        {/* Supression */}
+                        {(u.level !== UserRole.SUPERADMIN || u.login !== login) && (
+                            <Button
+                                onClick={isSubmitting ? null : () => handleDelete(u)}
+                                className="settings-users-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                            </Button>
+                        )}
+
                         {/* Modification */}
                         <Button
-                            // onClick={() => showPlayerModal(p, 'update')}
+                            // TODO
+                            // onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
                             className="settings-users-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >

@@ -22,7 +22,6 @@ import './Home.css';
 
 /**
  * Page d'accueil
- * @returns
  */
 const Home = () => {
     // Router
@@ -45,8 +44,8 @@ const Home = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
     const [messageModalEdition, setMessageModalEdition] = useState(null);
+    const [messagePage, setMessagePage] = useState(null);
     const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
 
     // API states

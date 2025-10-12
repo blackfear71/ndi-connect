@@ -32,7 +32,6 @@ import './Edition.css';
 
 /**
  * Page détail édition
- * @returns
  */
 const Edition = () => {
     // Router
@@ -78,12 +77,12 @@ const Edition = () => {
     const [isSubmittingGift, setIsSubmittingGift] = useState(false);
     const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
     const [isSubmittingReward, setIsSubmittingReward] = useState(false);
-    const [messagePage, setMessagePage] = useState(null);
     const [messageModalConfirm, setMessageModalConfirm] = useState(null);
     const [messageModalEdition, setMessageModalEdition] = useState(null);
     const [messageModalGift, setMessageModalGift] = useState(null);
     const [messageModalPlayer, setMessageModalPlayer] = useState(null);
     const [messageModalReward, setMessageModalReward] = useState(null);
+    const [messagePage, setMessagePage] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
     const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
     const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
@@ -750,6 +749,7 @@ const Edition = () => {
                         />
                     )}
 
+                    {/* Modale de confirmation */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}

@@ -59,7 +59,7 @@ class EditionsService
         $edition = null;
         $data = $this->repository->getEdition($id);
 
-        if ($data) {
+        if ($id && $data) {
             // Récupération des données édition
             $edition['edition'] = $data;
 
@@ -113,7 +113,7 @@ class EditionsService
         // Modification
         $data = $this->processData($data);
 
-        if ($this->repository->update($id, $login, $data)) {
+        if ($id && $this->repository->update($id, $login, $data)) {
             return $this->getEdition($id);
         }
 

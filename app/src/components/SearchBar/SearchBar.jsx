@@ -16,8 +16,6 @@ import './SearchBar.css';
 
 /**
  * Barre de recherche
- * @param {*} param0
- * @returns
  */
 const SearchBar = ({ placeholder }) => {
     // Router

@@ -89,7 +89,7 @@ class RewardsService
         // Insertion d'un enregistrement
         $dataReward = $this->processDataReward($player, $gift);
 
-        if ($this->repository->create($login, $dataReward)) {
+        if ($idEdition && $idPlayer && $this->repository->create($login, $dataReward)) {
             $dataPlayer = $this->processDataPlayer($player, $gift);
 
             // Suppression des points du participant et récupération des données
@@ -116,7 +116,7 @@ class RewardsService
         $reward = $this->repository->find($idReward);
 
         // Suppression logique de l'attribution
-        if ($reward && $this->repository->logicalDelete($idReward, $login)) {
+        if ($idEdition && $idReward && $reward && $this->repository->logicalDelete($idReward, $login)) {
             // Récupération des points pour le participant
             if ($this->getPlayersService()->updatePlayerDelta($reward['id_player'], $login, $reward['points'])) {
                 // Récupération des données cadeaux

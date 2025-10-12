@@ -2,11 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Badge, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaQuestionCircle } from 'react-icons/fa';
 import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
 import UsersService from '../../api/usersService';
 
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Message from '../../components/Message/Message';
 import SettingsCreateUser from '../../components/SettingsCreateUser/SettingsCreateUser';
 import SettingsPassword from '../../components/SettingsPassword/SettingsPassword';
@@ -22,8 +24,7 @@ import { AuthContext } from '../../utils/AuthContext';
 import './Settings.css';
 
 /**
- * Page d'accueil
- * @returns
+ * Paramètres
  */
 const Settings = () => {
     // Router
@@ -49,7 +50,9 @@ const Settings = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
     const [messagePage, setMessagePage] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', data: null, isOpen: false });
     const [showCreateUserForm, setShowCreateUserForm] = useState(false);
     const [showPasswordForm, setShowPasswordForm] = useState(false);
 
@@ -86,6 +89,44 @@ const Settings = () => {
             setIsLoading(false);
         }
     }, []);
+
+    /**
+     * Affiche le rôle de utilisateur
+     * @param {*} level Niveau utilisateur
+     * @returns Rôle utilisateur
+     */
+    const getUserRole = (level) => {
+        switch (level) {
+            case UserRole.USER:
+                return (
+                    <>
+                        <FaUser size={18} className="me-2" />
+                        {t(`settings.level${level}`)}
+                    </>
+                );
+            case UserRole.ADMIN:
+                return (
+                    <>
+                        <FaUserPlus size={18} className="me-2" />
+                        {t(`settings.level${level}`)}
+                    </>
+                );
+            case UserRole.SUPERADMIN:
+                return (
+                    <>
+                        <FaStar size={18} className="me-2" />
+                        {t(`settings.level${level}`)}
+                    </>
+                );
+            default:
+                return (
+                    <>
+                        <FaQuestionCircle size={18} className="me-2" />
+                        {t('settings.unknownLevel')}
+                    </>
+                );
+        }
+    };
 
     /**
      * Affiche ou masque la saisie de mot de passe
@@ -187,6 +228,57 @@ const Settings = () => {
         });
     };
 
+    /**
+     * Ouverture/fermeture de la modale de confirmation
+     */
+    const openCloseConfirmModal = (confirmOptions) => {
+        // Ouverture ou fermeture
+        if (confirmOptions) {
+            setModalOptionsConfirm({
+                content: confirmOptions.content,
+                data: confirmOptions.data,
+                isOpen: !modalOptionsConfirm.isOpen
+            });
+        } else {
+            setModalOptionsConfirm({
+                content: '',
+                data: null,
+                isOpen: false
+            });
+        }
+    };
+
+    /**
+     * Suppression d'un utilisateur
+     */
+    const handleDeleteUser = () => {
+        setMessageModalConfirm(null);
+        setMessagePage(null);
+        setIsSubmitting(true);
+
+        const usersService = new UsersService(localStorage.getItem('token'));
+
+        const subscriptionUsers = usersService.deleteUser(modalOptionsConfirm.data);
+
+        combineLatest([subscriptionUsers])
+            .pipe(
+                map(([dataUsers]) => {
+                    openCloseConfirmModal();
+                    setUsers(dataUsers.response.data);
+                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
+                })
+            )
+            .subscribe();
+    };
+
     return (
         <>
             {isLoading ? (
@@ -203,10 +295,7 @@ const Settings = () => {
                         <>
                             {/* Niveau */}
                             <Badge bg="warning" text="dark" className="fs-6 p-2 d-inline-flex align-items-center">
-                                {auth.level === UserRole.USER && <FaUser size={18} className="me-2" />}
-                                {auth.level === UserRole.ADMIN && <FaUserPlus size={18} className="me-2" />}
-                                {auth.level === UserRole.SUPERADMIN && <FaStar size={18} className="me-2" />}
-                                {t(`settings.level${auth.level}`)}
+                                {getUserRole(auth.level)}
                             </Badge>
 
                             {/* Gestion mot de passe */}
@@ -240,11 +329,28 @@ const Settings = () => {
 
                                     {/* Gestion utilisateurs */}
                                     <div className="settings-form mt-3">
-                                        <SettingsUsers users={users} isSubmitting={isSubmitting} />
+                                        <SettingsUsers
+                                            login={auth.login}
+                                            users={users}
+                                            onConfirm={openCloseConfirmModal}
+                                            isSubmitting={isSubmitting}
+                                        />
                                     </div>
                                 </>
                             )}
                         </>
+                    )}
+
+                    {/* Modale de confirmation */}
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                        <ConfirmModal
+                            modalOptions={modalOptionsConfirm}
+                            message={messageModalConfirm}
+                            setMessage={setMessageModalConfirm}
+                            onClose={openCloseConfirmModal}
+                            onConfirmAction={handleDeleteUser}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
                 </>
             )}

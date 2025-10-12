@@ -62,3 +62,12 @@ $router->patch('/users/password', function () use ($db) {
     // Appel contrôleur
     (new UsersController($db))->updatePassword($token, $data);
 });
+
+$router->delete('/users/delete/:id', function ($params) use ($db) {
+    // Headers
+    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
+    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+
+    // Appel contrôleur
+    (new UsersController($db))->deleteUser($token, $params['id']);
+});
