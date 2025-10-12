@@ -96,7 +96,7 @@ class EditionsService
         }
 
         // Insertion
-        $data = $this->processData($data);
+        $data = $this->processDataEdition($data);
         return $this->repository->create($login, $data);
     }
 
@@ -163,7 +163,7 @@ class EditionsService
     /**
      * Formate les données avant traitement SQL
      */
-    private function processData($data)
+    private function processDataEdition($data)
     {
         $startDate = new DateTime($data['startDate'] . ' ' . $data['startTime']);
         $endDate = new DateTime($data['startDate'] . ' ' . $data['endTime']);

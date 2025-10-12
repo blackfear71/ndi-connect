@@ -143,7 +143,8 @@ class RewardsService
         // Contrôle points participant
         $enoughPoints = $player['points'] >= $gift['value'];
 
-        return $remainingQuantity > 0 && $enoughPoints;
+        return $remainingQuantity > 0
+            && $enoughPoints;
     }
 
     /**

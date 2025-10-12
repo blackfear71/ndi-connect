@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -47,15 +47,15 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
             return;
         }
 
-        // Contrôle que les nouveaux mots de passe correspondent
-        if (formPassword.newPassword !== formPassword.confirmPassword) {
-            setMessage({ code: 'errors.passwordMatch', type: 'error' });
-            return;
-        }
-
         // Contrôle que le nouveau mot de passe est différent de l'ancien
         if (formPassword.oldPassword === formPassword.newPassword) {
             setMessage({ code: 'errors.passwordIdentical', type: 'error' });
+            return;
+        }
+
+        // Contrôle que les nouveaux mots de passe correspondent
+        if (formPassword.newPassword !== formPassword.confirmPassword) {
+            setMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
 

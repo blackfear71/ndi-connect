@@ -61,4 +61,26 @@ class UsersRepository extends Model
         $data['login'] = $login;
         return $stmt->execute($data);
     }
+
+    /**
+     * Mise à jour mot de passe
+     */
+    public function updatePassword($login, $password)
+    {
+        $data['password'] = $password;
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_by'] = $login;
+
+        $fields = [];
+
+        foreach ($data as $key => $value) {
+            $fields[] = "$key = :$key";
+        }
+
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE login = :login";
+        $stmt = $this->db->prepare($sql);
+
+        $data['login'] = $login;
+        return $stmt->execute($data);
+    }
 }

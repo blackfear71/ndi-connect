@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';

@@ -124,6 +124,8 @@ class GiftsService
         $value = $data['value'] ?? null;
         $quantity = $data['quantity'] ?? null;
 
-        return $name && is_numeric($value) && $value > 0 && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
+        return $name
+            && is_numeric($value) && $value > 0
+            && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
     }
 }

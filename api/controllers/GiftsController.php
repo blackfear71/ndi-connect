@@ -51,7 +51,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -84,7 +84,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updateGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -117,7 +117,7 @@ class GiftsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteGift de GiftsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

@@ -54,6 +54,26 @@ class UsersService {
         const url = `${this.apiUrl}/disconnect`;
         return ajax.post(url, null, this.headers);
     };
+
+    /**
+     * Création utilisateur
+     * @param {*} body Données utilisateur
+     * @returns
+     */
+    createUser = (body) => {
+        const url = `${this.apiUrl}/create`;
+        return ajax.post(url, body, this.headers);
+    };
+
+    /**
+     * Mise à jour mot de passe
+     * @param {*} body Données mot de passe
+     * @returns
+     */
+    updatePassword = (body) => {
+        const url = `${this.apiUrl}/password`;
+        return ajax.patch(url, body, this.headers);
+    };
 }
 
 export default UsersService;

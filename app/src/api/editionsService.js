@@ -52,7 +52,7 @@ class EditionsService {
      * @param {*} body Données édition
      * @returns
      */
-    insertEdition = (body) => {
+    createEdition = (body) => {
         const url = `${this.apiUrl}/create`;
         return ajax.post(url, body, this.headers);
     };

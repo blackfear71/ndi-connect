@@ -51,7 +51,7 @@ class RewardsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createReward de RewardsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -84,7 +84,7 @@ class RewardsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteReward de RewardsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

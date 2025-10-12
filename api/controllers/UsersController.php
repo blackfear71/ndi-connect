@@ -134,7 +134,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
                     401,
-                    'Utilisateur non trouvé (disconnect)'
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
                 exit;
             }
@@ -154,6 +154,81 @@ class UsersController
             }
         } catch (Exception $e) {
             // Exception levée
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Insertion d'un enregistrement
+     */
+    public function createUser($token, $data)
+    {
+        try {
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+
+            // Insertion d'un enregistrement
+            $created = $this->service->createUser($user['login'], $data);
+
+            if ($created) {
+                // Succès
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+            } else {
+                // Échec de la création
+                ResponseHelper::error(
+                    'ERR_CREATION_FAILED',
+                    400,
+                    'Erreur lors de la création de l\'utilisateur : ' . $data['login'] . ' (utilisateur niveau ' . $data['level'] . ')'
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function updatePassword($token, $data)
+    {
+        try {
+            $user = $this->service->checkAuth($token);
+
+            if (!$user) {
+                // Utilisateur non trouvé
+                ResponseHelper::error(
+                    'ERR_UNAUTHORIZED_ACTION',
+                    401,
+                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
+                exit;
+            }
+
+            // Modification d'un enregistrement
+            $updated = $this->service->updatePassword($user['login'], $data);
+
+            if ($updated) {
+                // Succès
+                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+            } else {
+                // Échec de la modification
+                ResponseHelper::error(
+                    'ERR_UPDATE_FAILED',
+                    400,
+                    'Erreur lors de la modification du mot de passe de l\'utilisateur : ' . $user['login']
+                );
+            }
+        } catch (Exception $e) {
+            // Gestion des erreurs
             ResponseHelper::error(
                 $e->getMessage(),
                 500,

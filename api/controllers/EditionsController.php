@@ -48,7 +48,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getAllEditions de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -77,7 +77,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -107,7 +107,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans getSearchEditions de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -140,7 +140,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -173,7 +173,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updateEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -206,7 +206,7 @@ class EditionsController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deleteEdition de EditionsController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

@@ -51,7 +51,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans createPlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -84,7 +84,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans updatePlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }
@@ -117,7 +117,7 @@ class PlayersController
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
-                'Exception levée dans deletePlayer de PlayersController : ' . $e->getMessage()
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
     }

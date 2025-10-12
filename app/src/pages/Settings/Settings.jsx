@@ -15,7 +15,7 @@ import SettingsUsers from '../../components/SettingsUsers/SettingsUsers';
 import UserRole from '../../enums/UserRole';
 
 import { combineLatest, of } from 'rxjs';
-import { catchError, finalize, map, take } from 'rxjs/operators';
+import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
 
@@ -109,6 +109,7 @@ const Settings = () => {
             .pipe(
                 map(([dataUsers]) => {
                     showHidePasswordForm();
+                    resetFormPassword();
                     setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -121,6 +122,17 @@ const Settings = () => {
                 })
             )
             .subscribe();
+    };
+
+    /**
+     * Réinitialisation formulaire (modification mot de passe)
+     */
+    const resetFormPassword = () => {
+        setFormPassword({
+            oldPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+        });
     };
 
     /**
@@ -139,13 +151,17 @@ const Settings = () => {
 
         const usersService = new UsersService(localStorage.getItem('token'));
 
-        const subscriptionUsers = usersService.createUser(formCreateUser);
-
-        combineLatest([subscriptionUsers])
+        usersService
+            .createUser(formCreateUser)
             .pipe(
-                map(([dataUsers]) => {
+                map((dataUser) => {
+                    setMessagePage({ code: dataUser.response.message, type: dataUser.response.status });
+                }),
+                switchMap(() => usersService.getAllUsers()),
+                map((dataUsers) => {
                     showHideCreateUserForm();
-                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                    resetFormCreateUser();
+                    setUsers(dataUsers.response.data);
                 }),
                 take(1),
                 catchError((err) => {
@@ -157,6 +173,18 @@ const Settings = () => {
                 })
             )
             .subscribe();
+    };
+
+    /**
+     * Réinitialisation formulaire (création utilisateur)
+     */
+    const resetFormCreateUser = () => {
+        setFormCreateUser({
+            login: '',
+            password: '',
+            confirmPassword: '',
+            level: ''
+        });
     };
 
     return (

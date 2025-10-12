@@ -69,7 +69,6 @@ class Model
         $stmt = $this->db->prepare($sql);
 
         $data['id'] = $id;
-
         return $stmt->execute($data);
     }
 

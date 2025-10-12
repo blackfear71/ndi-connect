@@ -100,7 +100,7 @@ const Home = () => {
         const editionsService = new EditionsService(localStorage.getItem('token'));
 
         editionsService
-            .insertEdition(formEdition)
+            .createEdition(formEdition)
             .pipe(
                 map((dataEdition) => {
                     setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
