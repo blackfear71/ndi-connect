@@ -22,7 +22,7 @@ class RewardsService {
      * Attribution d'un cadeau à un participant
      * @param {*} idEdition Identifiant de l'édition
      * @param {*} body Données participant et cadeau
-     * @returns
+     * @returns Données participant et cadeau à jour
      */
     postReward = (idEdition, body) => {
         const url = `${this.apiUrl}/reward/${idEdition}`;
@@ -33,7 +33,7 @@ class RewardsService {
      * Annulation de l'attribution d'un cadeau à un participant
      * @param {*} idEdition Identifiant de l'édition
      * @param {*} body Données participant et cadeau
-     * @returns
+     * @returns Données participant et cadeau à jour
      */
     deleteReward = (idEdition, idReward) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idReward}`;

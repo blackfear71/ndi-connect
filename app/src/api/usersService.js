@@ -58,7 +58,7 @@ class UsersService {
     /**
      * Création utilisateur
      * @param {*} body Données utilisateur
-     * @returns
+     * @returns Message retour
      */
     createUser = (body) => {
         const url = `${this.apiUrl}/create`;
@@ -68,7 +68,7 @@ class UsersService {
     /**
      * Réinitialisation mot de passe
      * @param {*} id Identifiant utilisateur
-     * @returns
+     * @returns Message retour
      */
     resetPassword = (id) => {
         const url = `${this.apiUrl}/reset/${id}`;
@@ -78,7 +78,7 @@ class UsersService {
     /**
      * Mise à jour mot de passe
      * @param {*} body Données mot de passe
-     * @returns
+     * @returns Message retour
      */
     updatePassword = (body) => {
         const url = `${this.apiUrl}/password`;
@@ -88,7 +88,7 @@ class UsersService {
     /**
      * Mise à jour utilisateur
      * @param {*} body Données utilisateur
-     * @returns
+     * @returns Liste des utilisateurs
      */
     updateUser = (body) => {
         const url = `${this.apiUrl}/update`;

@@ -50,7 +50,7 @@ class EditionsService {
     /**
      * Création édition
      * @param {*} body Données édition
-     * @returns
+     * @returns Message retour
      */
     createEdition = (body) => {
         const url = `${this.apiUrl}/create`;
@@ -61,7 +61,7 @@ class EditionsService {
      * Mise à jour édition
      * @param {*} id Identifiant édition
      * @param {*} body Données édition
-     * @returns
+     * @returns Données édition à jour
      */
     updateEdition = (id, body) => {
         const url = `${this.apiUrl}/update/${id}`;
@@ -71,7 +71,7 @@ class EditionsService {
     /**
      * Suppression édition
      * @param {*} id Identifiant édition
-     * @returns
+     * @returns Message retour
      */
     deleteEdition = (id) => {
         const url = `${this.apiUrl}/delete/${id}`;
