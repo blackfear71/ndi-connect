@@ -8,13 +8,12 @@ const API_URL = process.env.REACT_APP_API_URL + '/editions';
 class EditionsService {
     /**
      * Constructeur du service
-     * @param {*} token Token de connexion
      */
-    constructor(token = null) {
+    constructor() {
         this.apiUrl = API_URL;
         this.headers = {
             'Content-Type': 'application/json',
-            ...(token && { Authorization: `Bearer ${token}` })
+            ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` })
         };
     }
 

@@ -73,7 +73,7 @@ const Settings = () => {
         if (!auth.isLoggedIn) {
             navigate('/');
         } else if (auth.level >= UserRole.SUPERADMIN) {
-            const usersService = new UsersService(localStorage.getItem('token'));
+            const usersService = new UsersService();
 
             const subscriptionUsers = usersService.getAllUsers();
 
@@ -149,7 +149,7 @@ const Settings = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const usersService = new UsersService(localStorage.getItem('token'));
+        const usersService = new UsersService();
 
         const subscriptionUsers = usersService.updatePassword(formPassword);
 
@@ -197,7 +197,7 @@ const Settings = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const usersService = new UsersService(localStorage.getItem('token'));
+        const usersService = new UsersService();
 
         usersService
             .createUser(formCreateUser)
@@ -244,7 +244,7 @@ const Settings = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const usersService = new UsersService(localStorage.getItem('token'));
+        const usersService = new UsersService();
 
         const subscriptionUsers = usersService.resetPassword(id);
 
@@ -298,7 +298,7 @@ const Settings = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const usersService = new UsersService(localStorage.getItem('token'));
+        const usersService = new UsersService();
 
         const subscriptionUsers = usersService.updateUser(formUpdateUser);
 
@@ -349,7 +349,7 @@ const Settings = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const usersService = new UsersService(localStorage.getItem('token'));
+        const usersService = new UsersService();
 
         const subscriptionUsers = usersService.deleteUser(modalOptionsConfirm.data);
 

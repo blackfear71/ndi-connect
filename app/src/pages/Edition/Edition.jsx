@@ -148,7 +148,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingEdition(true);
 
-        const editionsService = new EditionsService(localStorage.getItem('token'));
+        const editionsService = new EditionsService();
 
         const subscriptionEdition = editionsService.updateEdition(edition.id, formEdition);
 
@@ -218,7 +218,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingConfirm(true);
 
-        const editionsService = new EditionsService(localStorage.getItem('token'));
+        const editionsService = new EditionsService();
 
         const subscriptionEdition = editionsService.deleteEdition(edition.id);
 
@@ -251,7 +251,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingPlayer(true);
 
-        const playersService = new PlayersService(localStorage.getItem('token'));
+        const playersService = new PlayersService();
 
         let subscriptionPlayers = null;
 
@@ -328,7 +328,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingConfirm(true);
 
-        const playersService = new PlayersService(localStorage.getItem('token'));
+        const playersService = new PlayersService();
 
         const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
 
@@ -359,7 +359,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingGift(true);
 
-        const giftsService = new GiftsService(localStorage.getItem('token'));
+        const giftsService = new GiftsService();
 
         let subscriptionGifts = null;
 
@@ -434,7 +434,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingConfirm(true);
 
-        const giftsService = new GiftsService(localStorage.getItem('token'));
+        const giftsService = new GiftsService();
 
         const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
 
@@ -465,7 +465,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingReward(true);
 
-        const rewardsService = new RewardsService(localStorage.getItem('token'));
+        const rewardsService = new RewardsService();
 
         const subscriptionRewards = rewardsService.postReward(edition.id, formReward);
 
@@ -519,7 +519,7 @@ const Edition = () => {
         setMessagePage(null);
         setIsSubmittingConfirm(true);
 
-        const rewardsService = new RewardsService(localStorage.getItem('token'));
+        const rewardsService = new RewardsService();
 
         const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
 

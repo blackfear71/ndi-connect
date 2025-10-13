@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
         return new Promise((resolve, reject) => {
             setAuthError(null);
 
-            const usersService = new UsersService(localStorage.getItem('token'));
+            const usersService = new UsersService();
 
             const subscriptionUser = usersService.disconnect();
 

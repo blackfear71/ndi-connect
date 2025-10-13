@@ -96,7 +96,7 @@ const Home = () => {
         setMessagePage(null);
         setIsSubmitting(true);
 
-        const editionsService = new EditionsService(localStorage.getItem('token'));
+        const editionsService = new EditionsService();
 
         editionsService
             .createEdition(formEdition)
