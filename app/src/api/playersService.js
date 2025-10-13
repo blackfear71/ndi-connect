@@ -12,8 +12,7 @@ class PlayersService {
     constructor() {
         this.apiUrl = API_URL;
         this.headers = {
-            'Content-Type': 'application/json',
-            ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` })
+            'Content-Type': 'application/json'
         };
     }
 
@@ -25,7 +24,13 @@ class PlayersService {
      */
     createPlayer = (idEdition, body) => {
         const url = `${this.apiUrl}/create/${idEdition}`;
-        return ajax.post(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -37,7 +42,13 @@ class PlayersService {
      */
     updatePlayer = (idEdition, idPlayer, body) => {
         const url = `${this.apiUrl}/update/${idEdition}/${idPlayer}`;
-        return ajax.patch(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -48,7 +59,12 @@ class PlayersService {
      */
     deletePlayer = (idEdition, idPlayer) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idPlayer}`;
-        return ajax.delete(url, this.headers);
+        return ajax({
+            url,
+            method: 'DELETE',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 }
 

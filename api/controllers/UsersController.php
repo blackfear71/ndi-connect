@@ -32,21 +32,17 @@ class UsersController
             // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
-            if (!$user) {
-                // Authentification incorrecte
+            if ($user) {
+                // Succès
+                ResponseHelper::success($user);
+            } else {
+                // Échec de l'authentification
                 ResponseHelper::error(
                     'ERR_INVALID_AUTH',
                     401,
                     'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
-                exit;
             }
-
-            // Autorisation valide & token
-            $user['authorized'] = true;
-            $user['token'] = $token;
-
-            ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
             ResponseHelper::error(
@@ -81,7 +77,7 @@ class UsersController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -99,17 +95,33 @@ class UsersController
             // Connexion utilisateur
             $user = $this->service->connect($data);
 
-            if (!$user) {
-                // Utilisateur non trouvé
+            if ($user) {
+                // Token de connexion
+                setcookie(
+                    'token',
+                    $user['token'],
+                    [
+                        'expires' => time() + 3600 * 24, // 1 jour (identique à la durée stockée en base)
+                        'path' => '/',
+                        'secure' => true,
+                        'httponly' => true,
+                        'samesite' => 'Strict'
+                    ]
+                );
+
+                // Suppression du token pour ne pas le renvoyer dans la réponse
+                unset($user['token']);
+
+                // Succès
+                ResponseHelper::success($user);
+            } else {
+                // Échec de la connexion
                 ResponseHelper::error(
                     'ERR_LOGIN_FAILED',
                     401,
                     'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
                 );
-                exit;
             }
-
-            ResponseHelper::success($user);
         } catch (Exception $e) {
             // Exception levée
             ResponseHelper::error(
@@ -129,27 +141,30 @@ class UsersController
             // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
-            if (!$user) {
+            if ($user) {
+                // Déconnexion utilisateur
+                $disconnected = $this->service->disconnect($user['login']);
+
+                if ($disconnected) {
+                    // Suppression token de connexion
+                    setcookie('token', '', time() - 3600, '/');
+
+                    // Succès
+                    ResponseHelper::success(['disconnected' => $disconnected]);
+                } else {
+                    // Échec de la déconnexion
+                    ResponseHelper::error(
+                        'ERR_LOGOUT_FAILED',
+                        401,
+                        'Erreur lors de la déconnexion dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
+                    );
+                }
+            } else {
                 // Utilisateur non trouvé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
                     401,
                     'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
-                exit;
-            }
-
-            // Déconnexion utilisateur
-            $disconnected = $this->service->disconnect($user['login']);
-
-            if ($disconnected) {
-                ResponseHelper::success(['disconnected' => $disconnected]);
-            } else {
-                // Échec de la déconnexion
-                ResponseHelper::error(
-                    'ERR_LOGOUT_FAILED',
-                    401,
-                    'Erreur lors de la déconnexion dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
                 );
             }
         } catch (Exception $e) {
@@ -186,7 +201,7 @@ class UsersController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -219,7 +234,7 @@ class UsersController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -237,32 +252,31 @@ class UsersController
             // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
-            if (!$user) {
+            if ($user) {
+                // Modification d'un enregistrement
+                $updated = $this->service->updatePassword($user['login'], $data);
+
+                if ($updated) {
+                    // Succès
+                    ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+                } else {
+                    // Échec de la modification
+                    ResponseHelper::error(
+                        'ERR_UPDATE_FAILED',
+                        400,
+                        'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
+                    );
+                }
+            } else {
                 // Utilisateur non trouvé
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
                     401,
                     'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
-                exit;
-            }
-
-            // Modification d'un enregistrement
-            $updated = $this->service->updatePassword($user['login'], $data);
-
-            if ($updated) {
-                // Succès
-                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
-            } else {
-                // Échec de la modification
-                ResponseHelper::error(
-                    'ERR_UPDATE_FAILED',
-                    400,
-                    'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
-                );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -287,7 +301,7 @@ class UsersController
                 // Succès
                 ResponseHelper::success($users, 'MSG_UPDATE_SUCCESS');
             } else {
-                // Échec de la suppression
+                // Échec de la modification
                 ResponseHelper::error(
                     'ERR_UPDATE_FAILED',
                     400,
@@ -295,7 +309,7 @@ class UsersController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -328,7 +342,7 @@ class UsersController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,

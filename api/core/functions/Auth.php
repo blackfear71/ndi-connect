@@ -48,13 +48,12 @@ class Auth
 
             return $user;
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
                 'Exception levée dans ' . __FUNCTION__ . ' de ' . self::helperName . ' : ' . $e->getMessage() . '',
             );
-            exit;
         }
     }
 }

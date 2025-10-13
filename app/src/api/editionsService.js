@@ -12,8 +12,7 @@ class EditionsService {
     constructor() {
         this.apiUrl = API_URL;
         this.headers = {
-            'Content-Type': 'application/json',
-            ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` })
+            'Content-Type': 'application/json'
         };
     }
 
@@ -53,7 +52,13 @@ class EditionsService {
      */
     createEdition = (body) => {
         const url = `${this.apiUrl}/create`;
-        return ajax.post(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -64,7 +69,13 @@ class EditionsService {
      */
     updateEdition = (id, body) => {
         const url = `${this.apiUrl}/update/${id}`;
-        return ajax.patch(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -74,7 +85,12 @@ class EditionsService {
      */
     deleteEdition = (id) => {
         const url = `${this.apiUrl}/delete/${id}`;
-        return ajax.delete(url, this.headers);
+        return ajax({
+            url,
+            method: 'DELETE',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 }
 

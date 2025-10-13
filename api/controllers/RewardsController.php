@@ -47,7 +47,7 @@ class RewardsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -80,7 +80,7 @@ class RewardsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,

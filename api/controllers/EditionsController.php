@@ -44,7 +44,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -62,10 +62,10 @@ class EditionsController
             $edition = $this->service->getEdition($id);
 
             if ($edition) {
-                // Réponse si l'enregistrement est trouvé
+                // Succès
                 ResponseHelper::success($edition);
             } else {
-                // Réponse si l'enregistrement est introuvable
+                // Échec de la lecture
                 ResponseHelper::error(
                     'ERR_EDITION_NOT_FOUND',
                     404,
@@ -73,7 +73,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -103,7 +103,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -136,7 +136,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -169,7 +169,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,
@@ -202,7 +202,7 @@ class EditionsController
                 );
             }
         } catch (Exception $e) {
-            // Gestion des erreurs
+            // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
                 500,

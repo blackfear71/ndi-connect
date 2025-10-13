@@ -32,39 +32,31 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         setAuthError(null);
 
-        const userToken = localStorage.getItem('token');
+        const usersService = new UsersService();
 
-        // Vérification token présent
-        if (!userToken) {
-            setAuthLoading(false);
-            resetAuth();
-        } else {
-            const usersService = new UsersService(userToken);
+        const subscriptionUser = usersService.checkAuth();
 
-            const subscriptionUser = usersService.checkAuth();
-
-            combineLatest([subscriptionUser])
-                .pipe(
-                    map(([dataUser]) => {
-                        dataUser.response.data.authorized ? persistAuth(dataUser.response.data) : resetAuth();
-                    }),
-                    take(1),
-                    catchError((err) => {
-                        // Vérification requête abandonnée
-                        if (isAbortedAjaxError(err)) {
-                            return of();
-                        }
-
-                        resetAuth();
-                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
+        combineLatest([subscriptionUser])
+            .pipe(
+                map(([dataUser]) => {
+                    dataUser?.response?.data ? persistAuth(dataUser.response.data) : resetAuth();
+                }),
+                take(1),
+                catchError((err) => {
+                    // Vérification requête abandonnée
+                    if (isAbortedAjaxError(err)) {
                         return of();
-                    }),
-                    finalize(() => {
-                        setAuthLoading(false);
-                    })
-                )
-                .subscribe();
-        }
+                    }
+
+                    resetAuth();
+                    setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    setAuthLoading(false);
+                })
+            )
+            .subscribe();
     }, []);
 
     /**
@@ -140,7 +132,6 @@ export const AuthProvider = ({ children }) => {
             login: data.login,
             level: data.level
         });
-        localStorage.setItem('token', data.token);
     };
     /**
      * Réinitialise les informations d'authentification
@@ -151,7 +142,6 @@ export const AuthProvider = ({ children }) => {
             login: null,
             level: 0
         });
-        localStorage.clear();
     };
 
     /**

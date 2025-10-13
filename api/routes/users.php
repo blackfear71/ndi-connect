@@ -5,18 +5,16 @@ $database = new Database();
 $db = $database->getConnection();
 
 $router->get('/users/checkAuth', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new UsersController($db))->checkAuth($token);
 });
 
 $router->get('/users/all', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new UsersController($db))->getAllUsers($token);
@@ -31,18 +29,16 @@ $router->post('/users/connect', function () use ($db) {
 });
 
 $router->post('/users/disconnect', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new UsersController($db))->disconnect($token);
 });
 
 $router->post('/users/create', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -52,9 +48,8 @@ $router->post('/users/create', function () use ($db) {
 });
 
 $router->patch('/users/password', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -64,18 +59,16 @@ $router->patch('/users/password', function () use ($db) {
 });
 
 $router->patch('/users/reset/:id', function ($params) use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new UsersController($db))->resetPassword($token, $params['id']);
 });
 
 $router->patch('/users/update', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -85,9 +78,8 @@ $router->patch('/users/update', function () use ($db) {
 });
 
 $router->delete('/users/delete/:id', function ($params) use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new UsersController($db))->deleteUser($token, $params['id']);

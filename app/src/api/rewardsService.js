@@ -12,8 +12,7 @@ class RewardsService {
     constructor() {
         this.apiUrl = API_URL;
         this.headers = {
-            'Content-Type': 'application/json',
-            ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` })
+            'Content-Type': 'application/json'
         };
     }
 
@@ -25,18 +24,29 @@ class RewardsService {
      */
     postReward = (idEdition, body) => {
         const url = `${this.apiUrl}/reward/${idEdition}`;
-        return ajax.post(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
      * Annulation de l'attribution d'un cadeau à un participant
      * @param {*} idEdition Identifiant de l'édition
-     * @param {*} body Données participant et cadeau
+     * @param {*} idReward Identifiant de la récompense
      * @returns Données participant et cadeau à jour
      */
     deleteReward = (idEdition, idReward) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idReward}`;
-        return ajax.delete(url, this.headers);
+        return ajax({
+            url,
+            method: 'DELETE',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 }
 

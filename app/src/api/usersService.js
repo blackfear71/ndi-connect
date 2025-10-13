@@ -3,7 +3,7 @@ import { ajax } from 'rxjs/ajax';
 const API_URL = process.env.REACT_APP_API_URL + '/users';
 
 /**
- * Service appel API utilisateur (connexion, déconnexion...)
+ * Service appel API utilisateurs
  */
 class UsersService {
     /**
@@ -12,8 +12,7 @@ class UsersService {
     constructor() {
         this.apiUrl = API_URL;
         this.headers = {
-            'Content-Type': 'application/json',
-            ...(localStorage.getItem('token') && { Authorization: `Bearer ${localStorage.getItem('token')}` })
+            'Content-Type': 'application/json'
         };
     }
 
@@ -23,7 +22,12 @@ class UsersService {
      */
     checkAuth = () => {
         const url = `${this.apiUrl}/checkAuth`;
-        return ajax.get(url, this.headers);
+        return ajax({
+            url,
+            method: 'GET',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 
     /**
@@ -32,7 +36,12 @@ class UsersService {
      */
     getAllUsers = () => {
         const url = `${this.apiUrl}/all`;
-        return ajax.get(url, this.headers);
+        return ajax({
+            url,
+            method: 'GET',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 
     /**
@@ -42,7 +51,13 @@ class UsersService {
      */
     connect = (body) => {
         const url = `${this.apiUrl}/connect`;
-        return ajax.post(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -51,7 +66,12 @@ class UsersService {
      */
     disconnect = () => {
         const url = `${this.apiUrl}/disconnect`;
-        return ajax.post(url, null, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 
     /**
@@ -61,7 +81,13 @@ class UsersService {
      */
     createUser = (body) => {
         const url = `${this.apiUrl}/create`;
-        return ajax.post(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'POST',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -71,7 +97,12 @@ class UsersService {
      */
     resetPassword = (id) => {
         const url = `${this.apiUrl}/reset/${id}`;
-        return ajax.patch(url, null, this.headers);
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 
     /**
@@ -81,7 +112,13 @@ class UsersService {
      */
     updatePassword = (body) => {
         const url = `${this.apiUrl}/password`;
-        return ajax.patch(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -91,7 +128,13 @@ class UsersService {
      */
     updateUser = (body) => {
         const url = `${this.apiUrl}/update`;
-        return ajax.patch(url, body, this.headers);
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            body,
+            withCredentials: true
+        });
     };
 
     /**
@@ -101,7 +144,12 @@ class UsersService {
      */
     deleteUser = (id) => {
         const url = `${this.apiUrl}/delete/${id}`;
-        return ajax.delete(url, this.headers);
+        return ajax({
+            url,
+            method: 'DELETE',
+            headers: this.headers,
+            withCredentials: true
+        });
     };
 }
 

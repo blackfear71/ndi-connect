@@ -23,9 +23,8 @@ $router->post('/editions/search', function () use ($db) {
 });
 
 $router->post('/editions/create', function () use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -35,9 +34,8 @@ $router->post('/editions/create', function () use ($db) {
 });
 
 $router->patch('/editions/update/:id', function ($params) use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
@@ -47,9 +45,8 @@ $router->patch('/editions/update/:id', function ($params) use ($db) {
 });
 
 $router->delete('/editions/delete/:id', function ($params) use ($db) {
-    // Headers
-    $headers = function_exists('getallheaders') ? array_change_key_case(getallheaders(), CASE_LOWER) : [];
-    $token = trim(str_replace('Bearer', '', $headers['authorization'] ?? ''));
+    // Token
+    $token = $_COOKIE['token'] ?? null;
 
     // Appel contrôleur
     (new EditionsController($db))->deleteEdition($token, $params['id']);
