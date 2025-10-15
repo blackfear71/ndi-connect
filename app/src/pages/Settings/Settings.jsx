@@ -32,7 +32,7 @@ const Settings = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth, refreshAuth } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -295,16 +295,6 @@ const Settings = () => {
     };
 
     /**
-     * Réinitialisation formulaire (modification utilisateur)
-     */
-    const resetFormUpdateUser = () => {
-        setFormUpdateUser({
-            id: null,
-            level: ''
-        });
-    };
-
-    /**
      * Modification d'un utilisateur
      */
     const handleSubmitUpdateUser = () => {
@@ -321,6 +311,11 @@ const Settings = () => {
                     openCloseUpdateUserModal();
                     setUsers(dataUsers.response.data);
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
+
+                    // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
+                    if (auth.login === dataUsers.response.data.find((u) => u.id === formUpdateUser.id)?.login) {
+                        refreshAuth();
+                    }
                 }),
                 take(1),
                 catchError((err) => {
@@ -335,6 +330,16 @@ const Settings = () => {
                 })
             )
             .subscribe();
+    };
+
+    /**
+     * Réinitialisation formulaire (modification utilisateur)
+     */
+    const resetFormUpdateUser = () => {
+        setFormUpdateUser({
+            id: null,
+            level: ''
+        });
     };
 
     /**

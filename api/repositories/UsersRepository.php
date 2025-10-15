@@ -29,9 +29,9 @@ class UsersRepository extends Model
     }
 
     /**
-     * Récupération données utilisateur actif
+     * Récupération données utilisateur actif (via login)
      */
-    public function getActiveUserData($login)
+    public function getActiveUserDataByLogin($login)
     {
         $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -40,14 +40,38 @@ class UsersRepository extends Model
     }
 
     /**
+     * Récupération données utilisateur actif (via id)
+     */
+    public function getActiveUserDataById($id)
+    {
+        $sql = "SELECT id, login, level FROM {$this->table} WHERE id = :id AND is_active = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupération données utilisateur (tous statuts)
      */
     public function getUserDataByLogin($login)
     {
-        $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login";
+        $sql = "SELECT id, login, level FROM {$this->table} WHERE login = :login";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est le dernier super admin actif
+     */
+    public function isLastAdmin()
+    {
+        $sql = "SELECT COUNT(*) AS nbAdmin FROM {$this->table} WHERE level = :level AND is_active = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['level' => UserRole::SUPERADMIN->value]);
+        $count = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return ($count['nbAdmin'] == 1);
     }
 
     /**

@@ -8,6 +8,7 @@
 export const getMessageTranslationKey = (code, params, t) => {
     // Mapping des messages entre BACK et FRONT
     const map = {
+        // Erreurs
         ERR_CREATION_FAILED: 'errors.creationFailed',
         ERR_DELETION_FAILED: 'errors.deletionFailed',
         ERR_EDITION_NOT_FOUND: 'errors.editionNotFound',
@@ -20,12 +21,17 @@ export const getMessageTranslationKey = (code, params, t) => {
         ERR_UNKNOWN_ENDPOINT: 'errors.unknownEndpoint',
         ERR_UPDATE_FAILED: 'errors.updateFailed',
         ERR_USERS_NOT_FOUND: 'errors.usersNotFound',
+
+        // Messages
         MSG_CREATION_SUCCESS: 'messages.creationSuccess',
         MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
         MSG_RESET_PASSWORD_SUCCESS: 'messages.resetPasswordSuccess',
         MSG_REWARD_SUCCESS: 'messages.rewardSuccess',
         MSG_UPDATE_SUCCESS: 'messages.updateSuccess',
-        MSG_USER_EXISTS: 'messages.userExists'
+
+        // Alertes
+        WRN_LAST_ADMIN: 'warnings.lastAdmin',
+        WRN_USER_EXISTS: 'warnings.userExists'
     };
 
     // Retourne la traduction

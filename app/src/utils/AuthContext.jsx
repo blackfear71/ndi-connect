@@ -30,6 +30,13 @@ export const AuthProvider = ({ children }) => {
      * Contrôle de la connexion au lancement de l'application
      */
     useEffect(() => {
+        refreshAuth();
+    }, []);
+
+    /**
+     * Vérifie l'authentification de l'utilisateur
+     */
+    const refreshAuth = () => {
         setAuthError(null);
 
         const usersService = new UsersService();
@@ -57,7 +64,7 @@ export const AuthProvider = ({ children }) => {
                 })
             )
             .subscribe();
-    }, []);
+    };
 
     /**
      * Connexion de l'utilisateur
@@ -155,7 +162,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authError, setAuthError, login, logout }}>
+        <AuthContext.Provider value={{ auth, authError, setAuthError, refreshAuth, login, logout }}>
             {authLoading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" variant="light" />

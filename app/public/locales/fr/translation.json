@@ -40,7 +40,10 @@
         "searchMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "resetPasswordSuccess": "Le mot de passe a été réinitialisé pour : {{password}}, il est conseillé de le changer immédiatement",
         "rewardSuccess": "Cadeau attribué",
-        "updateSuccess": "Modification réussie",
+        "updateSuccess": "Modification réussie"
+    },
+    "warnings": {
+        "lastAdmin": "Il doit rester au moins un Super Administrateur actif",
         "userExists": "L'identifiant a déjà été utilisé"
     },
     "common": {

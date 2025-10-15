@@ -194,7 +194,7 @@ class UsersController
                 ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
             } else if ($created === false) {
                 // Alerte
-                ResponseHelper::warning(null, 'MSG_USER_EXISTS', 409);
+                ResponseHelper::warning(null, 'WRN_USER_EXISTS', 409);
             } else {
                 // Échec de la création
                 ResponseHelper::error(
@@ -300,9 +300,12 @@ class UsersController
             // Suppression logique d'un enregistrement
             $users = $this->service->updateUser($user['login'], $data);
 
-            if ($users !== null) {
+            if ($users !== null && $users !== false) {
                 // Succès
                 ResponseHelper::success($users, 'MSG_UPDATE_SUCCESS');
+            } else if ($users !== null && $users === false) {
+                // Alerte
+                ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
             } else {
                 // Échec de la modification
                 ResponseHelper::error(
@@ -333,9 +336,12 @@ class UsersController
             // Suppression logique d'un enregistrement
             $users = $this->service->deleteUser($id, $user['login']);
 
-            if ($users !== null) {
+            if ($users !== null && $users !== false) {
                 // Succès
                 ResponseHelper::success($users, 'MSG_DELETION_SUCCESS');
+            } else if ($users !== null && $users === false) {
+                // Alerte
+                ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
             } else {
                 // Échec de la suppression
                 ResponseHelper::error(

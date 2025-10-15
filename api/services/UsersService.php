@@ -42,7 +42,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserData($data['login']);
+        $user = $this->repository->getActiveUserDataByLogin($data['login']);
 
         // Contrôle mot de passe incorrect
         if (!$user || !password_verify($data['password'], $user['password'])) {
@@ -121,7 +121,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserData($login);
+        $user = $this->repository->getActiveUserDataByLogin($login);
 
         // Contrôle ancien mot de passe incorrect
         if (!$user || !password_verify($data['oldPassword'], $user['password'])) {
@@ -143,6 +143,16 @@ class UsersService
             return null;
         }
 
+        // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
+        $user = $this->repository->getActiveUserDataByLogin($login);
+
+        // Contrôle dernier admin actif si changement de rôle
+        if ($user && $user['level'] == UserRole::SUPERADMIN->value && $data['level'] != UserRole::SUPERADMIN->value) {
+            if ($this->repository->isLastAdmin()) {
+                return false;
+            }
+        }
+
         // Modification et récupération des utilisateurs
         $id = $data['id'];
         unset($data['id']);
@@ -159,6 +169,16 @@ class UsersService
      */
     public function deleteUser($id, $login)
     {
+        // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
+        $user = $this->repository->getActiveUserDataById($id);
+
+        // Contrôle dernier admin actif si suppression
+        if ($user && $user['level'] == UserRole::SUPERADMIN->value) {
+            if ($this->repository->isLastAdmin()) {
+                return false;
+            }
+        }
+
         // Suppression logique de l'utilisateur et récupération des utilisateurs restants
         if ($id && $this->repository->logicalDelete($id, $login)) {
             return $this->getAllUsers();
