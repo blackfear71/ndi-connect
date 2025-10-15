@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import PasswordInput from '../PasswordInput/PasswordInput';
 
 /**
- * Liste des participants
+ * Création d'utilisateur
  */
 const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
@@ -124,6 +124,7 @@ const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, s
                             </Button>
                             <Button type="submit" className="settings-button">
                                 {t('common.validate')}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         </div>
                     </Form>

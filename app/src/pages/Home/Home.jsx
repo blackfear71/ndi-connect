@@ -43,10 +43,8 @@ const Home = () => {
         challenge: ''
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [messagePage, setMessagePage] = useState(null);
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
+    const [message, setMessage] = useState(null);
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false, message: null, isSubmitting: false });
 
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
@@ -67,7 +65,7 @@ const Home = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                    setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -76,66 +74,6 @@ const Home = () => {
             )
             .subscribe();
     }, []);
-
-    /**
-     * Ouverture/fermeture de la modale de création d'édition
-     */
-    const openCloseEditionModal = (openAction) => {
-        // Ouverture ou fermeture
-        setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition();
-    };
-
-    /**
-     * Création
-     */
-    const handleSubmit = () => {
-        setMessageModalEdition(null);
-        setMessagePage(null);
-        setIsSubmitting(true);
-
-        const editionsService = new EditionsService();
-
-        editionsService
-            .createEdition(formEdition)
-            .pipe(
-                map((dataEdition) => {
-                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
-                }),
-                switchMap(() => editionsService.getAllEditions()),
-                map((dataEditions) => {
-                    groupByYear(dataEditions.response.data);
-                    openCloseEditionModal('');
-                    resetFormEdition();
-                    setEditionsByYear([]);
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalEdition({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmitting(false);
-                })
-            )
-            .subscribe();
-    };
-
-    /**
-     * Réinitialisation formulaire (création)
-     */
-    const resetFormEdition = () => {
-        setFormEdition({
-            location: '',
-            startDate: '',
-            startTime: '',
-            endTime: '',
-            theme: '',
-            challenge: ''
-        });
-    };
 
     /**
      * Regroupe par année les éditions et trie
@@ -186,6 +124,74 @@ const Home = () => {
         setEditionsByYear([]);
     };
 
+    /**
+     * Ouverture/fermeture de la modale de création d'édition
+     */
+    const openCloseEditionModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsEdition((prev) => ({
+            ...prev,
+            action: openAction,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsEdition.isOpen && resetFormEdition();
+    };
+
+    /**
+     * Création édition
+     */
+    const handleSubmit = () => {
+        setMessage(null);
+        setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
+        const editionsService = new EditionsService();
+
+        editionsService
+            .createEdition(formEdition)
+            .pipe(
+                map((dataEdition) => {
+                    setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
+                }),
+                switchMap(() => editionsService.getAllEditions()),
+                map((dataEditions) => {
+                    groupByYear(dataEditions.response.data);
+                    openCloseEditionModal('');
+                    resetFormEdition();
+                    setEditionsByYear([]);
+                }),
+                take(1),
+                catchError((err) => {
+                    setModalOptionsEdition((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
+                    return of();
+                }),
+                finalize(() => {
+                    setModalOptionsEdition((prev) => ({ ...prev, isSubmitting: false }));
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Réinitialisation formulaire (création édition)
+     */
+    const resetFormEdition = () => {
+        setFormEdition({
+            location: '',
+            startDate: '',
+            startTime: '',
+            endTime: '',
+            theme: '',
+            challenge: ''
+        });
+    };
+
     return (
         <>
             {isLoading ? (
@@ -195,9 +201,7 @@ const Home = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && (
-                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
-                    )}
+                    {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                     {/* Titre */}
                     <h1>
@@ -259,11 +263,9 @@ const Home = () => {
                             formData={formEdition}
                             setFormData={setFormEdition}
                             modalOptions={modalOptionsEdition}
-                            message={messageModalEdition}
-                            setMessage={setMessageModalEdition}
+                            setModalOptions={setModalOptionsEdition}
                             onClose={openCloseEditionModal}
                             onSubmit={handleSubmit}
-                            isSubmitting={isSubmitting}
                         />
                     )}
                 </>

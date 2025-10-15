@@ -9,7 +9,7 @@ import globals from 'globals';
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
     {
-        ignores: ['build/**'],
+        ignores: ['build/**']
     },
     js.configs.recommended,
     {
@@ -26,24 +26,24 @@ export default [
                 beforeEach: 'readonly',
                 afterEach: 'readonly',
                 it: 'readonly',
-                process: 'readonly',
+                process: 'readonly'
             },
             parserOptions: {
                 ecmaFeatures: {
-                    jsx: true,
-                },
-            },
+                    jsx: true
+                }
+            }
         },
         plugins: {
             react,
             'react-hooks': reactHooks,
             'simple-import-sort': simpleImportSort,
-            prettier,
+            prettier
         },
         settings: {
             react: {
-                version: 'detect',
-            },
+                version: 'detect'
+            }
         },
         rules: {
             // Règles React
@@ -64,13 +64,6 @@ export default [
             // Règles personnalisées
             quotes: ['error', 'single'],
             semi: 'error',
-            indent: [
-                'error',
-                4,
-                {
-                    SwitchCase: 1,
-                },
-            ],
             'simple-import-sort/imports': [
                 'error',
                 {
@@ -84,18 +77,18 @@ export default [
                         ['enum'],
                         ['rxjs'],
                         ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-                        ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-                    ],
-                },
+                        ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$']
+                    ]
+                }
             ],
             'prettier/prettier': [
                 'error',
                 {
                     singleQuote: true,
                     tabWidth: 4,
-                    endOfLine: 'lf',
-                },
-            ],
-        },
-    },
+                    endOfLine: 'lf'
+                }
+            ]
+        }
+    }
 ];

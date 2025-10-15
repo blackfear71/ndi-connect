@@ -15,7 +15,7 @@ import './EditionGifts.css';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -30,6 +30,7 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmit
     const showGiftModal = (gift, action) => {
         if (gift) {
             setFormData({
+                ...formData,
                 id: gift.id,
                 name: gift.name,
                 value: gift.value,
@@ -37,10 +38,11 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmit
             });
         }
 
-        setModalOptions({
+        setModalOptions((prev) => ({
+            ...prev,
             action: action,
-            isOpen: true
-        });
+            isOpen: !prev.isOpen
+        }));
     };
 
     /**

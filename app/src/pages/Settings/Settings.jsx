@@ -55,11 +55,15 @@ const Settings = () => {
     });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
-    const [messageModalUpdateUser, setMessageModalUpdateUser] = useState(null);
-    const [messagePage, setMessagePage] = useState(null);
-    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', data: null, isOpen: false });
-    const [modalOptionsUpdateUser, setModalOptionsUpdateUser] = useState({ isOpen: false });
+    const [message, setMessage] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
+        content: '',
+        data: null,
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsUpdateUser, setModalOptionsUpdateUser] = useState({ isOpen: false, message: null, isSubmitting: false });
     const [showCreateUserForm, setShowCreateUserForm] = useState(false);
     const [showPasswordForm, setShowPasswordForm] = useState(false);
 
@@ -84,7 +88,7 @@ const Settings = () => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                        setMessage({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {
@@ -146,7 +150,7 @@ const Settings = () => {
      * Modification du mot de passe
      */
     const handleSubmitPassword = () => {
-        setMessagePage(null);
+        setMessage(null);
         setIsSubmitting(true);
 
         const usersService = new UsersService();
@@ -158,11 +162,11 @@ const Settings = () => {
                 map(([dataUsers]) => {
                     showHidePasswordForm();
                     resetFormPassword();
-                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                    setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                    setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -194,7 +198,7 @@ const Settings = () => {
      * Création d'un utilisateur
      */
     const handleSubmitCreateUser = () => {
-        setMessagePage(null);
+        setMessage(null);
         setIsSubmitting(true);
 
         const usersService = new UsersService();
@@ -203,7 +207,7 @@ const Settings = () => {
             .createUser(formCreateUser)
             .pipe(
                 map((dataUser) => {
-                    setMessagePage({ code: dataUser.response.message, type: dataUser.response.status });
+                    setMessage({ code: dataUser.response.message, type: dataUser.response.status });
                 }),
                 switchMap(() => usersService.getAllUsers()),
                 map((dataUsers) => {
@@ -213,7 +217,7 @@ const Settings = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                    setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -236,13 +240,28 @@ const Settings = () => {
     };
 
     /**
+     * Ouverture/fermeture de la modale de modification d'utilisateur
+     */
+    const openCloseUpdateUserModal = () => {
+        // Ouverture ou fermeture
+        setModalOptionsUpdateUser((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsUpdateUser.isOpen && resetFormUpdateUser();
+    };
+
+    /**
      * Réinitialisation du mot de passe
      * @param {*} id Identifiant utilisateur
      */
     const handleResetPassword = (id) => {
-        setMessageModalUpdateUser(null);
-        setMessagePage(null);
-        setIsSubmitting(true);
+        setMessage(null);
+        setModalOptionsUpdateUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -251,33 +270,28 @@ const Settings = () => {
         combineLatest([subscriptionUsers])
             .pipe(
                 map(([dataUsers]) => {
-                    setMessageModalUpdateUser({
-                        code: dataUsers.response.message,
-                        params: { password: dataUsers.response.data },
-                        type: dataUsers.response.status
-                    });
+                    setModalOptionsUpdateUser((prev) => ({
+                        ...prev,
+                        message: {
+                            code: dataUsers.response.message,
+                            params: { password: dataUsers.response.data },
+                            type: dataUsers.response.status
+                        }
+                    }));
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModalUpdateUser({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsUpdateUser((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmitting(false);
+                    setModalOptionsUpdateUser((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
-    };
-
-    /**
-     * Ouverture/fermeture de la modale de modification d'utilisateur
-     */
-    const openCloseUpdateUserModal = () => {
-        // Ouverture ou fermeture
-        setModalOptionsUpdateUser({ isOpen: !modalOptionsUpdateUser.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsUpdateUser.isOpen && resetFormUpdateUser();
     };
 
     /**
@@ -294,9 +308,8 @@ const Settings = () => {
      * Modification d'un utilisateur
      */
     const handleSubmitUpdateUser = () => {
-        setMessageModalUpdateUser(null);
-        setMessagePage(null);
-        setIsSubmitting(true);
+        setMessage(null);
+        setModalOptionsUpdateUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -305,17 +318,20 @@ const Settings = () => {
         combineLatest([subscriptionUsers])
             .pipe(
                 map(([dataUsers]) => {
-                    openCloseUpdateUserModal('');
+                    openCloseUpdateUserModal();
                     setUsers(dataUsers.response.data);
-                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                    setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModalUpdateUser({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsUpdateUser((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmitting(false);
+                    setModalOptionsUpdateUser((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
@@ -330,13 +346,17 @@ const Settings = () => {
             setModalOptionsConfirm({
                 content: confirmOptions.content,
                 data: confirmOptions.data,
-                isOpen: !modalOptionsConfirm.isOpen
+                isOpen: !modalOptionsConfirm.isOpen,
+                message: null,
+                isSubmitting: false
             });
         } else {
             setModalOptionsConfirm({
                 content: '',
                 data: null,
-                isOpen: false
+                isOpen: false,
+                message: null,
+                isSubmitting: false
             });
         }
     };
@@ -345,9 +365,8 @@ const Settings = () => {
      * Suppression d'un utilisateur
      */
     const handleDeleteUser = () => {
-        setMessageModalConfirm(null);
-        setMessagePage(null);
-        setIsSubmitting(true);
+        setMessage(null);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -358,15 +377,15 @@ const Settings = () => {
                 map(([dataUsers]) => {
                     openCloseConfirmModal();
                     setUsers(dataUsers.response.data);
-                    setMessagePage({ code: dataUsers.response.message, type: dataUsers.response.status });
+                    setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsConfirm((prev) => ({ ...prev, message: { code: err?.response?.message, type: err?.response?.status } }));
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmitting(false);
+                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
@@ -381,9 +400,7 @@ const Settings = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && (
-                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
-                    )}
+                    {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                     {/* Paramètres */}
                     {auth.isLoggedIn && (
@@ -396,11 +413,11 @@ const Settings = () => {
                             {/* Gestion mot de passe */}
                             <div className="settings-form mt-3">
                                 <SettingsPassword
-                                    formPassword={formPassword}
-                                    setFormPassword={setFormPassword}
+                                    formData={formPassword}
+                                    setFormData={setFormPassword}
                                     showForm={showPasswordForm}
                                     showFormMethod={showHidePasswordForm}
-                                    setMessage={setMessagePage}
+                                    setMessage={setMessage}
                                     onSubmit={handleSubmitPassword}
                                     isSubmitting={isSubmitting}
                                 />
@@ -416,7 +433,7 @@ const Settings = () => {
                                             setFormData={setFormCreateUser}
                                             showForm={showCreateUserForm}
                                             showFormMethod={showHideCreateUserForm}
-                                            setMessage={setMessagePage}
+                                            setMessage={setMessage}
                                             onSubmit={handleSubmitCreateUser}
                                             isSubmitting={isSubmitting}
                                         />
@@ -427,11 +444,11 @@ const Settings = () => {
                                         <SettingsUsers
                                             login={auth.login}
                                             users={users}
-                                            formUpdateUser={formUpdateUser}
-                                            setFormUpdateUser={setFormUpdateUser}
-                                            setModalOptionsUpdateUser={setModalOptionsUpdateUser}
+                                            formData={formUpdateUser}
+                                            setFormData={setFormUpdateUser}
+                                            modalOptions={modalOptionsUpdateUser}
+                                            setModalOptions={setModalOptionsUpdateUser}
                                             onConfirm={openCloseConfirmModal}
-                                            isSubmitting={isSubmitting}
                                         />
                                     </div>
                                 </>
@@ -447,12 +464,10 @@ const Settings = () => {
                             formData={formUpdateUser}
                             setFormData={setFormUpdateUser}
                             modalOptions={modalOptionsUpdateUser}
-                            message={messageModalUpdateUser}
-                            setMessage={setMessageModalUpdateUser}
+                            setModalOptions={setModalOptionsUpdateUser}
                             onReset={handleResetPassword}
                             onClose={openCloseUpdateUserModal}
                             onSubmit={handleSubmitUpdateUser}
-                            isSubmitting={isSubmitting}
                         />
                     )}
 
@@ -460,11 +475,9 @@ const Settings = () => {
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}
-                            message={messageModalConfirm}
-                            setMessage={setMessageModalConfirm}
+                            setModalOptions={setModalOptionsConfirm}
                             onClose={openCloseConfirmModal}
                             onConfirmAction={handleDeleteUser}
-                            isSubmitting={isSubmitting}
                         />
                     )}
                 </>

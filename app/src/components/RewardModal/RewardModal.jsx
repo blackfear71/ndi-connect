@@ -12,19 +12,7 @@ import Message from '../Message/Message';
 
 import './RewardModal.css';
 
-const RewardModal = ({
-    player,
-    gifts,
-    formData,
-    setFormData,
-    modalOptions,
-    message,
-    setMessage,
-    onClose,
-    onSubmit,
-    onConfirm,
-    isSubmitting
-}) => {
+const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, onConfirm }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -43,6 +31,14 @@ const RewardModal = ({
             setMessage(null);
         }
     }, [modalOptions?.isOpen]);
+
+    /**
+     * Définit le message affiché
+     * @param {*} message Message à afficher
+     */
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
+    };
 
     /**
      * Met à jour le formulaire à la saisie
@@ -99,7 +95,7 @@ const RewardModal = ({
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
+            <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -109,7 +105,14 @@ const RewardModal = ({
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
+                        {modalOptions.message && (
+                            <Message
+                                code={modalOptions.message.code}
+                                params={modalOptions.message.params}
+                                type={modalOptions.message.type}
+                                setMessage={setMessage}
+                            />
+                        )}
 
                         {/* Attribuer un cadeau / Informations */}
                         <div className="modal-section-title">
@@ -169,7 +172,10 @@ const RewardModal = ({
                                     <div key={r.id} className="d-flex align-items-center gap-2">
                                         <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
                                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                                            <Button onClick={isSubmitting ? null : () => handleDelete(r)} className="reward-modal-button">
+                                            <Button
+                                                onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
+                                                className="reward-modal-button"
+                                            >
                                                 <FaTrashCan />
                                             </Button>
                                         )}
@@ -188,7 +194,7 @@ const RewardModal = ({
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && obtainableGifts.length > 0 && (
                             <Button type="submit" variant="primary">
                                 {t('common.validate')}
-                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         )}
                     </Modal.Footer>

@@ -8,19 +8,7 @@ import Message from '../Message/Message';
 
 import './SettingsModal.css';
 
-const SettingsModal = ({
-    user,
-    getUserRole,
-    formData,
-    setFormData,
-    modalOptions,
-    message,
-    setMessage,
-    onReset,
-    onClose,
-    onSubmit,
-    isSubmitting
-}) => {
+const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -33,6 +21,14 @@ const SettingsModal = ({
             setMessage(null);
         }
     }, [modalOptions?.isOpen]);
+
+    /**
+     * Définit le message affiché
+     * @param {*} message Message à afficher
+     */
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
+    };
 
     /**
      * Met à jour le formulaire à la saisie
@@ -65,7 +61,7 @@ const SettingsModal = ({
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
+            <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event)}>
                     <Modal.Header closeButton>
                         <Modal.Title>{t('settings.manageUser')}</Modal.Title>
@@ -73,7 +69,14 @@ const SettingsModal = ({
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
+                        {modalOptions.message && (
+                            <Message
+                                code={modalOptions.message.code}
+                                params={modalOptions.message.params}
+                                type={modalOptions.message.type}
+                                setMessage={setMessage}
+                            />
+                        )}
 
                         {/* Utilisateur */}
                         <div className="settings-modal-badges">
@@ -107,6 +110,7 @@ const SettingsModal = ({
 
                         <Button type="button" className="settings-button mt-2" onClick={() => onReset(user.id)}>
                             {t('settings.resetPassword')}
+                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Body>
 
@@ -116,7 +120,7 @@ const SettingsModal = ({
                         </Button>
                         <Button type="submit" variant="primary">
                             {t('common.validate')}
-                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Footer>
                 </Form>

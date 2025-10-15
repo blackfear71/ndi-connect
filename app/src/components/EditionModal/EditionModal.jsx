@@ -10,7 +10,7 @@ import { WiTime4, WiTime8 } from 'react-icons/wi';
 
 import Message from '../Message/Message';
 
-const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -31,7 +31,15 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     }, [modalOptions?.isOpen]);
 
     /**
-     * Met à jour le formulaire à la saisie (création)
+     * Définit le message affiché
+     * @param {*} message Message à afficher
+     */
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
+    };
+
+    /**
+     * Met à jour le formulaire à la saisie
      * @param {*} e Evènement
      */
     const handleChange = (e) => {
@@ -40,7 +48,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
     };
 
     /**
-     * Gère le comportement du formulaire
+     * Gère le comportement du formulaire à la soumission
      * @param {*} e Evènement
      */
     const handleSubmit = (e) => {
@@ -98,7 +106,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
+            <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>{t(getTitleFromAction(modalOptions.action))}</Modal.Title>
@@ -106,7 +114,14 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
+                        {modalOptions.message && (
+                            <Message
+                                code={modalOptions.message.code}
+                                params={modalOptions.message.params}
+                                type={modalOptions.message.type}
+                                setMessage={setMessage}
+                            />
+                        )}
 
                         {/* Lieu */}
                         <Form.Group className="d-flex align-items-center" controlId="location">
@@ -171,7 +186,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, message, setMessage
                         </Button>
                         <Button type="submit" variant="primary">
                             {t(getButtonFromAction(modalOptions.action))}
-                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                         </Button>
                     </Modal.Footer>
                 </Form>

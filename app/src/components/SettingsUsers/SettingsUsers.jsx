@@ -8,9 +8,9 @@ import UserRole from '../../enums/UserRole';
 import './SettingsUsers.css';
 
 /**
- * Liste des participants
+ * Gestion des utilisateurs
  */
-const SettingsUsers = ({ login, users, formUpdateUser, setFormUpdateUser, setModalOptionsUpdateUser, onConfirm, isSubmitting }) => {
+const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setModalOptions, onConfirm }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -50,16 +50,17 @@ const SettingsUsers = ({ login, users, formUpdateUser, setFormUpdateUser, setMod
      */
     const showUpdateUserModal = (user) => {
         if (user) {
-            setFormUpdateUser({
-                ...formUpdateUser,
+            setFormData({
+                ...formData,
                 id: user.id,
                 level: user.level
             });
-        }
 
-        setModalOptionsUpdateUser({
-            isOpen: true
-        });
+            setModalOptions((prev) => ({
+                ...prev,
+                isOpen: !prev.isOpen
+            }));
+        }
     };
 
     return (
@@ -80,21 +81,21 @@ const SettingsUsers = ({ login, users, formUpdateUser, setFormUpdateUser, setMod
                         {/* Supression */}
                         {(u.level !== UserRole.SUPERADMIN || u.login !== login) && (
                             <Button
-                                onClick={isSubmitting ? null : () => handleDelete(u)}
+                                onClick={modalOptions.isSubmitting ? null : () => handleDelete(u)}
                                 className="settings-users-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                                style={{ cursor: modalOptions.isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
-                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                                <FaTrashCan color={modalOptions.isSubmitting ? 'gray' : 'white'} />
                             </Button>
                         )}
 
                         {/* Modification */}
                         <Button
-                            onClick={isSubmitting ? null : () => showUpdateUserModal(u)}
+                            onClick={modalOptions.isSubmitting ? null : () => showUpdateUserModal(u)}
                             className="settings-users-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            style={{ cursor: modalOptions.isSubmitting ? 'not-allowed' : 'pointer' }}
                         >
-                            <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
+                            <FaAngleRight color={modalOptions.isSubmitting ? 'gray' : 'white'} />
                         </Button>
                     </div>
                 ))

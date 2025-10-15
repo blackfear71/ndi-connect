@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './PasswordInput.css';
 
 /**
- * Liste des participants
+ * Saisie de mot de passe
  */
 const PasswordInput = ({ ref = null, name, placeholder, value, handleChange }) => {
     // Local states

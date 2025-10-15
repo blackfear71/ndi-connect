@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import PasswordInput from '../PasswordInput/PasswordInput';
 
 /**
- * Liste des participants
+ * Modification de mot de passe
  */
-const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
+const SettingsPassword = ({ formData, setFormData, showForm, showFormMethod, setMessage, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
      */
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormPassword((prev) => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     /**
@@ -40,19 +40,19 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
         e.preventDefault();
 
         // Contrôle que les mots de passe sont renseignés
-        if (!formPassword.oldPassword || !formPassword.newPassword || !formPassword.confirmPassword) {
+        if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
             setMessage({ code: 'errors.invalidPassword', type: 'error' });
             return;
         }
 
         // Contrôle que le nouveau mot de passe est différent de l'ancien
-        if (formPassword.oldPassword === formPassword.newPassword) {
+        if (formData.oldPassword === formData.newPassword) {
             setMessage({ code: 'errors.passwordIdentical', type: 'error' });
             return;
         }
 
         // Contrôle que les nouveaux mots de passe correspondent
-        if (formPassword.newPassword !== formPassword.confirmPassword) {
+        if (formData.newPassword !== formData.confirmPassword) {
             setMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
@@ -78,19 +78,19 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
                             ref={passwordInputRef}
                             name={'oldPassword'}
                             placeholder={t('settings.oldPassword')}
-                            value={formPassword.oldPassword}
+                            value={formData.oldPassword}
                             handleChange={handleChange}
                         />
                         <PasswordInput
                             name={'newPassword'}
                             placeholder={t('settings.newPassword')}
-                            value={formPassword.newPassword}
+                            value={formData.newPassword}
                             handleChange={handleChange}
                         />
                         <PasswordInput
                             name={'confirmPassword'}
                             placeholder={t('settings.confirmPassword')}
-                            value={formPassword.confirmPassword}
+                            value={formData.confirmPassword}
                             handleChange={handleChange}
                         />
                         <div className="d-flex align-items-center mt-2">
@@ -99,6 +99,7 @@ const SettingsPassword = ({ formPassword, setFormPassword, showForm, showFormMet
                             </Button>
                             <Button type="submit" className="settings-button">
                                 {t('common.validate')}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         </div>
                     </Form>

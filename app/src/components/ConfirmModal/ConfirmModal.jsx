@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import Message from '../Message/Message';
 
-const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAction, isSubmitting }) => {
+const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -18,6 +18,14 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAct
             setMessage(null);
         }
     }, [modalOptions?.isOpen]);
+
+    /**
+     * Définit le message affiché
+     * @param {*} message Message à afficher
+     */
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
+    };
 
     /**
      * Gère le comportement du formulaire à la soumission
@@ -33,7 +41,7 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAct
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
+            <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>{t('common.confirm')}</Modal.Title>
@@ -41,7 +49,14 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAct
 
                     <Modal.Body>
                         {/* Message */}
-                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
+                        {modalOptions.message && (
+                            <Message
+                                code={modalOptions.message.code}
+                                params={modalOptions.message.params}
+                                type={modalOptions.message.type}
+                                setMessage={setMessage}
+                            />
+                        )}
 
                         {/* Contenu */}
                         {modalOptions.content}
@@ -54,7 +69,7 @@ const ConfirmModal = ({ modalOptions, message, setMessage, onClose, onConfirmAct
                         {onConfirmAction && (
                             <Button type="submit" variant="primary">
                                 {t('common.validate')}
-                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         )}
                     </Modal.Footer>

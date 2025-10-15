@@ -1,14 +1,11 @@
-import { useTranslation } from 'react-i18next';
-
 /**
- * Fonction de conversion des messages back vers front
+ * Fonction de conversion des messages back vers front ou erreur inconnue
  * @param {*} code Code du message back
- * @returns Code du message front
+ * @param {*} params Paramètres optionnels du message back
+ * @param {*} t Méthode de traduction
+ * @returns Message front convertit
  */
-export const getMessageTranslationKey = (code, params) => {
-    // Traductions
-    const { t } = useTranslation();
-
+export const getMessageTranslationKey = (code, params, t) => {
     // Mapping des messages entre BACK et FRONT
     const map = {
         ERR_CREATION_FAILED: 'errors.creationFailed',
@@ -30,5 +27,6 @@ export const getMessageTranslationKey = (code, params) => {
         MSG_UPDATE_SUCCESS: 'messages.updateSuccess'
     };
 
-    return t(map[code], params || {});
+    // Retourne la traduction
+    return t(map[code] || 'errors.unknownError', params || {});
 };

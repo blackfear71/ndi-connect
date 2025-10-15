@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import { Badge, Button, Form } from 'react-bootstrap';
+import { Badge, Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
@@ -108,10 +108,11 @@ const EditionPlayers = ({
             });
         }
 
-        setModalOptionsPlayer({
+        setModalOptionsPlayer((prev) => ({
+            ...prev,
             action: action,
-            isOpen: true
-        });
+            isOpen: !prev.isOpen
+        }));
     };
 
     /**
@@ -128,9 +129,10 @@ const EditionPlayers = ({
             });
         }
 
-        setModalOptionsReward({
-            isOpen: true
-        });
+        setModalOptionsReward((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen
+        }));
     };
 
     /**
@@ -176,7 +178,7 @@ const EditionPlayers = ({
                                     <FaTimes />
                                 </Button>
                                 <Button type="submit" className="edition-players-button">
-                                    <FaCheck />
+                                    {isSubmitting ? <Spinner animation="border" role="status" variant="light" size="sm" /> : <FaCheck />}
                                 </Button>
                             </Form>
                         </fieldset>

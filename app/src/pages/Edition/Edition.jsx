@@ -72,22 +72,35 @@ const Edition = () => {
         idGift: 0
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
-    const [isSubmittingEdition, setIsSubmittingEdition] = useState(false);
-    const [isSubmittingGift, setIsSubmittingGift] = useState(false);
-    const [isSubmittingPlayer, setIsSubmittingPlayer] = useState(false);
-    const [isSubmittingReward, setIsSubmittingReward] = useState(false);
-    const [messageModalConfirm, setMessageModalConfirm] = useState(null);
-    const [messageModalEdition, setMessageModalEdition] = useState(null);
-    const [messageModalGift, setMessageModalGift] = useState(null);
-    const [messageModalPlayer, setMessageModalPlayer] = useState(null);
-    const [messageModalReward, setMessageModalReward] = useState(null);
-    const [messagePage, setMessagePage] = useState(null);
-    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({ content: '', action: '', data: null, isOpen: false });
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false });
-    const [modalOptionsGift, setModalOptionsGift] = useState({ action: '', isOpen: false });
-    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({ action: '', isOpen: false });
-    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [message, setMessage] = useState(null);
+    const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
+        content: '',
+        action: '',
+        data: null,
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({
+        action: '',
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsGift, setModalOptionsGift] = useState({
+        action: '',
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsPlayer, setModalOptionsPlayer] = useState({
+        action: '',
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false, message: null, isSubmitting: false });
     const [showActions, setShowActions] = useState(true);
 
     // API states
@@ -123,7 +136,7 @@ const Edition = () => {
                 take(1),
                 catchError((err) => {
                     setShowActions(false);
-                    setMessagePage({ code: err?.response?.message, type: err?.response?.status });
+                    setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -134,19 +147,28 @@ const Edition = () => {
     }, [id]);
 
     /**
-     * Contrôle soumission en cours
+     * Ouverture/fermeture de la modale de modification d'édition
      */
-    const isSubmitting = useMemo(() => {
-        return isSubmittingConfirm || isSubmittingEdition || isSubmittingGift || isSubmittingPlayer || isSubmittingReward;
-    }, [isSubmittingConfirm, isSubmittingEdition, isSubmittingGift, isSubmittingPlayer, isSubmittingReward]);
+    const openCloseEditionModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsEdition((prev) => ({
+            ...prev,
+            action: openAction,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
+
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsEdition.isOpen && resetFormEdition(edition);
+    };
 
     /**
      * Modification de l'édition
      */
     const handleSubmitEdition = () => {
-        setMessageModalEdition(null);
-        setMessagePage(null);
-        setIsSubmittingEdition(true);
+        setMessage(null);
+        setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const editionsService = new EditionsService();
 
@@ -159,29 +181,21 @@ const Edition = () => {
                     openCloseEditionModal('');
                     resetFormEdition(dataEdition.response.data.edition);
                     setEdition(dataEdition.response.data.edition);
-                    setMessagePage({ code: dataEdition.response.message, type: dataEdition.response.status });
+                    setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModalEdition({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsEdition((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmittingEdition(false);
+                    setModalOptionsEdition((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
-    };
-
-    /**
-     * Ouverture/fermeture de la modale de modification d'édition
-     */
-    const openCloseEditionModal = (openAction) => {
-        // Ouverture ou fermeture
-        setModalOptionsEdition({ action: openAction, isOpen: !modalOptionsEdition.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition(edition);
     };
 
     /**
@@ -199,57 +213,27 @@ const Edition = () => {
     };
 
     /**
-     * Ouvre la modale de suppression d'édition
+     * Ouverture/fermeture de la modale de modification de participant
      */
-    const handleConfirmEdition = () => {
-        // Ouverture de la modale de confirmation
-        openCloseConfirmModal({
-            content: t('edition.deleteEdition', { year: new Date(edition.startDate).getFullYear(), location: edition.location }),
-            action: 'deleteEdition',
-            data: null
-        });
-    };
+    const openClosePlayerModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsPlayer((prev) => ({
+            ...prev,
+            action: openAction,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
 
-    /**
-     * Suppression de l'édition
-     */
-    const handleDeleteEdition = () => {
-        setMessageModalConfirm(null);
-        setMessagePage(null);
-        setIsSubmittingConfirm(true);
-
-        const editionsService = new EditionsService();
-
-        const subscriptionEdition = editionsService.deleteEdition(edition.id);
-
-        combineLatest([subscriptionEdition])
-            .pipe(
-                map(() => {
-                    // Fermeture modale de confirmation
-                    openCloseConfirmModal();
-
-                    // Redirection
-                    navigate('/');
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingConfirm(false);
-                })
-            )
-            .subscribe();
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsPlayer.isOpen && resetFormPlayer();
     };
 
     /**
      * Création ou modification d'un participant
      */
     const handleSubmitPlayer = (action) => {
-        setMessageModalPlayer(null);
-        setMessagePage(null);
-        setIsSubmittingPlayer(true);
+        setMessage(null);
 
         const playersService = new PlayersService();
 
@@ -257,6 +241,8 @@ const Edition = () => {
 
         switch (action) {
             case 'create':
+                setIsSubmitting(true);
+
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
                     id_edition: edition.id,
                     name: formPlayer.name,
@@ -264,6 +250,8 @@ const Edition = () => {
                 });
                 break;
             case 'update':
+                setModalOptionsPlayer((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
                 subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
                     name: formPlayer.name,
                     delta: formPlayer.delta,
@@ -277,34 +265,26 @@ const Edition = () => {
             combineLatest([subscriptionPlayers])
                 .pipe(
                     map(([dataPlayers]) => {
-                        action === 'create' ? resetFormPlayer() : openClosePlayerModal('');
+                        action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
                         setPlayers(dataPlayers.response.data);
-                        setMessagePage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+                        setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                     }),
                     take(1),
                     catchError((err) => {
-                        action === 'create'
-                            ? setMessagePage({ code: err?.response?.message, type: err?.response?.status })
-                            : setMessageModalPlayer({ code: err?.response?.message, type: err?.response?.status });
+                        action === 'update'
+                            ? setModalOptionsPlayer((prev) => ({
+                                  ...prev,
+                                  message: { code: err?.response?.message, type: err?.response?.status }
+                              }))
+                            : setMessage({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {
-                        setIsSubmittingPlayer(false);
+                        action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
                     })
                 )
                 .subscribe();
         }
-    };
-
-    /**
-     * Ouverture/fermeture de la modale de modification de participant
-     */
-    const openClosePlayerModal = (openAction) => {
-        // Ouverture ou fermeture
-        setModalOptionsPlayer({ action: openAction, isOpen: !modalOptionsPlayer.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsPlayer.isOpen && resetFormPlayer();
     };
 
     /**
@@ -321,43 +301,27 @@ const Edition = () => {
     };
 
     /**
-     * Suppression d'un participant
+     * Ouverture/fermeture de la modale de modification de cadeau
      */
-    const handleDeletePlayer = (idPlayer) => {
-        setMessageModalConfirm(null);
-        setMessagePage(null);
-        setIsSubmittingConfirm(true);
+    const openCloseGiftModal = (openAction) => {
+        // Ouverture ou fermeture
+        setModalOptionsGift((prev) => ({
+            ...prev,
+            action: openAction,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
 
-        const playersService = new PlayersService();
-
-        const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
-
-        combineLatest([subscriptionPlayers])
-            .pipe(
-                map(([dataPlayers]) => {
-                    openCloseConfirmModal();
-                    setPlayers(dataPlayers.response.data);
-                    setMessagePage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingConfirm(false);
-                })
-            )
-            .subscribe();
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsGift.isOpen && resetFormGift();
     };
 
     /**
      * Création ou modification d'un cadeau
      */
     const handleSubmitGift = (action) => {
-        setMessageModalGift(null);
-        setMessagePage(null);
-        setIsSubmittingGift(true);
+        setMessage(null);
 
         const giftsService = new GiftsService();
 
@@ -365,6 +329,8 @@ const Edition = () => {
 
         switch (action) {
             case 'create':
+                setIsSubmitting(true);
+
                 subscriptionGifts = giftsService.createGift(edition.id, {
                     id_edition: edition.id,
                     name: formGift.name,
@@ -373,6 +339,8 @@ const Edition = () => {
                 });
                 break;
             case 'update':
+                setModalOptionsGift((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
                 subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
                     name: formGift.name,
                     value: formGift.value,
@@ -388,30 +356,24 @@ const Edition = () => {
                         openCloseGiftModal('');
                         resetFormGift();
                         setGifts(dataGifts.response.data);
-                        setMessagePage({ code: dataGifts.response.message, type: dataGifts.response.status });
+                        setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                     }),
                     take(1),
                     catchError((err) => {
-                        setMessageModalGift({ code: err?.response?.message, type: err?.response?.status });
+                        action === 'update'
+                            ? setModalOptionsGift((prev) => ({
+                                  ...prev,
+                                  message: { code: err?.response?.message, type: err?.response?.status }
+                              }))
+                            : setMessage({ code: err?.response?.message, type: err?.response?.status });
                         return of();
                     }),
                     finalize(() => {
-                        setIsSubmittingGift(false);
+                        action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
                     })
                 )
                 .subscribe();
         }
-    };
-
-    /**
-     * Ouverture/fermeture de la modale de modification de cadeau
-     */
-    const openCloseGiftModal = (openAction) => {
-        // Ouverture ou fermeture
-        setModalOptionsGift({ action: openAction, isOpen: !modalOptionsGift.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsGift.isOpen && resetFormGift();
     };
 
     /**
@@ -427,43 +389,27 @@ const Edition = () => {
     };
 
     /**
-     * Suppression d'un cadeau
+     * Ouverture/fermeture de la modale d'attribution de cadeau
      */
-    const handleDeleteGift = (idGift) => {
-        setMessageModalConfirm(null);
-        setMessagePage(null);
-        setIsSubmittingConfirm(true);
+    const openCloseRewardModal = () => {
+        // Ouverture ou fermeture
+        setModalOptionsReward((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
 
-        const giftsService = new GiftsService();
-
-        const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
-
-        combineLatest([subscriptionGifts])
-            .pipe(
-                map(([dataGifts]) => {
-                    openCloseConfirmModal();
-                    setGifts(dataGifts.response.data);
-                    setMessagePage({ code: dataGifts.response.message, type: dataGifts.response.status });
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingConfirm(false);
-                })
-            )
-            .subscribe();
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsReward.isOpen && resetFormReward();
     };
 
     /**
      * Attribution d'un cadeau à un participant
      */
     const handleSubmitReward = () => {
-        setMessageModalReward(null);
-        setMessagePage(null);
-        setIsSubmittingReward(true);
+        setMessage(null);
+        setModalOptionsReward((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const rewardsService = new RewardsService();
 
@@ -475,29 +421,21 @@ const Edition = () => {
                     openCloseRewardModal();
                     setGifts(dataRewards.response.data.gifts);
                     setPlayers(dataRewards.response.data.players);
-                    setMessagePage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                    setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessageModalReward({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsReward((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    setIsSubmittingReward(false);
+                    setModalOptionsReward((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
-    };
-
-    /**
-     * Ouverture/fermeture de la modale d'attribution de cadeau
-     */
-    const openCloseRewardModal = () => {
-        // Ouverture ou fermeture
-        setModalOptionsReward({ isOpen: !modalOptionsReward.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsReward.isOpen && resetFormReward();
     };
 
     /**
@@ -512,38 +450,6 @@ const Edition = () => {
     };
 
     /**
-     * Suppression d'un cadeau d'un participant
-     */
-    const handleDeleteReward = (idReward) => {
-        setMessageModalConfirm(null);
-        setMessagePage(null);
-        setIsSubmittingConfirm(true);
-
-        const rewardsService = new RewardsService();
-
-        const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
-
-        combineLatest([subscriptionRewards])
-            .pipe(
-                map(([dataRewards]) => {
-                    openCloseConfirmModal();
-                    setGifts(dataRewards.response.data.gifts);
-                    setPlayers(dataRewards.response.data.players);
-                    setMessagePage({ code: dataRewards.response.message, type: dataRewards.response.status });
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessageModalConfirm({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmittingConfirm(false);
-                })
-            )
-            .subscribe();
-    };
-
-    /**
      * Ouverture/fermeture de la modale de confirmation
      */
     const openCloseConfirmModal = (confirmOptions) => {
@@ -553,16 +459,35 @@ const Edition = () => {
                 content: confirmOptions.content,
                 action: confirmOptions.action,
                 data: confirmOptions.data,
-                isOpen: !modalOptionsConfirm.isOpen
+                isOpen: !modalOptionsConfirm.isOpen,
+                message: null,
+                isSubmitting: false
             });
         } else {
             setModalOptionsConfirm({
                 content: '',
                 action: '',
                 data: null,
-                isOpen: false
+                isOpen: false,
+                message: null,
+                isSubmitting: false
             });
         }
+    };
+
+    /**
+     * Ouvre la modale de suppression d'édition
+     */
+    const handleConfirmDeleteEdition = () => {
+        // Ouverture de la modale de confirmation
+        openCloseConfirmModal({
+            content: t('edition.deleteEdition', {
+                year: new Date(edition.startDate).getFullYear(),
+                location: edition.location
+            }),
+            action: 'deleteEdition',
+            data: null
+        });
     };
 
     /**
@@ -583,6 +508,141 @@ const Edition = () => {
         }
     };
 
+    /**
+     * Suppression de l'édition
+     */
+    const handleDeleteEdition = () => {
+        setMessage(null);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
+        const editionsService = new EditionsService();
+
+        const subscriptionEdition = editionsService.deleteEdition(edition.id);
+
+        combineLatest([subscriptionEdition])
+            .pipe(
+                map(() => {
+                    // Fermeture modale de confirmation
+                    openCloseConfirmModal();
+
+                    // Redirection
+                    navigate('/');
+                }),
+                take(1),
+                catchError((err) => {
+                    setModalOptionsConfirm((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
+                    return of();
+                }),
+                finalize(() => {
+                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Suppression d'un cadeau
+     */
+    const handleDeleteGift = (idGift) => {
+        setMessage(null);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
+        const giftsService = new GiftsService();
+
+        const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
+
+        combineLatest([subscriptionGifts])
+            .pipe(
+                map(([dataGifts]) => {
+                    openCloseConfirmModal();
+                    setGifts(dataGifts.response.data);
+                    setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setModalOptionsConfirm((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
+                    return of();
+                }),
+                finalize(() => {
+                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Suppression d'un participant
+     */
+    const handleDeletePlayer = (idPlayer) => {
+        setMessage(null);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
+        const playersService = new PlayersService();
+
+        const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
+
+        combineLatest([subscriptionPlayers])
+            .pipe(
+                map(([dataPlayers]) => {
+                    openCloseConfirmModal();
+                    setPlayers(dataPlayers.response.data);
+                    setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setModalOptionsConfirm((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
+                    return of();
+                }),
+                finalize(() => {
+                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Suppression d'un cadeau d'un participant
+     */
+    const handleDeleteReward = (idReward) => {
+        setMessage(null);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+
+        const rewardsService = new RewardsService();
+
+        const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
+
+        combineLatest([subscriptionRewards])
+            .pipe(
+                map(([dataRewards]) => {
+                    openCloseConfirmModal();
+                    setGifts(dataRewards.response.data.gifts);
+                    setPlayers(dataRewards.response.data.players);
+                    setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    setModalOptionsConfirm((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
+                    return of();
+                }),
+                finalize(() => {
+                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                })
+            )
+            .subscribe();
+    };
+
     return (
         <div>
             {isLoading ? (
@@ -592,9 +652,7 @@ const Edition = () => {
             ) : (
                 <>
                     {/* Message */}
-                    {messagePage && (
-                        <Message code={messagePage.code} params={messagePage.params} type={messagePage.type} setMessage={setMessagePage} />
-                    )}
+                    {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                     {/* Actions */}
                     <div className="row g-2 mb-2">
@@ -631,7 +689,7 @@ const Edition = () => {
                                     <Button
                                         variant="outline-action"
                                         size="sm"
-                                        onClick={isSubmitting ? null : () => handleConfirmEdition()}
+                                        onClick={isSubmitting ? null : () => handleConfirmDeleteEdition()}
                                         className="d-flex align-items-center justify-content-center gap-2 w-100 btn-red"
                                     >
                                         <FaTrashCan size={15} className="outline-action-icon" />
@@ -647,7 +705,10 @@ const Edition = () => {
                         <div>
                             <h1>
                                 <FaComputer size={30} />
-                                {t('edition.editionTitle', { year: new Date(edition.startDate).getFullYear(), location: edition.location })}
+                                {t('edition.editionTitle', {
+                                    year: new Date(edition.startDate).getFullYear(),
+                                    location: edition.location
+                                })}
                             </h1>
                         </div>
                     )}
@@ -665,7 +726,7 @@ const Edition = () => {
                                 formReward={formReward}
                                 setFormReward={setFormReward}
                                 setModalOptionsReward={setModalOptionsReward}
-                                setMessage={setMessagePage}
+                                setMessage={setMessage}
                                 onSubmit={handleSubmitPlayer}
                                 onConfirm={openCloseConfirmModal}
                                 isSubmitting={isSubmitting}
@@ -676,6 +737,7 @@ const Edition = () => {
                         <Tab eventKey="gifts" title={t('edition.gifts')}>
                             <EditionGifts
                                 gifts={gifts}
+                                formData={formGift}
                                 setFormData={setFormGift}
                                 setModalOptions={setModalOptionsGift}
                                 onConfirm={openCloseConfirmModal}
@@ -695,11 +757,9 @@ const Edition = () => {
                             formData={formEdition}
                             setFormData={setFormEdition}
                             modalOptions={modalOptionsEdition}
-                            message={messageModalEdition}
-                            setMessage={setMessageModalEdition}
+                            setModalOptions={setModalOptionsEdition}
                             onClose={openCloseEditionModal}
                             onSubmit={handleSubmitEdition}
-                            isSubmitting={isSubmittingEdition}
                         />
                     )}
 
@@ -710,11 +770,9 @@ const Edition = () => {
                             formData={formGift}
                             setFormData={setFormGift}
                             modalOptions={modalOptionsGift}
-                            message={messageModalGift}
-                            setMessage={setMessageModalGift}
+                            setModalOptions={setModalOptionsGift}
                             onClose={openCloseGiftModal}
                             onSubmit={handleSubmitGift}
-                            isSubmitting={isSubmittingGift}
                         />
                     )}
 
@@ -726,11 +784,9 @@ const Edition = () => {
                             formData={formPlayer}
                             setFormData={setFormPlayer}
                             modalOptions={modalOptionsPlayer}
-                            message={messageModalPlayer}
-                            setMessage={setMessageModalPlayer}
+                            setModalOptions={setModalOptionsPlayer}
                             onClose={openClosePlayerModal}
                             onSubmit={handleSubmitPlayer}
-                            isSubmitting={isSubmittingPlayer}
                         />
                     )}
 
@@ -742,12 +798,10 @@ const Edition = () => {
                             formData={formReward}
                             setFormData={setFormReward}
                             modalOptions={modalOptionsReward}
-                            message={messageModalReward}
-                            setMessage={setMessageModalReward}
+                            setModalOptions={setModalOptionsReward}
                             onClose={openCloseRewardModal}
                             onSubmit={handleSubmitReward}
                             onConfirm={openCloseConfirmModal}
-                            isSubmitting={isSubmittingReward}
                         />
                     )}
 
@@ -755,11 +809,9 @@ const Edition = () => {
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}
-                            message={messageModalConfirm}
-                            setMessage={setMessageModalConfirm}
+                            setModalOptions={setModalOptionsConfirm}
                             onClose={openCloseConfirmModal}
                             onConfirmAction={handleConfirmAction}
-                            isSubmitting={isSubmittingConfirm}
                         />
                     )}
                 </>
