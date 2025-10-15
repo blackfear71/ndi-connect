@@ -189,9 +189,12 @@ class UsersController
             // Insertion d'un enregistrement
             $created = $this->service->createUser($user['login'], $data);
 
-            if ($created) {
+            if ($created === true) {
                 // Succès
                 ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+            } else if ($created === false) {
+                // Alerte
+                ResponseHelper::warning(null, 'MSG_USER_EXISTS', 409);
             } else {
                 // Échec de la création
                 ResponseHelper::error(

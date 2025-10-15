@@ -42,7 +42,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getUserData($data['login']);
+        $user = $this->repository->getActiveUserData($data['login']);
 
         // Contrôle mot de passe incorrect
         if (!$user || !password_verify($data['password'], $user['password'])) {
@@ -80,13 +80,18 @@ class UsersService
         }
 
         // Contrôle login existant
-        if ($this->repository->getUserData($data['login'])) {
-            return null;
+        if ($this->repository->getUserDataByLogin($data['login'])) {
+            return false;
         }
 
         // Insertion
         $data = $this->processDataUser($data);
-        return $this->repository->create($login, $data);
+
+        if ($this->repository->create($login, $data)) {
+            return true;
+        }
+
+        return null;
     }
 
     /**
@@ -94,9 +99,6 @@ class UsersService
      */
     public function resetPassword($login, $id)
     {
-        // Récupération de l'utilisateur
-        $user = $this->repository->getUserData($login);
-
         // Modification
         $newPassword = $this->generatePassword(15);
         $data = $this->processDataPassword($newPassword);
@@ -119,7 +121,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getUserData($login);
+        $user = $this->repository->getActiveUserData($login);
 
         // Contrôle ancien mot de passe incorrect
         if (!$user || !password_verify($data['oldPassword'], $user['password'])) {

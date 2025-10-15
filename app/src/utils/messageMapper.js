@@ -24,7 +24,8 @@ export const getMessageTranslationKey = (code, params, t) => {
         MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
         MSG_RESET_PASSWORD_SUCCESS: 'messages.resetPasswordSuccess',
         MSG_REWARD_SUCCESS: 'messages.rewardSuccess',
-        MSG_UPDATE_SUCCESS: 'messages.updateSuccess'
+        MSG_UPDATE_SUCCESS: 'messages.updateSuccess',
+        MSG_USER_EXISTS: 'messages.userExists'
     };
 
     // Retourne la traduction

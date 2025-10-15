@@ -29,11 +29,22 @@ class UsersRepository extends Model
     }
 
     /**
-     * Récupération données utilisateur
+     * Récupération données utilisateur actif
      */
-    public function getUserData($login)
+    public function getActiveUserData($login)
     {
         $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['login' => $login]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Récupération données utilisateur (tous statuts)
+     */
+    public function getUserDataByLogin($login)
+    {
+        $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['login' => $login]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

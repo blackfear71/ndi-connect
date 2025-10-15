@@ -45,8 +45,9 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'alerte
      */
-    public static function warning($data = null, $message = '')
+    public static function warning($data = null, $message = '', $code = 400)
     {
+        http_response_code($code);
         echo json_encode([
             'status' => 'warning',
             'message' => $message,
