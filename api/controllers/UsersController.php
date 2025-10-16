@@ -119,7 +119,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_LOGIN_FAILED',
                     401,
-                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
+                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
                 );
             }
         } catch (Exception $e) {
@@ -164,7 +164,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
                     401,
-                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
             }
         } catch (Exception $e) {
@@ -275,7 +275,7 @@ class UsersController
                 ResponseHelper::error(
                     'ERR_UNAUTHORIZED_ACTION',
                     401,
-                    'Utilisateur non trouvé dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName
                 );
             }
         } catch (Exception $e) {

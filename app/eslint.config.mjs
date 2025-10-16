@@ -13,7 +13,7 @@ export default [
     },
     js.configs.recommended,
     {
-        files: ['**/*.js', '**/*.jsx'],
+        files: ['**/*.cjs', '**/*.js', '**/*.jsx'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',

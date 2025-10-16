@@ -6,7 +6,7 @@ import './assets/fonts/fonts.css';
 
 import App from './App';
 
-import './index.css';
+import './main.css';
 import './utils/i18n';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';

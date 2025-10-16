@@ -5,7 +5,8 @@
 // error_reporting(E_ALL);                                                          // Reporter toutes les erreurs
 
 $allowedOrigins = [
-    'http://localhost:3000',
+    'http://localhost:3000', // CRA
+    'http://localhost:5173', // Vite
     'http://ndi-connect.ddns.net',
     'https://ndi-connect.ddns.net',
 ];

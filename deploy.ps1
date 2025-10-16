@@ -96,7 +96,7 @@ $versionType = switch ($versionChoice) {
 
 # Appel du script Node pour mettre à jour la version
 Push-Location ".\app\scripts"
-$newVersion = node updateVersion.js $versionType
+$newVersion = node updateVersion.cjs $versionType
 Pop-Location
 
 Write-Color "Version mise à jour : $currentVersion -> $newVersion" Green
@@ -110,15 +110,15 @@ foreach ($envFile in $envFiles) {
     if (-Not (Test-Path $envFilePath)) {
         # Créer le fichier s'il n'existe pas encore
         New-Item -ItemType File -Path $envFilePath -Force | Out-Null
-        Set-Content -Path $envFilePath -Value "REACT_APP_VERSION=$newVersion" -Encoding UTF8
+        Set-Content -Path $envFilePath -Value "VITE_VERSION=$newVersion" -Encoding UTF8
     } else {
         # Lire et mettre à jour le fichier
         $envContent = Get-Content $envFilePath -Raw
 
-        if ($envContent -match 'REACT_APP_VERSION=') {
-            $envContent = $envContent -replace 'REACT_APP_VERSION=.*', "REACT_APP_VERSION=$newVersion"
+        if ($envContent -match 'VITE_VERSION=') {
+            $envContent = $envContent -replace 'VITE_VERSION=.*', "VITE_VERSION=$newVersion"
         } else {
-            $envContent += "`nREACT_APP_VERSION=$newVersion"
+            $envContent += "`nVITE_VERSION=$newVersion"
         }
 
         $envContent | Set-Content -Path $envFilePath -Encoding UTF8

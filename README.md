@@ -44,22 +44,27 @@ ndi-connect/
 │   │   ├── utils/
 │   │   ├── App.css
 │   │   ├── App.jsx
-│   │   ├── index.css
-│   │   ├── index.jsx
+│   │   ├── main.css
+│   │   ├── main.jsx
 │   ├── .env.development
 │   ├── .env.production
 │   ├── .prettierrc
 │   ├── eslint.config.mjs
+│   ├── index.html
 │   ├── package-lock.json
 │   ├── package.json
+│   ├── vite.config.js
 ├── dist/                 # Dossier de déploiement
 ├── logs/                 # Dossier de logs
+├── .gitattributes
 ├── .gitignore
 ├── deploy.ps1            # Script de déploiement
 ├── README.md
 ```
 
 ## Installation
+
+Le projet a été initialisé avec Vite.
 
 ### Prérequis
 
@@ -91,6 +96,7 @@ DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
+LOG_DIR=../logs
 ```
 
 ### 4. Lancement en développement
@@ -103,7 +109,7 @@ Déployer le dossier api sur votre serveur local PHP (ex: WAMP, XAMPP, etc.).
 
 ```
 cd app
-npm start
+npm run dev
 ```
 
 ### 4. Déploiement
@@ -116,6 +122,7 @@ DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=prod_login
 DB_PASS=prod_password
+LOG_DIR=../logs
 ```
 
 Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deploy.ps1**. Dans une console lancer la commande puis faire le choix de version :
@@ -128,7 +135,7 @@ A la fin du déploiement le dossier est ouvert dans l'explorateur, il faut suppr
 
 ## Scripts disponibles dans le dossier app
 
-### `npm start`
+### `npm run dev`
 
 Lance l'application en mode développement.
 
@@ -136,9 +143,9 @@ Lance l'application en mode développement.
 
 Construit l'application pour la production.
 
-### `npm run eject`
+### `npm run preview`
 
-Sort l'application de la configuration CRA initiale. A ne pas utiliser.
+Simule un déploiement local comme en production.
 
 ### `npm run lint`
 
@@ -162,6 +169,7 @@ Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub
 
 ## Documentation
 
-[Create React App](https://github.com/facebook/create-react-app)  
-[Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)  
-[React documentation](https://reactjs.org/)
+[Vite](https://vite.dev/)  
+[Guide / Getting Started](https://vite.dev/guide/)  
+[Configuration](https://vite.dev/config/)  
+[React documentation](https://reactjs.org/)  

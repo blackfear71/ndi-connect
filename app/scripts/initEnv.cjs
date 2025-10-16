@@ -7,37 +7,39 @@ const envFiles = [
     {
         path: path.resolve('.env.development'),
         label: 'Front (dev)',
-        content: `REACT_APP_VERSION=0.0.0
-REACT_APP_API_URL=http://localhost/ndi-connect/api
+        content: `VITE_VERSION=0.0.0
+VITE_API_URL=http://localhost/ndi-connect/api
 `
     },
     {
         path: path.resolve('.env.production'),
         label: 'Front (prod)',
-        content: `REACT_APP_VERSION=0.0.0
-REACT_APP_API_URL=/api
+        content: `VITE_VERSION=0.0.0
+VITE_API_URL=/api
 `
     },
     {
         path: path.resolve('../api/.env'),
         label: 'Back',
-        content: `# A modifier avec les identifiants du compte phpMyAdmin [LOCAL] pour autoriser la connexion à la base de données (utilisé en développement)
+        content: `# A modifier avec les identifiants du compte phpMyAdmin et les chemins [LOCAL] pour autoriser la connexion à la base de données (utilisé en développement)
 DB_HOST=localhost
 DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
+LOG_DIR=../logs
 `
     },
     {
         path: path.resolve('../api/.env.production'),
         label: 'Back',
-        content: `# A modifier avec les identifiants du compte phpMyAdmin [SERVEUR] pour autoriser la connexion à la base de données (déployé sur le serveur automatiquement)
+        content: `# A modifier avec les identifiants du compte phpMyAdmin et les chemins [SERVEUR] pour autoriser la connexion à la base de données (déployé sur le serveur automatiquement)
 DB_HOST=localhost
 DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
+LOG_DIR=/server_path/logs/ndi-connect
 `
     }
 ];

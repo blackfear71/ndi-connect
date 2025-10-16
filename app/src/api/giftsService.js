@@ -1,6 +1,6 @@
 import { ajax } from 'rxjs/ajax';
 
-const API_URL = process.env.REACT_APP_API_URL + '/gifts';
+const API_URL = import.meta.env.VITE_API_URL + '/gifts';
 
 /**
  * Service appel API cadeaux
