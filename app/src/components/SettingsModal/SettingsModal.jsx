@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,9 @@ import './SettingsModal.css';
 const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
+
+    // Local states
+    const [confirmReset, setConfirmReset] = useState(false);
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -42,7 +45,22 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
     };
 
     /**
-     * Gère le comportement du formulaire à la soumission
+     * Gère le comportement du formulaire à la soumission (réinitialisation mot de passe)
+     * @param {*} e Evènement
+     */
+    const handleReset = (e) => {
+        // Empêche le rechargement de la page
+        e.preventDefault();
+
+        // Remise en place des boutons de confirmation de réinitialisation de mot de passe
+        setConfirmReset(false);
+
+        // Soumets le formulaire
+        onReset(user.id);
+    };
+
+    /**
+     * Gère le comportement du formulaire à la soumission (modification utilisateur)
      * @param {*} e Evènement
      */
     const handleSubmit = (e) => {
@@ -113,10 +131,33 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                         {/* Réinitialiser le mot de passe */}
                         <div className="modal-section-title mt-3">{t('settings.resetPassword')}</div>
 
-                        <Button type="button" className="settings-button mt-2" onClick={() => onReset(user.id)}>
-                            {t('settings.resetPassword')}
-                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Confirmation de réinitialisation */}
+                        {!confirmReset ? (
+                            <Button type="button" className="settings-button mt-2" onClick={() => setConfirmReset(true)}>
+                                {t('common.reset')}
+                            </Button>
+                        ) : (
+                            <div className="d-flex gap-2 mt-2">
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setConfirmReset(false)}
+                                    disabled={modalOptions.isSubmitting}
+                                >
+                                    {t('common.cancel')}
+                                </Button>
+
+                                <Button
+                                    type="button"
+                                    variant="danger"
+                                    onClick={(event) => handleReset(event)}
+                                    disabled={modalOptions.isSubmitting}
+                                >
+                                    {t('common.confirm')}
+                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                </Button>
+                            </div>
+                        )}
                     </Modal.Body>
 
                     <Modal.Footer>
