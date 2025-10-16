@@ -9,6 +9,16 @@ export default defineConfig({
         open: true
     },
     build: {
-        outDir: 'build'
+        outDir: 'build',
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    // Séparation des librairies lourdes
+                    react: ['react', 'react-dom'],
+                    i18n: ['i18next', 'react-i18next'],
+                    bootstrap: ['bootstrap']
+                }
+            }
+        }
     }
 });
