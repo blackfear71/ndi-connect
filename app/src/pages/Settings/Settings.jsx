@@ -143,7 +143,11 @@ const Settings = () => {
      * Affiche ou masque la saisie de mot de passe
      */
     const showHidePasswordForm = () => {
+        // Ouverture ou fermeture
         setShowPasswordForm((prev) => !prev);
+
+        // Réinitialisation du formulaire à la fermeture
+        !showPasswordForm.isOpen && resetFormPassword();
     };
 
     /**
@@ -161,7 +165,6 @@ const Settings = () => {
             .pipe(
                 map(([dataUsers]) => {
                     showHidePasswordForm();
-                    resetFormPassword();
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -191,7 +194,11 @@ const Settings = () => {
      * Affiche ou masque la saisie de nouvel utilisateur
      */
     const showHideCreateUserForm = () => {
+        // Ouverture ou fermeture
         setShowCreateUserForm((prev) => !prev);
+
+        // Réinitialisation du formulaire à la fermeture
+        !showCreateUserForm.isOpen && resetFormCreateUser();
     };
 
     /**
@@ -212,7 +219,6 @@ const Settings = () => {
                 switchMap(() => usersService.getAllUsers()),
                 map((dataUsers) => {
                     showHideCreateUserForm();
-                    resetFormCreateUser();
                     setUsers(dataUsers.response.data);
                 }),
                 take(1),

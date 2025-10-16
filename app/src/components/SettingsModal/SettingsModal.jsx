@@ -105,6 +105,11 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                             ))}
                         </Form.Select>
 
+                        {/* Description du niveau sélectionné */}
+                        {formData.level !== '' && (
+                            <p className="text-muted mt-2 settings-modal-border">{t(`settings.levelDescription${formData.level}`)}</p>
+                        )}
+
                         {/* Réinitialiser le mot de passe */}
                         <div className="modal-section-title mt-3">{t('settings.resetPassword')}</div>
 

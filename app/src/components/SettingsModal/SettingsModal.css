@@ -18,3 +18,8 @@
     text-overflow: ellipsis;
     vertical-align: middle;
 }
+
+.settings-modal-border {
+    border-left: solid 4px #d0d0d0;
+    padding-left: 10px;
+}
