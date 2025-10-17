@@ -122,7 +122,7 @@ DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=prod_login
 DB_PASS=prod_password
-LOG_DIR=../logs
+LOG_DIR=/server_path/logs/ndi-connect
 ```
 
 Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deploy.ps1**. Dans une console lancer la commande puis faire le choix de version :
@@ -172,4 +172,4 @@ Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue sur GitHub
 [Vite](https://vite.dev/)  
 [Guide / Getting Started](https://vite.dev/guide/)  
 [Configuration](https://vite.dev/config/)  
-[React documentation](https://reactjs.org/)  
+[React documentation](https://reactjs.org/)
