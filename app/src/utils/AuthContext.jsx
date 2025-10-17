@@ -30,18 +30,19 @@ export const AuthProvider = ({ children }) => {
      * Contrôle de la connexion au lancement de l'application
      */
     useEffect(() => {
-        refreshAuth();
+        refreshAuth(true);
     }, []);
 
     /**
      * Vérifie l'authentification de l'utilisateur
+     * @param {*} initLoad Indicateur chargement initial de la page
      */
-    const refreshAuth = () => {
+    const refreshAuth = (initLoad = false) => {
         setAuthError(null);
 
         const usersService = new UsersService();
 
-        const subscriptionUser = usersService.checkAuth();
+        const subscriptionUser = usersService.checkAuth(initLoad);
 
         combineLatest([subscriptionUser])
             .pipe(

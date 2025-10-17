@@ -8,8 +8,11 @@ $router->get('/users/checkAuth', function () use ($db) {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres URL
+    $initLoad = isset($_GET['initLoad']) && $_GET['initLoad'] === 'true';
+
     // Appel contrôleur
-    (new UsersController($db))->checkAuth($token);
+    (new UsersController($db))->checkAuth($token, $initLoad);
 });
 
 $router->get('/users/all', function () use ($db) {

@@ -26,7 +26,7 @@ class UsersController
     /**
      * Contrôle authentification
      */
-    public function checkAuth($token)
+    public function checkAuth($token, $initLoad = false)
     {
         try {
             // Contrôle authentification
@@ -36,12 +36,17 @@ class UsersController
                 // Succès
                 ResponseHelper::success($user);
             } else {
-                // Échec de l'authentification
-                ResponseHelper::error(
-                    'ERR_INVALID_AUTH',
-                    401,
-                    'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                if ($initLoad) {
+                    // On ne remonte pas d'erreur si pas connecté au lancement de l'application
+                    ResponseHelper::success();
+                } else {
+                    // Échec de l'authentification
+                    ResponseHelper::error(
+                        'ERR_INVALID_AUTH',
+                        401,
+                        'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                    );
+                }
             }
         } catch (Exception $e) {
             // Exception levée

@@ -18,10 +18,11 @@ class UsersService {
 
     /**
      * Contrôle authentification
-     * @returns Indicateur authentification valide
+     * @param {*} initLoad Indicateur chargement initial de la page
+     * @returns Données utilisateur si authentification valide
      */
-    checkAuth = () => {
-        const url = `${this.apiUrl}/checkAuth`;
+    checkAuth = (initLoad = false) => {
+        const url = `${this.apiUrl}/checkAuth?initLoad=${initLoad}`;
         return ajax({
             url,
             method: 'GET',

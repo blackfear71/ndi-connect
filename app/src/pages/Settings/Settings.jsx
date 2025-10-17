@@ -320,7 +320,7 @@ const Settings = () => {
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
                     if (auth.login === dataUsers.response.data.find((u) => u.id === formUpdateUser.id)?.login) {
-                        refreshAuth();
+                        refreshAuth(false);
                     }
                 }),
                 take(1),
