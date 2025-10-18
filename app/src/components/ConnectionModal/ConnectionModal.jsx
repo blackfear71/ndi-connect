@@ -8,7 +8,7 @@ import Message from '../Message/Message';
 
 const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
-    const { setAuthError } = useContext(AuthContext);
+    const { setAuthMessage } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -23,7 +23,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
             setMessage(null);
-            setAuthError(null);
+            setAuthMessage(null);
 
             // Focus
             loginInputRef.current?.focus();

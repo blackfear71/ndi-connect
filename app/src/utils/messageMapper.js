@@ -25,6 +25,8 @@ export const getMessageTranslationKey = (code, params, t) => {
         // Messages
         MSG_CREATION_SUCCESS: 'messages.creationSuccess',
         MSG_DELETION_SUCCESS: 'messages.deletionSuccess',
+        MSG_LOGIN_SUCCESS: 'messages.loginSuccess',
+        MSG_LOGOUT_SUCCESS: 'messages.logoutSuccess',
         MSG_RESET_PASSWORD_SUCCESS: 'messages.resetPasswordSuccess',
         MSG_REWARD_SUCCESS: 'messages.rewardSuccess',
         MSG_UPDATE_SUCCESS: 'messages.updateSuccess',

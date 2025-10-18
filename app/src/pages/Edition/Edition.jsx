@@ -39,7 +39,7 @@ const Edition = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth, authMessage, setAuthMessage } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -145,6 +145,17 @@ const Edition = () => {
             )
             .subscribe();
     }, [id]);
+
+    /**
+     * Si un message d'authentification est défini on l'affiche
+     */
+    useEffect(() => {
+        // Message venant du AuthContext (connexion / déconnexion)
+        if (authMessage && authMessage.target === 'page') {
+            setMessage(authMessage);
+            setAuthMessage(null);
+        }
+    }, [authMessage, setAuthMessage]);
 
     /**
      * Ouverture/fermeture de la modale de modification d'édition

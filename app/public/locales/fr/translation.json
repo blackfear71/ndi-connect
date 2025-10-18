@@ -36,6 +36,8 @@
     "messages": {
         "creationSuccess": "Création réussie",
         "deletionSuccess": "Suppression réussie",
+        "loginSuccess": "Bienvenue !",
+        "logoutSuccess": "Déconnexion réussie",
         "noResults": "Aucun résultat ne correspond à la recherche",
         "resetPasswordSuccess": "Le mot de passe a été réinitialisé pour : {{password}}, il est conseillé de le changer immédiatement",
         "rewardSuccess": "Cadeau attribué",

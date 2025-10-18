@@ -45,11 +45,15 @@
     border-top: none;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-width: 50%;
+    width: max-content;
+    max-width: 45vw;
     max-height: calc(100vh - 150px);
     overflow-y: auto;
     border-radius: 5px;
     padding: 0 !important;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .navbar-dropdown-triangle {

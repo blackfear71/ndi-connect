@@ -32,7 +32,7 @@ const Settings = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, refreshAuth } = useContext(AuthContext);
+    const { auth, authMessage, setAuthMessage, refreshAuth } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -100,6 +100,17 @@ const Settings = () => {
             setIsLoading(false);
         }
     }, []);
+
+    /**
+     * Si un message d'authentification est défini on l'affiche
+     */
+    useEffect(() => {
+        // Message venant du AuthContext (connexion / déconnexion)
+        if (authMessage && authMessage.target === 'page') {
+            setMessage(authMessage);
+            setAuthMessage(null);
+        }
+    }, [authMessage, setAuthMessage]);
 
     /**
      * Affiche le rôle de utilisateur

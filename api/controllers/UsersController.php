@@ -118,7 +118,7 @@ class UsersController
                 unset($user['token']);
 
                 // Succès
-                ResponseHelper::success($user);
+                ResponseHelper::success($user, 'MSG_LOGIN_SUCCESS');
             } else {
                 // Échec de la connexion
                 ResponseHelper::error(
@@ -155,7 +155,7 @@ class UsersController
                     setcookie('token', '', time() - 3600, '/');
 
                     // Succès
-                    ResponseHelper::success(['disconnected' => $disconnected]);
+                    ResponseHelper::success(null, 'MSG_LOGOUT_SUCCESS');
                 } else {
                     // Échec de la déconnexion
                     ResponseHelper::error(

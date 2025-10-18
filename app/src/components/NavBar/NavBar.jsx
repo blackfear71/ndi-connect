@@ -23,7 +23,7 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authError, login, logout } = useContext(AuthContext);
+    const { auth, authMessage, login, logout } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -154,7 +154,7 @@ const NavBar = () => {
                     formData={formConnection}
                     setFormData={setFormConnection}
                     modalOptions={modalOptions}
-                    message={message || authError}
+                    message={message || authMessage}
                     setMessage={setMessage}
                     onClose={openCloseConnectionModal}
                     onSubmit={handleSubmit}

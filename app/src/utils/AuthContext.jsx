@@ -1,20 +1,23 @@
 import { createContext, useEffect, useState } from 'react';
 
 import { Spinner } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import UsersService from '../api/usersService';
 
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 export const AuthContext = createContext(null);
+
+const redirectPages = ['/settings'];
 
 /**
  * Contexte d'authentification global
  */
 export const AuthProvider = ({ children }) => {
     // Router
+    const { pathname } = useLocation();
     const navigate = useNavigate();
 
     // Local states
@@ -23,8 +26,8 @@ export const AuthProvider = ({ children }) => {
         login: null,
         level: 0
     });
-    const [authError, setAuthError] = useState(null);
     const [authLoading, setAuthLoading] = useState(true);
+    const [authMessage, setAuthMessage] = useState(null);
 
     /**
      * Contrôle de la connexion au lancement de l'application
@@ -38,15 +41,14 @@ export const AuthProvider = ({ children }) => {
      * @param {*} initLoad Indicateur chargement initial de la page
      */
     const refreshAuth = (initLoad = false) => {
-        setAuthError(null);
+        setAuthMessage(null);
 
         const usersService = new UsersService();
 
-        const subscriptionUser = usersService.checkAuth(initLoad);
-
-        combineLatest([subscriptionUser])
+        usersService
+            .checkAuth(initLoad)
             .pipe(
-                map(([dataUser]) => {
+                map((dataUser) => {
                     dataUser?.response?.data ? persistAuth(dataUser.response.data) : resetAuth();
                 }),
                 take(1),
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }) => {
                     }
 
                     resetAuth();
-                    setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                    setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'page' });
                     return of();
                 }),
                 finalize(() => {
@@ -73,22 +75,22 @@ export const AuthProvider = ({ children }) => {
      */
     const login = (formData) => {
         return new Promise((resolve, reject) => {
-            setAuthError(null);
+            setAuthMessage(null);
 
             const usersService = new UsersService();
 
-            const subscriptionUser = usersService.connect(formData);
-
-            combineLatest([subscriptionUser])
+            usersService
+                .connect(formData)
                 .pipe(
-                    map(([dataUser]) => {
+                    map((dataUser) => {
                         persistAuth(dataUser.response.data);
+                        setAuthMessage({ code: dataUser.response.message, type: dataUser.response.status, target: 'page' });
                         resolve();
                     }),
                     take(1),
                     catchError((err) => {
                         resetAuth();
-                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                        setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'modal' });
                         reject(err?.response?.message);
                         return of();
                     })
@@ -102,23 +104,35 @@ export const AuthProvider = ({ children }) => {
      */
     const logout = () => {
         return new Promise((resolve, reject) => {
-            setAuthError(null);
+            setAuthMessage(null);
 
             const usersService = new UsersService();
 
-            const subscriptionUser = usersService.disconnect();
-
-            combineLatest([subscriptionUser])
+            usersService
+                .disconnect()
                 .pipe(
-                    map(() => {
+                    map((dataUser) => {
+                        const message = {
+                            code: dataUser.response.message,
+                            type: dataUser.response.status,
+                            target: 'page'
+                        };
                         resolve();
 
-                        // Retour à l'accueil
-                        navigate('/');
+                        // Retour à l'accueil ou affichage du message selon la page d'origine
+                        if (redirectPages.includes(pathname)) {
+                            navigate('/', {
+                                state: {
+                                    authMessage: message
+                                }
+                            });
+                        } else {
+                            setAuthMessage(message);
+                        }
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthError({ code: err?.response?.message, type: err?.response?.status });
+                        setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'page' });
                         reject(err?.response?.message);
                         return of();
                     }),
@@ -163,7 +177,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authError, setAuthError, refreshAuth, login, logout }}>
+        <AuthContext.Provider value={{ auth, authMessage, setAuthMessage, refreshAuth, login, logout }}>
             {authLoading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" variant="light" />

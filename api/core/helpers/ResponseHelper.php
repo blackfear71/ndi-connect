@@ -23,6 +23,7 @@ class ResponseHelper
      */
     public static function info($data = null, $message = '')
     {
+        http_response_code(200);
         echo json_encode([
             'status' => 'info',
             'message' => $message,
@@ -35,6 +36,7 @@ class ResponseHelper
      */
     public static function success($data = null, $message = '')
     {
+        http_response_code(200);
         echo json_encode([
             'status' => 'success',
             'message' => $message,

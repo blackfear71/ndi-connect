@@ -9,7 +9,7 @@ import EditionsService from '../../api/editionsService';
 
 import Message from '../../components/Message/Message';
 
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
 import './SearchBar.css';
@@ -59,11 +59,10 @@ const SearchBar = ({ placeholder }) => {
         } else if (value.length > 2) {
             const editionsService = new EditionsService();
 
-            const subscriptionEditions = editionsService.getSearchEditions({ search: value });
-
-            combineLatest([subscriptionEditions])
+            editionsService
+                .getSearchEditions({ search: value })
                 .pipe(
-                    map(([dataEditions]) => {
+                    map((dataEditions) => {
                         if (dataEditions.response.data.length === 0) {
                             setSearchMessage('messages.noResults');
                         }

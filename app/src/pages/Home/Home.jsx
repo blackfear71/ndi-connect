@@ -4,7 +4,7 @@ import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaMapLocationDot } from 'react-icons/fa6';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
 
@@ -25,10 +25,11 @@ import './Home.css';
  */
 const Home = () => {
     // Router
+    const location = useLocation();
     const navigate = useNavigate();
 
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth, authMessage, setAuthMessage } = useContext(AuthContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -74,6 +75,25 @@ const Home = () => {
             )
             .subscribe();
     }, []);
+
+    /**
+     * Si un message d'authentification est défini on l'affiche
+     */
+    useEffect(() => {
+        // Message venant du AuthContext (connexion / déconnexion)
+        if (authMessage && authMessage.target === 'page') {
+            setMessage(authMessage);
+            setAuthMessage(null);
+        }
+
+        // Message venant du navigate() (déconnexion depuis une page admin)
+        if (location.state?.authMessage) {
+            setMessage(location.state.authMessage);
+
+            // On nettoie le state pour ne pas le réafficher si l'utilisateur revient ici
+            window.history.replaceState({}, document.title);
+        }
+    }, [authMessage, setAuthMessage]);
 
     /**
      * Regroupe par année les éditions et trie
