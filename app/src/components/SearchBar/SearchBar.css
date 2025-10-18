@@ -79,7 +79,8 @@
     border-top: none;
 }
 
-.search-result-item:hover {
+.search-result-item:hover,
+.search-result-item:active {
     background-color: #f5f5f5;
 }
 

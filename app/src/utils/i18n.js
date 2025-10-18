@@ -13,13 +13,23 @@ i18n.use(HttpBackend)
     .use(initReactI18next)
     .init({
         fallbackLng: 'fr', // langue par défaut
+        supportedLngs: ['fr', 'en'], // langues supportées
         debug: false,
         interpolation: {
             escapeValue: false
+        },
+        detection: {
+            order: ['localStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
+            caches: ['localStorage']
         },
         backend: {
             loadPath: `/locales/{{lng}}/{{ns}}.json?v=${version}`
         }
     });
+
+// Met à jour la balise <html lang="">
+i18n.on('languageChanged', (lng) => {
+    document.documentElement.lang = lng;
+});
 
 export default i18n;
