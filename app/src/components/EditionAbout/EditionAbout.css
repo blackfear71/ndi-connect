@@ -17,4 +17,5 @@
 .edition-about-text {
     color: white;
     text-align: justify;
+    white-space: pre-line;
 }
