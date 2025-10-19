@@ -108,7 +108,7 @@ const NavBar = () => {
         <nav className="navbar-container">
             {/* Logo */}
             <Link to="/">
-                <img src={ndiConnectLogo} alt="ndi-connect" className="navbar-logo" />
+                <img src={ndiConnectLogo} alt="ndi-connect" title={t('common.home')} className="navbar-logo" />
             </Link>
 
             {/* Barre de recherche */}

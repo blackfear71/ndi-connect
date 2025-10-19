@@ -119,11 +119,11 @@ export const AuthProvider = ({ children }) => {
                         };
                         resolve();
 
-                        // Retour à l'accueil ou affichage du message selon la page d'origine
+                        // Redirection avec message ou affichage du message selon la page d'origine
                         if (redirectPages.includes(pathname)) {
                             navigate('/', {
                                 state: {
-                                    authMessage: message
+                                    navMessage: message
                                 }
                             });
                         } else {

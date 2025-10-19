@@ -26,6 +26,7 @@ const Footer = () => {
                 <img
                     src={i18n.language === 'fr' ? flagFr : flagEn}
                     alt={i18n.language === 'fr' ? t('common.french') : t('common.english')}
+                    title={i18n.language === 'fr' ? t('common.french') : t('common.english')}
                     className="footer-language-flag"
                 />
             </button>

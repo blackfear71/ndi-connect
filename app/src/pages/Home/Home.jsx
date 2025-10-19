@@ -86,14 +86,14 @@ const Home = () => {
             setAuthMessage(null);
         }
 
-        // Message venant du navigate() (déconnexion depuis une page admin)
-        if (location.state?.authMessage) {
-            setMessage(location.state.authMessage);
+        // Message venant du navigate() (déconnexion depuis une page admin, suppression édition)
+        if (location.state?.navMessage) {
+            setMessage(location.state.navMessage);
 
-            // On nettoie le state pour ne pas le réafficher si l'utilisateur revient ici
-            window.history.replaceState({}, document.title);
+            // Nettoyage du state React Router
+            navigate(location.pathname, { replace: true, state: {} });
         }
-    }, [authMessage, setAuthMessage]);
+    }, [authMessage, setAuthMessage, location]);
 
     /**
      * Regroupe par année les éditions et trie
@@ -241,7 +241,7 @@ const Home = () => {
                     {/* Ajout */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                         <div className="d-grid mb-2">
-                            <Button variant="outline-edition" onClick={() => openCloseEditionModal('create')}>
+                            <Button variant="outline-action" onClick={() => openCloseEditionModal('create')}>
                                 {t('home.addEdition')}
                             </Button>
                         </div>
@@ -252,13 +252,13 @@ const Home = () => {
                         editionsByYear && editionsByYear.length > 0 ? (
                             <div className="d-grid gap-2">
                                 {/* Retour */}
-                                <Button variant="outline-edition" className="btn-yellow" onClick={showYearsOfEditions}>
+                                <Button variant="outline-action" className="btn-yellow" onClick={showYearsOfEditions}>
                                     {t('common.return')}
                                 </Button>
 
                                 {/* Editions */}
                                 {editionsByYear.map((edition) => (
-                                    <Button key={edition.id} variant="edition" onClick={() => navigate(`/edition/${edition.id}`)}>
+                                    <Button key={edition.id} variant="action" onClick={() => navigate(`/edition/${edition.id}`)}>
                                         {edition.location}
                                     </Button>
                                 ))}
@@ -267,7 +267,7 @@ const Home = () => {
                             <div className="d-grid gap-2">
                                 {/* Années */}
                                 {yearsAndEditions.map((year) => (
-                                    <Button key={year.year} variant="edition" onClick={() => showEditionsByYear(year)}>
+                                    <Button key={year.year} variant="action" onClick={() => showEditionsByYear(year)}>
                                         {year.year}
                                     </Button>
                                 ))}

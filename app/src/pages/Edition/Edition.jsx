@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Button, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaComputer, FaHouse, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
+import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
@@ -101,7 +101,6 @@ const Edition = () => {
         isSubmitting: false
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false, message: null, isSubmitting: false });
-    const [showActions, setShowActions] = useState(true);
 
     // API states
     const [edition, setEdition] = useState();
@@ -135,7 +134,6 @@ const Edition = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setShowActions(false);
                     setMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
@@ -532,12 +530,16 @@ const Edition = () => {
 
         combineLatest([subscriptionEdition])
             .pipe(
-                map(() => {
+                map(([dataEdition]) => {
                     // Fermeture modale de confirmation
                     openCloseConfirmModal();
 
-                    // Redirection
-                    navigate('/');
+                    // Redirection avec message
+                    navigate('/', {
+                        state: {
+                            navMessage: { code: dataEdition.response.message, type: dataEdition.response.status }
+                        }
+                    });
                 }),
                 take(1),
                 catchError((err) => {
@@ -665,52 +667,6 @@ const Edition = () => {
                     {/* Message */}
                     {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
-                    {/* Actions */}
-                    <div className="row g-2 mb-2">
-                        {/* Accueil */}
-                        <div className="col">
-                            <Button
-                                variant="outline-action"
-                                size="sm"
-                                onClick={() => navigate('/')}
-                                className="d-flex align-items-center justify-content-center gap-2 w-100 btn-yellow"
-                            >
-                                <FaHouse size={15} className="outline-action-icon" />
-                                {t('common.home')}
-                            </Button>
-                        </div>
-
-                        {showActions && auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                            <>
-                                {/* Modifier */}
-                                <div className="col">
-                                    <Button
-                                        variant="outline-action"
-                                        size="sm"
-                                        onClick={isSubmitting ? null : () => openCloseEditionModal('update')}
-                                        className="d-flex align-items-center justify-content-center gap-2 w-100 btn-blue"
-                                    >
-                                        <FaWandMagicSparkles size={15} className="outline-action-icon" />
-                                        {t('common.update')}
-                                    </Button>
-                                </div>
-
-                                {/* Supprimer */}
-                                <div className="col">
-                                    <Button
-                                        variant="outline-action"
-                                        size="sm"
-                                        onClick={isSubmitting ? null : () => handleConfirmDeleteEdition()}
-                                        className="d-flex align-items-center justify-content-center gap-2 w-100 btn-red"
-                                    >
-                                        <FaTrashCan size={15} className="outline-action-icon" />
-                                        {t('common.delete')}
-                                    </Button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-
                     {/* Titre */}
                     {edition && (
                         <div>
@@ -758,7 +714,7 @@ const Edition = () => {
 
                         {/* A propos */}
                         <Tab eventKey="about" title={t('edition.about')}>
-                            <EditionAbout edition={edition} />
+                            <EditionAbout edition={edition} onEdit={openCloseEditionModal} onConfirm={handleConfirmDeleteEdition} />
                         </Tab>
                     </Tabs>
 

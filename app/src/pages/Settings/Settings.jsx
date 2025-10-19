@@ -74,9 +74,22 @@ const Settings = () => {
      * Lancement initial de la page
      */
     useEffect(() => {
+        // Rafraichissement du contexte d'authentification si l'utilisateur s'est déconnecté ailleurs
+        refreshAuth(false);
+    }, []);
+
+    /**
+     * Récupération des données après contrôle de l'authentification
+     */
+    useEffect(() => {
+        // Retour à l'accueil si non connecté
         if (!auth.isLoggedIn) {
             navigate('/');
-        } else if (auth.level >= UserRole.SUPERADMIN) {
+            return;
+        }
+
+        // Récupération des données utilisateurs
+        if (auth.level >= UserRole.SUPERADMIN) {
             const usersService = new UsersService();
 
             const subscriptionUsers = usersService.getAllUsers();
@@ -99,7 +112,7 @@ const Settings = () => {
         } else {
             setIsLoading(false);
         }
-    }, []);
+    }, [auth]);
 
     /**
      * Si un message d'authentification est défini on l'affiche

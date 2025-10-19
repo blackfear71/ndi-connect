@@ -63,7 +63,7 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                 <div className="d-grid mb-2">
-                    <Button variant="outline-edition" onClick={() => showGiftModal(null, 'create')}>
+                    <Button variant="outline-action" onClick={() => showGiftModal(null, 'create')}>
                         {t('edition.addGift')}
                     </Button>
                 </div>

@@ -154,7 +154,7 @@ const EditionPlayers = ({
                 <>
                     {/* Ajout */}
                     <div className="d-grid mb-2">
-                        <Button variant="outline-edition" onClick={() => showHidePlayerEntry(true)}>
+                        <Button variant="outline-action" onClick={() => showHidePlayerEntry(true)}>
                             {t('edition.addPlayer')}
                         </Button>
                     </div>
