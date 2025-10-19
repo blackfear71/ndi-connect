@@ -7,7 +7,7 @@ import { FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
-import { getFrenchDate, getTimeFromDate } from '../../utils/dateHelper';
+import { getLocalizedDate, getLocalizedTime } from '../../utils/dateHelper';
 
 import './EditionAbout.css';
 
@@ -36,12 +36,16 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
 
         // Nettoyage à la destruction
         return () => clearInterval(interval);
-    }, [edition.startDate, edition.endDate]);
+    }, [edition?.startDate, edition?.endDate]);
 
     /**
      * Met à jour l'avancement
      */
     const updateProgress = () => {
+        if (!edition || !edition.startDate || !edition.endDate) {
+            return;
+        }
+
         const now = new Date();
         const startDate = new Date(edition.startDate);
         const endDate = new Date(edition.endDate);
@@ -96,13 +100,13 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                             <div className="edition-about-title">{t('edition.progress')}</div>
                             <div className="d-flex align-items-center mt-2">
                                 <Badge pill bg="success" className="me-2">
-                                    {getTimeFromDate(edition.startDate)}
+                                    {getLocalizedTime(edition.startDate)}
                                 </Badge>
                                 <div className="flex-fill">
                                     <ProgressBar now={progress.value} />
                                 </div>
                                 <Badge pill bg="danger" className="ms-2">
-                                    {getTimeFromDate(edition.endDate)}
+                                    {getLocalizedTime(edition.endDate)}
                                 </Badge>
                             </div>
                         </div>
@@ -121,8 +125,8 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                                     <td className="fw-bold">{t('edition.start')}</td>
                                     <td>
                                         {t('edition.editionDate', {
-                                            date: getFrenchDate(edition.startDate),
-                                            time: getTimeFromDate(edition.startDate)
+                                            date: getLocalizedDate(edition.startDate),
+                                            time: getLocalizedTime(edition.startDate)
                                         })}
                                     </td>
                                 </tr>
@@ -130,8 +134,8 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                                     <td className="fw-bold">{t('edition.end')}</td>
                                     <td>
                                         {t('edition.editionDate', {
-                                            date: getFrenchDate(edition.endDate),
-                                            time: getTimeFromDate(edition.endDate)
+                                            date: getLocalizedDate(edition.endDate),
+                                            time: getLocalizedTime(edition.endDate)
                                         })}
                                     </td>
                                 </tr>

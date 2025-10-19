@@ -1,43 +1,68 @@
+import i18next from 'i18next';
+
 /**
- * Récupère le jour d'une date au format yyyy-MM-dd
- * @param {*} date Date à convertir
- * @returns Jour
+ * Retourne une date au format YYYY-MM-DD (pour les champs de formulaire)
+ * @param {string|Date} date Date à convertir
+ * @returns Date formatée
  */
 export const getDayFromDate = (date) => {
-    const jsDate = new Date(date.replace(' ', 'T'));
+    if (!date) return '';
 
-    const year = jsDate.getFullYear();
-    const month = (jsDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = jsDate.getDate().toString().padStart(2, '0');
+    const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
+
+    const year = jsDate.getUTCFullYear();
+    const month = String(jsDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(jsDate.getUTCDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
 };
 
 /**
- * Récupère le jour d'une date au format français dd/MM/yyyy
- * @param {*} date Date à convertir
- * @returns Jour français
+ * Récupère une date formatée selon la langue active (i18next)
+ * @param {string|Date} date Date à convertir
+ * @param {Object} [options] Options Intl.DateTimeFormat
+ * @returns Date formatée
  */
-export const getFrenchDate = (date) => {
-    const jsDate = new Date(date.replace(' ', 'T'));
+export const getLocalizedDate = (date, options = {}) => {
+    if (!date) {
+        return '';
+    }
 
-    const year = jsDate.getFullYear();
-    const month = (jsDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = jsDate.getDate().toString().padStart(2, '0');
+    // Normalisation de la date (utile pour les formats "YYYY-MM-DD HH:mm:ss")
+    const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
 
-    return `${day}/${month}/${year}`;
+    // Récupération de la langue actuelle
+    const locale = i18next.language || 'fr';
+
+    // Options par défaut : DD/MM/YYYY
+    const defaultOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        ...options
+    };
+
+    return new Intl.DateTimeFormat(locale, defaultOptions).format(jsDate);
 };
 
 /**
- * Récupère l'heure d'une date au format HH:mm
- * @param {*} date Date à convertir
- * @returns Heure
+ * Récupère l'heure d'une date selon la locale active
+ * @param {string|Date} date Date à convertir
+ * @param {Object} [options] Options Intl.DateTimeFormat
+ * @returns Heure formatée
  */
-export const getTimeFromDate = (date) => {
-    const jsDate = new Date(date.replace(' ', 'T'));
+export const getLocalizedTime = (date, options = {}) => {
+    if (!date) return '';
 
-    const hours = jsDate.getHours().toString().padStart(2, '0');
-    const minutes = jsDate.getMinutes().toString().padStart(2, '0');
+    const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
+    const locale = i18next.language || 'fr';
 
-    return `${hours}:${minutes}`;
+    // Options par défaut : HH:MM
+    const defaultOptions = {
+        hour: '2-digit',
+        minute: '2-digit',
+        ...options
+    };
+
+    return new Intl.DateTimeFormat(locale, defaultOptions).format(jsDate);
 };
