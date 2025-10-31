@@ -82,9 +82,11 @@ const Settings = () => {
      * Récupération des données après contrôle de l'authentification
      */
     useEffect(() => {
-        // Retour à l'accueil si non connecté
+        // Retour à l'accueil si non connecté (on ne fait la navigation que si on n'est pas déjà revenu à l'accueil, après déconnexion par exemple)
         if (!auth.isLoggedIn) {
-            navigate('/');
+            if (window.location.pathname === '/settings') {
+                navigate('/');
+            }
             return;
         }
 
@@ -171,7 +173,7 @@ const Settings = () => {
         setShowPasswordForm((prev) => !prev);
 
         // Réinitialisation du formulaire à la fermeture
-        !showPasswordForm.isOpen && resetFormPassword();
+        !showPasswordForm && resetFormPassword();
     };
 
     /**

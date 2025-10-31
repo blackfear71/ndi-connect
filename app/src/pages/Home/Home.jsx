@@ -93,7 +93,7 @@ const Home = () => {
             // Nettoyage du state React Router
             navigate(location.pathname, { replace: true, state: {} });
         }
-    }, [authMessage, setAuthMessage, location]);
+    }, [authMessage, setAuthMessage, location.state]);
 
     /**
      * Regroupe par année les éditions et trie
