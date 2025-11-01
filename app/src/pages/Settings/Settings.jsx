@@ -447,6 +447,11 @@ const Settings = () => {
                                 {getUserRole(auth.level)}
                             </Badge>
 
+                            {/* Description */}
+                            {auth.level !== '' && (
+                                <p className="text-white mt-2 settings-description-border">{t(`settings.levelDescription${auth.level}`)}</p>
+                            )}
+
                             {/* Gestion mot de passe */}
                             <div className="settings-form mt-3">
                                 <SettingsPassword

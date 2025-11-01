@@ -18,3 +18,8 @@
 .settings-button:active {
     background-color: #0a2f68 !important;
 }
+
+.settings-description-border {
+    border-left: solid 4px white;
+    padding-left: 10px;
+}

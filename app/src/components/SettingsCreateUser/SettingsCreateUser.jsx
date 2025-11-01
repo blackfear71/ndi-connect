@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import PasswordInput from '../PasswordInput/PasswordInput';
 
-import './SettingsCreateUser.css';
-
 /**
  * Création d'utilisateur
  */
@@ -123,7 +121,7 @@ const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, s
 
                         {/* Description du niveau sélectionné */}
                         {formData.level !== '' && (
-                            <p className="text-white mt-2 settings-create-user-border">{t(`settings.levelDescription${formData.level}`)}</p>
+                            <p className="text-white mt-2 settings-description-border">{t(`settings.levelDescription${formData.level}`)}</p>
                         )}
 
                         <div className="d-flex align-items-center mt-2">

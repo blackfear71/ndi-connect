@@ -136,7 +136,7 @@
         "level1": "Administrator",
         "levelDescription1": "The administrator can manage participants and gifts during the Nuit de l'Info.",
         "level2": "Super Administrator",
-        "levelDescription2": "The super administrator has full rights on the application; they can comprehensively manage editions, participants, gifts, and users.",
+        "levelDescription2": "The super administrator has full rights on the application; he can fully manage editions, participants, gifts and users.",
         "login": "Username",
         "manageUser": "Manage user",
         "manageUsers": "User management",
