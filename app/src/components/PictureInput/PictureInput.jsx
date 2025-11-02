@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Form, Image } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { FaTrashCan } from 'react-icons/fa6';
 
 import './PictureInput.css';
@@ -9,6 +10,9 @@ import './PictureInput.css';
  * Saisie d'image avec aperçu et suppression
  */
 const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     // Local states
     const [fileName, setFileName] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -73,11 +77,11 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
     };
 
     return (
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 w-100">
             {/* Parcourir */}
             <Form.Group>
                 <Form.Label className="picture-input-button rounded p-3 m-0" style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
-                    Parcourir
+                    {t('common.browse')}
                     <Form.Control
                         type="file"
                         name={name}
@@ -89,22 +93,20 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
             </Form.Group>
 
             {/* Aperçu et suppression */}
-            <div className="d-flex align-items-center">
-                {previewUrl && (
-                    <>
-                        {/* TODO : revoir le style pour que ça prenne l'espace entre les boutons mais avec un max heigth quand même */}
-                        {/* TODO : revoir la taille des icônes à gauche pour qu'elle soit identique pour toutes, sinon ça créé des décalages */}
-
+            <div className="picture-input-preview-wrapper">
+                {previewUrl ? (
+                    <div className="picture-input-preview-content">
                         {/* Aperçu */}
-                        <Image src={previewUrl} alt="Aperçu" rounded style={{ maxHeight: '70px' }} className="max-h-70 me-2" />
+                        <Image src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
 
                         {/* Suppression */}
                         <Button onClick={handleFileRemove} className="picture-input-button-small">
                             <FaTrashCan />
                         </Button>
-                    </>
+                    </div>
+                ) : (
+                    t('common.noFilesSelected')
                 )}
-                {!fileName && <span>Aucun fichier sélectionné</span>}
             </div>
         </div>
     );

@@ -62,6 +62,7 @@
     },
     "common": {
         "add": "Ajouter",
+        "browse": "Parcourir",
         "cancel": "Annuler",
         "close": "Fermer",
         "confirm": "Confirmer",
@@ -69,6 +70,7 @@
         "english": "Anglais",
         "french": "Français",
         "home": "Accueil",
+        "noFilesSelected": "Aucun fichier sélectionné",
         "reset": "Réinitialiser",
         "return": "Retour",
         "unknownLabel": "Libellé inconnu",

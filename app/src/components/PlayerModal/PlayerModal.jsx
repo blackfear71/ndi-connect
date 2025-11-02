@@ -2,6 +2,7 @@ import { useContext, useEffect } from 'react';
 
 import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaUserFriends } from 'react-icons/fa';
 import { GiTwoCoins } from 'react-icons/gi';
 import { PiUserListFill } from 'react-icons/pi';
 
@@ -197,7 +198,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="points" className="d-flex align-items-center mt-3 gap-3">
-                            <GiTwoCoins size={30} />
+                            <GiTwoCoins className="input-icon" />
 
                             <div className="d-flex align-items-center w-100">
                                 <Button
@@ -227,7 +228,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <PiUserListFill size={30} className="me-3" />
+                            <PiUserListFill className="input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="name"
@@ -244,7 +245,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
-                            <GiTwoCoins size={30} />
+                            <GiTwoCoins className="input-icon" />
 
                             <div className="d-flex align-items-center w-100">
                                 <Button
@@ -270,7 +271,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                         </Form.Group>
 
                         <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <PiUserListFill size={30} className="me-3" />
+                            <FaUserFriends className="input-icon me-3" />
 
                             <Form.Select value={formData.giveawayId} onChange={handleChangeSelect}>
                                 <option key={0} value={0}>

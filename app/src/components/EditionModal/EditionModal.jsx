@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaMapLocationDot, FaRegImage } from 'react-icons/fa6';
+import { FaMapLocationDot } from 'react-icons/fa6';
 import { GoGoal } from 'react-icons/go';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
+import { LuImage } from 'react-icons/lu';
 import { MdOutlineLightbulb } from 'react-icons/md';
 import { WiTime4, WiTime8 } from 'react-icons/wi';
 
@@ -145,7 +146,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Lieu */}
                         <Form.Group className="d-flex align-items-center" controlId="location">
-                            <FaMapLocationDot size={30} className="me-3" />
+                            <FaMapLocationDot className="input-icon me-3" />
                             <Form.Control
                                 ref={locationInputRef}
                                 type="text"
@@ -160,24 +161,24 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Date */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
-                            <IoCalendarNumberOutline size={30} className="me-3" />
+                            <IoCalendarNumberOutline className="input-icon me-3" />
                             <Form.Control type="date" name="startDate" value={formData.startDate || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         {/* Heures */}
                         <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
-                            <WiTime4 size={30} className="me-3" />
+                            <WiTime4 className="input-icon me-3" />
                             <Form.Control type="time" name="startTime" value={formData.startTime || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
-                            <WiTime8 size={30} className="me-3" />
+                            <WiTime8 className="input-icon me-3" />
                             <Form.Control type="time" name="endTime" value={formData.endTime || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         {/* Image */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="picture">
-                            <FaRegImage size={26} className="me-3" />
+                            <LuImage className="input-icon me-3" />
                             <PictureInput
                                 name={'picture'}
                                 value={formData.picture}
@@ -189,7 +190,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Thème */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
-                            <MdOutlineLightbulb size={30} className="me-3" />
+                            <MdOutlineLightbulb className="input-icon me-3" />
                             <Form.Control
                                 as="textarea"
                                 name="theme"
@@ -201,7 +202,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Challenge */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
-                            <GoGoal size={30} className="me-3" />
+                            <GoGoal className="input-icon me-3" />
                             <Form.Control
                                 as="textarea"
                                 name="challenge"

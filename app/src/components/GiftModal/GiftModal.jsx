@@ -122,7 +122,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
 
                         {/* Formulaire */}
                         <Form.Group controlId="name" className="d-flex align-items-center mb-2">
-                            <IoGiftSharp size={30} className="me-3" />
+                            <IoGiftSharp className="input-icon me-3" />
                             <Form.Control
                                 ref={nameInputRef}
                                 type="text"
@@ -136,7 +136,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                         </Form.Group>
 
                         <Form.Group controlId="value" className="d-flex align-items-center mb-2">
-                            <GrMoney size={30} className="me-3" />
+                            <GrMoney className="input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="value"
@@ -150,7 +150,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                         </Form.Group>
 
                         <Form.Group controlId="quantity" className="d-flex align-items-center">
-                            <GiCardboardBox size={30} className="me-3" />
+                            <GiCardboardBox className="input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="quantity"
