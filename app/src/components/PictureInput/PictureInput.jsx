@@ -53,7 +53,7 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
 
                 onChange && onChange(file, 'insert');
             } else {
-                setMessage({ code: 'errors.invalidFile', type: 'error' });
+                setMessage({ code: 'errors.invalidFileType', type: 'error' });
 
                 e.target.value = '';
                 setFileName('');

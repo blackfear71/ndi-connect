@@ -187,15 +187,6 @@ const Edition = () => {
 
         const editionsService = new EditionsService();
 
-        // TODO, cas à tester :
-        // - création sans image
-        // - création avec image
-        // - création avec image puis suppression avant de valider (pas d'image enregistrée)
-        // - modification sans image sans image avant
-        // - modification sans image avec image avant (la conserver)
-        // - modification avec image autre (suppression ancienne et création nouvelle)
-        // - modification avec image puis suppression avant de valider (suppression ancienne)
-
         const subscriptionEdition = editionsService.updateEdition(edition.id, body);
 
         combineLatest([subscriptionEdition])
@@ -230,7 +221,7 @@ const Edition = () => {
 
         // Champs textes
         Object.entries(formEdition).forEach(([key, value]) => {
-            if (key !== 'picture' && value !== null) {
+            if (key !== 'picture') {
                 formData.append(key, value);
             }
         });

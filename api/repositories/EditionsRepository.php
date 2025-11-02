@@ -36,4 +36,15 @@ class EditionsRepository extends Model
         $stmt->execute(['search' => "%$search%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Lecture d'un enregistrement par Id
+     */
+    public function getEditionPicture($id)
+    {
+        $sql = "SELECT picture FROM {$this->table} WHERE id = :id AND is_active = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetchColumn();
+    }
 }

@@ -2,11 +2,20 @@
     "errors": {
         "creationFailed": "Création échouée",
         "deletionFailed": "Suppression échouée",
+        "deletionFileFailed": "Suppression du fichier échouée",
         "editionNotFound": "Edition non trouvée",
         "editionsNotFound": "Editions non trouvées",
+        "envFilesDirMissing": "Le dossier de destination est manquant dans le fichier d'environnement",
+        "fileTooLarge": "Le fichier est trop volumineux",
+        "fileNotFound": "Le fichier n'existe pas",
         "invalidAuth": "Authentification invalide",
+        "invalidDirectory": "Le dossier de destination n'existe pas",
         "invalidEndTime": "L'heure de fin est invalide",
-        "invalidFile": "Le type de fichier sélectionné n'est pas autorisé",
+        "invalidFile": "Le fichier reçu est invalide",
+        "invalidFileType": "Le type de fichier sélectionné n'est pas autorisé",
+        "invalidFilename": "Le nom du fichier n'est pas renseigné",
+        "invalidFormat": "Le format du fichier est invalide",
+        "invalidImage": "Le fichier n'est pas une image",
         "invalidGift": "Un cadeau doit être choisi",
         "invalidGiftPoints": "Le nombre de points est insuffisant pour ce cadeau",
         "invalidGiveaway": "Le nom et le nombre de points à donner doivent être renseignés",
@@ -32,7 +41,9 @@
         "unknownEndpoint": "Endpoint inconnu",
         "unknownError": "Une erreur inconnue est survenue",
         "updateFailed": "Modification échouée",
-        "usersNotFound": "Utilisateurs non trouvés"
+        "uploadFailed": "Téléchargement de l'image échoué",
+        "usersNotFound": "Utilisateurs non trouvés",
+        "webpConversionFailed": "Erreur lors de la conversion de l'image au format WebP"
     },
     "messages": {
         "creationSuccess": "Création réussie",

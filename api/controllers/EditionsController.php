@@ -115,18 +115,14 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition($token, $data, $files)
+    public function createEdition($token, $data, $file)
     {
-        // TODO : une fois pictureAction testé, il faut certainement supprimer du formulaire pour ne pas tenter de l'insérer en base
-        var_dump($data);
-        var_dump($files);
-
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createEdition($user['login'], $data);
+            $created = $this->service->createEdition($user['login'], $data, $file);
 
             if ($created) {
                 // Succès
@@ -143,7 +139,7 @@ class EditionsController
             // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
-                500,
+                $e->getCode() ?: 500,
                 'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
@@ -152,18 +148,14 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition($token, $id, $data, $files)
+    public function updateEdition($token, $id, $data, $file)
     {
-        // TODO : une fois pictureAction testé, il faut certainement supprimer du formulaire pour ne pas tenter de l'ins
-        var_dump($data);
-        var_dump($files);
-
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
-            $edition = $this->service->updateEdition($id, $user['login'], $data);
+            $edition = $this->service->updateEdition($id, $user['login'], $data, $file);
 
             if ($edition) {
                 // Succès
@@ -180,7 +172,7 @@ class EditionsController
             // Exception levée
             ResponseHelper::error(
                 $e->getMessage(),
-                500,
+                $e->getCode() ?: 500,
                 'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
             );
         }
