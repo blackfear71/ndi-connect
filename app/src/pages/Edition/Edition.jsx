@@ -50,6 +50,8 @@ const Edition = () => {
         startDate: '',
         startTime: '',
         endTime: '',
+        picture: null,
+        pictureAction: null,
         theme: '',
         challenge: ''
     });
@@ -128,6 +130,7 @@ const Edition = () => {
                         startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
                         startTime: getLocalizedTime(dataEdition.response.data.edition.startDate),
                         endTime: getLocalizedTime(dataEdition.response.data.edition.endDate),
+                        picture: dataEdition.response.data.edition.picture,
                         theme: dataEdition.response.data.edition.theme,
                         challenge: dataEdition.response.data.edition.challenge
                     });
@@ -158,7 +161,7 @@ const Edition = () => {
     /**
      * Ouverture/fermeture de la modale de modification d'édition
      */
-    const openCloseEditionModal = (openAction) => {
+    const openCloseEditionModal = (openAction, data) => {
         // Ouverture ou fermeture
         setModalOptionsEdition((prev) => ({
             ...prev,
@@ -169,7 +172,7 @@ const Edition = () => {
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition(edition);
+        modalOptionsEdition.isOpen && resetFormEdition(data ?? edition);
     };
 
     /**
@@ -179,16 +182,27 @@ const Edition = () => {
         setMessage(null);
         setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
+        // Formatage des données
+        const body = formatDataEdition();
+
         const editionsService = new EditionsService();
 
-        const subscriptionEdition = editionsService.updateEdition(edition.id, formEdition);
+        // TODO, cas à tester :
+        // - création sans image
+        // - création avec image
+        // - création avec image puis suppression avant de valider (pas d'image enregistrée)
+        // - modification sans image sans image avant
+        // - modification sans image avec image avant (la conserver)
+        // - modification avec image autre (suppression ancienne et création nouvelle)
+        // - modification avec image puis suppression avant de valider (suppression ancienne)
+
+        const subscriptionEdition = editionsService.updateEdition(edition.id, body);
 
         combineLatest([subscriptionEdition])
             .pipe(
                 map(([dataEdition]) => {
                     // Fermeture modale
-                    openCloseEditionModal('');
-                    resetFormEdition(dataEdition.response.data.edition);
+                    openCloseEditionModal('', dataEdition.response.data.edition);
                     setEdition(dataEdition.response.data.edition);
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
@@ -208,6 +222,26 @@ const Edition = () => {
     };
 
     /**
+     * Formate les données édition
+     * @returns Données formatées
+     */
+    const formatDataEdition = () => {
+        const formData = new FormData();
+
+        // Champs textes
+        Object.entries(formEdition).forEach(([key, value]) => {
+            if (key !== 'picture' && value !== null) {
+                formData.append(key, value);
+            }
+        });
+
+        // Images (s'il y a une image à traiter)
+        formEdition.pictureAction === 'insert' && formEdition.picture && formData.append('picture', formEdition.picture);
+
+        return formData;
+    };
+
+    /**
      * Réinitialisation formulaire (modification édition)
      */
     const resetFormEdition = (data) => {
@@ -216,6 +250,8 @@ const Edition = () => {
             startDate: getDayFromDate(data.startDate),
             startTime: getLocalizedTime(data.startDate),
             endTime: getLocalizedTime(data.endDate),
+            picture: data.picture,
+            pictureAction: null,
             theme: data.theme,
             challenge: data.challenge
         });
@@ -363,7 +399,6 @@ const Edition = () => {
                 .pipe(
                     map(([dataGifts]) => {
                         openCloseGiftModal('');
-                        resetFormGift();
                         setGifts(dataGifts.response.data);
                         setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                     }),
@@ -664,132 +699,142 @@ const Edition = () => {
                 </div>
             ) : (
                 <>
-                    {/* Message */}
-                    {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
+                    {/* Thème */}
+                    {edition?.picture && <img src={edition.picture} alt={edition.picture.split('/').pop()} className="edition-picture" />}
 
-                    {/* Edition */}
-                    {edition && (
-                        <>
-                            {/* Titre */}
-                            <div>
-                                <h1>
-                                    <FaComputer size={30} />
-                                    {t('edition.editionTitle', {
-                                        year: new Date(edition.startDate).getFullYear(),
-                                        location: edition.location
-                                    })}
-                                </h1>
-                            </div>
+                    {/* Contenu */}
+                    <div className="position-relative z-2">
+                        {/* Message */}
+                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
-                            {/* Onglets */}
-                            <Tabs
-                                variant="underline"
-                                defaultActiveKey="players"
-                                id="justify-tab-example"
-                                className="mb-3 edition-tabs"
-                                justify
-                            >
-                                {/* Participants */}
-                                <Tab eventKey="players" title={t('edition.players')}>
-                                    <EditionPlayers
-                                        players={players}
-                                        formPlayer={formPlayer}
-                                        setFormPlayer={setFormPlayer}
-                                        resetFormPlayer={resetFormPlayer}
-                                        setModalOptionsPlayer={setModalOptionsPlayer}
-                                        formReward={formReward}
-                                        setFormReward={setFormReward}
-                                        setModalOptionsReward={setModalOptionsReward}
-                                        setMessage={setMessage}
-                                        onSubmit={handleSubmitPlayer}
-                                        onConfirm={openCloseConfirmModal}
-                                        isSubmitting={isSubmitting}
+                        {/* Edition */}
+                        {edition && (
+                            <>
+                                {/* Titre */}
+                                <div>
+                                    <h1>
+                                        <FaComputer size={30} />
+                                        {t('edition.editionTitle', {
+                                            year: new Date(edition.startDate).getFullYear(),
+                                            location: edition.location
+                                        })}
+                                    </h1>
+                                </div>
+
+                                {/* Onglets */}
+                                <Tabs
+                                    variant="underline"
+                                    defaultActiveKey="players"
+                                    id="justify-tab-example"
+                                    className="mb-3 edition-tabs"
+                                    justify
+                                >
+                                    {/* Participants */}
+                                    <Tab eventKey="players" title={t('edition.players')}>
+                                        <EditionPlayers
+                                            players={players}
+                                            formPlayer={formPlayer}
+                                            setFormPlayer={setFormPlayer}
+                                            resetFormPlayer={resetFormPlayer}
+                                            setModalOptionsPlayer={setModalOptionsPlayer}
+                                            formReward={formReward}
+                                            setFormReward={setFormReward}
+                                            setModalOptionsReward={setModalOptionsReward}
+                                            setMessage={setMessage}
+                                            onSubmit={handleSubmitPlayer}
+                                            onConfirm={openCloseConfirmModal}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    </Tab>
+
+                                    {/* Cadeaux */}
+                                    <Tab eventKey="gifts" title={t('edition.gifts')}>
+                                        <EditionGifts
+                                            gifts={gifts}
+                                            formData={formGift}
+                                            setFormData={setFormGift}
+                                            setModalOptions={setModalOptionsGift}
+                                            onConfirm={openCloseConfirmModal}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    </Tab>
+
+                                    {/* A propos */}
+                                    <Tab eventKey="about" title={t('edition.about')}>
+                                        <EditionAbout
+                                            edition={edition}
+                                            onEdit={openCloseEditionModal}
+                                            onConfirm={handleConfirmDeleteEdition}
+                                        />
+                                    </Tab>
+                                </Tabs>
+
+                                {/* Modale de modification/suppression d'édition */}
+                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
+                                    <EditionModal
+                                        formData={formEdition}
+                                        setFormData={setFormEdition}
+                                        modalOptions={modalOptionsEdition}
+                                        setModalOptions={setModalOptionsEdition}
+                                        onClose={openCloseEditionModal}
+                                        onSubmit={handleSubmitEdition}
                                     />
-                                </Tab>
+                                )}
 
-                                {/* Cadeaux */}
-                                <Tab eventKey="gifts" title={t('edition.gifts')}>
-                                    <EditionGifts
-                                        gifts={gifts}
+                                {/* Modale de création/modification de cadeau */}
+                                {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
+                                    <GiftModal
+                                        gift={gifts.find((g) => g.id === formGift.id)}
                                         formData={formGift}
                                         setFormData={setFormGift}
+                                        modalOptions={modalOptionsGift}
                                         setModalOptions={setModalOptionsGift}
-                                        onConfirm={openCloseConfirmModal}
-                                        isSubmitting={isSubmitting}
+                                        onClose={openCloseGiftModal}
+                                        onSubmit={handleSubmitGift}
                                     />
-                                </Tab>
+                                )}
 
-                                {/* A propos */}
-                                <Tab eventKey="about" title={t('edition.about')}>
-                                    <EditionAbout edition={edition} onEdit={openCloseEditionModal} onConfirm={handleConfirmDeleteEdition} />
-                                </Tab>
-                            </Tabs>
+                                {/* Modale de modification de participant */}
+                                {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
+                                    <PlayerModal
+                                        players={players}
+                                        player={players.find((p) => p.id === formPlayer.id)}
+                                        formData={formPlayer}
+                                        setFormData={setFormPlayer}
+                                        modalOptions={modalOptionsPlayer}
+                                        setModalOptions={setModalOptionsPlayer}
+                                        onClose={openClosePlayerModal}
+                                        onSubmit={handleSubmitPlayer}
+                                    />
+                                )}
 
-                            {/* Modale de modification/suppression d'édition */}
-                            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
-                                <EditionModal
-                                    formData={formEdition}
-                                    setFormData={setFormEdition}
-                                    modalOptions={modalOptionsEdition}
-                                    setModalOptions={setModalOptionsEdition}
-                                    onClose={openCloseEditionModal}
-                                    onSubmit={handleSubmitEdition}
-                                />
-                            )}
+                                {/* Modale d'attribution de cadeau à un participant */}
+                                {modalOptionsReward.isOpen && (
+                                    <RewardModal
+                                        player={players.find((p) => p.id === formReward.idPlayer)}
+                                        gifts={gifts}
+                                        formData={formReward}
+                                        setFormData={setFormReward}
+                                        modalOptions={modalOptionsReward}
+                                        setModalOptions={setModalOptionsReward}
+                                        onClose={openCloseRewardModal}
+                                        onSubmit={handleSubmitReward}
+                                        onConfirm={openCloseConfirmModal}
+                                    />
+                                )}
 
-                            {/* Modale de création/modification de cadeau */}
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
-                                <GiftModal
-                                    gift={gifts.find((g) => g.id === formGift.id)}
-                                    formData={formGift}
-                                    setFormData={setFormGift}
-                                    modalOptions={modalOptionsGift}
-                                    setModalOptions={setModalOptionsGift}
-                                    onClose={openCloseGiftModal}
-                                    onSubmit={handleSubmitGift}
-                                />
-                            )}
-
-                            {/* Modale de modification de participant */}
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
-                                <PlayerModal
-                                    players={players}
-                                    player={players.find((p) => p.id === formPlayer.id)}
-                                    formData={formPlayer}
-                                    setFormData={setFormPlayer}
-                                    modalOptions={modalOptionsPlayer}
-                                    setModalOptions={setModalOptionsPlayer}
-                                    onClose={openClosePlayerModal}
-                                    onSubmit={handleSubmitPlayer}
-                                />
-                            )}
-
-                            {/* Modale d'attribution de cadeau à un participant */}
-                            {modalOptionsReward.isOpen && (
-                                <RewardModal
-                                    player={players.find((p) => p.id === formReward.idPlayer)}
-                                    gifts={gifts}
-                                    formData={formReward}
-                                    setFormData={setFormReward}
-                                    modalOptions={modalOptionsReward}
-                                    setModalOptions={setModalOptionsReward}
-                                    onClose={openCloseRewardModal}
-                                    onSubmit={handleSubmitReward}
-                                    onConfirm={openCloseConfirmModal}
-                                />
-                            )}
-
-                            {/* Modale de confirmation */}
-                            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
-                                <ConfirmModal
-                                    modalOptions={modalOptionsConfirm}
-                                    setModalOptions={setModalOptionsConfirm}
-                                    onClose={openCloseConfirmModal}
-                                    onConfirmAction={handleConfirmAction}
-                                />
-                            )}
-                        </>
-                    )}
+                                {/* Modale de confirmation */}
+                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                                    <ConfirmModal
+                                        modalOptions={modalOptionsConfirm}
+                                        setModalOptions={setModalOptionsConfirm}
+                                        onClose={openCloseConfirmModal}
+                                        onConfirmAction={handleConfirmAction}
+                                    />
+                                )}
+                            </>
+                        )}
+                    </div>
                 </>
             )}
         </div>

@@ -23,6 +23,7 @@
 /app/build
 /build
 /dist
+/files
 /logs
 
 # Misc

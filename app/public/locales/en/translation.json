@@ -6,6 +6,7 @@
         "editionsNotFound": "Editions not found",
         "invalidAuth": "Invalid authentication",
         "invalidEndTime": "Invalid end time",
+        "invalidFile": "The selected file type is not allowed",
         "invalidGift": "A gift must be selected",
         "invalidGiftPoints": "Insufficient points for this gift",
         "invalidGiveaway": "The name and number of points to give must be provided",

@@ -40,6 +40,8 @@ const Home = () => {
         startDate: '',
         startTime: '',
         endTime: '',
+        picture: null,
+        pictureAction: null,
         theme: '',
         challenge: ''
     });
@@ -168,10 +170,13 @@ const Home = () => {
         setMessage(null);
         setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
+        // Formatage des données
+        const body = formatDataEdition();
+
         const editionsService = new EditionsService();
 
         editionsService
-            .createEdition(formEdition)
+            .createEdition(body)
             .pipe(
                 map((dataEdition) => {
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
@@ -180,7 +185,6 @@ const Home = () => {
                 map((dataEditions) => {
                     groupByYear(dataEditions.response.data);
                     openCloseEditionModal('');
-                    resetFormEdition();
                     setEditionsByYear([]);
                 }),
                 take(1),
@@ -199,6 +203,26 @@ const Home = () => {
     };
 
     /**
+     * Formate les données édition
+     * @returns Données formatées
+     */
+    const formatDataEdition = () => {
+        const formData = new FormData();
+
+        // Champs textes
+        Object.entries(formEdition).forEach(([key, value]) => {
+            if (key !== 'picture' && value !== null) {
+                formData.append(key, value);
+            }
+        });
+
+        // Images (s'il y a une image à traiter)
+        formEdition.pictureAction === 'insert' && formEdition.picture && formData.append('picture', formEdition.picture);
+
+        return formData;
+    };
+
+    /**
      * Réinitialisation formulaire (création édition)
      */
     const resetFormEdition = () => {
@@ -207,6 +231,8 @@ const Home = () => {
             startDate: '',
             startTime: '',
             endTime: '',
+            picture: null,
+            pictureAction: null,
             theme: '',
             challenge: ''
         });

@@ -1,0 +1,32 @@
+.picture-input-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #163c76;
+    color: white;
+    border: none;
+    height: 36px;
+    cursor: pointer;
+}
+
+.picture-input-button:hover,
+.picture-input-button:active {
+    background-color: #0a2f68 !important;
+}
+
+.picture-input-button-small {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #f33e3e !important;
+    color: white !important;
+    border: none !important;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.picture-input-button-small:hover,
+.picture-input-button-small:active {
+    background-color: #d43636 !important;
+}

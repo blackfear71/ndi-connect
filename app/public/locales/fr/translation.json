@@ -6,6 +6,7 @@
         "editionsNotFound": "Editions non trouvées",
         "invalidAuth": "Authentification invalide",
         "invalidEndTime": "L'heure de fin est invalide",
+        "invalidFile": "Le type de fichier sélectionné n'est pas autorisé",
         "invalidGift": "Un cadeau doit être choisi",
         "invalidGiftPoints": "Le nombre de points est insuffisant pour ce cadeau",
         "invalidGiveaway": "Le nom et le nombre de points à donner doivent être renseignés",

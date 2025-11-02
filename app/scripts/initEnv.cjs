@@ -27,7 +27,9 @@ DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
-LOG_DIR=../logs
+FILES_DIR=../files
+FILES_URL=http://localhost/ndi-connect/files
+LOGS_DIR=../logs
 `
     },
     {
@@ -39,7 +41,9 @@ DB_PORT=
 DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
-LOG_DIR=/server_path/logs/ndi-connect
+FILES_DIR=/server_path/files/ndi-connect
+FILES_URL=web_url/files/ndi-connect
+LOGS_DIR=/server_path/logs/ndi-connect
 `
     }
 ];

@@ -16,3 +16,16 @@
     text-align: center;
     border-radius: 5px;
 }
+
+.edition-picture {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: auto;
+    max-height: calc(100vh - 89.5px); /* 60px : navbar + 29.5px : footer) */
+    z-index: 0;
+    opacity: 0.8;
+    mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+}

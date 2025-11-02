@@ -20,7 +20,7 @@ class EditionsRepository extends Model
      */
     public function getEdition($id)
     {
-        $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate', theme, challenge FROM {$this->table} WHERE id = :id AND is_active = 1";
+        $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate', picture, theme, challenge FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);

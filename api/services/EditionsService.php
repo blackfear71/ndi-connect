@@ -57,17 +57,23 @@ class EditionsService
     public function getEdition($id)
     {
         $edition = null;
-        $data = $this->repository->getEdition($id);
 
-        if ($id && $data) {
-            // Récupération des données édition
-            $edition['edition'] = $data;
+        if ($id) {
+            $data = $this->repository->getEdition($id);
 
-            // Récupération des données cadeaux
-            $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
+            if ($data) {
+                // Vérification image existante et génération URL
+                $data['picture'] = FileHelper::getFilePath('themes', $data['picture']);
 
-            // Récupération des données participants
-            $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
+                // Récupération des données édition
+                $edition['edition'] = $data;
+
+                // Récupération des données cadeaux
+                $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
+
+                // Récupération des données participants
+                $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
+            }
         }
 
         return $edition;

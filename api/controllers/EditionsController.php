@@ -115,8 +115,12 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition($token, $data)
+    public function createEdition($token, $data, $files)
     {
+        // TODO : une fois pictureAction testé, il faut certainement supprimer du formulaire pour ne pas tenter de l'insérer en base
+        var_dump($data);
+        var_dump($files);
+
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
@@ -148,8 +152,12 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition($token, $id, $data)
+    public function updateEdition($token, $id, $data, $files)
     {
+        // TODO : une fois pictureAction testé, il faut certainement supprimer du formulaire pour ne pas tenter de l'ins
+        var_dump($data);
+        var_dump($files);
+
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);

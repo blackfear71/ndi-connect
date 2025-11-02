@@ -2,13 +2,14 @@ import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaMapLocationDot } from 'react-icons/fa6';
+import { FaMapLocationDot, FaRegImage } from 'react-icons/fa6';
 import { GoGoal } from 'react-icons/go';
 import { IoCalendarNumberOutline } from 'react-icons/io5';
 import { MdOutlineLightbulb } from 'react-icons/md';
 import { WiTime4, WiTime8 } from 'react-icons/wi';
 
 import Message from '../Message/Message';
+import PictureInput from '../PictureInput/PictureInput';
 
 const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
@@ -45,6 +46,25 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    /**
+     * Met à jour le formulaire à la saisie d'un fichier
+     * @param {*} file Fichier
+     * @param {*} action Action à réaliser
+     */
+    const handleChangeFile = (file, action) => {
+        switch (action) {
+            case 'delete':
+                setFormData((prev) => ({ ...prev, picture: null, pictureAction: action }));
+                break;
+            case 'insert':
+                setFormData((prev) => ({ ...prev, picture: file, pictureAction: action }));
+                break;
+            default:
+                setFormData((prev) => ({ ...prev, picture: null, pictureAction: null }));
+                break;
+        }
     };
 
     /**
@@ -153,6 +173,18 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                         <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
                             <WiTime8 size={30} className="me-3" />
                             <Form.Control type="time" name="endTime" value={formData.endTime || ''} onChange={handleChange} required />
+                        </Form.Group>
+
+                        {/* Image */}
+                        <Form.Group className="d-flex align-items-center mt-2" controlId="picture">
+                            <FaRegImage size={26} className="me-3" />
+                            <PictureInput
+                                name={'picture'}
+                                value={formData.picture}
+                                setMessage={setMessage}
+                                onChange={handleChangeFile}
+                                isSubmitting={modalOptions.isSubmitting}
+                            />
                         </Form.Group>
 
                         {/* Thème */}

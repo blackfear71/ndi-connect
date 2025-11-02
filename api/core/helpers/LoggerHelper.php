@@ -8,15 +8,15 @@ class LoggerHelper
      * @param $message Message à logguer
      * @param $level Niveau de gravité (ex: ERROR, INFO, WARNING)
      */
-    public static function log(string $message, string $level = 'ERROR')
+    public static function log($message, $level = 'ERROR')
     {
         // Récupération du dossier de logs depuis le fichier .env
         if (self::$env === null) {
             self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
-        if (isset(self::$env['LOG_DIR']) && !empty(self::$env['LOG_DIR'])) {
-            $logDir = self::$env['LOG_DIR'];
+        if (isset(self::$env['LOGS_DIR']) && !empty(self::$env['LOGS_DIR'])) {
+            $logDir = self::$env['LOGS_DIR'];
 
             // Contrôle que le dossier de logs existe
             if (!is_dir($logDir)) {
