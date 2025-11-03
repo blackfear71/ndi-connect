@@ -6,12 +6,12 @@ class FileHelper
     /**
      * Contrôle l'existence d'un fichier sur le serveur
      * @param $destination Dossier de destination
-     * @param $file Fichier
+     * @param $fileName Nom du fichier
      */
-    public static function getFilePath($destination, $file)
+    public static function getFilePath($destination, $fileName)
     {
         // Contrôle données renseignées
-        if (!$file || !$destination) {
+        if (!$fileName || !$destination) {
             return null;
         }
 
@@ -22,12 +22,12 @@ class FileHelper
 
         // Contrôle que le fichier existe
         $destination = trim($destination, '/\\');
-        $file = basename($file);
+        $fileName = basename($fileName);
         $dir = rtrim(self::$env['FILES_DIR'], '/\\');
         $url = rtrim(self::$env['FILES_URL'], '/\\');
 
-        $filePath = "$dir/$destination/$file";
-        $fileUrl = "$url/$destination/$file";
+        $filePath = "$dir/$destination/$fileName";
+        $fileUrl = "$url/$destination/$fileName";
 
         return is_file($filePath) ? $fileUrl : null;
     }
