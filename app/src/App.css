@@ -74,3 +74,9 @@
     border-color: #f33e3e !important;
     color: white !important;
 }
+
+.input-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+}

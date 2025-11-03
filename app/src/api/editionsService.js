@@ -54,8 +54,8 @@ class EditionsService {
         const url = `${this.apiUrl}/create`;
         return ajax({
             url,
-            method: 'POST',
-            headers: this.headers,
+            method: 'POST', // La méthode doit être POST pour remplir $_POST et $_FILES côté back
+            headers: undefined, // Si le body est de type FormData, le Content-Type ne doit pas être précisé dans le header
             body,
             withCredentials: true
         });
@@ -71,8 +71,8 @@ class EditionsService {
         const url = `${this.apiUrl}/update/${id}`;
         return ajax({
             url,
-            method: 'PATCH',
-            headers: this.headers,
+            method: 'POST', // La méthode doit être POST pour remplir $_POST et $_FILES côté back
+            headers: undefined, // Si le body est de type FormData, le Content-Type ne doit pas être précisé dans le header
             body,
             withCredentials: true
         });

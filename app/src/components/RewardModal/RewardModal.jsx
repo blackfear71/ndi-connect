@@ -137,7 +137,7 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setMo
                                 {gifts.length > 0 ? (
                                     obtainableGifts.length > 0 ? (
                                         <Form.Group controlId="name" className="d-flex align-items-center mt-2">
-                                            <PiListStarBold size={30} className="me-3" />
+                                            <PiListStarBold className="input-icon me-3" />
                                             <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
                                                 <option key={0} value={0} disabled>
                                                     {t('edition.chooseGift')}

@@ -77,16 +77,6 @@ const NavBar = () => {
     };
 
     /**
-     * Réinitialisation formulaire
-     */
-    const resetFormConnection = () => {
-        setFormConnection({
-            login: '',
-            password: ''
-        });
-    };
-
-    /**
      * Connexion ou déconnexion selon le cas
      */
     const handleSubmit = () => {
@@ -102,6 +92,16 @@ const NavBar = () => {
             .finally(() => {
                 setIsSubmitting(false);
             });
+    };
+
+    /**
+     * Réinitialisation formulaire
+     */
+    const resetFormConnection = () => {
+        setFormConnection({
+            login: '',
+            password: ''
+        });
     };
 
     return (

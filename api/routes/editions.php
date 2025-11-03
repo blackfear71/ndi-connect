@@ -26,22 +26,16 @@ $router->post('/editions/create', function () use ($db) {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
-    // Données d'entrée
-    $data = json_decode(file_get_contents('php://input'), true);
-
     // Appel contrôleur
-    (new EditionsController($db))->createEdition($token, $data);
+    (new EditionsController($db))->createEdition($token, $_POST, $_FILES);
 });
 
-$router->patch('/editions/update/:id', function ($params) use ($db) {
+$router->post('/editions/update/:id', function ($params) use ($db) {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
-    // Données d'entrée
-    $data = json_decode(file_get_contents('php://input'), true);
-
     // Appel contrôleur
-    (new EditionsController($db))->updateEdition($token, $params['id'], $data);
+    (new EditionsController($db))->updateEdition($token, $params['id'], $_POST, $_FILES);
 });
 
 $router->delete('/editions/delete/:id', function ($params) use ($db) {

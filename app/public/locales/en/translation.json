@@ -2,10 +2,20 @@
     "errors": {
         "creationFailed": "Creation failed",
         "deletionFailed": "Deletion failed",
+        "deletionFileFailed": "File deletion failed",
         "editionNotFound": "Edition not found",
         "editionsNotFound": "Editions not found",
+        "envFilesDirMissing": "Destination folder is missing in the environment file",
+        "fileTooLarge": "The file is too large",
+        "fileNotFound": "File not found",
         "invalidAuth": "Invalid authentication",
+        "invalidDirectory": "Destination folder does not exist",
         "invalidEndTime": "Invalid end time",
+        "invalidFile": "Invalid file received",
+        "invalidFileType": "The selected file type is not allowed",
+        "invalidFilename": "Filename is missing",
+        "invalidFormat": "Invalid file format",
+        "invalidImage": "The file is not an image",
         "invalidGift": "A gift must be selected",
         "invalidGiftPoints": "Insufficient points for this gift",
         "invalidGiveaway": "The name and number of points to give must be provided",
@@ -31,7 +41,9 @@
         "unknownEndpoint": "Unknown endpoint",
         "unknownError": "An unknown error occurred",
         "updateFailed": "Update failed",
-        "usersNotFound": "Users not found"
+        "uploadFailed": "Image upload failed",
+        "usersNotFound": "Users not found",
+        "webpConversionFailed": "Error while converting image to WebP format"
     },
     "messages": {
         "creationSuccess": "Creation successful",
@@ -50,6 +62,7 @@
     },
     "common": {
         "add": "Add",
+        "browse": "Browse",
         "cancel": "Cancel",
         "close": "Close",
         "confirm": "Confirm",
@@ -57,6 +70,7 @@
         "english": "English",
         "french": "French",
         "home": "Home",
+        "noFilesSelected": "No files selected",
         "reset": "Reset",
         "return": "Back",
         "unknownLabel": "Unknown label",

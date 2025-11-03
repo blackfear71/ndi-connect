@@ -57,17 +57,23 @@ class EditionsService
     public function getEdition($id)
     {
         $edition = null;
-        $data = $this->repository->getEdition($id);
 
-        if ($id && $data) {
-            // Récupération des données édition
-            $edition['edition'] = $data;
+        if ($id) {
+            $data = $this->repository->getEdition($id);
 
-            // Récupération des données cadeaux
-            $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
+            if ($data) {
+                // Vérification image existante et génération URL
+                $data['picture'] = FileHelper::getFilePath('themes', $data['picture']);
 
-            // Récupération des données participants
-            $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
+                // Récupération des données édition
+                $edition['edition'] = $data;
+
+                // Récupération des données cadeaux
+                $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
+
+                // Récupération des données participants
+                $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
+            }
         }
 
         return $edition;
@@ -88,12 +94,15 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition($login, $data)
+    public function createEdition($login, $data, $file)
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
             return null;
         }
+
+        // Traitement de l'image
+        $data['picture'] = $this->uploadImage(null, $data['pictureAction'] ?? null, $file['picture'] ?? null);
 
         // Insertion
         $data = $this->processDataEdition($data);
@@ -103,12 +112,15 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition($id, $login, $data)
+    public function updateEdition($id, $login, $data, $file)
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
             return null;
         }
+
+        // Traitement de l'image
+        $data['picture'] = $this->uploadImage($id, $data['pictureAction'] ?? null, $file['picture'] ?? null);
 
         // Modification
         $data = $this->processDataEdition($data);
@@ -161,6 +173,39 @@ class EditionsService
     }
 
     /**
+     * Traitement de l'image
+     */
+    private function uploadImage($id, $action, $file)
+    {
+        // Récupération des données de l'édition
+        $picture = $id ? $this->repository->getEditionPicture($id) : null;
+
+        // Traitement de l'image
+        switch ($action) {
+            case 'insert':
+                // Import de la nouvelle image
+                $fileName = FileHelper::uploadImage('themes', $file);
+
+                // Suppression de l'ancienne image si pas d'erreur (hors création)
+                if ($fileName && $picture) {
+                    FileHelper::deleteFile('themes', $picture);
+                }
+
+                return $fileName;
+            case 'delete':
+                // Suppression de l'ancienne image (hors création)
+                if ($picture) {
+                    FileHelper::deleteFile('themes', $picture);
+                }
+
+                return null;
+            default:
+                // Si pas d'action alors on laisse en l'état
+                return $picture;
+        }
+    }
+
+    /**
      * Formate les données avant traitement SQL
      */
     private function processDataEdition($data)
@@ -173,6 +218,7 @@ class EditionsService
             'location'   => $data['location'],
             'start_date' => $startDate->format('Y-m-d H:i:s'),
             'end_date'   => $endDate->format('Y-m-d H:i:s'),
+            'picture'    => $data['picture'],
             'theme'      => $data['theme'],
             'challenge'  => $data['challenge']
         ];
