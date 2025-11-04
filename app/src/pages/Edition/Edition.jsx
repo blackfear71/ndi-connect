@@ -692,11 +692,13 @@ const Edition = () => {
                 <>
                     {/* Thème */}
                     {edition?.picture && (
-                        <img
-                            src={`${import.meta.env.VITE_API_URL}/serve-file?destination=images&file=${edition.picture}`}
-                            alt={edition.picture}
-                            className="edition-picture"
-                        />
+                        <div className="edition-picture-wrapper">
+                            <img
+                                src={`${import.meta.env.VITE_API_URL}/serve-file?destination=images&file=${edition.picture}`}
+                                alt={edition.picture}
+                                className="edition-picture"
+                            />
+                        </div>
                     )}
 
                     {/* Contenu */}
