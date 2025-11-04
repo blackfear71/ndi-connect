@@ -36,6 +36,7 @@
     object-fit: contain;
     flex: 0 1 auto;
     background-color: #e3e3e3;
+    word-break: break-all;
 }
 
 .picture-input-button-small {

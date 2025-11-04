@@ -22,12 +22,12 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
      */
     useEffect(() => {
         if (value) {
-            // Si la valeur ressemble à une URL (commence par http ou /), on la garde telle quelle
+            // Si c'est le nom d'un fichier existant sur le serveur
             if (typeof value === 'string') {
-                setPreviewUrl(value);
-                setFileName(value.split('/').pop());
+                setPreviewUrl(`${import.meta.env.VITE_API_URL}/serve-file?destination=images&file=${value}`);
+                setFileName(value);
             }
-            // Si c'est un fichier (File object)
+            // Si c'est un fichier saisi (File object)
             else if (value instanceof File) {
                 setPreviewUrl(URL.createObjectURL(value));
                 setFileName(value.name);
