@@ -152,7 +152,8 @@ class FileHelper
                     if (!move_uploaded_file($fileTmp, $destinationPath)) {
                         throw new Exception('ERR_UPLOAD_FAILED', 400);
                     }
-                    exit;
+                    
+                    return $newFileName;
 
                 default:
                     throw new Exception('ERR_INVALID_FORMAT', 400);
