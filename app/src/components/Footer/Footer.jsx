@@ -1,3 +1,4 @@
+import { Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 import flagEn from '../../assets/icons/flag-en.svg';
@@ -23,7 +24,7 @@ const Footer = () => {
         <footer className="footer d-flex align-items-center justify-content-between">
             <span className="footer-text mx-auto">© 2025, NDI-Connect - v{packageJson.version}</span>
             <button className="footer-language-toggle" onClick={handleToggleLanguage}>
-                <img
+                <Image
                     src={i18n.language === 'fr' ? flagFr : flagEn}
                     alt={i18n.language === 'fr' ? t('common.french') : t('common.english')}
                     title={i18n.language === 'fr' ? t('common.french') : t('common.english')}

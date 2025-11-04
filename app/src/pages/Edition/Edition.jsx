@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -693,7 +693,7 @@ const Edition = () => {
                     {/* Thème */}
                     {edition?.picture && (
                         <div className="edition-picture-wrapper">
-                            <img
+                            <Image
                                 src={`${import.meta.env.VITE_API_URL}/serve-file?destination=images&file=${edition.picture}`}
                                 alt={edition.picture}
                                 className="edition-picture"

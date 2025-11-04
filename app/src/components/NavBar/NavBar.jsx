@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import { Badge, Dropdown } from 'react-bootstrap';
+import { Badge, Dropdown, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { FcApproval } from 'react-icons/fc';
@@ -108,7 +108,7 @@ const NavBar = () => {
         <nav className="navbar-container">
             {/* Logo */}
             <Link to="/">
-                <img src={ndiConnectLogo} alt="ndi-connect" title={t('common.home')} className="navbar-logo" />
+                <Image src={ndiConnectLogo} alt="ndi-connect" title={t('common.home')} className="navbar-logo" />
             </Link>
 
             {/* Barre de recherche */}

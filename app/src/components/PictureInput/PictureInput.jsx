@@ -29,6 +29,7 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
             }
             // Si c'est un fichier saisi (File object)
             else if (value instanceof File) {
+                previewUrl && URL.revokeObjectURL(previewUrl);
                 setPreviewUrl(URL.createObjectURL(value));
                 setFileName(value.name);
             }
@@ -52,16 +53,17 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
 
             // Si le type de fichier est autorisé, on met à jour le formulaire
             if (allowedTypes.includes(file.type)) {
-                setFileName(file.name);
+                previewUrl && URL.revokeObjectURL(previewUrl);
                 setPreviewUrl(URL.createObjectURL(file));
+                setFileName(file.name);
 
                 onChange && onChange(file, 'insert');
             } else {
                 setMessage({ code: 'errors.invalidFileType', type: 'error' });
 
                 e.target.value = '';
-                setFileName('');
                 setPreviewUrl(null);
+                setFileName('');
             }
         }
     };
@@ -97,7 +99,7 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
                 {previewUrl ? (
                     <div className="picture-input-preview-content">
                         {/* Aperçu */}
-                        <Image src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
+                        <Image key={previewUrl} src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
 
                         {/* Suppression */}
                         <Button onClick={handleFileRemove} className="picture-input-button-small">
