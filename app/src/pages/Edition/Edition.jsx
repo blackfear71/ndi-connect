@@ -691,7 +691,13 @@ const Edition = () => {
             ) : (
                 <>
                     {/* Thème */}
-                    {edition?.picture && <img src={edition.picture} alt={edition.picture.split('/').pop()} className="edition-picture" />}
+                    {edition?.picture && (
+                        <img
+                            src={`${import.meta.env.VITE_API_URL}/serve-file?destination=images&file=${edition.picture}`}
+                            alt={edition.picture}
+                            className="edition-picture"
+                        />
+                    )}
 
                     {/* Contenu */}
                     <div className="position-relative z-2">

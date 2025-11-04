@@ -8,7 +8,7 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function getFilePath($destination, $fileName)
+    public static function checkFile($destination, $fileName)
     {
         // Contrôle données renseignées
         if (!$fileName || !$destination) {
@@ -24,12 +24,58 @@ class FileHelper
         $destination = trim($destination, '/\\');
         $fileName = basename($fileName);
         $dir = rtrim(self::$env['FILES_DIR'], '/\\');
-        $url = rtrim(self::$env['FILES_URL'], '/\\');
 
         $filePath = "$dir/$destination/$fileName";
-        $fileUrl = "$url/$destination/$fileName";
 
-        return is_file($filePath) ? $fileUrl : null;
+        return is_file($filePath) ? $fileName : null;
+    }
+
+    /**
+     * Renvoie le fichier demandé
+     */
+    public static function serveFile()
+    {
+        $destination = isset($_GET['destination']) ? basename($_GET['destination']) : null;
+        $file = isset($_GET['file']) ? basename($_GET['file']) : null;
+
+        if (!$destination || !$file) {
+            ResponseHelper::error('ERR_MISSING_PARAMS', 400, 'Paramètres manquants.');
+            exit;
+        }
+
+        // Recherche du dossier des fichiers via getenv()
+        $filesDir = getenv('FILES_DIR');
+
+        // Fallback sur le .env uniquement si nécessaire
+        if (!$filesDir) {
+            $env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
+            $filesDir = $env['FILES_DIR'] ?? null;
+        }
+
+        if (!$filesDir || !is_dir($filesDir)) {
+            ResponseHelper::error('ERR_FORBIDDEN_FILE', 403, 'Chemin de fichier non autorisé.');
+            exit;
+        }
+
+        // Construction du chemin complet
+        $filePath = rtrim($filesDir, '/\\') . '/' . trim($destination, '/\\') . '/' . $file;
+
+        // Vérification existence du fichier
+        if (!is_file($filePath)) {
+            ResponseHelper::error('ERR_FILE_NOT_FOUND', 404, "Fichier introuvable : $file");
+            exit;
+        }
+
+        // Détection du type MIME
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $filePath);
+        finfo_close($finfo);
+
+        // Envoi du fichier
+        header('Content-Type: ' . $mimeType);
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
     }
 
     /**

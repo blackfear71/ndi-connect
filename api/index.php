@@ -44,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     require_once __DIR__ . '/routes/players.php';
 } else if (str_starts_with($uri, '/rewards')) {
     require_once __DIR__ . '/routes/rewards.php';
+} else if (str_starts_with($uri, '/serve-file')) {
+    require_once __DIR__ . '/routes/serve-file.php';
 } else if (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {

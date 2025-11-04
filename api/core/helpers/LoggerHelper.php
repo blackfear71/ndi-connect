@@ -15,8 +15,8 @@ class LoggerHelper
             self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
-        if (isset(self::$env['LOGS_DIR']) && !empty(self::$env['LOGS_DIR'])) {
-            $logDir = self::$env['LOGS_DIR'];
+        if (isset(self::$env['FILES_DIR']) && !empty(self::$env['FILES_DIR'])) {
+            $logDir = self::$env['FILES_DIR'] . '/logs';
 
             // Contrôle que le dossier de logs existe
             if (!is_dir($logDir)) {

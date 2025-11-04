@@ -55,8 +55,7 @@ ndi-connect/
 │   ├── package.json
 │   ├── vite.config.js
 ├── dist/                 # Dossier de déploiement
-├── files/                # Dossier des fichiers
-├── logs/                 # Dossier de logs
+├── files/                # Dossier des fichiers (images, logs...)
 ├── .gitattributes
 ├── .gitignore
 ├── deploy.ps1            # Script de déploiement
@@ -98,8 +97,6 @@ DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
 FILES_DIR=../files
-FILES_URL=http://localhost/ndi-connect/files
-LOGS_DIR=../logs
 ```
 
 ### 4. Lancement en développement
@@ -126,8 +123,6 @@ DB_NAME=ndi_connect_db
 DB_USER=prod_login
 DB_PASS=prod_password
 FILES_DIR=/server_path/files/ndi-connect
-FILES_URL=web_url/files/ndi-connect
-LOGS_DIR=/server_path/logs/ndi-connect
 ```
 
 Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deploy.ps1**. Dans une console lancer la commande puis faire le choix de version :

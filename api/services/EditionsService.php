@@ -63,7 +63,7 @@ class EditionsService
 
             if ($data) {
                 // Vérification image existante et génération URL
-                $data['picture'] = FileHelper::getFilePath('themes', $data['picture']);
+                $data['picture'] = FileHelper::checkFile('images', $data['picture']);
 
                 // Récupération des données édition
                 $edition['edition'] = $data;
@@ -184,18 +184,18 @@ class EditionsService
         switch ($action) {
             case 'insert':
                 // Import de la nouvelle image
-                $fileName = FileHelper::uploadImage('themes', $file);
+                $fileName = FileHelper::uploadImage('images', $file);
 
                 // Suppression de l'ancienne image si pas d'erreur (hors création)
                 if ($fileName && $picture) {
-                    FileHelper::deleteFile('themes', $picture);
+                    FileHelper::deleteFile('images', $picture);
                 }
 
                 return $fileName;
             case 'delete':
                 // Suppression de l'ancienne image (hors création)
                 if ($picture) {
-                    FileHelper::deleteFile('themes', $picture);
+                    FileHelper::deleteFile('images', $picture);
                 }
 
                 return null;

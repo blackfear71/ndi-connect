@@ -28,8 +28,6 @@ DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
 FILES_DIR=../files
-FILES_URL=http://localhost/ndi-connect/files
-LOGS_DIR=../logs
 `
     },
     {
@@ -42,8 +40,6 @@ DB_NAME=ndi_connect_db
 DB_USER=root
 DB_PASS=
 FILES_DIR=/server_path/files/ndi-connect
-FILES_URL=web_url/files/ndi-connect
-LOGS_DIR=/server_path/logs/ndi-connect
 `
     }
 ];

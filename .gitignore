@@ -24,7 +24,6 @@
 /build
 /dist
 /files
-/logs
 
 # Misc
 .DS_Store
