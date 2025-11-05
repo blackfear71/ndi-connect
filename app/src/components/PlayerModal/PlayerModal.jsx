@@ -197,25 +197,25 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                         </div>
 
                         {/* Formulaire */}
-                        <Form.Group controlId="points" className="d-flex align-items-center mt-3 gap-3">
+                        <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
                             <GiTwoCoins className="input-icon" />
 
-                            <div className="d-flex align-items-center w-100">
+                            <div className="d-flex align-items-center w-100 justify-content-evenly">
                                 <Button
-                                    className="flex-fill"
+                                    className="player-modal-button"
                                     variant="outline-secondary"
-                                    size="sm"
+                                    size="lg"
                                     onClick={() => handleChangeIncrement('remove')}
                                 >
                                     –
                                 </Button>
 
-                                <div className="flex-fill px-3 text-center">{formData.delta || 0}</div>
+                                <div className="player-modal-value">{formData.delta || 0}</div>
 
                                 <Button
-                                    className="flex-fill"
+                                    className="player-modal-button"
                                     variant="outline-secondary"
-                                    size="sm"
+                                    size="lg"
                                     onClick={() => handleChangeIncrement('add')}
                                 >
                                     +
@@ -247,22 +247,22 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                         <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
                             <GiTwoCoins className="input-icon" />
 
-                            <div className="d-flex align-items-center w-100">
+                            <div className="d-flex align-items-center w-100 justify-content-evenly">
                                 <Button
-                                    className="flex-fill"
+                                    className="player-modal-button"
                                     variant="outline-secondary"
-                                    size="sm"
+                                    size="lg"
                                     onClick={() => handleChangeGiveaway('remove')}
                                 >
                                     –
                                 </Button>
 
-                                <div className="flex-fill px-3 text-center">{formData.giveaway || 0}</div>
+                                <div className="player-modal-value">{formData.giveaway || 0}</div>
 
                                 <Button
-                                    className="flex-fill"
+                                    className="player-modal-button"
                                     variant="outline-secondary"
-                                    size="sm"
+                                    size="lg"
                                     onClick={() => handleChangeGiveaway('add')}
                                 >
                                     +

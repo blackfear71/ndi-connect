@@ -203,15 +203,6 @@ const EditionPlayers = ({
                             <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{p.name}</span>
                         </div>
 
-                        {/* Cadeaux */}
-                        <Button
-                            onClick={isSubmitting ? null : () => showRewardModal(p)}
-                            className="edition-players-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                        >
-                            <FaGift color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
-
                         {/* Supression */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
@@ -222,6 +213,15 @@ const EditionPlayers = ({
                                 <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
                             </Button>
                         )}
+
+                        {/* Cadeaux */}
+                        <Button
+                            onClick={isSubmitting ? null : () => showRewardModal(p)}
+                            className="edition-players-button"
+                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                        >
+                            <FaGift color={isSubmitting ? 'gray' : 'white'} />
+                        </Button>
 
                         {/* Modification */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (

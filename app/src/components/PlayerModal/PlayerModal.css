@@ -7,3 +7,29 @@
     font-size: medium !important;
     border-radius: 30px !important;
 }
+
+.player-modal-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px;
+    height: 40px;
+}
+
+.player-modal-button:hover,
+.player-modal-button:active {
+    background-color: #f33e3e !important;
+    border-color: #f33e3e !important;
+    color: white;
+}
+
+.player-modal-value {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: larger !important;
+    background-color: #e3e3e3;
+}
