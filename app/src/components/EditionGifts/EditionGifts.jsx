@@ -64,7 +64,7 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
                 <>
                     {/* Cadeaux à gagner */}
                     {availableGifts && availableGifts.length > 0 && (
-                        <div className="mt-2">
+                        <div className="mt-3">
                             <GiftList
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
@@ -77,14 +77,13 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
 
                     {/* Cadeaux déjà gagnés */}
                     {unavailableGifts && unavailableGifts.length > 0 && (
-                        <div className="mt-2">
+                        <div className="mt-3">
                             <GiftList
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
                                 onConfirm={onConfirm}
                                 showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
-                                className="mt-2"
                             />
                         </div>
                     )}
