@@ -2,7 +2,7 @@ import { useContext, useMemo, useState } from 'react';
 
 import { Badge, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaAngleRight, FaSort, FaTrashCan } from 'react-icons/fa6';
+import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
 
@@ -86,8 +86,11 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
             <div className="edition-sub-title d-flex align-items-center justify-content-between">
                 {title}
 
-                <Button className="edition-gifts-button" onClick={handleToggleSort}>
-                    <FaSort />
+                <Button className="edition-gifts-button edition-gifts-sort" onClick={handleToggleSort}>
+                    <FaSort size={15} />
+                    {sortMode === 'name' && <FaGift size={15} className="ms-2" />}
+                    {sortMode === 'value' && <GrMoney size={15} className="ms-2" />}
+                    {sortMode === 'quantity' && <GiCardboardBox size={15} className="ms-2" />}
                 </Button>
             </div>
 

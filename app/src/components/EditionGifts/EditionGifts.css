@@ -15,6 +15,10 @@
     background-color: #0a2f68 !important;
 }
 
+.edition-gifts-sort {
+    width: auto;
+}
+
 .edition-gifts-name {
     background-color: white;
     border-radius: 5px;
