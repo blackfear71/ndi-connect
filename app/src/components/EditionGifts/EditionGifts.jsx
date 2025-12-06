@@ -1,10 +1,9 @@
 import { useContext } from 'react';
 
-import { Badge, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
-import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
-import { GrMoney } from 'react-icons/gr';
+
+import GiftList from '../../components/GiftList/GiftList';
 
 import UserRole from '../../enums/UserRole';
 
@@ -22,8 +21,12 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
     // Traductions
     const { t } = useTranslation();
 
+    // Constantes
+    const availableGifts = gifts.filter((g) => g.remainingQuantity > 0);
+    const unavailableGifts = gifts.filter((g) => g.remainingQuantity <= 0);
+
     /**
-     * Affiche la modale de création/modification/suppression d'un cadeau
+     * Affiche la modale de création/modification d'un cadeau
      * @param {*} gift Données cadeau
      * @param {*} action Action à réaliser
      */
@@ -45,24 +48,11 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
         }));
     };
 
-    /**
-     * Ouvre la modale de suppression de cadeau
-     * @param {*} gift Cadeau
-     */
-    const handleDelete = (gift) => {
-        // Ouverture de la modale de confirmation
-        onConfirm({
-            content: t('edition.deleteGift', { name: gift.name }),
-            action: 'deleteGift',
-            data: gift.id
-        });
-    };
-
     return (
         <>
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                <div className="d-grid mb-2">
+                <div className="d-grid">
                     <Button variant="outline-action" onClick={() => showGiftModal(null, 'create')}>
                         {t('edition.addGift')}
                     </Button>
@@ -70,52 +60,35 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
             )}
 
             {/* Liste */}
-            {gifts && gifts.length > 0 ? (
-                gifts.map((g) => (
-                    <div key={g.id} className="d-flex align-items-center gap-2 mt-2">
-                        {/* Cadeau */}
-                        <div className="d-flex align-items-center flex-grow-1 edition-gifts-name">
-                            <Badge bg="success" className="me-1 d-flex align-items-center">
-                                <GrMoney size={18} className="me-1" /> {g.value}
-                            </Badge>
-                            <Badge bg="primary" className="me-1 d-flex align-items-center">
-                                {g.remainingQuantity === 0 ? (
-                                    <GiCardboardBoxClosed size={18} className="me-1" />
-                                ) : (
-                                    <GiCardboardBox size={18} className="me-1" />
-                                )}{' '}
-                                {g.remainingQuantity}
-                            </Badge>
-                            <span
-                                className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${g.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}
-                            >
-                                {g.name}
-                            </span>
+            {(availableGifts && availableGifts.length > 0) || (unavailableGifts && unavailableGifts.length > 0) ? (
+                <>
+                    {/* Cadeaux à gagner */}
+                    {availableGifts && availableGifts.length > 0 && (
+                        <div className="mt-2">
+                            <GiftList
+                                gifts={availableGifts}
+                                title={t('edition.availableGifts')}
+                                onConfirm={onConfirm}
+                                showGiftModal={showGiftModal}
+                                isSubmitting={isSubmitting}
+                            />
                         </div>
+                    )}
 
-                        {/* Supression */}
-                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                            <Button
-                                onClick={isSubmitting ? null : () => handleDelete(g)}
-                                className="edition-gifts-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-                        )}
-
-                        {/* Modification */}
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                            <Button
-                                onClick={isSubmitting ? null : () => showGiftModal(g, 'update')}
-                                className="edition-gifts-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-                        )}
-                    </div>
-                ))
+                    {/* Cadeaux déjà gagnés */}
+                    {unavailableGifts && unavailableGifts.length > 0 && (
+                        <div className="mt-2">
+                            <GiftList
+                                gifts={unavailableGifts}
+                                title={t('edition.unavailableGifts')}
+                                onConfirm={onConfirm}
+                                showGiftModal={showGiftModal}
+                                isSubmitting={isSubmitting}
+                                className="mt-2"
+                            />
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="edition-empty mt-2">{t('edition.noGifts')}</div>
             )}

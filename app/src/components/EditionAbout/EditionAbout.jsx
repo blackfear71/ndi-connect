@@ -97,7 +97,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     {/* Progression */}
                     {progress.isActive && (
                         <div className="mb-3">
-                            <div className="edition-about-title">{t('edition.progress')}</div>
+                            <div className="edition-sub-title">{t('edition.progress')}</div>
                             <div className="d-flex align-items-center mt-2">
                                 <Badge pill bg="success" className="me-2">
                                     {getLocalizedTime(edition.startDate)}
@@ -113,7 +113,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     )}
 
                     {/* Informations */}
-                    <div className="edition-about-title">{t('edition.informations')}</div>
+                    <div className="edition-sub-title">{t('edition.informations')}</div>
                     <div className="edition-about-table mt-2">
                         <Table className="mb-0">
                             <tbody>
@@ -146,7 +146,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     {/* Thème */}
                     {edition.theme && (
                         <div className="mt-3">
-                            <div className="edition-about-title">{t('edition.theme')}</div>
+                            <div className="edition-sub-title">{t('edition.theme')}</div>
                             <div className="edition-about-text">{edition.theme}</div>
                         </div>
                     )}
@@ -154,7 +154,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     {/* Défi */}
                     {edition.challenge && (
                         <div className="mt-3">
-                            <div className="edition-about-title mt-3">{t('edition.challenge')}</div>
+                            <div className="edition-sub-title mt-3">{t('edition.challenge')}</div>
                             <div className="edition-about-text">{edition.challenge}</div>
                         </div>
                     )}

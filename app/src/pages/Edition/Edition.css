@@ -34,3 +34,9 @@
     opacity: 0.8;
     mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
 }
+
+.edition-sub-title {
+    color: white;
+    font-size: x-large;
+    font-style: italic;
+}

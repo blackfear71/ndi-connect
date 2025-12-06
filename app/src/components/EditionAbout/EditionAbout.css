@@ -2,12 +2,6 @@
     color: white;
 }
 
-.edition-about-title {
-    color: white;
-    font-size: x-large;
-    font-style: italic;
-}
-
 .edition-about-table {
     border-radius: 5px;
     overflow: hidden;
