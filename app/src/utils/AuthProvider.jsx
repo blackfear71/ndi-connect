@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Spinner } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -8,14 +8,14 @@ import UsersService from '../api/usersService';
 import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-export const AuthContext = createContext(null);
+import { AuthContext } from './AuthContext';
 
 const redirectPages = ['/settings'];
 
 /**
- * Contexte d'authentification global
+ * Provider d'authentification global
  */
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
     // Router
     const { pathname } = useLocation();
     const navigate = useNavigate();
@@ -188,3 +188,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+export default AuthProvider;

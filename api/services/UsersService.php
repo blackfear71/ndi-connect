@@ -144,7 +144,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataByLogin($login);
+        $user = $this->repository->getActiveUserDataById($data['id']);
 
         // Contrôle dernier admin actif si changement de rôle
         if ($user && $user['level'] == UserRole::SUPERADMIN->value && $data['level'] != UserRole::SUPERADMIN->value) {

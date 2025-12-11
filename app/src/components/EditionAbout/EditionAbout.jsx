@@ -28,7 +28,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
      * Mise à jour de l'avancement
      */
     useEffect(() => {
-        // Mise à jour intiale de l'avancement
+        // Mise à jour initiale de l'avancement
         updateProgress();
 
         // Mise à jour toutes les 60 secondes

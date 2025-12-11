@@ -4,6 +4,7 @@
 // ini_set('error_log', __DIR__ . '/../logs/error_logs_' . date('Y-m-d') . '.log'); // Chemin vers le fichier de log
 // error_reporting(E_ALL);                                                          // Reporter toutes les erreurs
 
+// Paramètres CORS
 $allowedOrigins = [
     'http://localhost:3000', // CRA
     'http://localhost:5173', // Vite
@@ -13,13 +14,31 @@ $allowedOrigins = [
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-if (in_array($origin, $allowedOrigins)) {
+// Préparation de l'URI
+$basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
+$uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
+
+if (str_starts_with($uri, '/editions/events')) {
+    // CORS pour SSE
+    header("Access-Control-Allow-Origin: $origin");
+    header("Cache-Control: no-cache");
+    header("Content-Type: text/event-stream");
+    header("Connection: keep-alive");
+} else if (in_array($origin, $allowedOrigins)) {
+    // CORS complet API classique
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
     header("Access-Control-Allow-Credentials: true");
 }
 
+// Gestion du preflight OPTIONS global
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+// Imports
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
 require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
@@ -29,14 +48,8 @@ require_once __DIR__ . '/core/helpers/ResponseHelper.php';
 
 $router = new Router();
 
-$basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
-$uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
-
 // Dispatch vers le bon groupe de routes
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-} else if (str_starts_with($uri, '/editions')) {
+if (str_starts_with($uri, '/editions')) {
     require_once __DIR__ . '/routes/editions.php';
 } else if (str_starts_with($uri, '/gifts')) {
     require_once __DIR__ . '/routes/gifts.php';

@@ -6,7 +6,8 @@ import Edition from './pages/Edition/Edition';
 import Home from './pages/Home/Home';
 import Settings from './pages/Settings/Settings';
 
-import { AuthProvider } from './utils/AuthContext';
+import AuthProvider from './utils/AuthProvider';
+import SseProvider from './utils/SseProvider';
 
 import './App.css';
 
@@ -21,7 +22,14 @@ function App() {
                             <Route index element={<Home />} />
 
                             {/* Edition */}
-                            <Route path="edition/:id" element={<Edition />} />
+                            <Route
+                                path="edition/:id"
+                                element={
+                                    <SseProvider>
+                                        <Edition />
+                                    </SseProvider>
+                                }
+                            />
 
                             {/* Paramètres */}
                             <Route path="settings" element={<Settings />} />

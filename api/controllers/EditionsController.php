@@ -112,6 +112,86 @@ class EditionsController
         }
     }
 
+
+
+
+
+
+    /**
+     * Flux SSE de mise à jour de l'édition
+     */
+    public function getEditionStream($id)
+    {
+        if ($id === null) {
+            echo "event: error\n";
+            echo "data: ID d'édition manquant\n\n";
+            flush();
+            return;
+        }
+
+        // Évite la limite de temps PHP
+        set_time_limit(0);
+
+        // Vider tous les tampons éventuels
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        ob_implicit_flush(true);
+
+        // Envoi initial pour test / ping
+        echo "event: ping\n";
+        echo "data: ok\n\n";
+        flush();
+
+        $lastGiftsHash = null;
+        $lastPlayersHash = null;
+
+        while (true) {
+            // Maintien de la connexion
+            echo "event: heartbeat\n";
+            echo "data: ok\n\n";
+            flush();
+
+            // TODO : améliorer l'algo & gérer les erreurs
+            $edition = $this->service->getEdition($id);
+
+            // Récupération des cadeaux
+            $gifts = $edition['gifts'];
+            $newGiftsHash = md5(json_encode($gifts));
+
+            if ($newGiftsHash !== $lastGiftsHash) {
+                echo "event: gifts_updated\n";
+                echo "data: " . json_encode($gifts) . "\n\n";
+                $lastGiftsHash = $newGiftsHash;
+                flush();
+            }
+
+            // Récupération des participants
+            $players = $edition['players'];
+            $newPlayersHash = md5(json_encode($players));
+
+            if ($newPlayersHash !== $lastPlayersHash) {
+                echo "event: players_updated\n";
+                echo "data: " . json_encode($players) . "\n\n";
+                $lastPlayersHash = $newPlayersHash;
+                flush();
+            }
+
+            // Pause avant la prochaine boucle
+            sleep(5);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
     /**
      * Insertion d'un enregistrement
      */

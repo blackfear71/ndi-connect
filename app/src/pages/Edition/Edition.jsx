@@ -27,6 +27,7 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { AuthContext } from '../../utils/AuthContext';
 import { getDayFromDate, getLocalizedTime } from '../../utils/dateHelper';
+import { SseContext } from '../../utils/SseContext';
 
 import './Edition.css';
 
@@ -40,6 +41,7 @@ const Edition = () => {
 
     // Contexte
     const { auth, authMessage, setAuthMessage } = useContext(AuthContext);
+    const { events } = useContext(SseContext);
 
     // Traductions
     const { t } = useTranslation();
@@ -146,6 +148,25 @@ const Edition = () => {
             )
             .subscribe();
     }, [id]);
+
+    /**
+     * Mise à jour depuis le SSE seulement si les données sont différentes
+     */
+    useEffect(() => {
+        // Mise à jour des cadeaux depuis le SSE
+        if (events?.gifts) {
+            if (JSON.stringify(gifts) !== JSON.stringify(events.gifts)) {
+                setGifts(events.gifts);
+            }
+        }
+
+        // Mise à jour des participants depuis le SSE
+        if (events?.players) {
+            if (JSON.stringify(players) !== JSON.stringify(events.players)) {
+                setPlayers(events.players);
+            }
+        }
+    }, [events]);
 
     /**
      * Si un message d'authentification est défini on l'affiche
