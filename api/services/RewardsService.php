@@ -29,6 +29,7 @@ class RewardsService
         if ($this->giftsService === null) {
             $this->giftsService = new GiftsService($this->db);
         }
+
         return $this->giftsService;
     }
 
@@ -40,6 +41,7 @@ class RewardsService
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
         }
+        
         return $this->playersService;
     }
 

@@ -18,11 +18,11 @@ $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
-if (str_starts_with($uri, '/editions/events')) {
+if (str_starts_with($uri, '/sse')) {
     // CORS pour SSE
     header("Access-Control-Allow-Origin: $origin");
-    header("Cache-Control: no-cache");
     header("Content-Type: text/event-stream");
+    header("Cache-Control: no-cache");
     header("Connection: keep-alive");
 } else if (in_array($origin, $allowedOrigins)) {
     // CORS complet API classique
@@ -59,6 +59,8 @@ if (str_starts_with($uri, '/editions')) {
     require_once __DIR__ . '/routes/rewards.php';
 } else if (str_starts_with($uri, '/serve-file')) {
     require_once __DIR__ . '/routes/serve-file.php';
+} else if (str_starts_with($uri, '/sse')) {
+    require_once __DIR__ . '/routes/sse.php';
 } else if (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {

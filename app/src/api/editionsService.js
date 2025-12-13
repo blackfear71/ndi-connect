@@ -36,15 +36,6 @@ class EditionsService {
     };
 
     /**
-     * Récupération d'une édition via SSE
-     * @returns Données SSE
-     */
-    getEditionStream = (id) => {
-        const url = `${this.apiUrl}/events?id=${id}`;
-        return new EventSource(url);
-    };
-
-    /**
      * Récupération des éditions recherchées
      * @param {*} body Saisie
      * @returns Liste des éditions recherchées

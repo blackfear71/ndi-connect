@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 
-import EditionsService from '../api/editionsService';
+import SseService from '../api/sseService';
 
 import { SseContext } from './SseContext';
 
@@ -36,20 +36,27 @@ const SseProvider = ({ children }) => {
      * Création connexion SSE et récupération des données (édition)
      */
     const createSseConnection = () => {
-        const editionsService = new EditionsService();
+        const sseService = new SseService();
 
-        const source = editionsService.getEditionStream(id);
+        const source = sseService.getSseEdition(id);
 
         // Réception des données
         source.onmessage = (event) => {
-            const message = JSON.parse(event.data);
+            // On ignore les messages vides
+            const trimmed = event.data.trim();
+
+            if (!trimmed) {
+                return;
+            }
+
+            const message = JSON.parse(trimmed);
 
             // Dispatch selon le type
             switch (message.type) {
-                case 'gifts_updated':
+                case 'get_gifts':
                     setEvents((prev) => ({ ...prev, gifts: message.payload }));
                     break;
-                case 'players_updated':
+                case 'get_players':
                     setEvents((prev) => ({ ...prev, players: message.payload }));
                     break;
                 default:
@@ -64,16 +71,16 @@ const SseProvider = ({ children }) => {
         };
 
         // Evènement de maintien de la connexion SSE
-        source.addEventListener('heartbeat', () => {});
+        source.addEventListener('is_alive', () => {});
 
-        // Evènement de mise à jour des cadeaux
-        source.addEventListener('gifts_updated', (event) => {
+        // Evènement de récupération des cadeaux
+        source.addEventListener('get_gifts', (event) => {
             const payload = JSON.parse(event.data);
             setEvents((prev) => ({ ...prev, gifts: payload }));
         });
 
-        // Evènement de mise à jour des participants
-        source.addEventListener('players_updated', (event) => {
+        // Evènement de récupération des participants
+        source.addEventListener('get_players', (event) => {
             const payload = JSON.parse(event.data);
             setEvents((prev) => ({ ...prev, players: payload }));
         });

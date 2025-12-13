@@ -32,6 +32,16 @@ class ResponseHelper
     }
 
     /**
+     * Gestion du retour SSE
+     */
+    public static function sse($logMessage = null)
+    {
+        if ($logMessage) {
+            LoggerHelper::log($logMessage, 'SSE');
+        }
+    }
+
+    /**
      * Gestion du retour en cas de succès
      */
     public static function success($data = null, $message = '')

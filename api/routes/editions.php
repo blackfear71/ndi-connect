@@ -14,11 +14,6 @@ $router->get('/editions/find/:id', function ($params) use ($db) {
     (new EditionsController($db))->getEdition($params['id']);
 });
 
-$router->get('/editions/events', function () use ($db) {
-    // Appel contrôleur
-    (new EditionsController($db))->getEditionStream($_GET['id'] ?? null);
-});
-
 $router->post('/editions/search', function () use ($db) {
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);

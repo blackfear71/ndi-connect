@@ -27,6 +27,7 @@ class GiftsService
         if ($this->rewardsService === null) {
             $this->rewardsService = new RewardsService($this->db);
         }
+        
         return $this->rewardsService;
     }
 
