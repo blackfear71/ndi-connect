@@ -16,7 +16,7 @@ class SseService {
      * @returns Données SSE
      */
     getSseEdition = (id) => {
-        const url = `${this.apiUrl}/edition?id=${id}`;
+        const url = `${this.apiUrl}/edition/${id}`;
         return new EventSource(url);
     };
 }

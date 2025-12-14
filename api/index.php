@@ -20,10 +20,10 @@ $uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
 
 if (str_starts_with($uri, '/sse')) {
     // CORS pour SSE
-    header("Access-Control-Allow-Origin: $origin");
     header("Content-Type: text/event-stream");
     header("Cache-Control: no-cache");
     header("Connection: keep-alive");
+    header("X-Accel-Buffering: no");
 } else if (in_array($origin, $allowedOrigins)) {
     // CORS complet API classique
     header("Access-Control-Allow-Origin: $origin");

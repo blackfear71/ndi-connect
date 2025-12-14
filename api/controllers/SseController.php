@@ -54,7 +54,6 @@ class SseController
         // Contrôle id renseigné
         if ($id === null) {
             echo $this->service->getSseEvent('error', 'ID d\'édition manquant');
-            ob_flush();
             flush();
             return;
         }
@@ -64,7 +63,6 @@ class SseController
 
         // Envoi initial
         echo $this->service->getSseEvent('is_initialized', 'ok');
-        ob_flush();
         flush();
 
         $lastGiftsHash = null;
@@ -80,7 +78,6 @@ class SseController
 
                 // Evènement de maintien de la connexion
                 echo $this->service->getSseEvent('is_alive', 'ok');
-                ob_flush();
                 flush();
 
                 // Evènement de récupération des cadeaux
@@ -101,7 +98,6 @@ class SseController
                         $lastGiftsHash = $newGiftsHash;
 
                         echo $this->service->getSseEvent('get_gifts', $gifts);
-                        ob_flush();
                         flush();
                     }
                 }
@@ -124,7 +120,6 @@ class SseController
                         $lastPlayersHash = $newPlayersHash;
 
                         echo $this->service->getSseEvent('get_players', $players);
-                        ob_flush();
                         flush();
                     }
                 }
@@ -138,7 +133,6 @@ class SseController
 
             // Message d'erreur
             echo $this->service->getSseEvent('fatal_error', 'Exception levée SSE');
-            ob_flush();
             flush();
         }
     }
