@@ -83,45 +83,39 @@ class SseController
                 // Evènement de récupération des cadeaux
                 try {
                     $gifts = $this->getGiftsService()->getEditionGifts($id);
+
+                    if ($gifts !== null) {
+                        $newGiftsHash = md5(json_encode($gifts));
+
+                        if ($newGiftsHash !== $lastGiftsHash) {
+                            $lastGiftsHash = $newGiftsHash;
+
+                            echo $this->service->getSseEvent('get_gifts', $gifts);
+                            flush();
+                        }
+                    }
                 } catch (Exception $e) {
                     // Échec de la lecture
                     ResponseHelper::sse('Erreur lors de la récupération des cadeaux dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage());
-
-                    // On continue sans casser le flux
-                    $gifts = null;
-                }
-
-                if ($gifts !== null) {
-                    $newGiftsHash = md5(json_encode($gifts));
-
-                    if ($newGiftsHash !== $lastGiftsHash) {
-                        $lastGiftsHash = $newGiftsHash;
-
-                        echo $this->service->getSseEvent('get_gifts', $gifts);
-                        flush();
-                    }
                 }
 
                 // Evènement de récupération des participants
                 try {
                     $players = $this->getPlayersService()->getEditionPlayers($id);
+
+                    if ($players !== null) {
+                        $newPlayersHash = md5(json_encode($players));
+
+                        if ($newPlayersHash !== $lastPlayersHash) {
+                            $lastPlayersHash = $newPlayersHash;
+
+                            echo $this->service->getSseEvent('get_players', $players);
+                            flush();
+                        }
+                    }
                 } catch (Exception $e) {
                     // Échec de la lecture
                     ResponseHelper::sse('Erreur lors de la récupération des participants dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage());
-
-                    // On continue sans casser le flux
-                    $players = null;
-                }
-
-                if ($players !== null) {
-                    $newPlayersHash = md5(json_encode($players));
-
-                    if ($newPlayersHash !== $lastPlayersHash) {
-                        $lastPlayersHash = $newPlayersHash;
-
-                        echo $this->service->getSseEvent('get_players', $players);
-                        flush();
-                    }
                 }
 
                 // Pause avant la prochaine boucle

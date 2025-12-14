@@ -2,7 +2,7 @@
   "name": "ndi-connect",
   "homepage": "/",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.3",
   "type": "module",
   "dependencies": {
     "@popperjs/core": "^2.11.8",

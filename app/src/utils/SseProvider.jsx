@@ -70,6 +70,9 @@ const SseProvider = ({ children }) => {
             setTimeout(createSseConnection, 5000);
         };
 
+        // Evènement d'initialisation de la connexion SSE
+        source.addEventListener('is_initialized', () => {});
+
         // Evènement de maintien de la connexion SSE
         source.addEventListener('is_alive', () => {});
 
