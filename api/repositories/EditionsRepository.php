@@ -4,13 +4,18 @@ require_once 'core/functions/Model.php';
 class EditionsRepository extends Model
 {
     protected $table = 'editions';
+    protected $playersTable = 'players';
 
     /**
      * Lecture de tous les enregistrements
      */
     public function getAllEditions()
     {
-        $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate' FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
+        $sql = "SELECT e.id, e.location, e.start_date AS 'startDate', e.end_date AS 'endDate', COUNT(p.id) AS 'playerCount' FROM {$this->table} AS e
+        LEFT JOIN {$this->playersTable} AS p ON p.id_edition = e.id AND p.is_active = 1
+        WHERE e.is_active = 1
+        GROUP BY e.id
+        ORDER BY e.id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

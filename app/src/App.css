@@ -22,6 +22,12 @@
 }
 
 .btn-action {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+    gap: 6px;
     background-color: #163c76 !important;
     border-color: #163c76 !important;
     color: white !important;
@@ -36,6 +42,12 @@
 }
 
 .btn-outline-action {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+    gap: 6px;
     border-color: #163c76 !important;
     border-width: 2px !important;
     color: white !important;

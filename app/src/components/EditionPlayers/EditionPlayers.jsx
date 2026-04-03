@@ -6,7 +6,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 import { FaGift } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
-import { IoGiftSharp } from 'react-icons/io5';
+import { IoAddCircleOutline, IoGiftSharp } from 'react-icons/io5';
 
 import UserRole from '../../enums/UserRole';
 
@@ -155,6 +155,7 @@ const EditionPlayers = ({
                     {/* Ajout */}
                     <div className="d-grid mb-2">
                         <Button variant="outline-action" onClick={() => showHidePlayerEntry(true)}>
+                            <IoAddCircleOutline size={25} />
                             {t('edition.addPlayer')}
                         </Button>
                     </div>

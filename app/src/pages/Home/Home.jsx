@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaMapLocationDot } from 'react-icons/fa6';
-import { IoCalendarNumberOutline } from 'react-icons/io5';
+import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
@@ -268,7 +268,12 @@ const Home = () => {
                     <div className="home-grid">
                         {/* Ajout */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                            <Button variant="outline-action" onClick={() => openCloseEditionModal('create')}>
+                            <Button
+                                variant="outline-action"
+                                className="home-grid-btn-action"
+                                onClick={() => openCloseEditionModal('create')}
+                            >
+                                <IoAddCircleOutline size={30} />
                                 {t('home.addEdition')}
                             </Button>
                         )}
@@ -278,7 +283,12 @@ const Home = () => {
                             editionsByYear && editionsByYear.length > 0 ? (
                                 <>
                                     {/* Retour */}
-                                    <Button variant="outline-action" className="btn-yellow" onClick={showYearsOfEditions}>
+                                    <Button
+                                        variant="outline-action"
+                                        className="home-grid-btn-action btn-yellow"
+                                        onClick={showYearsOfEditions}
+                                    >
+                                        <IoChevronBackOutline size={25} />
                                         {t('common.return')}
                                     </Button>
 
@@ -290,7 +300,12 @@ const Home = () => {
                                             className="home-grid-btn-location"
                                             onClick={() => navigate(`/edition/${edition.id}`)}
                                         >
-                                            <span>{edition.location}</span>
+                                            <span className="home-grid-btn-label">{edition.location}</span>
+                                            <span className="home-grid-btn-badge">
+                                                {t(edition.playerCount === 1 ? 'home.countPlayer' : 'home.countPlayers', {
+                                                    count: edition.playerCount
+                                                })}
+                                            </span>
                                         </Button>
                                     ))}
                                 </>

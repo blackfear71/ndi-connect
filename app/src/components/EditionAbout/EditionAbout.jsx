@@ -71,21 +71,13 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
             {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                 <div className="d-flex gap-2 mb-2">
                     {/* Modifier */}
-                    <Button
-                        variant="outline-action"
-                        className="d-flex align-items-center justify-content-center gap-2 w-100"
-                        onClick={() => onEdit('update')}
-                    >
+                    <Button variant="outline-action" onClick={() => onEdit('update')}>
                         <FaWandMagicSparkles size={15} />
                         {t('common.update')}
                     </Button>
 
                     {/* Supprimer */}
-                    <Button
-                        variant="outline-action"
-                        className="d-flex align-items-center justify-content-center gap-2 w-100 btn-red"
-                        onClick={onConfirm}
-                    >
+                    <Button variant="outline-action" className="btn-red" onClick={onConfirm}>
                         <FaTrashCan size={15} />
                         {t('common.delete')}
                     </Button>

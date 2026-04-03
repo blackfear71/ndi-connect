@@ -130,6 +130,8 @@
         "addEdition": "Ajouter une édition",
         "countEdition": "{{count}} édition",
         "countEditions": "{{count}} éditions",
+        "countPlayer": "{{count}} participant",
+        "countPlayers": "{{count}} participants",
         "creationEdition": "Edition créée",
         "editions": "Editions",
         "editionsTitle": "Editions {{year}}",

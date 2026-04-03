@@ -2,6 +2,7 @@ import { useContext } from 'react';
 
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { IoAddCircleOutline } from 'react-icons/io5';
 
 import GiftList from '../../components/GiftList/GiftList';
 
@@ -54,6 +55,7 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                 <div className="d-grid">
                     <Button variant="outline-action" onClick={() => showGiftModal(null, 'create')}>
+                        <IoAddCircleOutline size={25} />
                         {t('edition.addGift')}
                     </Button>
                 </div>
