@@ -33,7 +33,6 @@
 .btn-action:hover,
 .btn-action:active {
     background-color: #0a2f68 !important;
-    border-color: #0a2f68 !important;
 }
 
 .btn-outline-action {
@@ -48,7 +47,6 @@
 .btn-outline-action:hover,
 .btn-outline-action:active {
     background-color: #0a2f68 !important;
-    border-color: #0a2f68 !important;
 }
 
 .btn-outline-action.btn-yellow {
@@ -71,7 +69,7 @@
 .btn-outline-action.btn-red:hover,
 .btn-outline-action.btn-red:active {
     background-color: #f33e3e !important;
-    border-color: #f33e3e !important;
+    border-color: #ba2f2f !important;
     color: white !important;
 }
 
