@@ -128,6 +128,8 @@
     },
     "home": {
         "addEdition": "Add an edition",
+        "countEdition": "{{count}} edition",
+        "countEditions": "{{count}} editions",
         "creationEdition": "Edition created",
         "editions": "Editions",
         "editionsTitle": "Editions {{year}}",

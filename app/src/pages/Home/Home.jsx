@@ -284,7 +284,12 @@ const Home = () => {
 
                                     {/* Editions */}
                                     {editionsByYear.map((edition) => (
-                                        <Button key={edition.id} variant="action" onClick={() => navigate(`/edition/${edition.id}`)}>
+                                        <Button
+                                            key={edition.id}
+                                            variant="action"
+                                            className="home-grid-btn-location"
+                                            onClick={() => navigate(`/edition/${edition.id}`)}
+                                        >
                                             <span>{edition.location}</span>
                                         </Button>
                                     ))}
@@ -293,8 +298,18 @@ const Home = () => {
                                 <>
                                     {/* Années */}
                                     {yearsAndEditions.map((year) => (
-                                        <Button key={year.year} variant="action" onClick={() => showEditionsByYear(year)}>
-                                            <span>{year.year}</span>
+                                        <Button
+                                            key={year.year}
+                                            variant="action"
+                                            className="home-grid-btn-year"
+                                            onClick={() => showEditionsByYear(year)}
+                                        >
+                                            <span className="home-grid-btn-label">{year.year}</span>
+                                            <span className="home-grid-btn-badge">
+                                                {t(year.editions.length === 1 ? 'home.countEdition' : 'home.countEditions', {
+                                                    count: year.editions.length
+                                                })}
+                                            </span>
                                         </Button>
                                     ))}
                                 </>

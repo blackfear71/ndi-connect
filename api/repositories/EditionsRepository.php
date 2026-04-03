@@ -10,7 +10,7 @@ class EditionsRepository extends Model
      */
     public function getAllEditions()
     {
-        $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate', theme, challenge FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
+        $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate' FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

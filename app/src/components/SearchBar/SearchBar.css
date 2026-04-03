@@ -21,8 +21,7 @@
 }
 
 .search-bar-text::placeholder {
-    color: white !important;
-    opacity: 0.7 !important;
+    color: #c6cedd !important;
 }
 
 .search-bar-icon {
@@ -35,8 +34,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    opacity: 0.7;
+    color: #c6cedd;
     z-index: 2;
     padding: 10px;
 }

@@ -26,8 +26,8 @@
     border-color: #163c76 !important;
     color: white !important;
     font-size: large !important;
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding: 8px !important;
+    border-width: 2px !important;
 }
 
 .btn-action:hover,
@@ -40,8 +40,7 @@
     border-width: 2px !important;
     color: white !important;
     font-size: large !important;
-    padding-top: 7px !important;
-    padding-bottom: 7px !important;
+    padding: 7px !important;
 }
 
 .btn-outline-action:hover,
