@@ -20,9 +20,20 @@ const Footer = () => {
         i18n.changeLanguage(newLang);
     };
 
+    /**
+     * Retourne le copyright
+     * @returns Copyright à afficher 
+     */
+    const getCopyright = () => {
+        const currentYear = new Date().getFullYear();
+        const yearDisplay = currentYear > 2025 ? `2025–${currentYear}` : '2025';
+
+        return `© ${yearDisplay}, NDI-Connect • v${packageJson.version}`;
+    };
+
     return (
         <footer className="footer d-flex align-items-center justify-content-between">
-            <span className="footer-text mx-auto">© 2025, NDI-Connect - v{packageJson.version}</span>
+            <span className="footer-text mx-auto">{getCopyright()}</span>
             <button className="footer-language-toggle" onClick={handleToggleLanguage}>
                 <Image
                     src={i18n.language === 'fr' ? flagFr : flagEn}

@@ -279,7 +279,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                 </option>
                                 {availablePlayers.map((p) => (
                                     <option key={p.id} value={p.id}>
-                                        {p.name} - {p.points} {t('edition.points').toLowerCase()}
+                                        {p.name} • {p.points} {t('edition.points').toLowerCase()}
                                     </option>
                                 ))}
                             </Form.Select>

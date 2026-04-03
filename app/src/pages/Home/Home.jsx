@@ -264,44 +264,45 @@ const Home = () => {
                         )}
                     </h1>
 
-                    {/* Ajout */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                        <div className="d-grid mb-2">
+                    {/* Grille */}
+                    <div className="home-grid">
+                        {/* Ajout */}
+                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button variant="outline-action" onClick={() => openCloseEditionModal('create')}>
                                 {t('home.addEdition')}
                             </Button>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Années et éditions */}
-                    {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
-                        editionsByYear && editionsByYear.length > 0 ? (
-                            <div className="d-grid gap-2">
-                                {/* Retour */}
-                                <Button variant="outline-action" className="btn-yellow" onClick={showYearsOfEditions}>
-                                    {t('common.return')}
-                                </Button>
-
-                                {/* Editions */}
-                                {editionsByYear.map((edition) => (
-                                    <Button key={edition.id} variant="action" onClick={() => navigate(`/edition/${edition.id}`)}>
-                                        {edition.location}
+                        {/* Années et éditions */}
+                        {(yearsAndEditions && yearsAndEditions.length > 0) || (editionsByYear && editionsByYear.length > 0) ? (
+                            editionsByYear && editionsByYear.length > 0 ? (
+                                <>
+                                    {/* Retour */}
+                                    <Button variant="outline-action" className="btn-yellow" onClick={showYearsOfEditions}>
+                                        {t('common.return')}
                                     </Button>
-                                ))}
-                            </div>
+
+                                    {/* Editions */}
+                                    {editionsByYear.map((edition) => (
+                                        <Button key={edition.id} variant="action" onClick={() => navigate(`/edition/${edition.id}`)}>
+                                            <span>{edition.location}</span>
+                                        </Button>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    {/* Années */}
+                                    {yearsAndEditions.map((year) => (
+                                        <Button key={year.year} variant="action" onClick={() => showEditionsByYear(year)}>
+                                            <span>{year.year}</span>
+                                        </Button>
+                                    ))}
+                                </>
+                            )
                         ) : (
-                            <div className="d-grid gap-2">
-                                {/* Années */}
-                                {yearsAndEditions.map((year) => (
-                                    <Button key={year.year} variant="action" onClick={() => showEditionsByYear(year)}>
-                                        {year.year}
-                                    </Button>
-                                ))}
-                            </div>
-                        )
-                    ) : (
-                        <div className="home-empty">{t('home.noEdition')}</div>
-                    )}
+                            <div className="home-empty">{t('home.noEdition')}</div>
+                        )}
+                    </div>
 
                     {/* Modale de création d'édition */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (

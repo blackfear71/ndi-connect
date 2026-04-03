@@ -1,3 +1,9 @@
+.home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
 .home-empty {
     background-color: #163c76;
     color: white;
@@ -5,4 +11,32 @@
     padding: 8px;
     text-align: center;
     border-radius: 5px;
+}
+
+.home-grid .btn,
+.home-grid .home-empty {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 8px;
+}
+
+.home-grid .btn:not(.btn-outline-action) {
+    border-color: #104ba6 !important;
+}
+
+.home-grid .btn span {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word;
+}
+
+.home-grid .btn:hover {
+    transform: translateY(-2px);
 }

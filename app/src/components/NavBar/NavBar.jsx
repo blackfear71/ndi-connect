@@ -3,7 +3,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { Badge, Dropdown, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
-import { FcApproval } from 'react-icons/fc';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -121,7 +120,7 @@ const NavBar = () => {
                     onClick={() => (auth.isLoggedIn ? setShowDropdown(!showDropdown) : openCloseConnectionModal())}
                 >
                     <FaUserCircle className="navbar-user" />
-                    {auth.isLoggedIn && <FcApproval className="navbar-user-connected" />}
+                    {auth.isLoggedIn && <div className="navbar-user-connected"></div>}
                 </div>
 
                 {auth.isLoggedIn && (

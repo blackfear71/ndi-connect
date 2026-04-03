@@ -144,7 +144,7 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setMo
                                                 </option>
                                                 {obtainableGifts.map((g) => (
                                                     <option key={g.id} value={g.id}>
-                                                        {g.name} - {g.value} {t('edition.points').toLowerCase()} ({g.remainingQuantity}{' '}
+                                                        {g.name} • {g.value} {t('edition.points').toLowerCase()} ({g.remainingQuantity}{' '}
                                                         {g.remainingQuantity === 1 ? t('edition.remaining') : t('edition.remainings')})
                                                     </option>
                                                 ))}

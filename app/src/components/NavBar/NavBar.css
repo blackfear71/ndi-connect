@@ -32,8 +32,12 @@
 .navbar-user-connected {
     position: absolute;
     bottom: 0;
-    bottom: -1px;
     right: -2px;
+    width: 14px;
+    height: 14px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    border: 2px solid white;
 }
 
 .navbar-dropdown {
