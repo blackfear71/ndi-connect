@@ -15,16 +15,18 @@
 
 .home-grid .btn,
 .home-grid .home-empty {
-    height: 80px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     padding: 8px;
+    transition: transform 0.1s ease-out;
 }
 
 .home-grid .btn:not(.btn-outline-action) {
     border-color: #104ba6 !important;
+    border-width: 2px;
 }
 
 .home-grid .btn span {
