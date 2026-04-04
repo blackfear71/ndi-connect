@@ -180,6 +180,30 @@ const Edition = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
+     * Détermine une couleur d'icône en fonction du texte fourni
+     * @param {*} text Texte
+     * @returns Couleur
+     */
+    const getIconColor = (text) => {
+        const colors = [
+            '#2563eb',
+            '#7c3aed',
+            '#059669',
+            '#dc2626',
+            '#d97706',
+            '#0891b2',
+            '#9333ea',
+            '#16a34a',
+            '#e11d48',
+            '#0369a1',
+            '#b45309',
+            '#1d4ed8'
+        ];
+
+        return colors[text.charCodeAt(0) % colors.length];
+    };
+
+    /**
      * Ouverture/fermeture de la modale de modification d'édition
      */
     const openCloseEditionModal = (openAction, data) => {
@@ -753,6 +777,7 @@ const Edition = () => {
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
                                             players={players}
+                                            getIconColor={getIconColor}
                                             formPlayer={formPlayer}
                                             setFormPlayer={setFormPlayer}
                                             resetFormPlayer={resetFormPlayer}
@@ -771,6 +796,7 @@ const Edition = () => {
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
                                             gifts={gifts}
+                                            getIconColor={getIconColor}
                                             formData={formGift}
                                             setFormData={setFormGift}
                                             setModalOptions={setModalOptionsGift}

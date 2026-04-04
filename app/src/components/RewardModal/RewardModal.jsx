@@ -122,7 +122,7 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setMo
                         {/* Participant */}
                         <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-3">
                             <Badge className="reward-modal-badge bg-warning fs-6 me-2">{t('edition.player')}</Badge>
-                            <span className="me-1">{player.name}</span>
+                            <span className="reward-modal-label me-1">{player.name}</span>
                         </div>
 
                         {/* Nombre de points */}
@@ -170,7 +170,9 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setMo
                             <div className="d-flex flex-column gap-2 mt-3">
                                 {player.rewards.map((r) => (
                                     <div key={r.id} className="d-flex align-items-center gap-2">
-                                        <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2">{r.name}</div>
+                                        <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2 reward-modal-label">
+                                            {r.name}
+                                        </div>
                                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                             <Button
                                                 onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}

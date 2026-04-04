@@ -19,6 +19,7 @@ import './EditionPlayers.css';
  */
 const EditionPlayers = ({
     players,
+    getIconColor,
     formPlayer,
     setFormPlayer,
     resetFormPlayer,
@@ -148,30 +149,6 @@ const EditionPlayers = ({
         });
     };
 
-    /**
-     * Détermine une couleur d'avatar en fonction du nom du participant
-     * @param {*} name Nom du participant
-     * @returns Couleur
-     */
-    const getAvatarColor = (name) => {
-        const colors = [
-            '#2563eb',
-            '#7c3aed',
-            '#059669',
-            '#dc2626',
-            '#d97706',
-            '#0891b2',
-            '#9333ea',
-            '#16a34a',
-            '#e11d48',
-            '#0369a1',
-            '#b45309',
-            '#1d4ed8'
-        ];
-
-        return colors[name.charCodeAt(0) % colors.length];
-    };
-
     return (
         <>
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
@@ -199,10 +176,10 @@ const EditionPlayers = ({
                                     maxLength={100}
                                     required
                                 />
-                                <Button onClick={() => showHidePlayerEntry(false)} className="edition-players-button">
+                                <Button onClick={() => showHidePlayerEntry(false)} className="edition-button">
                                     <FaTimes />
                                 </Button>
-                                <Button type="submit" className="edition-players-button">
+                                <Button type="submit" className="edition-button">
                                     {isSubmitting ? <Spinner animation="border" role="status" variant="light" size="sm" /> : <FaCheck />}
                                 </Button>
                             </Form>
@@ -214,21 +191,21 @@ const EditionPlayers = ({
             {/* Liste */}
             {players && players.length > 0 ? (
                 players.map((p) => (
-                    <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-players-item">
-                        {/* Avatar */}
-                        <div className="edition-players-avatar" style={{ backgroundColor: getAvatarColor(p.name) }}>
+                    <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
+                        {/* Icône */}
+                        <div className="edition-item-icon" style={{ backgroundColor: getIconColor(p.name) }}>
                             {p.name.charAt(0).toUpperCase()}
                         </div>
 
                         {/* Participant */}
-                        <div className="d-flex flex-column flex-grow-1 edition-players-name">
-                            <span className="edition-players-ellipsis-text">{p.name}</span>
+                        <div className="d-flex flex-column flex-grow-1 edition-item-name">
+                            <span className="edition-item-ellipsis-text">{p.name}</span>
                             <div className="d-flex align-items-center gap-2">
-                                <span className="d-flex align-items-center gap-1 edition-players-counter">
+                                <span className="d-flex align-items-center gap-1 edition-item-counter">
                                     <GiTwoCoins size={15} />
                                     {p.points}
                                 </span>
-                                <span className="d-flex align-items-center gap-1 edition-players-counter">
+                                <span className="d-flex align-items-center gap-1 edition-item-counter">
                                     <IoGiftSharp size={13} />
                                     {p?.rewards.length}
                                 </span>
@@ -239,7 +216,7 @@ const EditionPlayers = ({
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
                                 onClick={isSubmitting ? null : () => handleDelete(p)}
-                                className="edition-players-button"
+                                className="edition-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
                                 <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
@@ -249,7 +226,7 @@ const EditionPlayers = ({
                         {/* Cadeaux */}
                         <Button
                             onClick={isSubmitting ? null : () => showRewardModal(p)}
-                            className="edition-players-button"
+                            className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >
                             <FaGift color={isSubmitting ? 'gray' : 'white'} />
@@ -259,7 +236,7 @@ const EditionPlayers = ({
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                             <Button
                                 onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
-                                className="edition-players-button"
+                                className="edition-button"
                                 style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             >
                                 <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />

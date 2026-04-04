@@ -13,7 +13,7 @@ import { AuthContext } from '../../utils/AuthContext';
 /**
  * Liste des cadeaux
  */
-const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
+const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -52,18 +52,18 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
         switch (sortMode) {
             // Tri par valeur
             case 'value':
-                return gifts.sort((a, b) => (b.value !== a.value ? b.value - a.value : a.name.localeCompare(b.name)));
+                return gifts?.sort((a, b) => (b.value !== a.value ? b.value - a.value : a.name.localeCompare(b.name)));
 
             // Tri par quantité
             case 'quantity':
-                return gifts.sort((a, b) =>
+                return gifts?.sort((a, b) =>
                     b.remainingQuantity !== a.remainingQuantity ? b.remainingQuantity - a.remainingQuantity : a.name.localeCompare(b.name)
                 );
 
             // Tri par nom (par défaut)
             case 'name':
             default:
-                return gifts.sort((a, b) => a.name.localeCompare(b.name));
+                return gifts?.sort((a, b) => a.name.localeCompare(b.name));
         }
     }, [gifts, sortMode]);
 
@@ -82,46 +82,50 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
 
     return (
         <>
-            {/* Titre */}
-            <div className="edition-sub-title d-flex align-items-center justify-content-between">
-                {title}
+            {/* Titre & tri */}
+            <div className="edition-sub-title d-flex align-items-center justify-content-between gap-2">
+                <Badge pill bg="warning">
+                    {title}
+                </Badge>
 
-                <Button className="edition-gifts-button edition-gifts-sort" onClick={handleToggleSort}>
+                <Button className="d-flex align-items-center p-2 gap-2 edition-gifts-sort" onClick={handleToggleSort}>
                     <FaSort size={15} />
-                    {sortMode === 'name' && <FaGift size={15} className="ms-2" />}
-                    {sortMode === 'value' && <GrMoney size={15} className="ms-2" />}
-                    {sortMode === 'quantity' && <GiCardboardBox size={15} className="ms-2" />}
+                    {sortMode === 'name' && <FaGift size={15} />}
+                    {sortMode === 'value' && <GrMoney size={15} />}
+                    {sortMode === 'quantity' && <GiCardboardBox size={15} />}
                 </Button>
             </div>
 
             {/* Liste */}
-            {sortedGifts.map((g) => (
-                <div key={g.id} className="d-flex align-items-center gap-2 mt-2">
+            {sortedGifts?.map((g) => (
+                <div key={g.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
+                    {/* Icône */}
+                    <div className="edition-item-icon" style={{ backgroundColor: getIconColor(g.name) }}>
+                        {g.name.charAt(0).toUpperCase()}
+                    </div>
+
                     {/* Cadeau */}
-                    <div className="d-flex align-items-center flex-grow-1 edition-gifts-name">
-                        <Badge bg="success" className="me-1 d-flex align-items-center">
-                            <GrMoney size={18} className="me-1" /> {g.value}
-                        </Badge>
-                        <Badge bg="primary" className="me-1 d-flex align-items-center">
-                            {g.remainingQuantity === 0 ? (
-                                <GiCardboardBoxClosed size={18} className="me-1" />
-                            ) : (
-                                <GiCardboardBox size={18} className="me-1" />
-                            )}{' '}
-                            {g.remainingQuantity}
-                        </Badge>
-                        <span
-                            className={`d-inline-block flex-grow-1 edition-gifts-ellipsis-text ${g.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}
-                        >
+                    <div className="d-flex flex-column flex-grow-1 edition-item-name">
+                        <span className={`edition-item-ellipsis-text ${g.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}>
                             {g.name}
                         </span>
+                        <div className="d-flex align-items-center gap-2">
+                            <span className="d-flex align-items-center gap-1 edition-item-counter">
+                                <GrMoney size={18} />
+                                {g.value}
+                            </span>
+                            <span className="d-flex align-items-center gap-1 edition-item-counter">
+                                {g.remainingQuantity === 0 ? <GiCardboardBoxClosed size={18} /> : <GiCardboardBox size={18} />}
+                                {g.remainingQuantity}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Supression */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                         <Button
                             onClick={isSubmitting ? null : () => handleDelete(g)}
-                            className="edition-gifts-button"
+                            className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >
                             <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
@@ -132,7 +136,7 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                         <Button
                             onClick={isSubmitting ? null : () => showGiftModal(g, 'update')}
-                            className="edition-gifts-button"
+                            className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >
                             <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />

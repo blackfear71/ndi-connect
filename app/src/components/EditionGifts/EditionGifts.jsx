@@ -15,7 +15,7 @@ import './EditionGifts.css';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+const EditionGifts = ({ gifts, getIconColor, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -23,8 +23,8 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
     const { t } = useTranslation();
 
     // Constantes
-    const availableGifts = gifts.filter((g) => g.remainingQuantity > 0);
-    const unavailableGifts = gifts.filter((g) => g.remainingQuantity <= 0);
+    const availableGifts = gifts?.filter((g) => g.remainingQuantity > 0);
+    const unavailableGifts = gifts?.filter((g) => g.remainingQuantity <= 0);
 
     /**
      * Affiche la modale de création/modification d'un cadeau
@@ -70,6 +70,7 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
                             <GiftList
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
+                                getIconColor={getIconColor}
                                 onConfirm={onConfirm}
                                 showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
@@ -83,6 +84,7 @@ const EditionGifts = ({ gifts, formData, setFormData, setModalOptions, onConfirm
                             <GiftList
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
+                                getIconColor={getIconColor}
                                 onConfirm={onConfirm}
                                 showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}

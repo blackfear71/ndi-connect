@@ -48,11 +48,11 @@
     justify-content: center !important;
     width: 100%;
     gap: 6px;
-    border-color: #163c76 !important;
-    border-width: 2px !important;
+    padding: 7px !important;
+    background-color: transparent !important;
+    border: 2px solid #163c76 !important;
     color: white !important;
     font-size: large !important;
-    padding: 7px !important;
 }
 
 .btn-outline-action:hover,

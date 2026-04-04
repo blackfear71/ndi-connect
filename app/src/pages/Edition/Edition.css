@@ -50,3 +50,68 @@
     font-size: x-large;
     font-style: italic;
 }
+
+.edition-sub-title .badge {
+    background-color: #29334d !important;
+    border: 2px solid #4a4a4c !important;
+    color: #fdd343 !important;
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: left;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.edition-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #223c66 !important;
+    color: white !important;
+    border: none !important;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.edition-button:hover,
+.edition-button:active {
+    background-color: #1f375e !important;
+}
+
+.edition-item {
+    display: flex;
+    align-items: center;
+    background-color: #162f57;
+    border: 1px solid #1f375e;
+    border-radius: 5px;
+}
+
+.edition-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.edition-item-name {
+    color: white;
+    min-width: 0;
+}
+
+.edition-item-ellipsis-text {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.edition-item-counter {
+    font-size: 12px;
+}
