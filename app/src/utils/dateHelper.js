@@ -6,7 +6,9 @@ import i18next from 'i18next';
  * @returns Date formatée
  */
 export const getDayFromDate = (date) => {
-    if (!date) return '';
+    if (!date) {
+        return '';
+    }
 
     const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
 
@@ -18,9 +20,9 @@ export const getDayFromDate = (date) => {
 };
 
 /**
- * Récupère une date formatée selon la langue active (i18next)
- * @param {string|Date} date Date à convertir
- * @param {Object} [options] Options Intl.DateTimeFormat
+ * Récupère une date formatée selon la langue active
+ * @param date Date à convertir
+ * @param options Options Intl.DateTimeFormat
  * @returns Date formatée
  */
 export const getLocalizedDate = (date, options = {}) => {
@@ -46,13 +48,43 @@ export const getLocalizedDate = (date, options = {}) => {
 };
 
 /**
- * Récupère l'heure d'une date selon la locale active
- * @param {string|Date} date Date à convertir
- * @param {Object} [options] Options Intl.DateTimeFormat
+ * Formate une durée (en ms) selon la langue active
+ * @param {*} ms Durée en ms
+ * @param {*} options Options Intl.DateTimeFormat
+ * @returns Durée formatée
+ */
+export const getLocalizedDuration = (ms, options = {}) => {
+    if (!ms || ms < 0) {
+        return '';
+    }
+
+    const totalMinutes = Math.floor(ms / 1000 / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const locale = i18next.language || 'fr';
+
+    try {
+        const defaultOptions = {
+            style: 'digital',
+            seconds: 'omit',
+            ...options
+        };
+        return new Intl.DurationFormat(locale, defaultOptions).format({ hours, minutes });
+    } catch {
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+};
+
+/**
+ * Récupère l'heure d'une date selon la langue active
+ * @param {*} date Date à convertir
+ * @param {*} options Options Intl.DateTimeFormat
  * @returns Heure formatée
  */
 export const getLocalizedTime = (date, options = {}) => {
-    if (!date) return '';
+    if (!date) {
+        return '';
+    }
 
     const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
     const locale = i18next.language || 'fr';

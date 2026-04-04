@@ -45,13 +45,13 @@
     mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
 }
 
-.edition-sub-title {
+.edition-subtitle {
     color: white;
     font-size: x-large;
     font-style: italic;
 }
 
-.edition-sub-title .badge {
+.edition-subtitle .badge {
     background-color: #29334d !important;
     border: 2px solid #4a4a4c !important;
     color: #fdd343 !important;

@@ -1,13 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
 
-import { Badge, Button, ProgressBar, Table } from 'react-bootstrap';
+import { Badge, Button, ProgressBar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
+import { CgSandClock } from 'react-icons/cg';
+import { FaFlagCheckered, FaScroll, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
+import { IoInformationCircleOutline } from 'react-icons/io5';
+
+import EditionTextCard from '../../components/EditionTextCard/EditionTextCard';
 
 import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
-import { getLocalizedDate, getLocalizedTime } from '../../utils/dateHelper';
+import { getLocalizedDate, getLocalizedDuration, getLocalizedTime } from '../../utils/dateHelper';
 
 import './EditionAbout.css';
 
@@ -22,7 +26,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
     const { t } = useTranslation();
 
     // Local states
-    const [progress, setProgress] = useState({ value: 0, isActive: false });
+    const [progress, setProgress] = useState({ value: 0, remaining: 0, isActive: false });
 
     /**
      * Mise à jour de l'avancement
@@ -49,21 +53,50 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
         const now = new Date();
         const startDate = new Date(edition.startDate);
         const endDate = new Date(edition.endDate);
-        const isActive = now >= startDate && now <= endDate;
+
         let value = 0;
+        let remaining = 0;
+        const isActive = now >= startDate && now <= endDate;
 
         if (isActive) {
             const totalDuration = endDate.getTime() - startDate.getTime();
             const elapsed = now.getTime() - startDate.getTime();
 
             value = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+            remaining = endDate - now;
         }
 
         setProgress({
             value: value,
+            remaining: remaining,
             isActive: isActive
         });
     };
+
+    /**
+     * Prépare les lignes d'informations
+     * @returns Liste de lignes
+     */
+    const getInformationsRows = () => [
+        {
+            label: t('edition.location'),
+            value: edition.location
+        },
+        {
+            label: t('edition.start'),
+            value: t('edition.editionDate', {
+                date: getLocalizedDate(edition.startDate),
+                time: getLocalizedTime(edition.startDate)
+            })
+        },
+        {
+            label: t('edition.end'),
+            value: t('edition.editionDate', {
+                date: getLocalizedDate(edition.endDate),
+                time: getLocalizedTime(edition.endDate)
+            })
+        }
+    ];
 
     return (
         <>
@@ -87,68 +120,60 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
             {edition && (
                 <>
                     {/* Progression */}
-                    {progress.isActive && (
-                        <div className="mb-3">
-                            <div className="edition-sub-title">{t('edition.progress')}</div>
-                            <div className="d-flex align-items-center mt-2">
-                                <Badge pill bg="success" className="me-2">
-                                    {getLocalizedTime(edition.startDate)}
-                                </Badge>
-                                <div className="flex-fill">
-                                    <ProgressBar now={progress.value} />
+                    {progress && progress.isActive && (
+                        <div className="edition-about-card mt-3">
+                            <div className="edition-about-card-header p-2">
+                                <div className="d-flex align-items-center gap-1 edition-about-card-title">
+                                    <CgSandClock size={20} />
+                                    {t('edition.progress')}
                                 </div>
-                                <Badge pill bg="danger" className="ms-2">
-                                    {getLocalizedTime(edition.endDate)}
-                                </Badge>
+                                <span>{Math.round(progress.value)}%</span>
+                            </div>
+
+                            <div className="edition-about-card-body gap-2 p-2">
+                                <div className="d-flex align-items-center mt-1">
+                                    <Badge pill bg="success" className="me-2">
+                                        {getLocalizedTime(edition.startDate)}
+                                    </Badge>
+                                    <div className="flex-fill">
+                                        <ProgressBar now={progress.value} />
+                                    </div>
+                                    <Badge pill bg="danger" className="ms-2">
+                                        {getLocalizedTime(edition.endDate)}
+                                    </Badge>
+                                </div>
+                                <div className="edition-about-card-progress-status">
+                                    {t('edition.progressStatus', { remaining: getLocalizedDuration(progress.remaining) })}
+                                </div>
                             </div>
                         </div>
                     )}
 
                     {/* Informations */}
-                    <div className="edition-sub-title">{t('edition.informations')}</div>
-                    <div className="edition-about-table mt-2">
-                        <Table className="mb-0">
-                            <tbody>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.location')}</td>
-                                    <td>{edition.location}</td>
-                                </tr>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.start')}</td>
-                                    <td>
-                                        {t('edition.editionDate', {
-                                            date: getLocalizedDate(edition.startDate),
-                                            time: getLocalizedTime(edition.startDate)
-                                        })}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="fw-bold">{t('edition.end')}</td>
-                                    <td>
-                                        {t('edition.editionDate', {
-                                            date: getLocalizedDate(edition.endDate),
-                                            time: getLocalizedTime(edition.endDate)
-                                        })}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                    <div className="edition-about-card mt-3">
+                        <div className="edition-about-card-header p-2">
+                            <div className="d-flex align-items-center gap-1 edition-about-card-title">
+                                <IoInformationCircleOutline size={22} />
+                                {t('edition.informations')}
+                            </div>
+                        </div>
+
+                        <div className="edition-about-card-body ps-2 pe-2">
+                            {getInformationsRows().map(({ label, value }) => (
+                                <div key={label} className="edition-about-card-line">
+                                    <span className="edition-about-card-line-label">{label}</span>
+                                    <span className="edition-about-card-line-value">{value}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Thème */}
-                    {edition.theme && (
-                        <div className="mt-3">
-                            <div className="edition-sub-title">{t('edition.theme')}</div>
-                            <div className="edition-about-text">{edition.theme}</div>
-                        </div>
-                    )}
+                    {edition.theme && <EditionTextCard title={t('edition.theme')} icon={<FaScroll size={18} />} text={edition.theme} />}
 
                     {/* Défi */}
                     {edition.challenge && (
-                        <div className="mt-3">
-                            <div className="edition-sub-title mt-3">{t('edition.challenge')}</div>
-                            <div className="edition-about-text">{edition.challenge}</div>
-                        </div>
+                        <EditionTextCard title={t('edition.challenge')} icon={<FaFlagCheckered size={18} />} text={edition.challenge} />
                     )}
                 </>
             )}

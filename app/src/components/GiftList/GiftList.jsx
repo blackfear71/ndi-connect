@@ -83,7 +83,7 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
     return (
         <>
             {/* Titre & tri */}
-            <div className="edition-sub-title d-flex align-items-center justify-content-between gap-2">
+            <div className="edition-subtitle d-flex align-items-center justify-content-between gap-2">
                 <Badge pill bg="warning">
                     {title}
                 </Badge>
