@@ -89,3 +89,7 @@
     height: 26px;
     flex-shrink: 0;
 }
+
+.modal-body {
+    word-wrap: break-word;
+}

@@ -17,6 +17,16 @@
     border-radius: 5px;
 }
 
+.edition-empty {
+    background-color: #162f57;
+    color: white;
+    font-size: large;
+    padding: 16px 8px;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px dashed #4f6280;
+}
+
 .edition-picture-wrapper {
     position: absolute;
     top: 60px;

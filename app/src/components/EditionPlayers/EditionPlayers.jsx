@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 
-import { Badge, Button, Form, Spinner } from 'react-bootstrap';
+import { Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
@@ -148,6 +148,30 @@ const EditionPlayers = ({
         });
     };
 
+    /**
+     * Détermine une couleur d'avatar en fonction du nom du participant
+     * @param {*} name Nom du participant
+     * @returns Couleur
+     */
+    const getAvatarColor = (name) => {
+        const colors = [
+            '#2563eb',
+            '#7c3aed',
+            '#059669',
+            '#dc2626',
+            '#d97706',
+            '#0891b2',
+            '#9333ea',
+            '#16a34a',
+            '#e11d48',
+            '#0369a1',
+            '#b45309',
+            '#1d4ed8'
+        ];
+
+        return colors[name.charCodeAt(0) % colors.length];
+    };
+
     return (
         <>
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
@@ -190,18 +214,25 @@ const EditionPlayers = ({
             {/* Liste */}
             {players && players.length > 0 ? (
                 players.map((p) => (
-                    <div key={p.id} className="d-flex align-items-center gap-2 mt-2">
+                    <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-players-item">
+                        {/* Avatar */}
+                        <div className="edition-players-avatar" style={{ backgroundColor: getAvatarColor(p.name) }}>
+                            {p.name.charAt(0).toUpperCase()}
+                        </div>
+
                         {/* Participant */}
-                        <div className="d-flex align-items-center flex-grow-1 edition-players-name">
-                            <Badge bg="success" className="me-1 d-flex align-items-center">
-                                <GiTwoCoins size={18} className="me-1" />
-                                {p.points}
-                            </Badge>
-                            <Badge bg="primary" className="me-1 d-flex align-items-center">
-                                <IoGiftSharp size={16} className="me-1" />
-                                {p?.rewards.length}
-                            </Badge>
-                            <span className="d-inline-block flex-grow-1 edition-players-ellipsis-text">{p.name}</span>
+                        <div className="d-flex flex-column flex-grow-1 edition-players-name">
+                            <span className="edition-players-ellipsis-text">{p.name}</span>
+                            <div className="d-flex align-items-center gap-2">
+                                <span className="d-flex align-items-center gap-1 edition-players-counter">
+                                    <GiTwoCoins size={15} />
+                                    {p.points}
+                                </span>
+                                <span className="d-flex align-items-center gap-1 edition-players-counter">
+                                    <IoGiftSharp size={13} />
+                                    {p?.rewards.length}
+                                </span>
+                            </div>
                         </div>
 
                         {/* Supression */}
