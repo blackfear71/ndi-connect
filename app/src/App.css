@@ -140,7 +140,7 @@
 }
 
 .modal-footer {
-    border-top: 2px solid #e8eaf0;
+    border-top: 2px solid #e8eaf0 !important;
     flex-direction: column;
     align-items: stretch;
 }
