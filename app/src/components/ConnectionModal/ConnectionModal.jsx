@@ -71,9 +71,6 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
-
                         {/* Formulaire */}
                         <div className="d-flex align-items-end">
                             <Form.Group className="me-2" controlId="login">
@@ -106,13 +103,24 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {t('navbar.connect')}
-                            {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Message */}
+                        {message && (
+                            <div className="modal-message">
+                                <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />
+                            </div>
+                        )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            <Button type="submit" variant="modal-action">
+                                {t('navbar.connect')}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

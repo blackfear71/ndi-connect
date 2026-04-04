@@ -110,19 +110,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
                         {/* Formulaire */}
                         <Form.Group controlId="name" className="d-flex align-items-center mb-2">
-                            <IoGiftSharp className="input-icon me-3" />
+                            <IoGiftSharp className="modal-input-icon me-3" />
                             <Form.Control
                                 ref={nameInputRef}
                                 type="text"
@@ -136,7 +126,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                         </Form.Group>
 
                         <Form.Group controlId="value" className="d-flex align-items-center mb-2">
-                            <GrMoney className="input-icon me-3" />
+                            <GrMoney className="modal-input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="value"
@@ -150,7 +140,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                         </Form.Group>
 
                         <Form.Group controlId="quantity" className="d-flex align-items-center">
-                            <GiCardboardBox className="input-icon me-3" />
+                            <GiCardboardBox className="modal-input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="quantity"
@@ -173,13 +163,29 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {t('common.validate')}
-                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
+                        )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            <Button type="submit" variant="modal-action">
+                                {t('common.validate')}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

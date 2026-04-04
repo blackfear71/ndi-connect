@@ -41,7 +41,7 @@ const EditionTextCard = ({ title, icon, text, limit = 200 }) => {
         <div className="edition-about-card mt-3">
             {/* Titre de la carte */}
             <div className="edition-about-card-header p-2">
-                <div className="d-flex align-items-center gap-1 edition-about-card-title">
+                <div className="d-flex align-items-center gap-2 edition-about-card-title">
                     {icon}
                     {title}
                 </div>

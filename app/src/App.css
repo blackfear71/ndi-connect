@@ -1,3 +1,11 @@
+/* TODO : modales restantes :
+- ConfirmModal
+- ConnectionModal
+- EditionModal
+- GiftModal
+- PlayerModal
+- SettingsModal */
+
 .App {
     background-color: #07224c;
 }
@@ -6,21 +14,7 @@
     padding: 0 !important;
 }
 
-.modal-header {
-    background-color: #163c76;
-    color: white;
-}
-
-.modal-header .btn-close {
-    filter: brightness(0) invert(1);
-}
-
-.modal-section-title {
-    background: #e3e3e3;
-    padding: 10px;
-    border-radius: 5px;
-}
-
+/* Boutons */
 .btn-action {
     display: flex !important;
     flex-direction: row;
@@ -29,11 +23,10 @@
     width: 100%;
     gap: 6px;
     background-color: #163c76 !important;
-    border-color: #163c76 !important;
+    border: 2px solid #163c76 !important;
     color: white !important;
     font-size: large !important;
     padding: 8px !important;
-    border-width: 2px !important;
 }
 
 .btn-action:hover,
@@ -48,11 +41,11 @@
     justify-content: center !important;
     width: 100%;
     gap: 6px;
-    padding: 7px !important;
     background-color: transparent !important;
     border: 2px solid #163c76 !important;
     color: white !important;
     font-size: large !important;
+    padding: 7px !important;
 }
 
 .btn-outline-action:hover,
@@ -84,12 +77,89 @@
     color: white !important;
 }
 
-.input-icon {
+.btn-modal-action {
+    background-color: #1d509e !important;
+    border: 2px solid #163c76 !important;
+    color: white !important;
+    padding: 5px 12px !important;
+}
+
+.btn-modal-action:hover,
+.btn-modal-action:active {
+    background-color: #163c76 !important;
+}
+
+.btn-modal-outline-action {
+    background-color: transparent !important;
+    border: 2px solid #8892a4 !important;
+    color: #8892a4 !important;
+    padding: 5px 12px !important;
+}
+
+.btn-modal-outline-action:hover,
+.btn-modal-outline-action:active {
+    background-color: #8892a4 !important;
+    color: white !important;
+}
+
+/* Modales */
+.modal-header {
+    background-color: #163c76;
+    color: white;
+    border: none !important;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+}
+
+.modal-section-title {
+    background: #e3e3e3;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.modal-body {
+    padding: 0 !important;
+}
+
+.modal-empty {
+    background-color: transparent;
+    color: #8892a4;
+    font-size: large;
+    padding: 8px;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px dashed #8892a4;
+}
+
+.modal-input-icon {
     width: 26px;
     height: 26px;
     flex-shrink: 0;
 }
 
-.modal-body {
-    word-wrap: break-word;
+.modal-footer {
+    border-top: 2px solid #e8eaf0;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.modal-footer > * {
+    margin: 0 !important;
+}
+
+.modal-footer .modal-message {
+    width: 100% !important;
+}
+
+.modal-footer .modal-message .alert {
+    margin-bottom: 8px !important;
+}
+
+.modal-footer .modal-footer-actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 8px;
 }

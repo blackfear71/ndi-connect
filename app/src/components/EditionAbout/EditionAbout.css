@@ -42,24 +42,21 @@
 }
 
 .edition-about-card-line-label {
-    font-size: medium;
     color: #5c6f85;
 }
 
 .edition-about-card-line-value {
-    font-size: medium;
     color: white;
 }
 
 .edition-about-card-text {
-    font-size: medium;
     color: white;
     text-align: justify;
     white-space: pre-line;
 }
 
 .edition-about-card-text-toggle {
-    background: none;
+    background-color: none;
     border: none;
     font-size: smaller;
     color: #987e4f;

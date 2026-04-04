@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 
-import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaTrashCan } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
@@ -12,7 +12,18 @@ import Message from '../Message/Message';
 
 import './RewardModal.css';
 
-const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, onConfirm }) => {
+const RewardModal = ({
+    player,
+    gifts,
+    getIconColor,
+    formData,
+    setFormData,
+    modalOptions,
+    setModalOptions,
+    onClose,
+    onSubmit,
+    onConfirm
+}) => {
     // Contexte
     const { auth } = useContext(AuthContext);
 
@@ -104,101 +115,131 @@ const RewardModal = ({ player, gifts, formData, setFormData, modalOptions, setMo
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
-                        {/* Attribuer un cadeau / Informations */}
-                        <div className="modal-section-title">
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.giveGift') : t('edition.player')}
-                        </div>
-
                         {/* Participant */}
-                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-3">
-                            <Badge className="reward-modal-badge bg-warning fs-6 me-2">{t('edition.player')}</Badge>
-                            <span className="reward-modal-label me-1">{player.name}</span>
-                        </div>
-
-                        {/* Nombre de points */}
-                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
-                            <Badge className="reward-modal-badge bg-warning fs-6 me-2">{t('edition.points')}</Badge>
-                            <Badge className="reward-modal-count bg-danger">{player?.points ?? 0}</Badge>
-                        </div>
-
-                        {/* Formulaire */}
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                            <>
-                                {gifts.length > 0 ? (
-                                    obtainableGifts.length > 0 ? (
-                                        <Form.Group controlId="name" className="d-flex align-items-center mt-2">
-                                            <PiListStarBold className="input-icon me-3" />
-                                            <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
-                                                <option key={0} value={0} disabled>
-                                                    {t('edition.chooseGift')}
-                                                </option>
-                                                {obtainableGifts.map((g) => (
-                                                    <option key={g.id} value={g.id}>
-                                                        {g.name} • {g.value} {t('edition.points').toLowerCase()} ({g.remainingQuantity}{' '}
-                                                        {g.remainingQuantity === 1 ? t('edition.remaining') : t('edition.remainings')})
-                                                    </option>
-                                                ))}
-                                            </Form.Select>
-                                        </Form.Group>
-                                    ) : (
-                                        <div className="bg-light rounded p-2 mt-2">{t('edition.notEnoughPoints')}</div>
-                                    )
-                                ) : (
-                                    <div className="bg-light rounded p-2 mt-2">{t('edition.noAvailableGifts')}</div>
-                                )}
-                            </>
-                        )}
-
-                        {/* Cadeaux obtenus */}
-                        <div className="modal-section-title mt-3 d-flex align-items-center justify-content-between">
-                            {t('edition.obtainedGifts')}
-                            <Badge className="reward-modal-count bg-danger">{player?.rewards.length ?? 0}</Badge>
-                        </div>
-
-                        {/* Cadeaux obtenus */}
-                        {player?.rewards.length > 0 ? (
-                            <div className="d-flex flex-column gap-2 mt-3">
-                                {player.rewards.map((r) => (
-                                    <div key={r.id} className="d-flex align-items-center gap-2">
-                                        <div className="d-flex align-items-center flex-grow-1 bg-light rounded p-2 reward-modal-label">
-                                            {r.name}
-                                        </div>
-                                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                                            <Button
-                                                onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
-                                                className="reward-modal-button"
-                                            >
-                                                <FaTrashCan />
-                                            </Button>
-                                        )}
-                                    </div>
-                                ))}
+                        <div className="d-flex align-items-center gap-2 p-2 reward-modal-participant">
+                            <div className="reward-modal-icon" style={{ backgroundColor: getIconColor(player.name) }}>
+                                {player.name.charAt(0).toUpperCase()}
                             </div>
-                        ) : (
-                            <div className="bg-light rounded p-2 mt-3">{t('edition.noObtainedGifts')}</div>
+
+                            <div className="reward-modal-label">{player.name}</div>
+                        </div>
+
+                        {/* Statistiques */}
+                        <div class="reward-modal-stats">
+                            <div class="reward-modal-cell">
+                                {/* Titre */}
+                                <div class="reward-modal-label">{t('edition.points')}</div>
+
+                                {/* Valeur */}
+                                <div class="reward-modal-value gold">{player?.points ?? 0}</div>
+                            </div>
+                            <div class="reward-modal-cell">
+                                {/* Titre */}
+                                <div class="reward-modal-label">{t('edition.gifts')}</div>
+
+                                {/* Valeur */}
+                                <div class="reward-modal-value green">{player?.rewards.length ?? 0}</div>
+                            </div>
+                        </div>
+
+                        {/* Attribution cadeaux */}
+                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                            <div class="reward-modal-zone">
+                                <div class="reward-modal-cell">
+                                    {/* Titre */}
+                                    <div class="reward-modal-label">{t('edition.giveGift')}</div>
+
+                                    {/* Formulaire */}
+                                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                                        <>
+                                            {gifts.length > 0 ? (
+                                                obtainableGifts.length > 0 ? (
+                                                    <Form.Group controlId="name" className="d-flex align-items-center mt-2">
+                                                        <PiListStarBold className="modal-input-icon me-2" />
+                                                        <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
+                                                            <option key={0} value={0} disabled>
+                                                                {t('edition.chooseGift')}
+                                                            </option>
+                                                            {obtainableGifts.map((g) => (
+                                                                <option key={g.id} value={g.id}>
+                                                                    {g.name} • {g.value} {t('edition.points').toLowerCase()} (
+                                                                    {g.remainingQuantity}{' '}
+                                                                    {g.remainingQuantity === 1
+                                                                        ? t('edition.remaining')
+                                                                        : t('edition.remainings')}
+                                                                    )
+                                                                </option>
+                                                            ))}
+                                                        </Form.Select>
+                                                    </Form.Group>
+                                                ) : (
+                                                    <div className="modal-empty mt-2">{t('edition.notEnoughPoints')}</div>
+                                                )
+                                            ) : (
+                                                <div className="modal-empty mt-2">{t('edition.noAvailableGifts')}</div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
                         )}
+
+                        {/* Cadeaux obtenus */}
+                        <div class="reward-modal-zone">
+                            <div class="reward-modal-cell">
+                                {/* Titre */}
+                                <div class="reward-modal-label">{t('edition.obtainedGifts')}</div>
+
+                                {/* Liste */}
+                                {player?.rewards.length > 0 ? (
+                                    <>
+                                        {player.rewards.map((r) => (
+                                            <div key={r.id} className="d-flex align-items-center pt-2 pb-2 gap-2 reward-modal-gift-row">
+                                                <div className="reward-modal-gift-name">{r.name}</div>
+                                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                                                    <Button
+                                                        onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
+                                                        className="reward-modal-button"
+                                                    >
+                                                        <FaTrashCan />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <div className="modal-empty mt-2">{t('edition.noObtainedGifts')}</div>
+                                )}
+                            </div>
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && obtainableGifts.length > 0 && (
-                            <Button type="submit" variant="primary">
-                                {t('common.validate')}
-                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                            </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
                         )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && obtainableGifts.length > 0 && (
+                                <Button type="submit" variant="modal-action">
+                                    {t('common.validate')}
+                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                </Button>
+                            )}
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

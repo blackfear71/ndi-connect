@@ -123,7 +123,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     {progress && progress.isActive && (
                         <div className="edition-about-card mt-3">
                             <div className="edition-about-card-header p-2">
-                                <div className="d-flex align-items-center gap-1 edition-about-card-title">
+                                <div className="d-flex align-items-center gap-2 edition-about-card-title">
                                     <CgSandClock size={20} />
                                     {t('edition.progress')}
                                 </div>
@@ -152,7 +152,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                     {/* Informations */}
                     <div className="edition-about-card mt-3">
                         <div className="edition-about-card-header p-2">
-                            <div className="d-flex align-items-center gap-1 edition-about-card-title">
+                            <div className="d-flex align-items-center gap-2 edition-about-card-title">
                                 <IoInformationCircleOutline size={22} />
                                 {t('edition.informations')}
                             </div>

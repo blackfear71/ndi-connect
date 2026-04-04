@@ -177,16 +177,6 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
                         {/* Attribuer des points */}
                         <div className="modal-section-title">{t('edition.givePoints')}</div>
 
@@ -198,7 +188,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
-                            <GiTwoCoins className="input-icon" />
+                            <GiTwoCoins className="modal-input-icon" />
 
                             <div className="d-flex align-items-center w-100 justify-content-evenly">
                                 <Button
@@ -228,7 +218,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <PiUserListFill className="input-icon me-3" />
+                            <PiUserListFill className="modal-input-icon me-3" />
                             <Form.Control
                                 type="text"
                                 name="name"
@@ -245,7 +235,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Formulaire */}
                         <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
-                            <GiTwoCoins className="input-icon" />
+                            <GiTwoCoins className="modal-input-icon" />
 
                             <div className="d-flex align-items-center w-100 justify-content-evenly">
                                 <Button
@@ -271,7 +261,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                         </Form.Group>
 
                         <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <FaUserFriends className="input-icon me-3" />
+                            <FaUserFriends className="modal-input-icon me-3" />
 
                             <Form.Select value={formData.giveawayId} onChange={handleChangeSelect}>
                                 <option key={0} value={0}>
@@ -287,13 +277,29 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {t('common.validate')}
-                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
+                        )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            <Button type="submit" variant="modal-action">
+                                {t('common.validate')}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

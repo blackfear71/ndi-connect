@@ -48,30 +48,36 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction 
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
-                        {/* Contenu */}
+                        {/* Texte */}
                         {modalOptions.content}
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.cancel')}
-                        </Button>
-                        {onConfirmAction && (
-                            <Button type="submit" variant="primary">
-                                {t('common.validate')}
-                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                            </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
                         )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.cancel')}
+                            </Button>
+
+                            {onConfirmAction && (
+                                <Button type="submit" variant="modal-action">
+                                    {t('common.validate')}
+                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                </Button>
+                            )}
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

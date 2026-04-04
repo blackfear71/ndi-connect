@@ -134,19 +134,9 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
                         {/* Lieu */}
                         <Form.Group className="d-flex align-items-center" controlId="location">
-                            <FaMapLocationDot className="input-icon me-3" />
+                            <FaMapLocationDot className="modal-input-icon me-3" />
                             <Form.Control
                                 ref={locationInputRef}
                                 type="text"
@@ -161,24 +151,24 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Date */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
-                            <IoCalendarNumberOutline className="input-icon me-3" />
+                            <IoCalendarNumberOutline className="modal-input-icon me-3" />
                             <Form.Control type="date" name="startDate" value={formData.startDate || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         {/* Heures */}
                         <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
-                            <WiTime4 className="input-icon me-3" />
+                            <WiTime4 className="modal-input-icon me-3" />
                             <Form.Control type="time" name="startTime" value={formData.startTime || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
-                            <WiTime8 className="input-icon me-3" />
+                            <WiTime8 className="modal-input-icon me-3" />
                             <Form.Control type="time" name="endTime" value={formData.endTime || ''} onChange={handleChange} required />
                         </Form.Group>
 
                         {/* Image */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="picture">
-                            <LuImage className="input-icon me-3" />
+                            <LuImage className="modal-input-icon me-3" />
                             <PictureInput
                                 name={'picture'}
                                 value={formData.picture}
@@ -190,7 +180,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Thème */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
-                            <MdOutlineLightbulb className="input-icon me-3" />
+                            <MdOutlineLightbulb className="modal-input-icon me-3" />
                             <Form.Control
                                 as="textarea"
                                 name="theme"
@@ -202,7 +192,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Challenge */}
                         <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
-                            <GoGoal className="input-icon me-3" />
+                            <GoGoal className="modal-input-icon me-3" />
                             <Form.Control
                                 as="textarea"
                                 name="challenge"
@@ -214,13 +204,29 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {t(getButtonFromAction(modalOptions.action))}
-                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
+                        )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            <Button type="submit" variant="modal-action">
+                                {t(getButtonFromAction(modalOptions.action))}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>

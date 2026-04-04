@@ -859,6 +859,7 @@ const Edition = () => {
                                     <RewardModal
                                         player={players.find((p) => p.id === formReward.idPlayer)}
                                         gifts={gifts}
+                                        getIconColor={getIconColor}
                                         formData={formReward}
                                         setFormData={setFormReward}
                                         modalOptions={modalOptionsReward}

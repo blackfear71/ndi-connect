@@ -86,16 +86,6 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Message */}
-                        {modalOptions.message && (
-                            <Message
-                                code={modalOptions.message.code}
-                                params={modalOptions.message.params}
-                                type={modalOptions.message.type}
-                                setMessage={setMessage}
-                            />
-                        )}
-
                         {/* Utilisateur */}
                         <div className="settings-modal-badges">
                             <Badge bg="success" className="fs-6 p-2 settings-modal-ellipsis d-inline-flex align-items-center">
@@ -161,13 +151,29 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button type="button" variant="secondary" onClick={() => onClose()}>
-                            {t('common.close')}
-                        </Button>
-                        <Button type="submit" variant="primary">
-                            {t('common.validate')}
-                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                        </Button>
+                        {/* Message */}
+                        {modalOptions.message && (
+                            <div className="modal-message">
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
+                            </div>
+                        )}
+
+                        {/* Boutons d'action */}
+                        <div className="modal-footer-actions">
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                                {t('common.close')}
+                            </Button>
+
+                            <Button type="submit" variant="modal-action">
+                                {t('common.validate')}
+                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Form>
             </fieldset>
