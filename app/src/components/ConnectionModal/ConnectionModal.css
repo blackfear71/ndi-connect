@@ -1,0 +1,24 @@
+.connection-modal-lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #edeff5;
+    border: 2px solid #d1d5e5;
+}
+
+.connection-modal-lock-text {
+    font-size: small;
+    color: #8892a4;
+}
+
+.connection-modal-label {
+    font-size: small;
+    font-weight: 600;
+    color: #8892a4;
+    text-transform: uppercase;
+    margin-bottom: 4px !important;
+}

@@ -140,6 +140,7 @@
         "noEdition": "Aucune édition"
     },
     "navbar": {
+        "adminOnly": "Accès réservé aux administrateurs",
         "connect": "Connexion",
         "connectedMessage": "Connecté en tant que",
         "disconnect": "Déconnexion",

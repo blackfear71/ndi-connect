@@ -1,10 +1,11 @@
 /* TODO : modales restantes :
-- ConfirmModal
-- ConnectionModal
-- EditionModal
-- GiftModal
-- PlayerModal
-- SettingsModal */
+- ConfirmModal    : icone -> OK | refonte -> OK
+- ConnectionModal : icone -> OK | refonte -> OK
+- EditionModal    : icone -> KO | refonte -> KO
+- GiftModal       : icone -> KO | refonte -> KO
+- PlayerModal     : icone -> KO | refonte -> KO
+- SettingsModal   : icone -> KO | refonte -> KO
+- supprimer .modal-body .modal-section-title */
 
 .App {
     background-color: #07224c;
@@ -109,22 +110,27 @@
     border: none !important;
 }
 
+.modal-header .modal-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
 .modal-header .btn-close {
     filter: brightness(0) invert(1);
 }
 
-.modal-section-title {
-    background: #e3e3e3;
+.modal-body {
+    word-wrap: break-word;
+}
+
+.modal-body .modal-section-title {
+    background-color: #e3e3e3;
     padding: 10px;
     border-radius: 5px;
 }
 
-.modal-body {
-    padding: 0 !important;
-    word-wrap: break-word;
-}
-
-.modal-empty {
+.modal-body .modal-empty {
     background-color: transparent;
     color: #8892a4;
     font-size: large;
@@ -134,7 +140,7 @@
     border: 2px dashed #8892a4;
 }
 
-.modal-input-icon {
+.modal-body .modal-input-icon {
     width: 26px;
     height: 26px;
     flex-shrink: 0;

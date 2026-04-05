@@ -2,9 +2,12 @@ import { useContext, useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaLock, FaUserCircle } from 'react-icons/fa';
 
 import { AuthContext } from '../../utils/AuthContext';
 import Message from '../Message/Message';
+
+import './ConnectionModal.css';
 
 const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
@@ -67,14 +70,25 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
             <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{t('navbar.connect')}</Modal.Title>
+                        <Modal.Title>
+                            <FaUserCircle />
+                            {t('navbar.connect')}
+                        </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
+                        {/* Verrou */}
+                        <div className="mt-1 mb-2 text-center">
+                            <div className="connection-modal-lock mb-1">
+                                <FaLock />
+                            </div>
+                            <div className="connection-modal-lock-text">{t('navbar.adminOnly')}</div>
+                        </div>
+
                         {/* Formulaire */}
                         <div className="d-flex align-items-end">
                             <Form.Group className="me-2" controlId="login">
-                                <Form.Label>{t('navbar.login')}</Form.Label>
+                                <Form.Label className="connection-modal-label">{t('navbar.login')}</Form.Label>
                                 <Form.Control
                                     ref={loginInputRef}
                                     type="text"
@@ -87,8 +101,8 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 />
                             </Form.Group>
 
-                            <Form.Group className="me-2" controlId="password">
-                                <Form.Label>{t('navbar.password')}</Form.Label>
+                            <Form.Group controlId="password">
+                                <Form.Label className="connection-modal-label">{t('navbar.password')}</Form.Label>
                                 <Form.Control
                                     type="password"
                                     name="password"

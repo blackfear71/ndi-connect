@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaQuestionCircle } from 'react-icons/fa';
 
 import Message from '../Message/Message';
 
@@ -44,7 +45,10 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction 
             <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{t('common.confirm')}</Modal.Title>
+                        <Modal.Title>
+                            <FaQuestionCircle />
+                            {t('common.confirm')}
+                        </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>

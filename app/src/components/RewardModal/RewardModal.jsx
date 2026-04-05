@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react';
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaTrashCan } from 'react-icons/fa6';
+import { FaGift } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
 
 import UserRole from '../../enums/UserRole';
@@ -110,11 +111,12 @@ const RewardModal = ({
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
+                            <FaGift />
                             {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body>
+                    <Modal.Body className="p-0">
                         {/* Participant */}
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-participant">
                             <div className="reward-modal-icon" style={{ backgroundColor: getIconColor(player.name) }}>
