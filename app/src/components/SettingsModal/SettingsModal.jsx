@@ -86,68 +86,74 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Utilisateur */}
-                        <div className="settings-modal-badges">
-                            <Badge bg="success" className="fs-6 p-2 settings-modal-ellipsis d-inline-flex align-items-center">
-                                <HiIdentification size={18} className="me-2" />
-                                <span className="settings-modal-ellipsis-text">{user.login}</span>
-                            </Badge>
+                        <div className="modal-group">
+                            <div className="modal-group-content">
+                                {/* Utilisateur */}
+                                <div className="settings-modal-badges">
+                                    <Badge bg="success" className="fs-6 p-2 settings-modal-ellipsis d-inline-flex align-items-center">
+                                        <HiIdentification size={18} className="me-2" />
+                                        <span className="settings-modal-ellipsis-text">{user.login}</span>
+                                    </Badge>
 
-                            <Badge bg="warning" text="dark" className="fs-6 p-2 mt-2 d-inline-flex align-items-center">
-                                {getUserRole(user.level)}
-                            </Badge>
-                        </div>
+                                    <Badge bg="warning" text="dark" className="fs-6 p-2 mt-2 d-inline-flex align-items-center">
+                                        {getUserRole(user.level)}
+                                    </Badge>
+                                </div>
 
-                        {/* Modifier le rôle */}
-                        <div className="modal-section-title mt-3">{t('settings.updateLevel')}</div>
+                                {/* Modifier le rôle */}
+                                <div className="modal-section-title mt-3">{t('settings.updateLevel')}</div>
 
-                        {/* Formulaire */}
-                        <Form.Select value={formData.level} onChange={handleChangeSelect} className="mt-2" required>
-                            <option key="" value="" disabled>
-                                {t('settings.chooseLevel')}
-                            </option>
-                            {[0, 1, 2].map((level) => (
-                                <option key={level} value={level}>
-                                    {t(`settings.level${level}`)}
-                                </option>
-                            ))}
-                        </Form.Select>
+                                {/* Formulaire */}
+                                <Form.Select value={formData.level} onChange={handleChangeSelect} className="mt-2" required>
+                                    <option key="" value="" disabled>
+                                        {t('settings.chooseLevel')}
+                                    </option>
+                                    {[0, 1, 2].map((level) => (
+                                        <option key={level} value={level}>
+                                            {t(`settings.level${level}`)}
+                                        </option>
+                                    ))}
+                                </Form.Select>
 
-                        {/* Description du niveau sélectionné */}
-                        {formData.level !== '' && (
-                            <p className="text-muted mt-2 settings-modal-border">{t(`settings.levelDescription${formData.level}`)}</p>
-                        )}
+                                {/* Description du niveau sélectionné */}
+                                {formData.level !== '' && (
+                                    <p className="text-muted mt-2 settings-modal-border">
+                                        {t(`settings.levelDescription${formData.level}`)}
+                                    </p>
+                                )}
 
-                        {/* Réinitialiser le mot de passe */}
-                        <div className="modal-section-title mt-3">{t('settings.resetPassword')}</div>
+                                {/* Réinitialiser le mot de passe */}
+                                <div className="modal-section-title mt-3">{t('settings.resetPassword')}</div>
 
-                        {/* Confirmation de réinitialisation */}
-                        {!confirmReset ? (
-                            <Button type="button" className="settings-button mt-2" onClick={() => setConfirmReset(true)}>
-                                {t('common.reset')}
-                            </Button>
-                        ) : (
-                            <div className="d-flex gap-2 mt-2">
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    onClick={() => setConfirmReset(false)}
-                                    disabled={modalOptions.isSubmitting}
-                                >
-                                    {t('common.cancel')}
-                                </Button>
+                                {/* Confirmation de réinitialisation */}
+                                {!confirmReset ? (
+                                    <Button type="button" className="settings-button mt-2" onClick={() => setConfirmReset(true)}>
+                                        {t('common.reset')}
+                                    </Button>
+                                ) : (
+                                    <div className="d-flex gap-2 mt-2">
+                                        <Button
+                                            type="button"
+                                            variant="secondary"
+                                            onClick={() => setConfirmReset(false)}
+                                            disabled={modalOptions.isSubmitting}
+                                        >
+                                            {t('common.cancel')}
+                                        </Button>
 
-                                <Button
-                                    type="button"
-                                    variant="danger"
-                                    onClick={(event) => handleReset(event)}
-                                    disabled={modalOptions.isSubmitting}
-                                >
-                                    {t('common.confirm')}
-                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                                </Button>
+                                        <Button
+                                            type="button"
+                                            variant="danger"
+                                            onClick={(event) => handleReset(event)}
+                                            disabled={modalOptions.isSubmitting}
+                                        >
+                                            {t('common.confirm')}
+                                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
-                        )}
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>

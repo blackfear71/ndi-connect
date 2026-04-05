@@ -1,12 +1,16 @@
-/* TODO : modales restantes :
+/* TODO : refontes restantes :
 - ConfirmModal    : icone -> OK | refonte -> OK
 - ConnectionModal : icone -> OK | refonte -> OK
 - EditionModal    : icone -> OK | refonte -> OK
 - GiftModal       : icone -> OK | refonte -> OK
-- PlayerModal     : icone -> ?? | refonte -> ??
+- PlayerModal     : icone -> OK | refonte -> OK
+- Settings        :               refonte -> ??
 - SettingsModal   : icone -> ?? | refonte -> ??
+
+- convertir l'image "ndi-connect.png" en webp, elle fait 1Mo c'est trop gros !
+- utiliser ou supprimer la police Quicksand
 - supprimer .modal-body .modal-section-title
-- supprimer les p-0 de <Modal.Body className="p-0"> si toutes uniformes
+- faire apparaitre une étoile si champ obligatoire ?
 - TODOs à vérifier */
 
 .App {
@@ -17,12 +21,21 @@
     padding: 0 !important;
 }
 
+/* Couleurs */
 .gold {
     color: #b8870a !important;
 }
 
+.gray {
+    color: #8892a4 !important;
+}
+
 .green {
     color: #0f6e3e !important;
+}
+
+.red {
+    color: #d43636 !important;
 }
 
 /* Boutons */
@@ -131,6 +144,7 @@
 }
 
 .modal-body {
+    padding: 0 !important;
     word-wrap: break-word;
 }
 
@@ -140,16 +154,16 @@
     border-radius: 5px;
 }
 
-.modal-body .modal-zone {
+.modal-body .modal-group {
     display: grid;
     border-bottom: 2px solid #e8eaf0;
 }
 
-.modal-body .modal-zone:last-child {
+.modal-body .modal-group:last-child {
     border-bottom: none;
 }
 
-.modal-body .modal-zone-content {
+.modal-body .modal-group-content {
     display: flex;
     flex-direction: column;
     padding: 10px 16px;
@@ -157,20 +171,20 @@
     overflow: hidden;
 }
 
-.modal-body .modal-zone-content .modal-zone-content-label {
+.modal-body .modal-group-content .modal-group-content-title {
     font-size: small;
     font-weight: 600;
     color: #8892a4;
     text-transform: uppercase;
 }
 
-.modal-body .modal-zone-content .modal-zone-content-value {
+.modal-body .modal-group-content .modal-group-content-value {
     font-size: x-large;
     font-weight: 600;
     color: #1a1a2e;
 }
 
-.modal-body .modal-zone-content .modal-empty {
+.modal-body .modal-group-content .modal-empty {
     background-color: transparent;
     color: #8892a4;
     font-size: large;
@@ -180,29 +194,19 @@
     border: 2px dashed #8892a4;
 }
 
-.modal-body .modal-zone-content .modal-input-icon {
+.modal-body .modal-group-content .modal-input-icon {
     width: 30px;
     height: 30px;
     flex-shrink: 0;
     color: #8892a4;
 }
 
-.modal-body .modal-zone-content .modal-input-icon svg {
+.modal-body .modal-group-content .modal-input-icon svg {
     width: 28px;
     height: 28px;
 }
 
-.modal-body .modal-zone-content .modal-input-sublabel-zone {
-    margin-top: -6px;
-}
-
-.modal-body .modal-zone-content .modal-input-sublabel {
-    font-size: small;
-    font-weight: 500;
-    color: #9faabf;
-}
-
-.modal-body .modal-zone-content .modal-button-delete {
+.modal-body .modal-group-content .modal-button-delete {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -217,14 +221,14 @@
     margin-left: auto;
 }
 
-.modal-body .modal-zone-content .modal-button-delete svg {
+.modal-body .modal-group-content .modal-button-delete svg {
     width: 14px;
     height: 14px;
     flex-shrink: 0;
 }
 
-.modal-body .modal-zone-content .modal-button-delete:hover,
-.modal-body .modal-zone-content .modal-button-delete:active {
+.modal-body .modal-group-content .modal-button-delete:hover,
+.modal-body .modal-group-content .modal-button-delete:active {
     background-color: #d43636;
 }
 
@@ -243,7 +247,7 @@
 }
 
 .modal-footer .modal-message .alert {
-    margin-bottom: 8px !important;
+    margin-bottom: 12px !important;
 }
 
 .modal-footer .modal-footer-actions {

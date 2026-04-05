@@ -1,17 +1,20 @@
 import { useContext, useEffect } from 'react';
 
-import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaUserFriends } from 'react-icons/fa';
+import { FaPeopleArrows, FaUserFriends } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
 import { PiUserListFill } from 'react-icons/pi';
 
 import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
-import Message from '../Message/Message';
 
-import './PlayerModal.css';
+import IncrementInput from '../IncrementInput/IncrementInput';
+import Message from '../Message/Message';
+import SelectInput from '../SelectInput/SelectInput';
+import TextInput from '../TextInput/TextInput';
 
 const PlayerModal = ({ players, player, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Contexte
@@ -54,7 +57,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
      * Met à jour le formulaire à la saisie d'un numérique
      * @param {*} action Action à réaliser
      */
-    const handleChangeIncrement = (action) => {
+    const handleChangePoints = (action) => {
         // Ajoute ou retire des points selon les droits
         switch (action) {
             case 'add':
@@ -168,112 +171,97 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         onSubmit(action);
     };
 
+    /**
+     * Renvoie une liste de participants sélectionnables
+     */
+    const getGivewayOptions = () => {
+        return availablePlayers.map((p) => ({
+            key: p.id,
+            value: p.id,
+            label: `${p.name} • ${p.points} ${t('edition.points').toLowerCase()}`
+        }));
+    };
+
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{t('edition.managePlayer')}</Modal.Title>
+                        <Modal.Title>
+                            <FaUser />
+                            {t('edition.managePlayer')}
+                        </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Attribuer des points */}
-                        <div className="modal-section-title">{t('edition.givePoints')}</div>
-
                         {/* Nombre de points */}
-                        <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
-                            <Badge className="bg-warning fs-6 me-2">{t('edition.points')}</Badge>
-                            <Badge className="player-modal-count bg-danger">{player?.points ?? 0}</Badge>
+                        <div className="modal-group">
+                            <div className="modal-group-content">
+                                {/* Titre */}
+                                <div className="modal-group-content-title">{t('edition.points')}</div>
+
+                                {/* Valeur */}
+                                <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                    {player?.points ?? 0}
+                                </div>
+                            </div>
                         </div>
 
-                        {/* Formulaire */}
-                        <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
-                            <GiTwoCoins className="modal-input-icon" />
-
-                            <div className="d-flex align-items-center w-100 justify-content-evenly">
-                                <Button
-                                    className="player-modal-button"
-                                    variant="outline-secondary"
-                                    size="lg"
-                                    onClick={() => handleChangeIncrement('remove')}
-                                >
-                                    –
-                                </Button>
-
-                                <div className="player-modal-value">{formData.delta || 0}</div>
-
-                                <Button
-                                    className="player-modal-button"
-                                    variant="outline-secondary"
-                                    size="lg"
-                                    onClick={() => handleChangeIncrement('add')}
-                                >
-                                    +
-                                </Button>
+                        {/* Modification du participant */}
+                        <div className="modal-group">
+                            <div className="modal-group-content gap-2">
+                                <TextInput
+                                    title={t('edition.updateName')}
+                                    icon={<PiUserListFill />}
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    maxLength={100}
+                                    required={true}
+                                />
                             </div>
-                        </Form.Group>
+                        </div>
 
-                        {/* Modifier le participant */}
-                        <div className="modal-section-title mt-3">{t('edition.updatePlayer')}</div>
-
-                        {/* Formulaire */}
-                        <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <PiUserListFill className="modal-input-icon me-3" />
-                            <Form.Control
-                                type="text"
-                                name="name"
-                                placeholder={t('edition.name')}
-                                value={formData.name}
-                                onChange={handleChange}
-                                maxLength={100}
-                                required
-                            />
-                        </Form.Group>
-
-                        {/* Donner des points */}
-                        <div className="modal-section-title mt-3">{t('edition.giveParticipant')}</div>
-
-                        {/* Formulaire */}
-                        <Form.Group controlId="points" className="d-flex align-items-center gap-3 mt-3">
-                            <GiTwoCoins className="modal-input-icon" />
-
-                            <div className="d-flex align-items-center w-100 justify-content-evenly">
-                                <Button
-                                    className="player-modal-button"
-                                    variant="outline-secondary"
-                                    size="lg"
-                                    onClick={() => handleChangeGiveaway('remove')}
-                                >
-                                    –
-                                </Button>
-
-                                <div className="player-modal-value">{formData.giveaway || 0}</div>
-
-                                <Button
-                                    className="player-modal-button"
-                                    variant="outline-secondary"
-                                    size="lg"
-                                    onClick={() => handleChangeGiveaway('add')}
-                                >
-                                    +
-                                </Button>
+                        {/* Attribution des points */}
+                        <div className="modal-group">
+                            <div className="modal-group-content">
+                                <IncrementInput
+                                    title={t('edition.givePoints')}
+                                    icon={<GiTwoCoins />}
+                                    name={'points'}
+                                    value={formData.delta}
+                                    onChangeDown={() => handleChangePoints('remove')}
+                                    onChangeUp={() => handleChangePoints('add')}
+                                />
                             </div>
-                        </Form.Group>
+                        </div>
 
-                        <Form.Group controlId="name" className="d-flex align-items-center mt-3">
-                            <FaUserFriends className="modal-input-icon me-3" />
+                        {/* Don de points */}
+                        {player?.points > 0 && availablePlayers.length > 0 && (
+                            <div className="modal-group">
+                                <div className="modal-group-content gap-2">
+                                    {/* Choix du participant */}
+                                    <SelectInput
+                                        title={t('edition.giveParticipant')}
+                                        icon={<FaUserFriends />}
+                                        name={'playerGiveaway'}
+                                        defaultOption={{ key: 0, value: 0, label: t('edition.chooseParticipant') }}
+                                        options={getGivewayOptions()}
+                                        value={formData.giveawayId}
+                                        onChange={handleChangeSelect}
+                                    />
 
-                            <Form.Select value={formData.giveawayId} onChange={handleChangeSelect}>
-                                <option key={0} value={0}>
-                                    {t('edition.chooseParticipant')}
-                                </option>
-                                {availablePlayers.map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                        {p.name} • {p.points} {t('edition.points').toLowerCase()}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
+                                    {/* Nombre de points */}
+                                    <IncrementInput
+                                        icon={<FaPeopleArrows />}
+                                        name={'giftGiveaway'}
+                                        value={formData.giveaway}
+                                        onChangeDown={() => handleChangeGiveaway('remove')}
+                                        onChangeUp={() => handleChangeGiveaway('add')}
+                                    />
+                                </div>
+                            </div>
+                        )}
                     </Modal.Body>
 
                     <Modal.Footer>

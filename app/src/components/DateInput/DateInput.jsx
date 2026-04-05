@@ -1,9 +1,9 @@
 import { Form } from 'react-bootstrap';
 
 /**
- * Saisie ligne de texte
+ * Saisie date
  */
-const TextInput = ({ title, icon, name, ref, value, onChange, maxLength, inputMode, pattern, required = false }) => {
+const DateInput = ({ title, icon, name, value, onChange, required = false }) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -17,22 +17,11 @@ const TextInput = ({ title, icon, name, ref, value, onChange, maxLength, inputMo
                 <Form.Group className="d-flex flex-column w-100" controlId={name}>
                     <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
 
-                    <Form.Control
-                        ref={ref}
-                        type="text"
-                        name={name}
-                        placeholder={title}
-                        value={value}
-                        onChange={onChange}
-                        maxLength={maxLength}
-                        inputMode={inputMode}
-                        pattern={pattern}
-                        required={required}
-                    />
+                    <Form.Control type="date" name={name} value={value || ''} onChange={onChange} required={required} />
                 </Form.Group>
             </div>
         </div>
     );
 };
 
-export default TextInput;
+export default DateInput;

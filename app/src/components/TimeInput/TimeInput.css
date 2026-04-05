@@ -1,0 +1,30 @@
+.time-input-group {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: white;
+}
+
+.time-input-prefix {
+    font-size: x-small;
+    font-weight: 600;
+    color: #9faabf;
+    text-transform: uppercase;
+    padding: 0 8px;
+    border-right: 1px solid #dee2e6;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.time-input-control {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 6px 8px !important;
+    min-width: 0;
+}
+
+.time-input-group:focus-within {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}

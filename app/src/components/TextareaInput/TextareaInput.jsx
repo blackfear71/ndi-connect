@@ -1,16 +1,33 @@
 import { Form } from 'react-bootstrap';
 
-const TextareaInput = ({ icon, name, title, placeholder, value, onChange }) => {
+/**
+ * Saisie zone de texte
+ */
+const TextareaInput = ({ title, icon, name, placeholder, value, onChange, required = false }) => {
     return (
-        <div className="d-flex align-items-center gap-2">
-            {/* Icône */}
-            <div className="d-flex align-items-center justify-content-center modal-input-icon">{icon}</div>
+        <div className="d-flex flex-column gap-1">
+            {/* Titre */}
+            {title && <div className="modal-group-content-title">{title}</div>}
 
-            {/* Titre & saisie */}
-            <Form.Group className="d-flex flex-column w-100" controlId={name}>
-                <Form.Label className="mb-1 modal-zone-content-label">{title}</Form.Label>
-                <Form.Control as="textarea" name={name} placeholder={placeholder} value={value} onChange={onChange} />
-            </Form.Group>
+            {/* Saisie */}
+            <div className="d-flex align-items-center gap-2">
+                {/* Icône */}
+                <div className="modal-input-icon">{icon}</div>
+
+                {/* Saisie */}
+                <Form.Group className="w-100" controlId={name}>
+                    <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
+
+                    <Form.Control
+                        as="textarea"
+                        name={name}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={onChange}
+                        required={required}
+                    />
+                </Form.Group>
+            </div>
         </div>
     );
 };

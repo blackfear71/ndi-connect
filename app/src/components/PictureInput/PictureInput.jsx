@@ -9,7 +9,7 @@ import './PictureInput.css';
 /**
  * Saisie d'image avec aperçu et suppression
  */
-const PictureInput = ({ icon, name, value, setMessage, onChange, isSubmitting }) => {
+const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -79,39 +79,47 @@ const PictureInput = ({ icon, name, value, setMessage, onChange, isSubmitting })
     };
 
     return (
-        <div className="d-flex align-items-center gap-2">
-            {/* Icône */}
-            <div className="d-flex align-items-center justify-content-center modal-input-icon">{icon}</div>
+        <div className="d-flex flex-column gap-1">
+            {/* Titre */}
+            {title && <div className="modal-group-content-title">{title}</div>}
 
-            {/* Parcourir */}
-            <Form.Group controlId="picture">
-                <Form.Label className="picture-input-button rounded p-3 m-0" style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
-                    {t('common.browse')}
-                    <Form.Control
-                        type="file"
-                        name={name}
-                        accept=".jpg,.jpeg,.png,.webp"
-                        onChange={handleFileChange}
-                        style={{ display: 'none' }}
-                    />
-                </Form.Label>
-            </Form.Group>
+            <div className="d-flex align-items-center gap-2">
+                {/* Icône */}
+                <div className="d-flex align-items-center justify-content-center modal-input-icon">{icon}</div>
 
-            {/* Aperçu et suppression */}
-            <div className="picture-input-preview-wrapper">
-                {previewUrl ? (
-                    <div className="picture-input-preview-content">
-                        {/* Aperçu */}
-                        <Image key={previewUrl} src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
+                {/* Parcourir */}
+                <Form.Group controlId="picture">
+                    <Form.Label
+                        className="picture-input-button rounded p-3 m-0"
+                        style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                    >
+                        {t('common.browse')}
+                        <Form.Control
+                            type="file"
+                            name={name}
+                            accept=".jpg,.jpeg,.png,.webp"
+                            onChange={handleFileChange}
+                            style={{ display: 'none' }}
+                        />
+                    </Form.Label>
+                </Form.Group>
 
-                        {/* Suppression */}
-                        <Button onClick={handleFileRemove} className="modal-button-delete">
-                            <FaTrashCan />
-                        </Button>
-                    </div>
-                ) : (
-                    t('common.noFilesSelected')
-                )}
+                {/* Aperçu et suppression */}
+                <div className="picture-input-preview-wrapper">
+                    {previewUrl ? (
+                        <div className="picture-input-preview-content">
+                            {/* Aperçu */}
+                            <Image key={previewUrl} src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
+
+                            {/* Suppression */}
+                            <Button onClick={handleFileRemove} className="modal-button-delete">
+                                <FaTrashCan />
+                            </Button>
+                        </div>
+                    ) : (
+                        t('common.noFilesSelected')
+                    )}
+                </div>
             </div>
         </div>
     );

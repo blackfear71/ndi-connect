@@ -52,8 +52,12 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction 
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Texte */}
-                        {modalOptions.content}
+                        <div className="modal-group">
+                            <div className="modal-group-content">
+                                {/* Texte */}
+                                {modalOptions.content}
+                            </div>
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>

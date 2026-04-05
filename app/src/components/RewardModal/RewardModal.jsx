@@ -8,7 +8,9 @@ import { PiListStarBold } from 'react-icons/pi';
 import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
+
 import Message from '../Message/Message';
+import SelectInput from '../SelectInput/SelectInput';
 
 import './RewardModal.css';
 
@@ -104,6 +106,17 @@ const RewardModal = ({
         });
     };
 
+    /**
+     * Renvoie une liste de cadeaux sélectionnables
+     */
+    const getGiftOptions = () => {
+        return obtainableGifts.map((g) => ({
+            key: g.id,
+            value: g.id,
+            label: `${g.name} • ${g.value} ${t('edition.points').toLowerCase()} (${g.remainingQuantity} ${g.remainingQuantity === 1 ? t('edition.remaining') : t('edition.remainings')})`
+        }));
+    };
+
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={modalOptions.isSubmitting}>
@@ -115,7 +128,7 @@ const RewardModal = ({
                         </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body className="p-0">
+                    <Modal.Body>
                         {/* Participant */}
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
                             <div className="reward-modal-icon" style={{ backgroundColor: getIconColor(player.name) }}>
@@ -127,71 +140,58 @@ const RewardModal = ({
 
                         {/* Statistiques */}
                         <div className="reward-modal-statistics">
-                            <div className="modal-zone-content">
+                            <div className="modal-group-content">
                                 {/* Titre */}
-                                <div className="modal-zone-content-label">{t('edition.points')}</div>
+                                <div className="modal-group-content-title">{t('edition.points')}</div>
 
                                 {/* Valeur */}
-                                <div className="modal-zone-content-value gold">{player?.points ?? 0}</div>
+                                <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                    {player?.points ?? 0}
+                                </div>
                             </div>
 
-                            <div className="modal-zone-content">
+                            <div className="modal-group-content">
                                 {/* Titre */}
-                                <div className="modal-zone-content-label">{t('edition.gifts')}</div>
+                                <div className="modal-group-content-title">{t('edition.gifts')}</div>
 
                                 {/* Valeur */}
-                                <div className="modal-zone-content-value green">{player?.rewards.length ?? 0}</div>
+                                <div className={`modal-group-content-value ${player?.rewards.length > 0 ? 'gold' : 'gray'}`}>
+                                    {player?.rewards.length ?? 0}
+                                </div>
                             </div>
                         </div>
 
                         {/* Attribution cadeaux */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                            <div className="modal-zone">
-                                <div className="modal-zone-content">
-                                    {/* Titre */}
-                                    <div className="modal-zone-content-label">{t('edition.giveGift')}</div>
-
-                                    {/* Formulaire */}
-                                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                                        <>
-                                            {gifts.length > 0 ? (
-                                                obtainableGifts.length > 0 ? (
-                                                    <Form.Group controlId="name" className="d-flex align-items-center mt-2 gap-2">
-                                                        <PiListStarBold className="modal-input-icon" />
-
-                                                        <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
-                                                            <option key={0} value={0} disabled>
-                                                                {t('edition.chooseGift')}
-                                                            </option>
-                                                            {obtainableGifts.map((g) => (
-                                                                <option key={g.id} value={g.id}>
-                                                                    {g.name} • {g.value} {t('edition.points').toLowerCase()} (
-                                                                    {g.remainingQuantity}{' '}
-                                                                    {g.remainingQuantity === 1
-                                                                        ? t('edition.remaining')
-                                                                        : t('edition.remainings')}
-                                                                    )
-                                                                </option>
-                                                            ))}
-                                                        </Form.Select>
-                                                    </Form.Group>
-                                                ) : (
-                                                    <div className="modal-empty mt-2">{t('edition.notEnoughPoints')}</div>
-                                                )
-                                            ) : (
-                                                <div className="modal-empty mt-2">{t('edition.noAvailableGifts')}</div>
-                                            )}
-                                        </>
+                            <div className="modal-group">
+                                <div className="modal-group-content">
+                                    {gifts.length > 0 ? (
+                                        obtainableGifts.length > 0 ? (
+                                            <SelectInput
+                                                title={t('edition.giveGift')}
+                                                icon={<PiListStarBold />}
+                                                name={'gift'}
+                                                defaultOption={{ key: 0, value: 0, label: t('edition.chooseGift') }}
+                                                options={getGiftOptions()}
+                                                value={formData.idGift}
+                                                onChange={handleChangeSelect}
+                                                required={true}
+                                            />
+                                        ) : (
+                                            <div className="modal-empty">{t('edition.notEnoughPoints')}</div>
+                                        )
+                                    ) : (
+                                        <div className="modal-empty">{t('edition.noAvailableGifts')}</div>
                                     )}
                                 </div>
                             </div>
                         )}
 
                         {/* Cadeaux obtenus */}
-                        <div className="modal-zone">
-                            <div className="modal-zone-content">
+                        <div className="modal-group">
+                            <div className="modal-group-content">
                                 {/* Titre */}
-                                <div className="modal-zone-content-label">{t('edition.obtainedGifts')}</div>
+                                <div className="modal-group-content-title">{t('edition.obtainedGifts')}</div>
 
                                 {/* Liste */}
                                 {player?.rewards.length > 0 ? (

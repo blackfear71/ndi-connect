@@ -110,6 +110,7 @@
         "noPlayers": "Aucun participant",
         "notEnoughPoints": "Pas assez de points pour les cadeaux",
         "obtainedGifts": "Cadeaux obtenus",
+        "picture": "Image",
         "players": "Participants",
         "points": "Points",
         "progress": "Progression",
@@ -126,6 +127,7 @@
         "theme": "Thème",
         "unavailableGifts": "Cadeaux gagnés",
         "updateEdition": "Modifier l'édition",
+        "updateName": "Modifier le nom",
         "updatePlayer": "Modifier le participant",
         "value": "Valeur",
         "year": "Année"

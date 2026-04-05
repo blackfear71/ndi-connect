@@ -10,13 +10,15 @@ export default defineConfig({
     },
     build: {
         outDir: 'build',
+        chunkSizeWarningLimit: 600,
         rollupOptions: {
             output: {
+                // Séparation des librairies lourdes pour un build plus rapide
                 manualChunks: {
-                    // Séparation des librairies lourdes
-                    react: ['react', 'react-dom'],
-                    i18n: ['i18next', 'react-i18next'],
-                    bootstrap: ['bootstrap']
+                    react: ['react', 'react-dom', 'react-router-dom'],
+                    bootstrap: ['bootstrap', 'react-bootstrap'],
+                    icons: ['react-icons'],
+                    i18n: ['i18next', 'react-i18next']
                 }
             }
         }

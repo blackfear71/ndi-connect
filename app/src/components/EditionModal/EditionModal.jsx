@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { FaFlagCheckered, FaRegClock, FaScroll, FaWandMagicSparkles } from 'react-icons/fa6';
 import { IoCalendarNumberOutline, IoImageOutline, IoLocationOutline } from 'react-icons/io5';
 
+import DateInput from '../DateInput/DateInput';
 import Message from '../Message/Message';
 import PictureInput from '../PictureInput/PictureInput';
 import TextareaInput from '../TextareaInput/TextareaInput';
 import TextInput from '../TextInput/TextInput';
+import TimeInput from '../TimeInput/TimeInput';
 
 const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
@@ -134,15 +136,15 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                         </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body className="p-0">
+                    <Modal.Body>
                         {/* Lieu */}
-                        <div className="modal-zone">
-                            <div className="modal-zone-content">
+                        <div className="modal-group">
+                            <div className="modal-group-content">
                                 <TextInput
-                                    icon={<IoLocationOutline />}
-                                    ref={locationInputRef}
-                                    name="location"
                                     title={t('edition.location')}
+                                    icon={<IoLocationOutline />}
+                                    name="location"
+                                    ref={locationInputRef}
                                     value={formData.location}
                                     onChange={handleChange}
                                     maxLength={100}
@@ -152,71 +154,39 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                         </div>
 
                         {/* Date et heures */}
-                        <div className="modal-zone">
-                            {/* Date */}
-                            <div className="modal-zone-content gap-2">
-                                <div className="d-flex align-items-center gap-2">
-                                    {/* Icône */}
-                                    <div className="d-flex align-items-center justify-content-center modal-input-icon">
-                                        <IoCalendarNumberOutline />
-                                    </div>
-
-                                    {/* Titre & saisie */}
-                                    <Form.Group className="d-flex flex-column w-100" controlId="startDate">
-                                        <Form.Label className="mb-1 modal-zone-content-label">{t('edition.startDate')}</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            name="startDate"
-                                            value={formData.startDate || ''}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
-                                </div>
+                        <div className="modal-group">
+                            <div className="modal-group-content gap-2">
+                                {/* Date */}
+                                <DateInput
+                                    title={t('edition.startDate')}
+                                    icon={<IoCalendarNumberOutline />}
+                                    name={'startDate'}
+                                    value={formData.startDate}
+                                    onChange={handleChange}
+                                    required={true}
+                                />
 
                                 {/* Heures */}
-                                <div className="d-flex align-items-center gap-2">
-                                    {/* Icône */}
-                                    <div className="d-flex align-items-center justify-content-center modal-input-icon">
-                                        <FaRegClock />
-                                    </div>
-
-                                    {/* Titre & saisies */}
-                                    <div className="d-flex flex-column w-100">
-                                        <div className="modal-zone-content-label">{t('edition.hours')}</div>
-
-                                        <div className="d-flex flex-row gap-2 modal-input-sublabel-zone">
-                                            <Form.Group className="flex-fill" controlId="startTime">
-                                                <Form.Label className="mb-1 modal-input-sublabel">{t('edition.start')}</Form.Label>
-                                                <Form.Control
-                                                    type="time"
-                                                    name="startTime"
-                                                    value={formData.startTime || ''}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
-                                            </Form.Group>
-
-                                            <Form.Group className="flex-fill" controlId="endTime">
-                                                <Form.Label className="mb-1 modal-input-sublabel">{t('edition.end')}</Form.Label>
-                                                <Form.Control
-                                                    type="time"
-                                                    name="endTime"
-                                                    value={formData.endTime || ''}
-                                                    onChange={handleChange}
-                                                    required
-                                                />
-                                            </Form.Group>
-                                        </div>
-                                    </div>
-                                </div>
+                                <TimeInput
+                                    title={t('edition.hours')}
+                                    icon={<FaRegClock />}
+                                    nameStart={'startTime'}
+                                    nameEnd={'endTime'}
+                                    titleStart={t('edition.start')}
+                                    titleEnd={t('edition.end')}
+                                    valueStart={formData.startTime}
+                                    valueEnd={formData.endTime}
+                                    onChange={handleChange}
+                                    required={true}
+                                />
                             </div>
                         </div>
 
                         {/* Image */}
-                        <div className="modal-zone">
-                            <div className="modal-zone-content">
+                        <div className="modal-group">
+                            <div className="modal-group-content">
                                 <PictureInput
+                                    title={t('edition.picture')}
                                     icon={<IoImageOutline />}
                                     name={'picture'}
                                     value={formData.picture}
@@ -228,13 +198,13 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                         </div>
 
                         {/* Thème & défi*/}
-                        <div className="modal-zone">
-                            <div className="modal-zone-content gap-2">
+                        <div className="modal-group">
+                            <div className="modal-group-content gap-2">
                                 {/* Thème */}
                                 <TextareaInput
+                                    title={t('edition.theme')}
                                     icon={<FaScroll />}
                                     name={'theme'}
-                                    title={t('edition.theme')}
                                     placeholder={t('edition.theme')}
                                     value={formData.theme}
                                     onChange={handleChange}
@@ -242,9 +212,9 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                                 {/* Défi */}
                                 <TextareaInput
+                                    title={t('edition.challenge')}
                                     icon={<FaFlagCheckered />}
                                     name={'challenge'}
-                                    title={t('edition.challenge')}
                                     placeholder={t('edition.challenge')}
                                     value={formData.challenge}
                                     onChange={handleChange}

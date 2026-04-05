@@ -112,29 +112,31 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                         </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body className="p-0">
+                    <Modal.Body>
                         {/* Cadeaux restants */}
                         {gift && (
-                            <div className="modal-zone">
-                                <div className="modal-zone-content">
+                            <div className="modal-group">
+                                <div className="modal-group-content">
                                     {/* Titre */}
-                                    <div className="modal-zone-content-label">{t('edition.remainingGifts')}</div>
+                                    <div className="modal-group-content-title">{t('edition.remainingGifts')}</div>
 
                                     {/* Valeur */}
-                                    <div className="modal-zone-content-value green">{gift?.remainingQuantity ?? 0}</div>
+                                    <div className={`modal-group-content-value ${gift?.remainingQuantity > 0 ? 'gold' : 'gray'}`}>
+                                        {gift?.remainingQuantity ?? 0}
+                                    </div>
                                 </div>
                             </div>
                         )}
 
                         {/* Formulaire */}
-                        <div className="modal-zone">
+                        <div className="modal-group">
                             {/* Nom */}
-                            <div className="modal-zone-content gap-2">
+                            <div className="modal-group-content gap-2">
                                 <TextInput
-                                    icon={<IoGiftSharp />}
-                                    ref={nameInputRef}
-                                    name="name"
                                     title={t('edition.name')}
+                                    icon={<IoGiftSharp />}
+                                    name="name"
+                                    ref={nameInputRef}
                                     value={formData.name}
                                     onChange={handleChange}
                                     maxLength={100}
@@ -143,9 +145,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
 
                                 {/* Valeur */}
                                 <TextInput
+                                    title={t('edition.value')}
                                     icon={<GrMoney />}
                                     name="value"
-                                    title={t('edition.value')}
                                     value={formData.value}
                                     onChange={handleChangeNumeric}
                                     maxLength={10}
@@ -156,9 +158,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
 
                                 {/* Quantité */}
                                 <TextInput
+                                    title={t('edition.quantity')}
                                     icon={<GiCardboardBox />}
                                     name="quantity"
-                                    title={t('edition.quantity')}
                                     value={formData.quantity}
                                     onChange={handleChangeNumeric}
                                     maxLength={10}

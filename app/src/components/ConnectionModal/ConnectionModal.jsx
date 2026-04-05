@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaLock, FaUserCircle } from 'react-icons/fa';
 
 import { AuthContext } from '../../utils/AuthContext';
+
 import Message from '../Message/Message';
 
 import './ConnectionModal.css';
@@ -77,42 +78,46 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Verrou */}
-                        <div className="mt-1 mb-2 text-center">
-                            <div className="connection-modal-lock mb-1">
-                                <FaLock />
+                        <div className="modal-group">
+                            <div className="modal-group-content">
+                                {/* Verrou */}
+                                <div className="mb-2 text-center">
+                                    <div className="connection-modal-lock mb-1">
+                                        <FaLock />
+                                    </div>
+                                    <div className="connection-modal-lock-text">{t('navbar.adminOnly')}</div>
+                                </div>
+
+                                {/* Formulaire */}
+                                <div className="d-flex align-items-end">
+                                    <Form.Group className="me-2" controlId="login">
+                                        <Form.Label className="connection-modal-label">{t('navbar.login')}</Form.Label>
+                                        <Form.Control
+                                            ref={loginInputRef}
+                                            type="text"
+                                            name="login"
+                                            placeholder={t('navbar.login')}
+                                            value={formData.login}
+                                            onChange={handleChange}
+                                            maxLength={100}
+                                            required
+                                        />
+                                    </Form.Group>
+
+                                    <Form.Group controlId="password">
+                                        <Form.Label className="connection-modal-label">{t('navbar.password')}</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            name="password"
+                                            placeholder={t('navbar.password')}
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            maxLength={100}
+                                            required
+                                        />
+                                    </Form.Group>
+                                </div>
                             </div>
-                            <div className="connection-modal-lock-text">{t('navbar.adminOnly')}</div>
-                        </div>
-
-                        {/* Formulaire */}
-                        <div className="d-flex align-items-end">
-                            <Form.Group className="me-2" controlId="login">
-                                <Form.Label className="connection-modal-label">{t('navbar.login')}</Form.Label>
-                                <Form.Control
-                                    ref={loginInputRef}
-                                    type="text"
-                                    name="login"
-                                    placeholder={t('navbar.login')}
-                                    value={formData.login}
-                                    onChange={handleChange}
-                                    maxLength={100}
-                                    required
-                                />
-                            </Form.Group>
-
-                            <Form.Group controlId="password">
-                                <Form.Label className="connection-modal-label">{t('navbar.password')}</Form.Label>
-                                <Form.Control
-                                    type="password"
-                                    name="password"
-                                    placeholder={t('navbar.password')}
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    maxLength={100}
-                                    required
-                                />
-                            </Form.Group>
                         </div>
                     </Modal.Body>
 

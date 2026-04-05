@@ -190,60 +190,62 @@ const EditionPlayers = ({
 
             {/* Liste */}
             {players && players.length > 0 ? (
-                players.map((p) => (
-                    <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
-                        {/* Icône */}
-                        <div className="edition-item-icon" style={{ backgroundColor: getIconColor(p.name) }}>
-                            {p.name.charAt(0).toUpperCase()}
-                        </div>
-
-                        {/* Participant */}
-                        <div className="d-flex flex-column flex-grow-1 edition-item-name">
-                            <span className="edition-item-ellipsis-text">{p.name}</span>
-                            <div className="d-flex align-items-center gap-2">
-                                <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                    <GiTwoCoins size={15} />
-                                    {p.points}
-                                </span>
-                                <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                    <IoGiftSharp size={13} />
-                                    {p?.rewards.length}
-                                </span>
+                <div className="mt-3">
+                    {players.map((p) => (
+                        <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
+                            {/* Icône */}
+                            <div className="edition-item-icon" style={{ backgroundColor: getIconColor(p.name) }}>
+                                {p.name.charAt(0).toUpperCase()}
                             </div>
+
+                            {/* Participant */}
+                            <div className="d-flex flex-column flex-grow-1 edition-item-name">
+                                <span className="edition-item-ellipsis-text">{p.name}</span>
+                                <div className="d-flex align-items-center gap-2">
+                                    <span className="d-flex align-items-center gap-1 edition-item-counter">
+                                        <GiTwoCoins size={15} />
+                                        {p.points}
+                                    </span>
+                                    <span className="d-flex align-items-center gap-1 edition-item-counter">
+                                        <IoGiftSharp size={13} />
+                                        {p?.rewards.length}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Supression */}
+                            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                                <Button
+                                    onClick={isSubmitting ? null : () => handleDelete(p)}
+                                    className="edition-button"
+                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                                >
+                                    <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
+                                </Button>
+                            )}
+
+                            {/* Cadeaux */}
+                            <Button
+                                onClick={isSubmitting ? null : () => showRewardModal(p)}
+                                className="edition-button"
+                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            >
+                                <FaGift color={isSubmitting ? 'gray' : 'white'} />
+                            </Button>
+
+                            {/* Modification */}
+                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                                <Button
+                                    onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
+                                    className="edition-button"
+                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                                >
+                                    <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
+                                </Button>
+                            )}
                         </div>
-
-                        {/* Supression */}
-                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                            <Button
-                                onClick={isSubmitting ? null : () => handleDelete(p)}
-                                className="edition-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-                        )}
-
-                        {/* Cadeaux */}
-                        <Button
-                            onClick={isSubmitting ? null : () => showRewardModal(p)}
-                            className="edition-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                        >
-                            <FaGift color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
-
-                        {/* Modification */}
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                            <Button
-                                onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
-                                className="edition-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-                        )}
-                    </div>
-                ))
+                    ))}
+                </div>
             ) : (
                 <div className="edition-empty mt-2">{t('edition.noPlayers')}</div>
             )}

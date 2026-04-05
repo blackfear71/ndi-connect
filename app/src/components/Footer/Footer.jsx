@@ -22,7 +22,7 @@ const Footer = () => {
 
     /**
      * Retourne le copyright
-     * @returns Copyright à afficher 
+     * @returns Copyright à afficher
      */
     const getCopyright = () => {
         const currentYear = new Date().getFullYear();

@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ndiConnectLogo from '../../assets/images/ndi-connect.png';
 
 import { AuthContext } from '../../utils/AuthContext';
+
 import ConnectionModal from '../ConnectionModal/ConnectionModal';
 import SearchBar from '../SearchBar/SearchBar';
 
