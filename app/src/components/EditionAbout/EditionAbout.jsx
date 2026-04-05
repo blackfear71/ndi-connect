@@ -136,7 +136,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                                         {getLocalizedTime(edition.startDate)}
                                     </Badge>
                                     <div className="flex-fill">
-                                        <ProgressBar now={progress.value} />
+                                        <ProgressBar now={progress.value} className="rounded-pill" />
                                     </div>
                                     <Badge pill bg="danger" className="ms-2">
                                         {getLocalizedTime(edition.endDate)}

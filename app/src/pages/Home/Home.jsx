@@ -2,8 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaMapLocationDot } from 'react-icons/fa6';
-import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline } from 'react-icons/io5';
+import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline, IoLocationOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import EditionsService from '../../api/editionsService';
@@ -253,7 +252,7 @@ const Home = () => {
                     <h1>
                         {editionsByYear && editionsByYear.length > 0 ? (
                             <>
-                                <FaMapLocationDot size={30} />
+                                <IoLocationOutline size={30} />
                                 {t('home.editionsTitle', { year: new Date(editionsByYear[0].startDate).getFullYear() })}
                             </>
                         ) : (

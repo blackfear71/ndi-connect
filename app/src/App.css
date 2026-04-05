@@ -1,11 +1,12 @@
 /* TODO : modales restantes :
 - ConfirmModal    : icone -> OK | refonte -> OK
 - ConnectionModal : icone -> OK | refonte -> OK
-- EditionModal    : icone -> KO | refonte -> KO
-- GiftModal       : icone -> KO | refonte -> KO
-- PlayerModal     : icone -> KO | refonte -> KO
-- SettingsModal   : icone -> KO | refonte -> KO
-- supprimer .modal-body .modal-section-title */
+- EditionModal    : icone -> OK | refonte -> OK
+- GiftModal       : icone -> ?? | refonte -> ??
+- PlayerModal     : icone -> ?? | refonte -> ??
+- SettingsModal   : icone -> ?? | refonte -> ??
+- supprimer .modal-body .modal-section-title
+- TODOs à vérifier */
 
 .App {
     background-color: #07224c;
@@ -130,7 +131,37 @@
     border-radius: 5px;
 }
 
-.modal-body .modal-empty {
+.modal-body .modal-zone {
+    display: grid;
+    border-bottom: 2px solid #e8eaf0;
+}
+
+.modal-body .modal-zone:last-child {
+    border-bottom: none;
+}
+
+.modal-body .modal-zone-content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    background-color: white;
+    overflow: hidden;
+}
+
+.modal-body .modal-zone-content .modal-zone-content-label {
+    font-size: small;
+    font-weight: 600;
+    color: #8892a4;
+    text-transform: uppercase;
+}
+
+.modal-body .modal-zone-content .modal-zone-content-value {
+    font-size: x-large;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.modal-body .modal-zone-content .modal-empty {
     background-color: transparent;
     color: #8892a4;
     font-size: large;
@@ -140,10 +171,52 @@
     border: 2px dashed #8892a4;
 }
 
-.modal-body .modal-input-icon {
-    width: 26px;
-    height: 26px;
+.modal-body .modal-zone-content .modal-input-icon {
+    width: 30px;
+    height: 30px;
     flex-shrink: 0;
+    color: #8892a4;
+}
+
+.modal-body .modal-zone-content .modal-input-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.modal-body .modal-zone-content .modal-input-sublabel-zone {
+    margin-top: -6px;
+}
+
+.modal-body .modal-zone-content .modal-input-sublabel {
+    font-size: small;
+    font-weight: 500;
+    color: #9faabf;
+}
+
+.modal-body .modal-zone-content .modal-button-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f33e3e;
+    border: 2px solid #d43636;
+    color: white;
+    height: 36px;
+    width: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.modal-body .modal-zone-content .modal-button-delete svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.modal-body .modal-zone-content .modal-button-delete:hover,
+.modal-body .modal-zone-content .modal-button-delete:active {
+    background-color: #d43636;
 }
 
 .modal-footer {

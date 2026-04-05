@@ -2,16 +2,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #163c76;
+    background-color: #1d509e;
+    border: 2px solid #163c76;
     color: white;
-    border: none;
-    height: 36px;
+    height: 34px;
     cursor: pointer;
 }
 
 .picture-input-button:hover,
 .picture-input-button:active {
-    background-color: #0a2f68 !important;
+    background-color: #163c76 !important;
 }
 
 .picture-input-preview-wrapper {
@@ -36,22 +36,4 @@
     object-fit: contain;
     flex: 0 1 auto;
     background-color: #e3e3e3;
-}
-
-.picture-input-button-small {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: #f33e3e !important;
-    color: white !important;
-    border: none !important;
-    height: 36px;
-    width: 36px;
-    cursor: pointer;
-    margin-left: auto;
-}
-
-.picture-input-button-small:hover,
-.picture-input-button-small:active {
-    background-color: #d43636 !important;
 }

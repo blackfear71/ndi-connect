@@ -9,7 +9,7 @@ import './PictureInput.css';
 /**
  * Saisie d'image avec aperçu et suppression
  */
-const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
+const PictureInput = ({ icon, name, value, setMessage, onChange, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -79,9 +79,12 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
     };
 
     return (
-        <div className="d-flex align-items-center gap-2 w-100">
+        <div className="d-flex align-items-center gap-2">
+            {/* Icône */}
+            <div className="d-flex align-items-center justify-content-center modal-input-icon">{icon}</div>
+
             {/* Parcourir */}
-            <Form.Group>
+            <Form.Group controlId="picture">
                 <Form.Label className="picture-input-button rounded p-3 m-0" style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
                     {t('common.browse')}
                     <Form.Control
@@ -102,7 +105,7 @@ const PictureInput = ({ name, value, setMessage, onChange, isSubmitting }) => {
                         <Image key={previewUrl} src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
 
                         {/* Suppression */}
-                        <Button onClick={handleFileRemove} className="picture-input-button-small">
+                        <Button onClick={handleFileRemove} className="modal-button-delete">
                             <FaTrashCan />
                         </Button>
                     </div>

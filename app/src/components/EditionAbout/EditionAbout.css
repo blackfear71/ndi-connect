@@ -56,7 +56,7 @@
 }
 
 .edition-about-card-text-toggle {
-    background-color: none;
+    background-color: transparent;
     border: none;
     font-size: smaller;
     color: #987e4f;

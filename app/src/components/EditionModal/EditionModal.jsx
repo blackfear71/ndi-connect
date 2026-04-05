@@ -2,15 +2,13 @@ import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaMapLocationDot } from 'react-icons/fa6';
-import { GoGoal } from 'react-icons/go';
-import { IoCalendarNumberOutline } from 'react-icons/io5';
-import { LuImage } from 'react-icons/lu';
-import { MdOutlineLightbulb } from 'react-icons/md';
-import { WiTime4, WiTime8 } from 'react-icons/wi';
+import { FaFlagCheckered, FaRegClock, FaScroll, FaWandMagicSparkles } from 'react-icons/fa6';
+import { IoCalendarNumberOutline, IoImageOutline, IoLocationOutline } from 'react-icons/io5';
 
 import Message from '../Message/Message';
 import PictureInput from '../PictureInput/PictureInput';
+import TextareaInput from '../TextareaInput/TextareaInput';
+import TextInput from '../TextInput/TextInput';
 
 const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
@@ -130,77 +128,133 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
             <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{t(getTitleFromAction(modalOptions.action))}</Modal.Title>
+                        <Modal.Title>
+                            <FaWandMagicSparkles />
+                            {t(getTitleFromAction(modalOptions.action))}
+                        </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body>
+                    <Modal.Body className="p-0">
                         {/* Lieu */}
-                        <Form.Group className="d-flex align-items-center" controlId="location">
-                            <FaMapLocationDot className="modal-input-icon me-3" />
-                            <Form.Control
-                                ref={locationInputRef}
-                                type="text"
-                                name="location"
-                                placeholder={t('edition.location')}
-                                value={formData.location}
-                                onChange={handleChange}
-                                maxLength={100}
-                                required
-                            />
-                        </Form.Group>
+                        <div className="modal-zone">
+                            <div className="modal-zone-content">
+                                <TextInput
+                                    icon={<IoLocationOutline />}
+                                    ref={locationInputRef}
+                                    name="location"
+                                    title={t('edition.location')}
+                                    value={formData.location}
+                                    onChange={handleChange}
+                                    maxLength={100}
+                                    required={true}
+                                />
+                            </div>
+                        </div>
 
-                        {/* Date */}
-                        <Form.Group className="d-flex align-items-center mt-2" controlId="startDate">
-                            <IoCalendarNumberOutline className="modal-input-icon me-3" />
-                            <Form.Control type="date" name="startDate" value={formData.startDate || ''} onChange={handleChange} required />
-                        </Form.Group>
+                        {/* Date et heures */}
+                        <div className="modal-zone">
+                            {/* Date */}
+                            <div className="modal-zone-content pb-1">
+                                <div className="d-flex align-items-center gap-2">
+                                    {/* Icône */}
+                                    <div className="d-flex align-items-center justify-content-center modal-input-icon">
+                                        <IoCalendarNumberOutline />
+                                    </div>
 
-                        {/* Heures */}
-                        <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="startTime">
-                            <WiTime4 className="modal-input-icon me-3" />
-                            <Form.Control type="time" name="startTime" value={formData.startTime || ''} onChange={handleChange} required />
-                        </Form.Group>
+                                    {/* Titre & saisie */}
+                                    <Form.Group className="d-flex flex-column w-100" controlId="startDate">
+                                        <Form.Label className="mb-1 modal-zone-content-label">{t('edition.startDate')}</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name="startDate"
+                                            value={formData.startDate || ''}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </Form.Group>
+                                </div>
+                            </div>
 
-                        <Form.Group className="d-flex align-items-center flex-fill mt-2" controlId="endTime">
-                            <WiTime8 className="modal-input-icon me-3" />
-                            <Form.Control type="time" name="endTime" value={formData.endTime || ''} onChange={handleChange} required />
-                        </Form.Group>
+                            {/* Heures */}
+                            <div className="modal-zone-content">
+                                <div className="d-flex align-items-center gap-2">
+                                    {/* Icône */}
+                                    <div className="d-flex align-items-center justify-content-center modal-input-icon">
+                                        <FaRegClock />
+                                    </div>
+
+                                    {/* Titre & saisies */}
+                                    <div className="d-flex flex-column w-100">
+                                        <div className="modal-zone-content-label">{t('edition.hours')}</div>
+
+                                        <div className="d-flex flex-row gap-2 modal-input-sublabel-zone">
+                                            <Form.Group className="flex-fill" controlId="startTime">
+                                                <Form.Label className="mb-1 modal-input-sublabel">{t('edition.start')}</Form.Label>
+                                                <Form.Control
+                                                    type="time"
+                                                    name="startTime"
+                                                    value={formData.startTime || ''}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            </Form.Group>
+
+                                            <Form.Group className="flex-fill" controlId="endTime">
+                                                <Form.Label className="mb-1 modal-input-sublabel">{t('edition.end')}</Form.Label>
+                                                <Form.Control
+                                                    type="time"
+                                                    name="endTime"
+                                                    value={formData.endTime || ''}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            </Form.Group>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Image */}
-                        <Form.Group className="d-flex align-items-center mt-2" controlId="picture">
-                            <LuImage className="modal-input-icon me-3" />
-                            <PictureInput
-                                name={'picture'}
-                                value={formData.picture}
-                                setMessage={setMessage}
-                                onChange={handleChangeFile}
-                                isSubmitting={modalOptions.isSubmitting}
-                            />
-                        </Form.Group>
+                        <div className="modal-zone">
+                            <div className="modal-zone-content">
+                                <PictureInput
+                                    icon={<IoImageOutline />}
+                                    name={'picture'}
+                                    value={formData.picture}
+                                    setMessage={setMessage}
+                                    onChange={handleChangeFile}
+                                    isSubmitting={modalOptions.isSubmitting}
+                                />
+                            </div>
+                        </div>
 
-                        {/* Thème */}
-                        <Form.Group className="d-flex align-items-center mt-2" controlId="theme">
-                            <MdOutlineLightbulb className="modal-input-icon me-3" />
-                            <Form.Control
-                                as="textarea"
-                                name="theme"
-                                placeholder={t('edition.theme')}
-                                value={formData.theme}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
+                        {/* Thème & défi*/}
+                        <div className="modal-zone">
+                            <div className="modal-zone-content">
+                                {/* Thème */}
+                                <TextareaInput
+                                    icon={<FaScroll />}
+                                    name={'theme'}
+                                    title={t('edition.theme')}
+                                    placeholder={t('edition.theme')}
+                                    value={formData.theme}
+                                    onChange={handleChange}
+                                />
+                            </div>
 
-                        {/* Challenge */}
-                        <Form.Group className="d-flex align-items-center mt-2" controlId="challenge">
-                            <GoGoal className="modal-input-icon me-3" />
-                            <Form.Control
-                                as="textarea"
-                                name="challenge"
-                                placeholder={t('edition.challenge')}
-                                value={formData.challenge}
-                                onChange={handleChange}
-                            />
-                        </Form.Group>
+                            <div className="modal-zone-content">
+                                {/* Défi */}
+                                <TextareaInput
+                                    icon={<FaFlagCheckered />}
+                                    name={'challenge'}
+                                    title={t('edition.challenge')}
+                                    placeholder={t('edition.challenge')}
+                                    value={formData.challenge}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>

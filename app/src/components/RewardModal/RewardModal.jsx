@@ -118,46 +118,48 @@ const RewardModal = ({
 
                     <Modal.Body className="p-0">
                         {/* Participant */}
-                        <div className="d-flex align-items-center gap-2 p-2 reward-modal-participant">
+                        <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
                             <div className="reward-modal-icon" style={{ backgroundColor: getIconColor(player.name) }}>
                                 {player.name.charAt(0).toUpperCase()}
                             </div>
 
-                            <div className="reward-modal-label">{player.name}</div>
+                            <div className="reward-modal-player-name">{player.name}</div>
                         </div>
 
                         {/* Statistiques */}
-                        <div class="reward-modal-stats">
-                            <div class="reward-modal-cell">
+                        <div className="reward-modal-statistics">
+                            <div className="modal-zone-content">
                                 {/* Titre */}
-                                <div class="reward-modal-label">{t('edition.points')}</div>
+                                <div className="modal-zone-content-label">{t('edition.points')}</div>
 
                                 {/* Valeur */}
-                                <div class="reward-modal-value gold">{player?.points ?? 0}</div>
+                                <div className="modal-zone-content-value gold">{player?.points ?? 0}</div>
                             </div>
-                            <div class="reward-modal-cell">
+
+                            <div className="modal-zone-content">
                                 {/* Titre */}
-                                <div class="reward-modal-label">{t('edition.gifts')}</div>
+                                <div className="modal-zone-content-label">{t('edition.gifts')}</div>
 
                                 {/* Valeur */}
-                                <div class="reward-modal-value green">{player?.rewards.length ?? 0}</div>
+                                <div className="modal-zone-content-value green">{player?.rewards.length ?? 0}</div>
                             </div>
                         </div>
 
                         {/* Attribution cadeaux */}
                         {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                            <div class="reward-modal-zone">
-                                <div class="reward-modal-cell">
+                            <div className="modal-zone">
+                                <div className="modal-zone-content">
                                     {/* Titre */}
-                                    <div class="reward-modal-label">{t('edition.giveGift')}</div>
+                                    <div className="modal-zone-content-label">{t('edition.giveGift')}</div>
 
                                     {/* Formulaire */}
                                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                                         <>
                                             {gifts.length > 0 ? (
                                                 obtainableGifts.length > 0 ? (
-                                                    <Form.Group controlId="name" className="d-flex align-items-center mt-2">
-                                                        <PiListStarBold className="modal-input-icon me-2" />
+                                                    <Form.Group controlId="name" className="d-flex align-items-center mt-2 gap-2">
+                                                        <PiListStarBold className="modal-input-icon" />
+
                                                         <Form.Select value={formData.idGift} onChange={handleChangeSelect} required>
                                                             <option key={0} value={0} disabled>
                                                                 {t('edition.chooseGift')}
@@ -187,10 +189,10 @@ const RewardModal = ({
                         )}
 
                         {/* Cadeaux obtenus */}
-                        <div class="reward-modal-zone">
-                            <div class="reward-modal-cell">
+                        <div className="modal-zone">
+                            <div className="modal-zone-content">
                                 {/* Titre */}
-                                <div class="reward-modal-label">{t('edition.obtainedGifts')}</div>
+                                <div className="modal-zone-content-label">{t('edition.obtainedGifts')}</div>
 
                                 {/* Liste */}
                                 {player?.rewards.length > 0 ? (
@@ -201,7 +203,7 @@ const RewardModal = ({
                                                 {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                                     <Button
                                                         onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
-                                                        className="reward-modal-button"
+                                                        className="modal-button-delete"
                                                     >
                                                         <FaTrashCan />
                                                     </Button>

@@ -1,8 +1,8 @@
-.reward-modal-participant {
+.reward-modal-player {
     background-color: #1d509e;
 }
 
-.reward-modal-label {
+.reward-modal-player-name {
     color: white;
     word-wrap: break-word;
     min-width: 0;
@@ -20,50 +20,20 @@
     color: white;
 }
 
-.reward-modal-stats {
+.reward-modal-statistics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1px;
+    gap: 2px;
     background-color: #e8eaf0;
     border-bottom: 2px solid #e8eaf0;
 }
 
-.reward-modal-zone {
-    display: grid;
-    border-bottom: 2px solid #e8eaf0;
+.reward-modal-statistics .gold {
+    color: #b8870a !important;
 }
 
-.reward-modal-zone:last-child {
-    border-bottom: none;
-}
-
-.reward-modal-cell {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 16px;
-    background-color: white;
-    overflow: hidden;
-}
-
-.reward-modal-cell .reward-modal-label {
-    font-size: small;
-    font-weight: 600;
-    color: #8892a4;
-    text-transform: uppercase;
-}
-
-.reward-modal-cell .reward-modal-value {
-    font-size: x-large;
-    font-weight: 600;
-    color: #1a1a2e;
-}
-
-.reward-modal-cell .reward-modal-value.gold {
-    color: #b8870a;
-}
-
-.reward-modal-cell .reward-modal-value.green {
-    color: #0f6e3e;
+.reward-modal-statistics .green {
+    color: #0f6e3e !important;
 }
 
 .reward-modal-gift-row {
@@ -82,21 +52,4 @@
     overflow: hidden;
     white-space: nowrap;
     min-width: 0;
-}
-
-.reward-modal-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: #d3d3d3 !important;
-    color: white !important;
-    border: none !important;
-    height: 36px;
-    width: 36px;
-    cursor: pointer;
-}
-
-.reward-modal-button:hover,
-.reward-modal-button:active {
-    background-color: #b3b3b3 !important;
 }
