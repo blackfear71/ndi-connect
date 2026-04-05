@@ -28,14 +28,6 @@
     border-bottom: 2px solid #e8eaf0;
 }
 
-.reward-modal-statistics .gold {
-    color: #b8870a !important;
-}
-
-.reward-modal-statistics .green {
-    color: #0f6e3e !important;
-}
-
 .reward-modal-gift-row {
     display: flex;
     align-items: center;

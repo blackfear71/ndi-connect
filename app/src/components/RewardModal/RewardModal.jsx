@@ -2,8 +2,7 @@ import { useContext, useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaTrashCan } from 'react-icons/fa6';
-import { FaGift } from 'react-icons/fa6';
+import { FaGift, FaTrashCan } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
 
 import UserRole from '../../enums/UserRole';

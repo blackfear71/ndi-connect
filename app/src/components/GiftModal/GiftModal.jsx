@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react';
 
-import { Badge, Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { FaGift } from 'react-icons/fa6';
 import { GiCardboardBox } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
 import { IoGiftSharp } from 'react-icons/io5';
 
 import Message from '../Message/Message';
-
-import './GiftModal.css';
+import TextInput from '../TextInput/TextInput';
 
 const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
@@ -106,60 +106,68 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
             <fieldset disabled={modalOptions.isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{t('edition.setGift')}</Modal.Title>
+                        <Modal.Title>
+                            <FaGift />
+                            {t('edition.setGift')}
+                        </Modal.Title>
                     </Modal.Header>
 
-                    <Modal.Body>
-                        {/* Formulaire */}
-                        <Form.Group controlId="name" className="d-flex align-items-center mb-2">
-                            <IoGiftSharp className="modal-input-icon me-3" />
-                            <Form.Control
-                                ref={nameInputRef}
-                                type="text"
-                                name="name"
-                                placeholder={t('edition.name')}
-                                value={formData.name}
-                                onChange={handleChange}
-                                maxLength={100}
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="value" className="d-flex align-items-center mb-2">
-                            <GrMoney className="modal-input-icon me-3" />
-                            <Form.Control
-                                type="text"
-                                name="value"
-                                placeholder={t('edition.value')}
-                                value={formData.value}
-                                onChange={handleChangeNumeric}
-                                inputMode="numeric"
-                                pattern="[0-9]*"
-                                required
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="quantity" className="d-flex align-items-center">
-                            <GiCardboardBox className="modal-input-icon me-3" />
-                            <Form.Control
-                                type="text"
-                                name="quantity"
-                                placeholder={t('edition.quantity')}
-                                value={formData.quantity}
-                                onChange={handleChangeNumeric}
-                                inputMode="numeric"
-                                pattern="[0-9]*"
-                                required
-                            />
-                        </Form.Group>
-
+                    <Modal.Body className="p-0">
                         {/* Cadeaux restants */}
                         {gift && (
-                            <div className="d-flex align-items-center justify-content-between bg-light rounded p-2 mt-2">
-                                <Badge className="bg-warning fs-6 me-2">{t('edition.remainingGifts')}</Badge>
-                                <Badge className="gift-modal-count bg-danger">{gift?.remainingQuantity ?? 0}</Badge>
+                            <div className="modal-zone">
+                                <div className="modal-zone-content">
+                                    {/* Titre */}
+                                    <div className="modal-zone-content-label">{t('edition.remainingGifts')}</div>
+
+                                    {/* Valeur */}
+                                    <div className="modal-zone-content-value green">{gift?.remainingQuantity ?? 0}</div>
+                                </div>
                             </div>
                         )}
+
+                        {/* Formulaire */}
+                        <div className="modal-zone">
+                            {/* Nom */}
+                            <div className="modal-zone-content gap-2">
+                                <TextInput
+                                    icon={<IoGiftSharp />}
+                                    ref={nameInputRef}
+                                    name="name"
+                                    title={t('edition.name')}
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    maxLength={100}
+                                    required={true}
+                                />
+
+                                {/* Valeur */}
+                                <TextInput
+                                    icon={<GrMoney />}
+                                    name="value"
+                                    title={t('edition.value')}
+                                    value={formData.value}
+                                    onChange={handleChangeNumeric}
+                                    maxLength={10}
+                                    inputMode={'numeric'}
+                                    pattern={'[0-9]*'}
+                                    required={true}
+                                />
+
+                                {/* Quantité */}
+                                <TextInput
+                                    icon={<GiCardboardBox />}
+                                    name="quantity"
+                                    title={t('edition.quantity')}
+                                    value={formData.quantity}
+                                    onChange={handleChangeNumeric}
+                                    maxLength={10}
+                                    inputMode={'numeric'}
+                                    pattern={'[0-9]*'}
+                                    required={true}
+                                />
+                            </div>
+                        </div>
                     </Modal.Body>
 
                     <Modal.Footer>

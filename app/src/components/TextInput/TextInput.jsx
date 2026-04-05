@@ -1,6 +1,6 @@
 import { Form } from 'react-bootstrap';
 
-const TextInput = ({ icon, ref, name, title, value, onChange, maxLength = null, required }) => {
+const TextInput = ({ icon, ref = null, name, title, value, onChange, maxLength = null, inputMode = null, pattern = null, required }) => {
     return (
         <div className="d-flex align-items-center gap-2">
             {/* Icône */}
@@ -18,6 +18,8 @@ const TextInput = ({ icon, ref, name, title, value, onChange, maxLength = null, 
                     value={value}
                     onChange={onChange}
                     maxLength={maxLength}
+                    inputMode={inputMode}
+                    pattern={pattern}
                     required={required}
                 />
             </Form.Group>

@@ -25,8 +25,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
             // Réinitialisation du message
             setMessage(null);
 
-            // Focus
-            locationInputRef.current?.focus();
+            // Focus à la création
+            modalOptions.action === 'create' && locationInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
@@ -154,7 +154,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                         {/* Date et heures */}
                         <div className="modal-zone">
                             {/* Date */}
-                            <div className="modal-zone-content pb-1">
+                            <div className="modal-zone-content gap-2">
                                 <div className="d-flex align-items-center gap-2">
                                     {/* Icône */}
                                     <div className="d-flex align-items-center justify-content-center modal-input-icon">
@@ -173,10 +173,8 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                         />
                                     </Form.Group>
                                 </div>
-                            </div>
 
-                            {/* Heures */}
-                            <div className="modal-zone-content">
+                                {/* Heures */}
                                 <div className="d-flex align-items-center gap-2">
                                     {/* Icône */}
                                     <div className="d-flex align-items-center justify-content-center modal-input-icon">
@@ -231,7 +229,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Thème & défi*/}
                         <div className="modal-zone">
-                            <div className="modal-zone-content">
+                            <div className="modal-zone-content gap-2">
                                 {/* Thème */}
                                 <TextareaInput
                                     icon={<FaScroll />}
@@ -241,9 +239,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                     value={formData.theme}
                                     onChange={handleChange}
                                 />
-                            </div>
 
-                            <div className="modal-zone-content">
                                 {/* Défi */}
                                 <TextareaInput
                                     icon={<FaFlagCheckered />}

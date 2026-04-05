@@ -2,10 +2,11 @@
 - ConfirmModal    : icone -> OK | refonte -> OK
 - ConnectionModal : icone -> OK | refonte -> OK
 - EditionModal    : icone -> OK | refonte -> OK
-- GiftModal       : icone -> ?? | refonte -> ??
+- GiftModal       : icone -> OK | refonte -> OK
 - PlayerModal     : icone -> ?? | refonte -> ??
 - SettingsModal   : icone -> ?? | refonte -> ??
 - supprimer .modal-body .modal-section-title
+- supprimer les p-0 de <Modal.Body className="p-0"> si toutes uniformes
 - TODOs à vérifier */
 
 .App {
@@ -14,6 +15,14 @@
 
 .container {
     padding: 0 !important;
+}
+
+.gold {
+    color: #b8870a !important;
+}
+
+.green {
+    color: #0f6e3e !important;
 }
 
 /* Boutons */
@@ -114,7 +123,7 @@
 .modal-header .modal-title {
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 12px !important;
 }
 
 .modal-header .btn-close {
