@@ -6,7 +6,7 @@ import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
 import { Link, useNavigate } from 'react-router-dom';
 
-import ndiConnectLogo from '../../assets/images/ndi-connect.png';
+import ndiConnectLogo from '../../assets/images/ndi-connect.webp';
 
 import { AuthContext } from '../../utils/AuthContext';
 
