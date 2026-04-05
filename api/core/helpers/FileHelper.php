@@ -160,11 +160,9 @@ class FileHelper
             }
 
             // Compression WebP s'il ne l'était pas déjà
-            if (!imagewebp($image, $destinationPath, 80)) {
+            if (!imagewebp($image, $destinationPath, 100)) {
                 throw new Exception('ERR_WEBP_CONVERSION_FAILED', 400);
             }
-
-            imagedestroy($image);
 
             // Réponse finale
             return $newFileName;
