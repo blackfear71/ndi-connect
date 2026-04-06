@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import { IoAddCircleOutline, IoGiftSharp } from 'react-icons/io5';
 
 import { TextInput } from '../../../components/inputs';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 
 import { UserRole } from '../../../enums';
 
@@ -35,7 +35,7 @@ const EditionPlayers = ({
     isSubmitting
 }) => {
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

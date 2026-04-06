@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Badge, Dropdown, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 import { ConnectionModal } from '../../../components/modals';
 import { SearchBar } from '../../../components/shared';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 
 import './NavBar.css';
 
@@ -23,7 +23,7 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, login, logout } = useContext(AuthContext);
+    const { auth, authMessage, login, logout } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

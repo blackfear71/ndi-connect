@@ -1,23 +1,21 @@
-import { useContext } from 'react';
-
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 
 import { UserRole } from '../../../enums';
 
-import GiftList from './GiftList/GiftList';
-
 import './EditionGifts.css';
+
+import GiftList from './GiftList/GiftList';
 
 /**
  * Liste des cadeaux
  */
 const EditionGifts = ({ gifts, getIconColor, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

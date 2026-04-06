@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -14,8 +14,8 @@ import { EditionAbout, EditionGifts, EditionPlayers } from '../../components/fea
 import { ConfirmModal, EditionModal, GiftModal, PlayerModal, RewardModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
-import { AuthContext } from '../../utils/context/AuthContext';
-import { SseContext } from '../../utils/context/SseContext';
+import { useAuth } from '../../utils/context/AuthContext';
+import { useSse } from '../../utils/context/SseContext';
 import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
 
 import { UserRole } from '../../enums';
@@ -31,8 +31,8 @@ const Edition = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage } = useContext(AuthContext);
-    const { events } = useContext(SseContext);
+    const { auth, authMessage, setAuthMessage } = useAuth();
+    const { events } = useSse();
 
     // Traductions
     const { t } = useTranslation();

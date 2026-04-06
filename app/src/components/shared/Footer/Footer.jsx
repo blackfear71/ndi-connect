@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import flagEn from '../../../assets/icons/flag-en.svg';
 import flagFr from '../../../assets/icons/flag-fr.svg';
 
-import packageJson from '../../../../package.json';
-
 import './Footer.css';
 
 const Footer = () => {
@@ -28,7 +26,7 @@ const Footer = () => {
         const currentYear = new Date().getFullYear();
         const yearDisplay = currentYear > 2025 ? `2025–${currentYear}` : '2025';
 
-        return `© ${yearDisplay}, NDI-Connect • v${packageJson.version}`;
+        return `© ${yearDisplay}, NDI-Connect • v${__APP_VERSION__}`;
     };
 
     return (

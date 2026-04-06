@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Badge, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
 
-import { AuthContext } from '../../../../utils/context/AuthContext';
+import { useAuth } from '../../../../utils/context/AuthContext';
 
 import { UserRole } from '../../../../enums';
 
@@ -15,7 +15,7 @@ import { UserRole } from '../../../../enums';
  */
 const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubmitting }) => {
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

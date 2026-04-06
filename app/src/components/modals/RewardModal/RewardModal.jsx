@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { PiListStarBold } from 'react-icons/pi';
 import { SelectInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 
 import { UserRole } from '../../../enums';
 
@@ -27,7 +27,7 @@ const RewardModal = ({
     onConfirm
 }) => {
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

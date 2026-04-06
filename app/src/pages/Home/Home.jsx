@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import { EditionsService } from '../../api';
 import { EditionModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
-import { AuthContext } from '../../utils/context/AuthContext';
+import { useAuth } from '../../utils/context/AuthContext';
 
 import { UserRole } from '../../enums';
 
@@ -28,7 +28,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage } = useContext(AuthContext);
+    const { auth, authMessage, setAuthMessage } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -94,7 +94,7 @@ const Home = () => {
             // Nettoyage du state React Router
             navigate(location.pathname, { replace: true, state: {} });
         }
-    }, [authMessage, setAuthMessage, location.state]);
+    }, [authMessage, setAuthMessage, location.state, location.pathname, navigate]);
 
     /**
      * Regroupe par année les éditions et trie

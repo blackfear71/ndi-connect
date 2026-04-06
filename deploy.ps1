@@ -101,32 +101,6 @@ Pop-Location
 
 Write-Color "Version mise à jour : $currentVersion -> $newVersion" Green
 
-# Fichiers d'environnement à mettre à jour
-$envFiles = @(".env.production", ".env.development")
-
-foreach ($envFile in $envFiles) {
-    $envFilePath = Join-Path $FRONT_SRC_DIR $envFile
-
-    if (-Not (Test-Path $envFilePath)) {
-        # Créer le fichier s'il n'existe pas encore
-        New-Item -ItemType File -Path $envFilePath -Force | Out-Null
-        Set-Content -Path $envFilePath -Value "VITE_VERSION=$newVersion" -Encoding UTF8
-    } else {
-        # Lire et mettre à jour le fichier
-        $envContent = Get-Content $envFilePath -Raw
-
-        if ($envContent -match 'VITE_VERSION=') {
-            $envContent = $envContent -replace 'VITE_VERSION=.*', "VITE_VERSION=$newVersion"
-        } else {
-            $envContent += "`nVITE_VERSION=$newVersion"
-        }
-
-        $envContent | Set-Content -Path $envFilePath -Encoding UTF8
-    }
-
-    Write-Color "Mise à jour de $envFile avec la version $newVersion" DarkGray
-}
-
 # Nettoyage
 Write-Color "Nettoyage du dossier de déploiement..." Blue
 if (Test-Path $DEPLOY_DIR) {
@@ -177,7 +151,8 @@ $envDestPath = Join-Path $DEPLOY_API_DIR ".env"
 if (Test-Path $envProdPath) {
     Copy-Item -Path $envProdPath -Destination $envDestPath -Force
     Write-Color ".env.production copié dans le dossier de déploiement sous le nom .env" Blue
-} else {
+}
+else {
     Write-Color "Fichier .env.production introuvable !" Red
 }
 

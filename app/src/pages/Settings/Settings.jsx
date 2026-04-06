@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
@@ -15,7 +15,7 @@ import { SettingsCreateUser, SettingsPassword, SettingsUsers } from '../../compo
 import { ConfirmModal, SettingsModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
-import { AuthContext } from '../../utils/context/AuthContext';
+import { useAuth } from '../../utils/context/AuthContext';
 
 import { UserRole } from '../../enums';
 
@@ -26,10 +26,11 @@ import './Settings.css';
  */
 const Settings = () => {
     // Router
+    const { pathname } = useLocation();
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage, refreshAuth } = useContext(AuthContext);
+    const { auth, authMessage, setAuthMessage, refreshAuth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -81,7 +82,7 @@ const Settings = () => {
     useEffect(() => {
         // Retour à l'accueil si non connecté (on ne fait la navigation que si on n'est pas déjà revenu à l'accueil, après déconnexion par exemple)
         if (!auth.isLoggedIn) {
-            if (window.location.pathname === '/settings') {
+            if (pathname === '/settings') {
                 navigate('/');
             }
             return;

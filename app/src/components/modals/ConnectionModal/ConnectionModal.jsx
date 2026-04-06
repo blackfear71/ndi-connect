@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -7,13 +7,13 @@ import { FaLock, FaUserCircle } from 'react-icons/fa';
 import { TextInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 
 import './ConnectionModal.css';
 
 const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
-    const { setAuthMessage } = useContext(AuthContext);
+    const { setAuthMessage } = useAuth();
 
     // Traductions
     const { t } = useTranslation();

@@ -6,11 +6,11 @@ import './assets/fonts/fonts.css';
 
 import './utils/i18n';
 
-import App from './App';
-
-import './main.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './main.css';
+
+import App from './App';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

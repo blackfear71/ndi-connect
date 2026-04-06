@@ -26,7 +26,8 @@ export default [
                 beforeEach: 'readonly',
                 afterEach: 'readonly',
                 it: 'readonly',
-                process: 'readonly'
+                process: 'readonly',
+                "__APP_VERSION__": "readonly"
             },
             parserOptions: {
                 ecmaFeatures: {
@@ -77,9 +78,10 @@ export default [
                         ['components'],
                         ['utils'],
                         ['enum'],
+                        ['js', 'css'],
+                        ['json'],
                         ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-                        ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-                        ['css']
+                        ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$']
                     ]
                 }
             ],

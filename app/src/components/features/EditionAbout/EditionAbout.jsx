@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge, Button, ProgressBar } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import { IoInformationCircleOutline } from 'react-icons/io5';
 
 import { TextCard } from '../../../components/ui';
 
-import { AuthContext } from '../../../utils/context/AuthContext';
+import { useAuth } from '../../../utils/context/AuthContext';
 import { getLocalizedDate, getLocalizedDuration, getLocalizedTime } from '../../../utils/helpers/dateHelper';
 
 import { UserRole } from '../../../enums';
@@ -20,7 +20,7 @@ import './EditionAbout.css';
  */
 const EditionAbout = ({ edition, onEdit, onConfirm }) => {
     // Contexte
-    const { auth } = useContext(AuthContext);
+    const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
