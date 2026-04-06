@@ -130,7 +130,7 @@ const NavBar = () => {
 
                         <Dropdown.Menu className="p-0 navbar-dropdown">
                             {/* Identifiant connecté */}
-                            <Dropdown.Item className="p-2 navbar-dropdown-item navbar-dropdown-item-first">
+                            <Dropdown.Item className="p-2 navbar-dropdown-item">
                                 {t('navbar.connectedMessage')}
 
                                 <Badge pill bg="success" className="fs-6 ms-1">

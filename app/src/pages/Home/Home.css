@@ -6,20 +6,16 @@
 }
 
 .home-grid .home-empty {
-    display: flex;
-    align-items: center;
-    height: 70px;
     background-color: #163c76;
     color: white;
     font-size: large;
-    padding: 8px;
+    padding: 16px 8px;
+    height: 70px;
     border-radius: 5px;
+    border: 2px dashed #4f6280;
 }
 
 .home-grid .home-grid-btn-action {
-    display: flex;
-    justify-content: flex-start !important;
-    text-align: left;
     height: 70px;
     transition: transform 0.1s ease-out;
 }

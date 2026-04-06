@@ -41,19 +41,18 @@ const TextCard = ({ title, icon, text, limit = 200 }) => {
 
     return (
         <div className="text-card mt-3">
-            {/* Titre de la carte */}
-            <div className="text-card-header p-2">
-                <div className="d-flex align-items-center gap-2 text-card-title">
-                    {icon}
-                    {title}
-                </div>
+            {/* Entête de la carte */}
+            <div className="d-flex align-items-center gap-2 p-2 text-card-header">
+                {icon}
+                {title}
             </div>
 
             {/* Texte de la carte */}
-            <div className="text-card-body p-2">
-                <div className="text-card-text">{textContent.text}</div>
+            <div className="d-flex flex-column p-2">
+                <div className="text-card-content">{textContent.text}</div>
+
                 {textContent.isLong && (
-                    <button className="d-flex align-items-center p-0 mt-2 gap-1 text-card-text-toggle" onClick={toggle}>
+                    <button className="d-flex align-items-center p-0 mt-2 gap-1 text-card-content-toggle" onClick={toggle}>
                         {textContent.expanded ? (
                             <>
                                 {t('common.readLess')}

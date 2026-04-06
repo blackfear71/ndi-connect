@@ -5,31 +5,19 @@
 }
 
 .text-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     border-bottom: 1px solid #1f375e;
-    color: white;
-}
-
-.text-card-title {
     color: white;
     font-size: larger;
     font-style: italic;
 }
 
-.text-card-body {
-    display: flex;
-    flex-direction: column;
-}
-
-.text-card-text {
+.text-card-content {
     color: white;
     text-align: justify;
     white-space: pre-line;
 }
 
-.text-card-text-toggle {
+.text-card-content-toggle {
     background-color: transparent;
     border: none;
     font-size: smaller;
@@ -38,6 +26,6 @@
     align-self: flex-end;
 }
 
-.text-card-text-toggle:hover {
+.text-card-content-toggle:hover {
     color: #fdd343;
 }

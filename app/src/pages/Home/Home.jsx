@@ -269,7 +269,7 @@ const Home = () => {
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
                                 variant="outline-action"
-                                className="home-grid-btn-action"
+                                className="d-flex align-items-center text-start home-grid-btn-action"
                                 onClick={() => openCloseEditionModal('create')}
                             >
                                 <IoAddCircleOutline size={30} />
@@ -284,7 +284,7 @@ const Home = () => {
                                     {/* Retour */}
                                     <Button
                                         variant="outline-action"
-                                        className="home-grid-btn-action btn-yellow"
+                                        className="d-flex align-items-center justify-content-start home-grid-btn-action btn-yellow"
                                         onClick={showYearsOfEditions}
                                     >
                                         <IoChevronBackOutline size={25} />
@@ -329,7 +329,7 @@ const Home = () => {
                                 </>
                             )
                         ) : (
-                            <div className="home-empty">{t('home.noEdition')}</div>
+                            <div className="d-flex align-items-center justify-content-center home-empty">{t('home.noEdition')}</div>
                         )}
                     </div>
 

@@ -178,10 +178,14 @@ const SearchBar = () => {
             {/* Résultats */}
             {showResults && results.length > 0 && (
                 <div className="search-results-dropdown">
-                    {results.map((item, idx) => (
-                        <div key={idx} className="search-result-item p-2" onClick={() => handleResultClick(item.id)}>
+                    {results.map((item) => (
+                        <div
+                            key={item.id}
+                            className="d-flex align-items-center justify-content-between p-2 search-result-item"
+                            onClick={() => handleResultClick(item.id)}
+                        >
                             <div className="search-result-item-left">{item.location}</div>
-                            <div className="search-result-item-right ms-3">{t('edition.editionResult', { year: item.year })}</div>
+                            <div className="ms-3 search-result-item-right">{t('edition.editionResult', { year: item.year })}</div>
                         </div>
                     ))}
                 </div>
