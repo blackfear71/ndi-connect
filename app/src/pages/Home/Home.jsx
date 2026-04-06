@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline, IoLocationOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import EditionsService from '../../api/editionsService';
-
-import EditionModal from '../../components/EditionModal/EditionModal';
-import Message from '../../components/Message/Message';
-
-import UserRole from '../../enums/UserRole';
-
 import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { AuthContext } from '../../utils/AuthContext';
+import { EditionsService } from '../../api';
+
+import { EditionModal } from '../../components/modals';
+import { Message } from '../../components/shared';
+
+import { AuthContext } from '../../utils/context/AuthContext';
+
+import { UserRole } from '../../enums';
 
 import './Home.css';
 

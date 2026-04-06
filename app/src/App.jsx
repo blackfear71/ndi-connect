@@ -1,13 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import Layout from './components/Layout/Layout';
+import { Edition, Home, Settings } from './pages';
 
-import Edition from './pages/Edition/Edition';
-import Home from './pages/Home/Home';
-import Settings from './pages/Settings/Settings';
+import { Layout } from './components/shared';
 
-import AuthProvider from './utils/AuthProvider';
-import SseProvider from './utils/SseProvider';
+import { AuthProvider, SseProvider } from './utils/providers';
 
 import './App.css';
 

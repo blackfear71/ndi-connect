@@ -6,21 +6,18 @@ import { FaQuestionCircle } from 'react-icons/fa';
 import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import UsersService from '../../api/usersService';
-
-import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
-import Message from '../../components/Message/Message';
-import SettingsCreateUser from '../../components/SettingsCreateUser/SettingsCreateUser';
-import SettingsModal from '../../components/SettingsModal/SettingsModal';
-import SettingsPassword from '../../components/SettingsPassword/SettingsPassword';
-import SettingsUsers from '../../components/SettingsUsers/SettingsUsers';
-
-import UserRole from '../../enums/UserRole';
-
 import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
-import { AuthContext } from '../../utils/AuthContext';
+import { UsersService } from '../../api';
+
+import { SettingsCreateUser, SettingsPassword, SettingsUsers } from '../../components/features';
+import { ConfirmModal, SettingsModal } from '../../components/modals';
+import { Message } from '../../components/shared';
+
+import { AuthContext } from '../../utils/context/AuthContext';
+
+import { UserRole } from '../../enums';
 
 import './Settings.css';
 

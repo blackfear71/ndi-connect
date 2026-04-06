@@ -5,29 +5,20 @@ import { useTranslation } from 'react-i18next';
 import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import EditionsService from '../../api/editionsService';
-import GiftsService from '../../api/giftsService';
-import PlayersService from '../../api/playersService';
-import RewardsService from '../../api/rewardsService';
-
-import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
-import EditionAbout from '../../components/EditionAbout/EditionAbout';
-import EditionGifts from '../../components/EditionGifts/EditionGifts';
-import EditionModal from '../../components/EditionModal/EditionModal';
-import EditionPlayers from '../../components/EditionPlayers/EditionPlayers';
-import GiftModal from '../../components/GiftModal/GiftModal';
-import Message from '../../components/Message/Message';
-import PlayerModal from '../../components/PlayerModal/PlayerModal';
-import RewardModal from '../../components/RewardModal/RewardModal';
-
-import UserRole from '../../enums/UserRole';
-
 import { combineLatest, of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { AuthContext } from '../../utils/AuthContext';
-import { getDayFromDate, getLocalizedTime } from '../../utils/dateHelper';
-import { SseContext } from '../../utils/SseContext';
+import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
+
+import { EditionAbout, EditionGifts, EditionPlayers } from '../../components/features';
+import { ConfirmModal, EditionModal, GiftModal, PlayerModal, RewardModal } from '../../components/modals';
+import { Message } from '../../components/shared';
+
+import { AuthContext } from '../../utils/context/AuthContext';
+import { SseContext } from '../../utils/context/SseContext';
+import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
+
+import { UserRole } from '../../enums';
 
 import './Edition.css';
 
