@@ -176,9 +176,11 @@ const EditionPlayers = ({
                                     maxLength={100}
                                     required
                                 />
+
                                 <Button onClick={() => showHidePlayerEntry(false)} className="edition-button">
                                     <FaTimes />
                                 </Button>
+
                                 <Button type="submit" className="edition-button">
                                     {isSubmitting ? <Spinner animation="border" role="status" variant="light" size="sm" /> : <FaCheck />}
                                 </Button>
@@ -201,13 +203,14 @@ const EditionPlayers = ({
                             {/* Participant */}
                             <div className="d-flex flex-column flex-grow-1 edition-item-name">
                                 <span className="edition-item-ellipsis-text">{p.name}</span>
+
                                 <div className="d-flex align-items-center gap-2">
                                     <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                        <GiTwoCoins size={15} />
+                                        <GiTwoCoins size={18} />
                                         {p.points}
                                     </span>
                                     <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                        <IoGiftSharp size={13} />
+                                        <IoGiftSharp size={15} />
                                         {p?.rewards.length}
                                     </span>
                                 </div>

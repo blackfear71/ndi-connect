@@ -100,8 +100,9 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     min-width: 0;
+    font-size: large;
 }
 
 .edition-item-counter {
-    font-size: 12px;
+    font-size: small;
 }

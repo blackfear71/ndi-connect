@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button, Form, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +9,16 @@ import './PictureInput.css';
 /**
  * Saisie d'image avec aperçu et suppression
  */
-const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmitting }) => {
+const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmitting, required = false }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const [fileName, setFileName] = useState('');
     const [previewUrl, setPreviewUrl] = useState(null);
+
+    // Constantes
+    const fileInputRef = useRef(null);
 
     /**
      * Initialise l'image existante si "value" est fourni
@@ -75,17 +78,27 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
         setFileName('');
         setPreviewUrl(null);
 
+        // Force le champ à vider le fichier en mémoire
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+
         onChange && onChange(null, 'delete');
     };
 
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
-            {title && <div className="modal-group-content-title">{title}</div>}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
 
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="d-flex align-items-center justify-content-center modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Parcourir */}
                 <Form.Group controlId="picture">
@@ -94,14 +107,17 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                     >
                         {t('common.browse')}
-                        <Form.Control
-                            type="file"
-                            name={name}
-                            accept=".jpg,.jpeg,.png,.webp"
-                            onChange={handleFileChange}
-                            style={{ display: 'none' }}
-                        />
                     </Form.Label>
+
+                    <Form.Control
+                        ref={fileInputRef}
+                        className="visually-hidden"
+                        type="file"
+                        name={name}
+                        accept=".jpg,.jpeg,.png,.webp"
+                        onChange={handleFileChange}
+                        required={required && !value}
+                    />
                 </Form.Group>
 
                 {/* Aperçu et suppression */}

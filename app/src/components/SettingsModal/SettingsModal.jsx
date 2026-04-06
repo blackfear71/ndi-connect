@@ -105,7 +105,7 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
 
                                 {/* Formulaire */}
                                 <Form.Select value={formData.level} onChange={handleChangeSelect} className="mt-2" required>
-                                    <option key="" value="" disabled>
+                                    <option key="" value="" hidden>
                                         {t('settings.chooseLevel')}
                                     </option>
                                     {[0, 1, 2].map((level) => (
@@ -132,23 +132,12 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                                     </Button>
                                 ) : (
                                     <div className="d-flex gap-2 mt-2">
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            onClick={() => setConfirmReset(false)}
-                                            disabled={modalOptions.isSubmitting}
-                                        >
+                                        <Button type="button" variant="secondary" onClick={() => setConfirmReset(false)}>
                                             {t('common.cancel')}
                                         </Button>
 
-                                        <Button
-                                            type="button"
-                                            variant="danger"
-                                            onClick={(event) => handleReset(event)}
-                                            disabled={modalOptions.isSubmitting}
-                                        >
+                                        <Button type="button" variant="danger" onClick={(event) => handleReset(event)}>
                                             {t('common.confirm')}
-                                            {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                                         </Button>
                                     </div>
                                 )}

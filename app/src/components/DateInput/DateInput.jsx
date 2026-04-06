@@ -7,11 +7,16 @@ const DateInput = ({ title, icon, name, value, onChange, required = false }) => 
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
-            {title && <div className="modal-group-content-title">{title}</div>}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
 
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Saisie */}
                 <Form.Group className="d-flex flex-column w-100" controlId={name}>

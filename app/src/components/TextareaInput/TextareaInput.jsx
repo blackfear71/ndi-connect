@@ -7,12 +7,17 @@ const TextareaInput = ({ title, icon, name, placeholder, value, onChange, requir
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
-            {title && <div className="modal-group-content-title">{title}</div>}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
 
             {/* Saisie */}
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Saisie */}
                 <Form.Group className="w-100" controlId={name}>

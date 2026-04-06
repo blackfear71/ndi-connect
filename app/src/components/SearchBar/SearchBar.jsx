@@ -141,6 +141,7 @@ const SearchBar = ({ placeholder }) => {
             {/* Barre de recherche */}
             <div className="search-bar-wrapper">
                 <FaSearch className="search-bar-icon search-icon" />
+
                 <Form.Control
                     ref={inputRef}
                     type="text"
@@ -150,6 +151,7 @@ const SearchBar = ({ placeholder }) => {
                     onChange={handleChange}
                     onFocus={handleFocus}
                 />
+
                 {searchText && <FaTimes className="search-bar-icon clear-icon" onClick={handleClear} />}
             </div>
 

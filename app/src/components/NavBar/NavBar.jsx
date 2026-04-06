@@ -127,19 +127,26 @@ const NavBar = () => {
                 {auth.isLoggedIn && (
                     <Dropdown show={showDropdown} align="end">
                         {showDropdown && <div className="navbar-dropdown-triangle"></div>}
+
                         <Dropdown.Menu className="navbar-dropdown">
-                            <Dropdown.Item className="navbar-dropdown-item navbar-dropdown-item-first" style={{ cursor: 'inherit' }}>
+                            {/* Identifiant connecté */}
+                            <Dropdown.Item className="navbar-dropdown-item navbar-dropdown-item-first">
                                 {t('navbar.connectedMessage')}
-                                <Badge pill bg="success" className="navbar-dropdown-badge ms-1">
+
+                                <Badge pill bg="success" className="fs-6 ms-1">
                                     {auth.login}
                                 </Badge>
                             </Dropdown.Item>
+
+                            {/* Paramètres */}
                             <Dropdown.Item
                                 className="navbar-dropdown-item d-flex align-items-center"
                                 onClick={() => handleRedirect('settings')}
                             >
                                 <IoSettingsOutline className="me-2" /> {t('navbar.settings')}
                             </Dropdown.Item>
+
+                            {/* Déconnexion */}
                             <Dropdown.Item className="navbar-dropdown-item d-flex align-items-center" onClick={logout}>
                                 <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>

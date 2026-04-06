@@ -109,7 +109,7 @@ const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, s
                             handleChange={handleChange}
                         />
                         <Form.Select value={formData.level} onChange={handleChangeSelect} className="mt-2" required>
-                            <option key="" value="" disabled>
+                            <option key="" value="" hidden>
                                 {t('settings.chooseLevel')}
                             </option>
                             {[0, 1, 2].map((level) => (

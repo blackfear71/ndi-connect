@@ -15,7 +15,7 @@ const IncrementInput = ({ title, icon, name, value, onChangeDown, onChangeUp }) 
             {/* Saisie */}
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Saisie */}
                 <Form.Group className="d-flex align-items-center gap-2 w-100" controlId={name}>

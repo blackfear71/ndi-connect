@@ -7,12 +7,17 @@ const SelectInput = ({ title, icon, name, defaultOption, options, value, onChang
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
-            {title && <div className="modal-group-content-title">{title}</div>}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
 
             {/* Saisie */}
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Titre & saisie */}
                 <Form.Group className="w-100" controlId={name}>
@@ -20,7 +25,7 @@ const SelectInput = ({ title, icon, name, defaultOption, options, value, onChang
 
                     <Form.Select value={value} onChange={onChange} required={required}>
                         {defaultOption && (
-                            <option key={defaultOption.key} value={defaultOption.value} disabled>
+                            <option key={defaultOption.key} value={defaultOption.value} hidden>
                                 {defaultOption.label}
                             </option>
                         )}

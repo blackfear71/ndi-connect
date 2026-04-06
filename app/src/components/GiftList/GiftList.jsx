@@ -111,7 +111,7 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                         </span>
                         <div className="d-flex align-items-center gap-2">
                             <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                <GrMoney size={18} />
+                                <GrMoney size={15} />
                                 {g.value}
                             </span>
                             <span className="d-flex align-items-center gap-1 edition-item-counter">

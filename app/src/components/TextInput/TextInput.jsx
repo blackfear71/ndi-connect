@@ -3,15 +3,20 @@ import { Form } from 'react-bootstrap';
 /**
  * Saisie ligne de texte
  */
-const TextInput = ({ title, icon, name, ref, value, onChange, maxLength, inputMode, pattern, required = false }) => {
+const TextInput = ({ title, icon, name, ref, type = 'text', value, onChange, maxLength, inputMode, pattern, required = false }) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
-            {title && <div className="modal-group-content-title">{title}</div>}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
 
             <div className="d-flex align-items-center gap-2">
                 {/* Icône */}
-                <div className="modal-input-icon">{icon}</div>
+                {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Saisie */}
                 <Form.Group className="d-flex flex-column w-100" controlId={name}>
@@ -19,7 +24,7 @@ const TextInput = ({ title, icon, name, ref, value, onChange, maxLength, inputMo
 
                     <Form.Control
                         ref={ref}
-                        type="text"
+                        type={type}
                         name={name}
                         placeholder={title}
                         value={value}

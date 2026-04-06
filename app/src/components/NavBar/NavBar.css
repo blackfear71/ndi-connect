@@ -90,12 +90,9 @@
 .navbar-dropdown-item-first {
     font-weight: bold !important;
     background-color: #e3e3e3 !important;
+    cursor: inherit !important;
 }
 
 .navbar-dropdown-item-first:active {
     background-color: #e3e3e3 !important;
-}
-
-.navbar-dropdown-badge {
-    font-size: 14px !important;
 }

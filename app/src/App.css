@@ -9,15 +9,22 @@
 
 - utiliser ou supprimer la police Quicksand
 - supprimer .modal-body .modal-section-title
-- faire apparaitre une étoile si champ obligatoire ?
 - TODOs à vérifier */
 
+/* Commun */
 .App {
     background-color: #07224c;
 }
 
 .container {
     padding: 0 !important;
+}
+
+.required-star {
+    color: #d43636;
+    font-size: medium;
+    margin-left: 3px;
+    line-height: 1;
 }
 
 /* Couleurs */
