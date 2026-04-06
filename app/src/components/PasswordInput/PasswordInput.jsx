@@ -8,7 +8,7 @@ import './PasswordInput.css';
 /**
  * Saisie de mot de passe
  */
-const PasswordInput = ({ ref = null, name, placeholder, value, handleChange }) => {
+const PasswordInput = ({ ref, name, placeholder, value, handleChange }) => {
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 

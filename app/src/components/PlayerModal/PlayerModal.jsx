@@ -214,6 +214,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                     title={t('edition.updateName')}
                                     icon={<PiUserListFill />}
                                     name="name"
+                                    placeholder={t('edition.name')}
                                     value={formData.name}
                                     onChange={handleChange}
                                     maxLength={100}

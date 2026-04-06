@@ -12,6 +12,8 @@ import UserRole from '../../enums/UserRole';
 
 import { AuthContext } from '../../utils/AuthContext';
 
+import TextInput from '../TextInput/TextInput';
+
 import './EditionPlayers.css';
 
 /**
@@ -165,17 +167,18 @@ const EditionPlayers = ({
                     {showEntry && (
                         <fieldset disabled={isSubmitting}>
                             <Form onSubmit={(event) => handleSubmit(event, 'create')} className="d-flex align-items-center gap-2">
-                                <Form.Control
-                                    ref={nameInputRef}
-                                    type="text"
-                                    name="name"
-                                    placeholder={t('edition.name')}
-                                    className="edition-players-entry"
-                                    value={formPlayer.name}
-                                    onChange={handleChange}
-                                    maxLength={100}
-                                    required
-                                />
+                                <div className="flex-fill">
+                                    <TextInput
+                                        name={'name'}
+                                        ref={nameInputRef}
+                                        className={'edition-players-entry'}
+                                        placeholder={t('edition.name')}
+                                        value={formPlayer.name}
+                                        onChange={handleChange}
+                                        maxLength={100}
+                                        required={true}
+                                    />
+                                </div>
 
                                 <Button onClick={() => showHidePlayerEntry(false)} className="edition-button">
                                     <FaTimes />

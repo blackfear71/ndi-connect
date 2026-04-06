@@ -145,6 +145,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                     icon={<IoLocationOutline />}
                                     name="location"
                                     ref={locationInputRef}
+                                    placeholder={t('edition.location')}
                                     value={formData.location}
                                     onChange={handleChange}
                                     maxLength={100}

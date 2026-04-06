@@ -3,7 +3,22 @@ import { Form } from 'react-bootstrap';
 /**
  * Saisie ligne de texte
  */
-const TextInput = ({ title, icon, name, ref, type = 'text', value, onChange, maxLength, inputMode, pattern, required = false }) => {
+const TextInput = ({
+    title,
+    icon,
+    name,
+    ref,
+    type = 'text',
+    className,
+    placeholder,
+    value,
+    onFocus,
+    onChange,
+    maxLength,
+    inputMode,
+    pattern,
+    required = false
+}) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -26,8 +41,10 @@ const TextInput = ({ title, icon, name, ref, type = 'text', value, onChange, max
                         ref={ref}
                         type={type}
                         name={name}
-                        placeholder={title}
+                        className={className}
+                        placeholder={placeholder}
                         value={value}
+                        onFocus={onFocus}
                         onChange={onChange}
                         maxLength={maxLength}
                         inputMode={inputMode}

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import EditionsService from '../../api/editionsService';
 
 import Message from '../../components/Message/Message';
+import TextInput from '../../components/TextInput/TextInput';
 
 import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
@@ -17,7 +17,7 @@ import './SearchBar.css';
 /**
  * Barre de recherche
  */
-const SearchBar = ({ placeholder }) => {
+const SearchBar = () => {
     // Router
     const navigate = useNavigate();
 
@@ -142,14 +142,14 @@ const SearchBar = ({ placeholder }) => {
             <div className="search-bar-wrapper">
                 <FaSearch className="search-bar-icon search-icon" />
 
-                <Form.Control
+                <TextInput
+                    name={'search'}
                     ref={inputRef}
-                    type="text"
-                    placeholder={placeholder || t('navbar.search')}
-                    className="search-bar-text"
+                    className={'search-bar-text'}
+                    placeholder={t('navbar.search')}
                     value={searchText}
-                    onChange={handleChange}
                     onFocus={handleFocus}
+                    onChange={handleChange}
                 />
 
                 {searchText && <FaTimes className="search-bar-icon clear-icon" onClick={handleClear} />}
