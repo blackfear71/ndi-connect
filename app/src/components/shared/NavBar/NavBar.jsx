@@ -105,7 +105,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="navbar-container">
+        <nav className="d-flex align-items-center jusitfy-content-between gap-3 navbar-container">
             {/* Logo */}
             <Link to="/">
                 <Image src={ndiConnectLogo} alt="ndi-connect" title={t('common.home')} className="navbar-logo" />
@@ -128,9 +128,9 @@ const NavBar = () => {
                     <Dropdown show={showDropdown} align="end">
                         {showDropdown && <div className="navbar-dropdown-triangle"></div>}
 
-                        <Dropdown.Menu className="navbar-dropdown">
+                        <Dropdown.Menu className="p-0 navbar-dropdown">
                             {/* Identifiant connecté */}
-                            <Dropdown.Item className="navbar-dropdown-item navbar-dropdown-item-first">
+                            <Dropdown.Item className="p-2 navbar-dropdown-item navbar-dropdown-item-first">
                                 {t('navbar.connectedMessage')}
 
                                 <Badge pill bg="success" className="fs-6 ms-1">
@@ -140,14 +140,14 @@ const NavBar = () => {
 
                             {/* Paramètres */}
                             <Dropdown.Item
-                                className="navbar-dropdown-item d-flex align-items-center"
+                                className="p-2 navbar-dropdown-item d-flex align-items-center"
                                 onClick={() => handleRedirect('settings')}
                             >
                                 <IoSettingsOutline className="me-2" /> {t('navbar.settings')}
                             </Dropdown.Item>
 
                             {/* Déconnexion */}
-                            <Dropdown.Item className="navbar-dropdown-item d-flex align-items-center" onClick={logout}>
+                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={logout}>
                                 <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>
                         </Dropdown.Menu>

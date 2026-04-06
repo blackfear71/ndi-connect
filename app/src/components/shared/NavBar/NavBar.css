@@ -1,10 +1,8 @@
 .navbar-container {
     position: fixed;
     z-index: 5;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     width: 100%;
+    padding: 10px 20px;
     background-color: #07224c;
     box-shadow: 0 1px 3px black;
 }
@@ -12,12 +10,10 @@
 .navbar-logo {
     height: 40px;
     width: 40px;
-    margin: 10px 20px;
 }
 
 .navbar-user-wrapper {
     position: relative;
-    margin: 10px 20px;
     height: 40px;
     width: 40px;
     cursor: pointer;
@@ -40,41 +36,38 @@
     border: 2px solid white;
 }
 
-.navbar-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 10px;
-    background-color: white;
-    border: none !important;
-    border-top: none;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: max-content;
-    max-width: 45vw;
-    max-height: calc(100vh - 150px);
-    overflow-y: auto;
-    border-radius: 5px;
-    padding: 0 !important;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
 .navbar-dropdown-triangle {
     content: '';
     position: absolute;
-    top: 1px;
-    right: 31px;
+    top: 11px;
+    right: 10px;
+    z-index: 1000;
     width: 0;
     height: 0;
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     border-bottom: 10px solid #e3e3e3;
+}
+
+.navbar-dropdown {
+    position: absolute;
+    top: calc(100% + 20px);
+    right: -10px;
+    width: max-content;
+    max-width: 45vw;
+    max-height: calc(100vh - 150px);
+    background-color: white;
+    border: none !important;
     z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    border-radius: 5px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .navbar-dropdown-item {
-    padding: 10px !important;
     border-bottom: 1px solid #e0e0e0 !important;
     cursor: pointer;
     white-space: normal !important;

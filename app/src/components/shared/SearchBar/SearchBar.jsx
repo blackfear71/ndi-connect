@@ -137,10 +137,10 @@ const SearchBar = () => {
     };
 
     return (
-        <div className="search-bar-container" ref={containerRef}>
+        <div className="flex-fill" ref={containerRef}>
             {/* Barre de recherche */}
             <div className="search-bar-wrapper">
-                <FaSearch className="search-bar-icon search-icon" />
+                <FaSearch className="d-flex align-items-center justify-content-center search-bar-icon search-icon" />
 
                 <TextInput
                     name={'search'}
@@ -152,19 +152,24 @@ const SearchBar = () => {
                     onChange={handleChange}
                 />
 
-                {searchText && <FaTimes className="search-bar-icon clear-icon" onClick={handleClear} />}
+                {searchText && (
+                    <FaTimes
+                        className="d-flex align-items-center justify-content-center search-bar-icon clear-icon"
+                        onClick={handleClear}
+                    />
+                )}
             </div>
 
             {/* Messages */}
             {showResults && searchMessage && (
                 <div className="search-results-dropdown">
-                    <div className="search-result-message">{t(searchMessage)}</div>
+                    <div className="p-2">{t(searchMessage)}</div>
                 </div>
             )}
 
             {message && (
                 <div className="search-results-dropdown">
-                    <div className="search-result-message search-result-message-no-margin-bottom">
+                    <div className="p-2">
                         <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />
                     </div>
                 </div>
@@ -174,9 +179,9 @@ const SearchBar = () => {
             {showResults && results.length > 0 && (
                 <div className="search-results-dropdown">
                     {results.map((item, idx) => (
-                        <div key={idx} className="search-result-item" onClick={() => handleResultClick(item.id)}>
+                        <div key={idx} className="search-result-item p-2" onClick={() => handleResultClick(item.id)}>
                             <div className="search-result-item-left">{item.location}</div>
-                            <div className="search-result-item-right">{t('edition.editionResult', { year: item.year })}</div>
+                            <div className="search-result-item-right ms-3">{t('edition.editionResult', { year: item.year })}</div>
                         </div>
                     ))}
                 </div>
