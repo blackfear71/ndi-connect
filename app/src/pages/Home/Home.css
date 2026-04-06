@@ -17,6 +17,8 @@
 
 .home-grid .home-grid-btn-action {
     height: 70px;
+    text-align: left !important;
+    justify-content: flex-start !important;
     transition: transform 0.1s ease-out;
 }
 
