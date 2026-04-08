@@ -1,7 +1,4 @@
 .picture-input-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-color: #1d509e;
     border: 2px solid #163c76;
     color: white;
@@ -15,18 +12,11 @@
 }
 
 .picture-input-preview-wrapper {
-    display: flex;
-    align-items: center;
-    width: 100%;
     color: #8892a4;
 }
 
 .picture-input-preview-content {
-    display: flex;
-    align-items: center;
-    width: 100%;
     min-width: 0;
-    gap: 10px;
 }
 
 .picture-input-preview-image {

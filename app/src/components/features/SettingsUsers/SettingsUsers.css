@@ -20,8 +20,6 @@
     border-radius: 5px;
     height: 36px;
     min-width: 0;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .settings-users-ellipsis-text {
@@ -35,7 +33,7 @@
     background-color: #163c76;
     color: white;
     font-size: large;
-    padding: 8px;
     text-align: center;
     border-radius: 5px;
+    border: 2px dashed #4f6280;
 }

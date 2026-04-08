@@ -103,7 +103,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                 {/* Parcourir */}
                 <Form.Group controlId="picture">
                     <Form.Label
-                        className="picture-input-button rounded p-3 m-0"
+                        className="d-flex align-items-center justify-content-center picture-input-button rounded p-3 m-0"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                     >
                         {t('common.browse')}
@@ -121,14 +121,17 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                 </Form.Group>
 
                 {/* Aperçu et suppression */}
-                <div className="picture-input-preview-wrapper">
+                <div className="w-100 picture-input-preview-wrapper">
                     {previewUrl ? (
-                        <div className="picture-input-preview-content">
+                        <div className="d-flex align-items-center gap-2 w-100 picture-input-preview-content">
                             {/* Aperçu */}
                             <Image key={previewUrl} src={previewUrl} alt={fileName} rounded className="picture-input-preview-image" />
 
                             {/* Suppression */}
-                            <Button onClick={handleFileRemove} className="modal-button-delete">
+                            <Button
+                                onClick={handleFileRemove}
+                                className="d-flex align-items-center justify-content-center modal-button-delete"
+                            >
                                 <FaTrashCan />
                             </Button>
                         </div>

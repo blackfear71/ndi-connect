@@ -9,7 +9,7 @@ const ProgressCard = ({ title, icon, value, badgeStart, badgeEnd, detail }) => {
     return (
         <div className="progress-card mt-3">
             {/* Entête de la carte */}
-            <div className="d-flex align-items-center p-2 progress-card-header">
+            <div className="d-flex align-items-center justify-content-between p-2 progress-card-header">
                 <div className="d-flex align-items-center gap-2 progress-card-title">
                     {icon}
                     {title}

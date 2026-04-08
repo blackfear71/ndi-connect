@@ -131,7 +131,10 @@ const RewardModal = ({
                     <Modal.Body>
                         {/* Participant */}
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
-                            <div className="reward-modal-icon" style={{ backgroundColor: getIconColor(player.name) }}>
+                            <div
+                                className="d-flex align-items-center justify-content-center reward-modal-icon"
+                                style={{ backgroundColor: getIconColor(player.name) }}
+                            >
                                 {player.name.charAt(0).toUpperCase()}
                             </div>
 
@@ -178,10 +181,10 @@ const RewardModal = ({
                                                 required={true}
                                             />
                                         ) : (
-                                            <div className="modal-empty">{t('edition.notEnoughPoints')}</div>
+                                            <div className="p-2 modal-empty">{t('edition.notEnoughPoints')}</div>
                                         )
                                     ) : (
-                                        <div className="modal-empty">{t('edition.noAvailableGifts')}</div>
+                                        <div className="p-2 modal-empty">{t('edition.noAvailableGifts')}</div>
                                     )}
                                 </div>
                             </div>
@@ -197,12 +200,15 @@ const RewardModal = ({
                                 {player?.rewards.length > 0 ? (
                                     <>
                                         {player.rewards.map((r) => (
-                                            <div key={r.id} className="d-flex align-items-center pt-2 pb-2 gap-2 reward-modal-gift-row">
+                                            <div
+                                                key={r.id}
+                                                className="d-flex align-items-center justify-content-between pt-2 pb-2 gap-2 reward-modal-gift-row"
+                                            >
                                                 <div className="reward-modal-gift-name">{r.name}</div>
                                                 {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                                     <Button
                                                         onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
-                                                        className="modal-button-delete"
+                                                        className="d-flex align-items-center justify-content-center modal-button-delete"
                                                     >
                                                         <FaTrashCan />
                                                     </Button>
@@ -211,7 +217,7 @@ const RewardModal = ({
                                         ))}
                                     </>
                                 ) : (
-                                    <div className="modal-empty mt-2">{t('edition.noObtainedGifts')}</div>
+                                    <div className="p-2 mt-2 modal-empty">{t('edition.noObtainedGifts')}</div>
                                 )}
                             </div>
                         </div>

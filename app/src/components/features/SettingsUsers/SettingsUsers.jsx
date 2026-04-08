@@ -73,7 +73,7 @@ const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setM
                 users.map((u) => (
                     <div key={u.id} className="d-flex align-items-center gap-2 mt-2">
                         {/* Identifiant */}
-                        <div className="d-flex align-items-center flex-grow-1 settings-users-name">
+                        <div className="d-flex align-items-center flex-grow-1 px-1 settings-users-name">
                             {getUserRoleIcon(u.level)}
                             <span className="d-inline-block flex-grow-1 settings-users-ellipsis-text">{u.login}</span>
                         </div>
@@ -100,7 +100,7 @@ const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setM
                     </div>
                 ))
             ) : (
-                <div className="settings-users-empty mt-2">{t('settings.noUsers')}</div>
+                <div className="px-2 py-3 mt-2 settings-users-empty">{t('settings.noUsers')}</div>
             )}
         </>
     );

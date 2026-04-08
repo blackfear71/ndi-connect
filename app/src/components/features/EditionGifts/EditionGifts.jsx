@@ -91,7 +91,7 @@ const EditionGifts = ({ gifts, getIconColor, formData, setFormData, setModalOpti
                     )}
                 </>
             ) : (
-                <div className="edition-empty mt-2">{t('edition.noGifts')}</div>
+                <div className="px-2 py-3 mt-2 edition-empty">{t('edition.noGifts')}</div>
             )}
         </>
     );

@@ -23,12 +23,12 @@ const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valu
 
                 {/* Début */}
                 <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameStart}>
-                    <span className="time-input-prefix">{titleStart}</span>
+                    <span className="px-2 time-input-prefix">{titleStart}</span>
 
                     <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
 
                     <Form.Control
-                        className="time-input-control w-100"
+                        className="w-100 px-2 time-input-control"
                         type="time"
                         name={nameStart}
                         value={valueStart || ''}
@@ -39,12 +39,12 @@ const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valu
 
                 {/* Fin */}
                 <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameEnd}>
-                    <span className="time-input-prefix">{titleEnd}</span>
+                    <span className="px-2 time-input-prefix">{titleEnd}</span>
 
                     <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
 
                     <Form.Control
-                        className="time-input-control w-100"
+                        className="w-100 px-2 time-input-control"
                         type="time"
                         name={nameEnd}
                         value={valueEnd || ''}

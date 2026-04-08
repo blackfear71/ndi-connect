@@ -100,7 +100,10 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
             {sortedGifts?.map((g) => (
                 <div key={g.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
                     {/* Icône */}
-                    <div className="edition-item-icon" style={{ backgroundColor: getIconColor(g.name) }}>
+                    <div
+                        className="d-flex align-items-center justify-content-center edition-item-icon"
+                        style={{ backgroundColor: getIconColor(g.name) }}
+                    >
                         {g.name.charAt(0).toUpperCase()}
                     </div>
 

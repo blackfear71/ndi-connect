@@ -10,7 +10,6 @@
     font-weight: 600;
     color: #9faabf;
     text-transform: uppercase;
-    padding: 0 8px;
     border-right: 1px solid #dee2e6;
     white-space: nowrap;
     flex-shrink: 0;
@@ -20,7 +19,6 @@
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 6px 8px !important;
     min-width: 0;
 }
 

@@ -12,7 +12,6 @@
     background-color: #163c76;
     color: white;
     font-size: large;
-    padding: 16px 8px;
     text-align: center;
     border-radius: 5px;
     border: 2px dashed #4f6280;
@@ -71,17 +70,12 @@
 }
 
 .edition-item {
-    display: flex;
-    align-items: center;
     background-color: #162f57;
     border: 1px solid #1f375e;
     border-radius: 5px;
 }
 
 .edition-item-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     width: 40px;
     height: 40px;

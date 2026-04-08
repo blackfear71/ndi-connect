@@ -9,7 +9,7 @@ import './Layout.css';
  */
 const Layout = () => {
     return (
-        <div className="layout-container">
+        <div className="d-flex flex-column layout-container">
             {/* Barre de navigation */}
             <NavBar />
 

@@ -721,7 +721,7 @@ const Edition = () => {
     return (
         <div>
             {isLoading ? (
-                <div className="layout-spinner-centered">
+                <div className="d-flex align-items-center justify-content-center layout-spinner-centered">
                     <Spinner animation="border" role="status" variant="light" />
                 </div>
             ) : (
@@ -747,7 +747,7 @@ const Edition = () => {
                             <>
                                 {/* Titre */}
                                 <div>
-                                    <h1>
+                                    <h1 className="d-flex align-items-center gap-2">
                                         <FaComputer size={30} />
                                         {t('edition.editionTitle', {
                                             year: new Date(edition.startDate).getFullYear(),

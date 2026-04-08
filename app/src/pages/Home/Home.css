@@ -1,15 +1,12 @@
 .home-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 15px;
 }
 
 .home-grid .home-empty {
     background-color: #163c76;
     color: white;
     font-size: large;
-    padding: 16px 8px;
     height: 70px;
     border-radius: 5px;
     border: 2px dashed #4f6280;
@@ -33,7 +30,6 @@
     justify-content: flex-start !important;
     align-items: flex-start !important;
     min-width: 0;
-    gap: 6px;
 }
 
 .home-grid-btn-year .home-grid-btn-label {

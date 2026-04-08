@@ -83,7 +83,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                             <div className="modal-group-content">
                                 {/* Verrou */}
                                 <div className="mb-2 text-center">
-                                    <div className="connection-modal-lock mb-1">
+                                    <div className="d-flex align-items-center justify-content-center mb-1 connection-modal-lock">
                                         <FaLock />
                                     </div>
                                     <div className="connection-modal-lock-text">{t('navbar.adminOnly')}</div>

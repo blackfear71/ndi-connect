@@ -1,7 +1,4 @@
 .settings-modal-badges {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     max-width: 100%;
 }
 
@@ -21,5 +18,4 @@
 
 .settings-modal-border {
     border-left: solid 4px #d0d0d0;
-    padding-left: 10px;
 }

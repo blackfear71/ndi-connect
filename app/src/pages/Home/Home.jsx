@@ -240,7 +240,7 @@ const Home = () => {
     return (
         <>
             {isLoading ? (
-                <div className="layout-spinner-centered">
+                <div className="d-flex align-items-center justify-content-center layout-spinner-centered">
                     <Spinner animation="border" role="status" variant="light" />
                 </div>
             ) : (
@@ -264,7 +264,7 @@ const Home = () => {
                     </h1>
 
                     {/* Grille */}
-                    <div className="home-grid">
+                    <div className="gap-2 mt-3 home-grid">
                         {/* Ajout */}
                         {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                             <Button
@@ -329,7 +329,9 @@ const Home = () => {
                                 </>
                             )
                         ) : (
-                            <div className="d-flex align-items-center justify-content-center home-empty">{t('home.noEdition')}</div>
+                            <div className="d-flex align-items-center justify-content-center px-2 py-3 home-empty">
+                                {t('home.noEdition')}
+                            </div>
                         )}
                     </div>
 

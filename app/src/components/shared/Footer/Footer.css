@@ -13,7 +13,6 @@
 
 .footer-language-toggle {
     position: absolute;
-    display: flex;
     right: 10px;
     background-color: transparent;
     border: none;

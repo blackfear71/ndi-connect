@@ -15,7 +15,7 @@ const TableCard = ({ icon, title, table }) => {
             {/* Tableau de la carte */}
             <div className="d-flex flex-column ps-2 pe-2">
                 {table?.map(({ label, value }) => (
-                    <div key={label} className="table-card-line">
+                    <div key={label} className="d-flex align-items-center justify-content-between pt-2 pb-2 table-card-line">
                         <span className="table-card-line-label">{label}</span>
                         <span className="table-card-line-value">{value}</span>
                     </div>

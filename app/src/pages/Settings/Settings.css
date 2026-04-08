@@ -4,9 +4,6 @@
 }
 
 .settings-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
     background-color: #163c76 !important;
     color: white !important;
     border: none !important;
@@ -21,5 +18,4 @@
 
 .settings-description-border {
     border-left: solid 4px white;
-    padding-left: 10px;
 }

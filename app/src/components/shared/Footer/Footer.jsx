@@ -32,7 +32,7 @@ const Footer = () => {
     return (
         <footer className="footer d-flex align-items-center justify-content-between">
             <span className="footer-text mx-auto">{getCopyright()}</span>
-            <button className="footer-language-toggle" onClick={handleToggleLanguage}>
+            <button className="d-flex footer-language-toggle" onClick={handleToggleLanguage}>
                 <Image
                     src={i18n.language === 'fr' ? flagFr : flagEn}
                     alt={i18n.language === 'fr' ? t('common.french') : t('common.english')}

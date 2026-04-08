@@ -429,7 +429,7 @@ const Settings = () => {
     return (
         <>
             {isLoading ? (
-                <div className="layout-spinner-centered">
+                <div className="d-flex align-items-center justify-content-center layout-spinner-centered">
                     <Spinner animation="border" role="status" variant="light" />
                 </div>
             ) : (
@@ -447,7 +447,9 @@ const Settings = () => {
 
                             {/* Description */}
                             {auth.level !== '' && (
-                                <p className="text-white mt-2 settings-description-border">{t(`settings.levelDescription${auth.level}`)}</p>
+                                <p className="text-white mt-2 ps-2 settings-description-border">
+                                    {t(`settings.levelDescription${auth.level}`)}
+                                </p>
                             )}
 
                             {/* Gestion mot de passe */}

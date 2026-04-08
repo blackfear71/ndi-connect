@@ -89,7 +89,7 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                         <div className="modal-group">
                             <div className="modal-group-content">
                                 {/* Utilisateur */}
-                                <div className="settings-modal-badges">
+                                <div className="d-flex flex-column align-items-start settings-modal-badges">
                                     <Badge bg="success" className="fs-6 p-2 settings-modal-ellipsis d-inline-flex align-items-center">
                                         <HiIdentification size={18} className="me-2" />
                                         <span className="settings-modal-ellipsis-text">{user.login}</span>
@@ -117,7 +117,7 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
 
                                 {/* Description du niveau sélectionné */}
                                 {formData.level !== '' && (
-                                    <p className="text-muted mt-2 settings-modal-border">
+                                    <p className="text-muted mt-2 ps-2 settings-modal-border">
                                         {t(`settings.levelDescription${formData.level}`)}
                                     </p>
                                 )}
