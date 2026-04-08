@@ -83,7 +83,7 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
     return (
         <>
             {/* Titre & tri */}
-            <div className="edition-subtitle d-flex align-items-center justify-content-between gap-2">
+            <div className="d-flex align-items-center justify-content-between gap-2 edition-subtitle">
                 <Badge pill bg="warning">
                     {title}
                 </Badge>
@@ -109,11 +109,13 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                         <span className={`edition-item-ellipsis-text ${g.remainingQuantity === 0 ? 'text-decoration-line-through' : ''}`}>
                             {g.name}
                         </span>
+
                         <div className="d-flex align-items-center gap-2">
                             <span className="d-flex align-items-center gap-1 edition-item-counter">
                                 <GrMoney size={15} />
                                 {g.value}
                             </span>
+
                             <span className="d-flex align-items-center gap-1 edition-item-counter">
                                 {g.remainingQuantity === 0 ? <GiCardboardBoxClosed size={18} /> : <GiCardboardBox size={18} />}
                                 {g.remainingQuantity}

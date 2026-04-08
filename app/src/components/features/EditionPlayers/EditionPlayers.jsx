@@ -3,10 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Form, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
-import { FaGift } from 'react-icons/fa6';
-import { GiTwoCoins } from 'react-icons/gi';
-import { IoAddCircleOutline, IoGiftSharp } from 'react-icons/io5';
+import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { TextInput } from '../../../components/inputs';
 
@@ -15,6 +12,8 @@ import { useAuth } from '../../../utils/context/AuthContext';
 import { UserRole } from '../../../enums';
 
 import './EditionPlayers.css';
+
+import PlayerList from './PlayerList/PlayerList';
 
 /**
  * Liste des participants
@@ -138,19 +137,6 @@ const EditionPlayers = ({
         }));
     };
 
-    /**
-     * Ouvre la modale de suppression de participant
-     * @param {*} player Participant
-     */
-    const handleDelete = (player) => {
-        // Ouverture de la modale de confirmation
-        onConfirm({
-            content: t('edition.deletePlayer', { name: player.name }),
-            action: 'deletePlayer',
-            data: player.id
-        });
-    };
-
     return (
         <>
             {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
@@ -196,61 +182,14 @@ const EditionPlayers = ({
             {/* Liste */}
             {players && players.length > 0 ? (
                 <div className="mt-3">
-                    {players.map((p) => (
-                        <div key={p.id} className="d-flex align-items-center gap-2 p-2 mt-2 edition-item">
-                            {/* Icône */}
-                            <div className="edition-item-icon" style={{ backgroundColor: getIconColor(p.name) }}>
-                                {p.name.charAt(0).toUpperCase()}
-                            </div>
-
-                            {/* Participant */}
-                            <div className="d-flex flex-column flex-grow-1 edition-item-name">
-                                <span className="edition-item-ellipsis-text">{p.name}</span>
-
-                                <div className="d-flex align-items-center gap-2">
-                                    <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                        <GiTwoCoins size={18} />
-                                        {p.points}
-                                    </span>
-                                    <span className="d-flex align-items-center gap-1 edition-item-counter">
-                                        <IoGiftSharp size={15} />
-                                        {p?.rewards.length}
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Supression */}
-                            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
-                                <Button
-                                    onClick={isSubmitting ? null : () => handleDelete(p)}
-                                    className="edition-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                                </Button>
-                            )}
-
-                            {/* Cadeaux */}
-                            <Button
-                                onClick={isSubmitting ? null : () => showRewardModal(p)}
-                                className="edition-button"
-                                style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            >
-                                <FaGift color={isSubmitting ? 'gray' : 'white'} />
-                            </Button>
-
-                            {/* Modification */}
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
-                                <Button
-                                    onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
-                                    className="edition-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                >
-                                    <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                                </Button>
-                            )}
-                        </div>
-                    ))}
+                    <PlayerList
+                        players={players}
+                        getIconColor={getIconColor}
+                        onConfirm={onConfirm}
+                        showRewardModal={showRewardModal}
+                        showPlayerModal={showPlayerModal}
+                        isSubmitting={isSubmitting}
+                    />
                 </div>
             ) : (
                 <div className="edition-empty mt-2">{t('edition.noPlayers')}</div>
