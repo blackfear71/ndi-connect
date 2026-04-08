@@ -1,0 +1,30 @@
+.progress-card {
+    background-color: #162f57;
+    border: 1px solid #1f375e;
+    border-radius: 5px;
+}
+
+.progress-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #1f375e;
+    color: white;
+}
+
+.progress-card-title {
+    color: white;
+    font-size: larger;
+    font-style: italic;
+}
+
+.progress-card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-card-detail {
+    font-size: smaller;
+    color: #5c6f85;
+    text-align: center;
+}

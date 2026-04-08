@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { Badge, Button, ProgressBar } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { CgSandClock } from 'react-icons/cg';
 import { FaFlagCheckered, FaScroll, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 
-import { TextCard } from '../../../components/ui';
+import { ProgressCard, TableCard, TextCard } from '../../../components/ui';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 import { getLocalizedDate, getLocalizedDuration, getLocalizedTime } from '../../../utils/helpers/dateHelper';
 
 import { UserRole } from '../../../enums';
-
-import './EditionAbout.css';
 
 /**
  * A propos
@@ -121,59 +119,29 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
                 <>
                     {/* Progression */}
                     {progress && progress.isActive && (
-                        <div className="edition-about-card mt-3">
-                            <div className="edition-about-card-header p-2">
-                                <div className="d-flex align-items-center gap-2 edition-about-card-title">
-                                    <CgSandClock size={20} />
-                                    {t('edition.progress')}
-                                </div>
-                                <span>{Math.round(progress.value)}%</span>
-                            </div>
-
-                            <div className="edition-about-card-body gap-2 p-2">
-                                <div className="d-flex align-items-center mt-1">
-                                    <Badge pill bg="success" className="me-2">
-                                        {getLocalizedTime(edition.startDate)}
-                                    </Badge>
-                                    <div className="flex-fill">
-                                        <ProgressBar now={progress.value} className="rounded-pill" />
-                                    </div>
-                                    <Badge pill bg="danger" className="ms-2">
-                                        {getLocalizedTime(edition.endDate)}
-                                    </Badge>
-                                </div>
-                                <div className="edition-about-card-progress-status">
-                                    {t('edition.progressStatus', { remaining: getLocalizedDuration(progress.remaining) })}
-                                </div>
-                            </div>
-                        </div>
+                        <ProgressCard
+                            icon={<CgSandClock size={20} />}
+                            title={t('edition.progress')}
+                            value={progress.value}
+                            badgeStart={getLocalizedTime(edition.startDate)}
+                            badgeEnd={getLocalizedTime(edition.endDate)}
+                            detail={t('edition.progressStatus', { remaining: getLocalizedDuration(progress.remaining) })}
+                        />
                     )}
 
                     {/* Informations */}
-                    <div className="edition-about-card mt-3">
-                        <div className="edition-about-card-header p-2">
-                            <div className="d-flex align-items-center gap-2 edition-about-card-title">
-                                <IoInformationCircleOutline size={22} />
-                                {t('edition.informations')}
-                            </div>
-                        </div>
-
-                        <div className="edition-about-card-body ps-2 pe-2">
-                            {getInformationsRows().map(({ label, value }) => (
-                                <div key={label} className="edition-about-card-line">
-                                    <span className="edition-about-card-line-label">{label}</span>
-                                    <span className="edition-about-card-line-value">{value}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <TableCard
+                        icon={<IoInformationCircleOutline size={22} />}
+                        title={t('edition.informations')}
+                        table={getInformationsRows()}
+                    />
 
                     {/* Thème */}
-                    {edition.theme && <TextCard title={t('edition.theme')} icon={<FaScroll size={18} />} text={edition.theme} />}
+                    {edition.theme && <TextCard icon={<FaScroll size={18} />} title={t('edition.theme')} text={edition.theme} />}
 
                     {/* Défi */}
                     {edition.challenge && (
-                        <TextCard title={t('edition.challenge')} icon={<FaFlagCheckered size={18} />} text={edition.challenge} />
+                        <TextCard icon={<FaFlagCheckered size={18} />} title={t('edition.challenge')} text={edition.challenge} />
                     )}
                 </>
             )}

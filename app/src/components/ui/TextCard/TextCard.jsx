@@ -8,7 +8,7 @@ import './TextCard.css';
 /**
  * Carte texte repliable
  */
-const TextCard = ({ title, icon, text, limit = 200 }) => {
+const TextCard = ({ icon, title, text, limit = 200 }) => {
     // Traductions
     const { t } = useTranslation();
 

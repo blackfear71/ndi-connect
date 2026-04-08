@@ -1,0 +1,32 @@
+.table-card {
+    background-color: #162f57;
+    border: 1px solid #1f375e;
+    border-radius: 5px;
+}
+
+.table-card-header {
+    border-bottom: 1px solid #1f375e;
+    color: white;
+    font-size: larger;
+    font-style: italic;
+}
+
+.table-card-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #1f375e;
+}
+
+.table-card-line:last-child {
+    border-bottom: none;
+}
+
+.table-card-line-label {
+    color: #5c6f85;
+}
+
+.table-card-line-value {
+    color: white;
+}
