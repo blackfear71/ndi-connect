@@ -207,8 +207,9 @@ const RewardModal = ({
                                                 <div className="reward-modal-gift-name">{r.name}</div>
                                                 {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                                                     <Button
-                                                        onClick={modalOptions.isSubmitting ? null : () => handleDelete(r)}
+                                                        onClick={() => handleDelete(r)}
                                                         className="d-flex align-items-center justify-content-center modal-button-delete"
+                                                        disabled={modalOptions.isSubmitting}
                                                     >
                                                         <FaTrashCan />
                                                     </Button>

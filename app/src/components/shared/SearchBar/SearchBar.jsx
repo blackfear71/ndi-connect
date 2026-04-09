@@ -46,8 +46,9 @@ const SearchBar = () => {
     /**
      * Lance la recherche
      */
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
         const value = e.target.value;
+
         setMessage(null);
         setSearchMessage(null);
         setSearchText(value);

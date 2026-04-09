@@ -6,7 +6,7 @@ import { FaQuestionCircle } from 'react-icons/fa';
 import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
@@ -94,9 +94,9 @@ const Settings = () => {
 
             const subscriptionUsers = usersService.getAllUsers();
 
-            combineLatest([subscriptionUsers])
+            subscriptionUsers
                 .pipe(
-                    map(([dataUsers]) => {
+                    map((dataUsers) => {
                         setUsers(dataUsers.response.data);
                     }),
                     take(1),
@@ -170,8 +170,8 @@ const Settings = () => {
         // Ouverture ou fermeture
         setShowPasswordForm((prev) => !prev);
 
-        // Réinitialisation du formulaire à la fermeture
-        !showPasswordForm && resetFormPassword();
+        // Réinitialisation du formulaire à la fermeture (c'est-à-dire si le formulaire était précédemment ouvert)
+        showPasswordForm && resetFormPassword();
     };
 
     /**
@@ -185,9 +185,9 @@ const Settings = () => {
 
         const subscriptionUsers = usersService.updatePassword(formPassword);
 
-        combineLatest([subscriptionUsers])
+        subscriptionUsers
             .pipe(
-                map(([dataUsers]) => {
+                map((dataUsers) => {
                     showHidePasswordForm();
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
@@ -221,8 +221,8 @@ const Settings = () => {
         // Ouverture ou fermeture
         setShowCreateUserForm((prev) => !prev);
 
-        // Réinitialisation du formulaire à la fermeture
-        !showCreateUserForm.isOpen && resetFormCreateUser();
+        // Réinitialisation du formulaire à la fermeture (c'est-à-dire si le formulaire était précédemment ouvert)
+        showCreateUserForm.isOpen && resetFormCreateUser();
     };
 
     /**
@@ -297,9 +297,9 @@ const Settings = () => {
 
         const subscriptionUsers = usersService.resetPassword(id);
 
-        combineLatest([subscriptionUsers])
+        subscriptionUsers
             .pipe(
-                map(([dataUsers]) => {
+                map((dataUsers) => {
                     setModalOptionsUpdateUser((prev) => ({
                         ...prev,
                         message: {
@@ -335,9 +335,9 @@ const Settings = () => {
 
         const subscriptionUsers = usersService.updateUser(formUpdateUser);
 
-        combineLatest([subscriptionUsers])
+        subscriptionUsers
             .pipe(
-                map(([dataUsers]) => {
+                map((dataUsers) => {
                     openCloseUpdateUserModal();
                     setUsers(dataUsers.response.data);
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
@@ -407,9 +407,9 @@ const Settings = () => {
 
         const subscriptionUsers = usersService.deleteUser(modalOptionsConfirm.data);
 
-        combineLatest([subscriptionUsers])
+        subscriptionUsers
             .pipe(
-                map(([dataUsers]) => {
+                map((dataUsers) => {
                     openCloseConfirmModal();
                     setUsers(dataUsers.response.data);
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });

@@ -26,7 +26,7 @@ const TextCard = ({ icon, title, text, limit = 200 }) => {
             isLong,
             text: isLong ? text.slice(0, limit) + '...' : (text ?? '')
         });
-    }, [text]);
+    }, [text, limit]);
 
     /**
      * Plie ou déplie le texte

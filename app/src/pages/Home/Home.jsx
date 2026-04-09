@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline, IoLocationOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { combineLatest, of, switchMap } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { EditionsService } from '../../api';
@@ -60,9 +60,9 @@ const Home = () => {
 
         const subscriptionEditions = editionsService.getAllEditions();
 
-        combineLatest([subscriptionEditions])
+        subscriptionEditions
             .pipe(
-                map(([dataEditions]) => {
+                map((dataEditions) => {
                     groupByYear(dataEditions.response.data);
                 }),
                 take(1),

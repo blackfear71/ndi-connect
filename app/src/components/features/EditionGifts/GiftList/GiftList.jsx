@@ -129,9 +129,10 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                     {/* Supression */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                         <Button
-                            onClick={isSubmitting ? null : () => handleDelete(g)}
+                            onClick={() => handleDelete(g)}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            disabled={isSubmitting}
                         >
                             <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
                         </Button>
@@ -140,9 +141,10 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                         <Button
-                            onClick={isSubmitting ? null : () => showGiftModal(g, 'update')}
+                            onClick={() => showGiftModal(g, 'update')}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            disabled={isSubmitting}
                         >
                             <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
                         </Button>

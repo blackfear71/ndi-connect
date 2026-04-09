@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import './TimeInput.css';
 
 /**
- * Saisie date
+ * Saisie heure de début et de fin
  */
 const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valueStart, valueEnd, onChange, required = false }) => {
     return (

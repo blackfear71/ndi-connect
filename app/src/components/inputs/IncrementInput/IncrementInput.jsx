@@ -25,7 +25,6 @@ const IncrementInput = ({ title, icon, name, value, onChangeDown, onChangeUp }) 
                         <FaMinus />
                     </Button>
 
-                    {/* <div className="d-flex align-items-center justify-content-center increment-input-value">{value || 0}</div> */}
                     <div
                         className={`d-flex align-items-center justify-content-center increment-input-value ${value > 0 ? 'green' : value < 0 ? 'red' : ''}`}
                     >

@@ -51,7 +51,6 @@ const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setM
     const showUpdateUserModal = (user) => {
         if (user) {
             setFormData({
-                ...formData,
                 id: user.id,
                 level: user.level
             });
@@ -81,9 +80,10 @@ const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setM
                         {/* Supression */}
                         {(u.level !== UserRole.SUPERADMIN || u.login !== login) && (
                             <Button
-                                onClick={modalOptions.isSubmitting ? null : () => handleDelete(u)}
+                                onClick={() => handleDelete(u)}
                                 className="settings-users-button"
                                 style={{ cursor: modalOptions.isSubmitting ? 'not-allowed' : 'pointer' }}
+                                disabled={modalOptions.isSubmitting}
                             >
                                 <FaTrashCan color={modalOptions.isSubmitting ? 'gray' : 'white'} />
                             </Button>
@@ -91,9 +91,10 @@ const SettingsUsers = ({ login, users, formData, setFormData, modalOptions, setM
 
                         {/* Modification */}
                         <Button
-                            onClick={modalOptions.isSubmitting ? null : () => showUpdateUserModal(u)}
+                            onClick={() => showUpdateUserModal(u)}
                             className="settings-users-button"
                             style={{ cursor: modalOptions.isSubmitting ? 'not-allowed' : 'pointer' }}
+                            disabled={modalOptions.isSubmitting}
                         >
                             <FaAngleRight color={modalOptions.isSubmitting ? 'gray' : 'white'} />
                         </Button>

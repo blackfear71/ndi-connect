@@ -63,9 +63,10 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
                     {/* Supression */}
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
                         <Button
-                            onClick={isSubmitting ? null : () => handleDelete(p)}
+                            onClick={() => handleDelete(p)}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            disabled={isSubmitting}
                         >
                             <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
                         </Button>
@@ -73,9 +74,10 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
 
                     {/* Cadeaux */}
                     <Button
-                        onClick={isSubmitting ? null : () => showRewardModal(p)}
+                        onClick={() => showRewardModal(p)}
                         className="edition-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                        disabled={isSubmitting}
                     >
                         <FaGift color={isSubmitting ? 'gray' : 'white'} />
                     </Button>
@@ -83,9 +85,10 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
                         <Button
-                            onClick={isSubmitting ? null : () => showPlayerModal(p, 'update')}
+                            onClick={() => showPlayerModal(p, 'update')}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                            disabled={isSubmitting}
                         >
                             <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
                         </Button>

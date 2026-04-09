@@ -24,6 +24,8 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
      * Initialise l'image existante si "value" est fourni
      */
     useEffect(() => {
+        let objectUrl = null;
+
         if (value) {
             // Si c'est le nom d'un fichier existant sur le serveur
             if (typeof value === 'string') {
@@ -32,14 +34,19 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
             }
             // Si c'est un fichier saisi (File object)
             else if (value instanceof File) {
-                previewUrl && URL.revokeObjectURL(previewUrl);
-                setPreviewUrl(URL.createObjectURL(value));
+                objectUrl = URL.createObjectURL(value);
+                setPreviewUrl(objectUrl);
                 setFileName(value.name);
             }
         } else {
             setPreviewUrl(null);
             setFileName('');
         }
+
+        // Cleanup : révoque l'URL blob au prochain changement ou au démontage
+        return () => {
+            objectUrl && URL.revokeObjectURL(objectUrl);
+        };
     }, [value]);
 
     /**

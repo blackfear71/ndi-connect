@@ -32,7 +32,6 @@ const EditionGifts = ({ gifts, getIconColor, formData, setFormData, setModalOpti
     const showGiftModal = (gift, action) => {
         if (gift) {
             setFormData({
-                ...formData,
                 id: gift.id,
                 name: gift.name,
                 value: gift.value,

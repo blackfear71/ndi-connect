@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { combineLatest, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
@@ -110,20 +110,20 @@ const Edition = () => {
 
         const subscriptionEdition = editionsService.getEdition(id);
 
-        combineLatest([subscriptionEdition])
+        subscriptionEdition
             .pipe(
-                map(([dataEdition]) => {
+                map((dataEdition) => {
                     setEdition(dataEdition.response.data.edition);
                     setGifts(dataEdition.response.data.gifts);
                     setPlayers(dataEdition.response.data.players);
 
                     setFormEdition({
-                        ...formEdition,
                         location: dataEdition.response.data.edition.location,
                         startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
                         startTime: getLocalizedTime(dataEdition.response.data.edition.startDate),
                         endTime: getLocalizedTime(dataEdition.response.data.edition.endDate),
                         picture: dataEdition.response.data.edition.picture,
+                        pictureAction: null,
                         theme: dataEdition.response.data.edition.theme,
                         challenge: dataEdition.response.data.edition.challenge
                     });
@@ -157,7 +157,7 @@ const Edition = () => {
                 setPlayers(events.players);
             }
         }
-    }, [events]);
+    }, [events, gifts, players]);
 
     /**
      * Si un message d'authentification est défini on l'affiche
@@ -225,9 +225,9 @@ const Edition = () => {
 
         const subscriptionEdition = editionsService.updateEdition(edition.id, body);
 
-        combineLatest([subscriptionEdition])
+        subscriptionEdition
             .pipe(
-                map(([dataEdition]) => {
+                map((dataEdition) => {
                     // Fermeture modale
                     openCloseEditionModal('', dataEdition.response.data.edition);
                     setEdition(dataEdition.response.data.edition);
@@ -257,7 +257,7 @@ const Edition = () => {
 
         // Champs textes
         Object.entries(formEdition).forEach(([key, value]) => {
-            if (key !== 'picture') {
+            if (key !== 'picture' && value !== null) {
                 formData.append(key, value);
             }
         });
@@ -333,30 +333,27 @@ const Edition = () => {
                 break;
         }
 
-        if (subscriptionPlayers) {
-            combineLatest([subscriptionPlayers])
-                .pipe(
-                    map(([dataPlayers]) => {
-                        action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
-                        setPlayers(dataPlayers.response.data);
-                        setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
-                    }),
-                    take(1),
-                    catchError((err) => {
-                        action === 'update'
-                            ? setModalOptionsPlayer((prev) => ({
-                                  ...prev,
-                                  message: { code: err?.response?.message, type: err?.response?.status }
-                              }))
-                            : setMessage({ code: err?.response?.message, type: err?.response?.status });
-                        return of();
-                    }),
-                    finalize(() => {
-                        action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
-                    })
-                )
-                .subscribe();
-        }
+        subscriptionPlayers?.pipe(
+            map((dataPlayers) => {
+                action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
+                setPlayers(dataPlayers.response.data);
+                setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+            }),
+            take(1),
+            catchError((err) => {
+                action === 'update'
+                    ? setModalOptionsPlayer((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }))
+                    : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                return of();
+            }),
+            finalize(() => {
+                action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+            })
+        )
+        .subscribe();
     };
 
     /**
@@ -421,30 +418,27 @@ const Edition = () => {
                 break;
         }
 
-        if (subscriptionGifts) {
-            combineLatest([subscriptionGifts])
-                .pipe(
-                    map(([dataGifts]) => {
-                        openCloseGiftModal('');
-                        setGifts(dataGifts.response.data);
-                        setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
-                    }),
-                    take(1),
-                    catchError((err) => {
-                        action === 'update'
-                            ? setModalOptionsGift((prev) => ({
-                                  ...prev,
-                                  message: { code: err?.response?.message, type: err?.response?.status }
-                              }))
-                            : setMessage({ code: err?.response?.message, type: err?.response?.status });
-                        return of();
-                    }),
-                    finalize(() => {
-                        action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
-                    })
-                )
-                .subscribe();
-        }
+        subscriptionGifts?.pipe(
+            map((dataGifts) => {
+                openCloseGiftModal('');
+                setGifts(dataGifts.response.data);
+                setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
+            }),
+            take(1),
+            catchError((err) => {
+                action === 'update'
+                    ? setModalOptionsGift((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }))
+                    : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                return of();
+            }),
+            finalize(() => {
+                action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+            })
+        )
+        .subscribe();
     };
 
     /**
@@ -486,9 +480,9 @@ const Edition = () => {
 
         const subscriptionRewards = rewardsService.postReward(edition.id, formReward);
 
-        combineLatest([subscriptionRewards])
+        subscriptionRewards
             .pipe(
-                map(([dataRewards]) => {
+                map((dataRewards) => {
                     openCloseRewardModal();
                     setGifts(dataRewards.response.data.gifts);
                     setPlayers(dataRewards.response.data.players);
@@ -590,9 +584,9 @@ const Edition = () => {
 
         const subscriptionEdition = editionsService.deleteEdition(edition.id);
 
-        combineLatest([subscriptionEdition])
+        subscriptionEdition
             .pipe(
-                map(([dataEdition]) => {
+                map((dataEdition) => {
                     // Fermeture modale de confirmation
                     openCloseConfirmModal();
 
@@ -629,9 +623,9 @@ const Edition = () => {
 
         const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
 
-        combineLatest([subscriptionGifts])
+        subscriptionGifts
             .pipe(
-                map(([dataGifts]) => {
+                map((dataGifts) => {
                     openCloseConfirmModal();
                     setGifts(dataGifts.response.data);
                     setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
@@ -662,9 +656,9 @@ const Edition = () => {
 
         const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
 
-        combineLatest([subscriptionPlayers])
+        subscriptionPlayers
             .pipe(
-                map(([dataPlayers]) => {
+                map((dataPlayers) => {
                     openCloseConfirmModal();
                     setPlayers(dataPlayers.response.data);
                     setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
@@ -695,9 +689,9 @@ const Edition = () => {
 
         const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
 
-        combineLatest([subscriptionRewards])
+        subscriptionRewards
             .pipe(
-                map(([dataRewards]) => {
+                map((dataRewards) => {
                     openCloseConfirmModal();
                     setGifts(dataRewards.response.data.gifts);
                     setPlayers(dataRewards.response.data.players);
