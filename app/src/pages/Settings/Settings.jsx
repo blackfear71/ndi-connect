@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { Badge, Spinner } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
-import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
+import { FaKey, FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
+import { IoSettingsOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { of } from 'rxjs';
@@ -126,40 +127,38 @@ const Settings = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
-     * Affiche le rôle de utilisateur
+     * Affiche l'icône du rôle de l'utilisateur
      * @param {*} level Niveau utilisateur
-     * @returns Rôle utilisateur
+     * @returns Icône
      */
-    const getUserRole = (level) => {
+    const getUserRoleIcon = (level) => {
         switch (level) {
             case UserRole.USER:
-                return (
-                    <>
-                        <FaUser size={18} className="me-2" />
-                        {t(`settings.level${level}`)}
-                    </>
-                );
+                return <FaUser size={18} />;
             case UserRole.ADMIN:
-                return (
-                    <>
-                        <FaUserPlus size={18} className="me-2" />
-                        {t(`settings.level${level}`)}
-                    </>
-                );
+                return <FaUserPlus size={18} />;
             case UserRole.SUPERADMIN:
-                return (
-                    <>
-                        <FaStar size={18} className="me-2" />
-                        {t(`settings.level${level}`)}
-                    </>
-                );
+                return <FaStar size={18} />;
             default:
-                return (
-                    <>
-                        <FaQuestionCircle size={18} className="me-2" />
-                        {t('settings.unknownLevel')}
-                    </>
-                );
+                return <FaQuestionCircle size={18} />;
+        }
+    };
+
+    /**
+     * Affiche le libellé du rôle de l'utilisateur
+     * @param {*} level Niveau utilisateur
+     * @returns Libellé
+     */
+    const getUserRoleLabel = (level) => {
+        switch (level) {
+            case UserRole.USER:
+                return t(`settings.level${level}`);
+            case UserRole.ADMIN:
+                return t(`settings.level${level}`);
+            case UserRole.SUPERADMIN:
+                return t(`settings.level${level}`);
+            default:
+                return t('settings.unknownLevel');
         }
     };
 
@@ -440,14 +439,40 @@ const Settings = () => {
                     {/* Paramètres */}
                     {auth.isLoggedIn && (
                         <>
-                            {/* Niveau */}
-                            <Badge bg="warning" text="dark" className="fs-6 p-2 d-inline-flex align-items-center">
-                                {getUserRole(auth.level)}
-                            </Badge>
+                            {/* Titre */}
+                            <h1 className="d-flex align-items-center gap-2">
+                                <IoSettingsOutline size={30} />
+                                {t('settings.settingsTitle')}
+                            </h1>
+
+                            {/* Utilisateur */}
+                            <div className="d-flex align-items-center gap-2 p-2 mt-3 settings-item">
+                                {/* Icône */}
+                                <div className="d-flex align-items-center justify-content-center settings-item-icon">
+                                    {getUserRoleIcon(auth.level)}
+                                </div>
+
+                                {/* Identifiant et rôle */}
+                                <div className="d-flex flex-column flex-grow-1 settings-item-name">
+                                    <span className="settings-item-ellipsis-text">{auth.login}</span>
+                                    <div className="d-flex align-items-center gap-2 settings-item-role">{getUserRoleLabel(auth.level)}</div>
+                                </div>
+
+                                {/* Mot de passe */}
+                                <Button
+                                    // TODO : ouvrir une modale mot de passe
+                                    // onClick={() => showPlayerModal(p, 'update')}
+                                    className="settings-item-button"
+                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                                    disabled={isSubmitting}
+                                >
+                                    <FaKey color={isSubmitting ? 'gray' : 'white'} />
+                                </Button>
+                            </div>
 
                             {/* Description */}
                             {auth.level !== '' && (
-                                <p className="text-white mt-2 ps-2 settings-description-border">
+                                <p className="text-white mt-2 px-2 py-1 settings-description">
                                     {t(`settings.levelDescription${auth.level}`)}
                                 </p>
                             )}
@@ -502,7 +527,7 @@ const Settings = () => {
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUpdateUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === formUpdateUser.id)}
-                            getUserRole={getUserRole}
+                            getUserRole={getUserRoleLabel}
                             formData={formUpdateUser}
                             setFormData={setFormUpdateUser}
                             modalOptions={modalOptionsUpdateUser}

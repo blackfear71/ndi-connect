@@ -1,3 +1,69 @@
+.settings-item {
+    background-color: #162f57;
+    border: 1px solid #1f375e;
+    border-radius: 5px;
+}
+
+.settings-item-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fdd343;
+    color: black;
+}
+
+.settings-item-name {
+    color: white;
+    min-width: 0;
+}
+
+.settings-item-ellipsis-text {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+    font-size: large;
+}
+
+.settings-item-role {
+    text-transform: uppercase;
+    font-size: x-small;
+    font-weight: 600;
+}
+
+.settings-item-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #223c66 !important;
+    color: white !important;
+    border: none !important;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.settings-item-button:hover,
+.settings-item-button:active {
+    background-color: #1f375e !important;
+}
+
+.settings-description {
+    text-align: justify;
+    border-radius: 5px;
+    background-color: #162f57;
+    border: 1px solid #1f375e;
+    border-left: 4px solid #fdd343;
+}
+
+
+
+
+
+
+
+/* TODO : à nettoyer */
 .settings-form .form-control {
     border: none !important;
     box-shadow: none !important;

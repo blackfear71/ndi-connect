@@ -172,6 +172,7 @@
         "oldPassword": "Old password",
         "password": "Password",
         "resetPassword": "Reset password",
+        "settingsTitle": "Settings",
         "showCreateUserForm": "Create user",
         "unknownLevel": "Unknown role",
         "updateLevel": "Edit role",
