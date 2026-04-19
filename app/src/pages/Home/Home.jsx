@@ -249,7 +249,7 @@ const Home = () => {
                     {message && <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />}
 
                     {/* Titre */}
-                    <h1>
+                    <h1 className="d-flex align-items-center gap-2">
                         {editionsByYear && editionsByYear.length > 0 ? (
                             <>
                                 <IoLocationOutline size={30} />

@@ -333,27 +333,28 @@ const Edition = () => {
                 break;
         }
 
-        subscriptionPlayers?.pipe(
-            map((dataPlayers) => {
-                action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
-                setPlayers(dataPlayers.response.data);
-                setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
-            }),
-            take(1),
-            catchError((err) => {
-                action === 'update'
-                    ? setModalOptionsPlayer((prev) => ({
-                        ...prev,
-                        message: { code: err?.response?.message, type: err?.response?.status }
-                    }))
-                    : setMessage({ code: err?.response?.message, type: err?.response?.status });
-                return of();
-            }),
-            finalize(() => {
-                action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
-            })
-        )
-        .subscribe();
+        subscriptionPlayers
+            ?.pipe(
+                map((dataPlayers) => {
+                    action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
+                    setPlayers(dataPlayers.response.data);
+                    setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    action === 'update'
+                        ? setModalOptionsPlayer((prev) => ({
+                              ...prev,
+                              message: { code: err?.response?.message, type: err?.response?.status }
+                          }))
+                        : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+                })
+            )
+            .subscribe();
     };
 
     /**
@@ -418,27 +419,28 @@ const Edition = () => {
                 break;
         }
 
-        subscriptionGifts?.pipe(
-            map((dataGifts) => {
-                openCloseGiftModal('');
-                setGifts(dataGifts.response.data);
-                setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
-            }),
-            take(1),
-            catchError((err) => {
-                action === 'update'
-                    ? setModalOptionsGift((prev) => ({
-                        ...prev,
-                        message: { code: err?.response?.message, type: err?.response?.status }
-                    }))
-                    : setMessage({ code: err?.response?.message, type: err?.response?.status });
-                return of();
-            }),
-            finalize(() => {
-                action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
-            })
-        )
-        .subscribe();
+        subscriptionGifts
+            ?.pipe(
+                map((dataGifts) => {
+                    openCloseGiftModal('');
+                    setGifts(dataGifts.response.data);
+                    setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
+                }),
+                take(1),
+                catchError((err) => {
+                    action === 'update'
+                        ? setModalOptionsGift((prev) => ({
+                              ...prev,
+                              message: { code: err?.response?.message, type: err?.response?.status }
+                          }))
+                        : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                    return of();
+                }),
+                finalize(() => {
+                    action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+                })
+            )
+            .subscribe();
     };
 
     /**
@@ -740,15 +742,13 @@ const Edition = () => {
                         {edition && (
                             <>
                                 {/* Titre */}
-                                <div>
-                                    <h1 className="d-flex align-items-center gap-2">
-                                        <FaComputer size={30} />
-                                        {t('edition.editionTitle', {
-                                            year: new Date(edition.startDate).getFullYear(),
-                                            location: edition.location
-                                        })}
-                                    </h1>
-                                </div>
+                                <h1 className="d-flex align-items-center gap-2">
+                                    <FaComputer size={30} />
+                                    {t('edition.editionTitle', {
+                                        year: new Date(edition.startDate).getFullYear(),
+                                        location: edition.location
+                                    })}
+                                </h1>
 
                                 {/* Onglets */}
                                 <Tabs
