@@ -168,7 +168,6 @@
         "manageUser": "Gérer l'utilisateur",
         "manageUsers": "Gestion des utilisateurs",
         "newPassword": "Nouveau mot de passe",
-        "noUsers": "Aucun utilisateur",
         "oldPassword": "Ancien mot de passe",
         "password": "Mot de passe",
         "resetPassword": "Réinitialiser le mot de passe",
@@ -176,6 +175,7 @@
         "showCreateUserForm": "Créer un utilisateur",
         "unknownLevel": "Rôle inconnu",
         "updateLevel": "Modifier le rôle",
-        "updatePassword": "Modifier le mot de passe"
+        "updatePassword": "Modifier le mot de passe",
+        "users": "Utilisateurs"
     }
 }

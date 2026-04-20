@@ -168,7 +168,6 @@
         "manageUser": "Manage user",
         "manageUsers": "User management",
         "newPassword": "New password",
-        "noUsers": "No users",
         "oldPassword": "Old password",
         "password": "Password",
         "resetPassword": "Reset password",
@@ -176,6 +175,7 @@
         "showCreateUserForm": "Create user",
         "unknownLevel": "Unknown role",
         "updateLevel": "Edit role",
-        "updatePassword": "Change password"
+        "updatePassword": "Change password",
+        "users": "Users"
     }
 }

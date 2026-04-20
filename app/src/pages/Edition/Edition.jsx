@@ -782,7 +782,6 @@ const Edition = () => {
                                         <EditionGifts
                                             gifts={gifts}
                                             getIconColor={getIconColor}
-                                            formData={formGift}
                                             setFormData={setFormGift}
                                             setModalOptions={setModalOptionsGift}
                                             onConfirm={openCloseConfirmModal}

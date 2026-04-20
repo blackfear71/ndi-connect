@@ -74,6 +74,7 @@ const SettingsCreateUser = ({ formData, setFormData, showForm, showFormMethod, s
 
     return (
         <>
+            {/* TODO : réutiliser modale de modification utilisateur en mode création */}
             {/* Titre */}
             <h1>{t('settings.createUser')}</h1>
 

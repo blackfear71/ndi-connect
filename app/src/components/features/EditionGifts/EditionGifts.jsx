@@ -13,7 +13,8 @@ import GiftList from './GiftList/GiftList';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, getIconColor, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+// TODO : voir pour les getIconColor aussi pour l'appliquer à la liste au lieu d'envoyer la méthode
+const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 

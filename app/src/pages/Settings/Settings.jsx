@@ -12,7 +12,7 @@ import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
 
-import { SettingsCreateUser, SettingsPassword, SettingsUsers } from '../../components/features';
+import { SettingsCreateUser, SettingsPassword, SettingsUserList } from '../../components/features';
 import { ConfirmModal, SettingsModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
@@ -98,7 +98,7 @@ const Settings = () => {
             subscriptionUsers
                 .pipe(
                     map((dataUsers) => {
-                        setUsers(dataUsers.response.data);
+                        setUsers(processUserDatas(dataUsers.response.data));
                     }),
                     take(1),
                     catchError((err) => {
@@ -127,38 +127,32 @@ const Settings = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
-     * Affiche l'icône du rôle de l'utilisateur
-     * @param {*} level Niveau utilisateur
-     * @returns Icône
+     * Enrichit les données utilisateurs avec les informations de rôle
+     * @param {*} usersData Données utilisateurs
+     * @returns Données utilisateurs enrichies
      */
-    const getUserRoleIcon = (level) => {
-        switch (level) {
-            case UserRole.USER:
-                return <FaUser size={18} />;
-            case UserRole.ADMIN:
-                return <FaUserPlus size={18} />;
-            case UserRole.SUPERADMIN:
-                return <FaStar size={18} />;
-            default:
-                return <FaQuestionCircle size={18} />;
-        }
+    const processUserDatas = (usersData) => {
+        return usersData.map((user) => ({
+            ...user,
+            role: getUserRole(user.level)
+        }));
     };
 
     /**
-     * Affiche le libellé du rôle de l'utilisateur
+     * Récupère les données du rôle de l'utilisateur
      * @param {*} level Niveau utilisateur
-     * @returns Libellé
+     * @returns Données du rôle
      */
-    const getUserRoleLabel = (level) => {
+    const getUserRole = (level) => {
         switch (level) {
             case UserRole.USER:
-                return t(`settings.level${level}`);
+                return { label: t(`settings.level${level}`), icon: <FaUser size={18} /> };
             case UserRole.ADMIN:
-                return t(`settings.level${level}`);
+                return { label: t(`settings.level${level}`), icon: <FaUserPlus size={18} /> };
             case UserRole.SUPERADMIN:
-                return t(`settings.level${level}`);
+                return { label: t(`settings.level${level}`), icon: <FaStar size={18} /> };
             default:
-                return t('settings.unknownLevel');
+                return { label: t('settings.unknownLevel'), icon: <FaQuestionCircle size={18} /> };
         }
     };
 
@@ -242,7 +236,7 @@ const Settings = () => {
                 switchMap(() => usersService.getAllUsers()),
                 map((dataUsers) => {
                     showHideCreateUserForm();
-                    setUsers(dataUsers.response.data);
+                    setUsers(processUserDatas(dataUsers.response.data));
                 }),
                 take(1),
                 catchError((err) => {
@@ -338,7 +332,7 @@ const Settings = () => {
             .pipe(
                 map((dataUsers) => {
                     openCloseUpdateUserModal();
-                    setUsers(dataUsers.response.data);
+                    setUsers(processUserDatas(dataUsers.response.data));
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
@@ -410,7 +404,7 @@ const Settings = () => {
             .pipe(
                 map((dataUsers) => {
                     openCloseConfirmModal();
-                    setUsers(dataUsers.response.data);
+                    setUsers(processUserDatas(dataUsers.response.data));
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -445,22 +439,26 @@ const Settings = () => {
                                 {t('settings.settingsTitle')}
                             </h1>
 
+                            {/* TODO : faire des Tabs avec des composants pour chaque tab, attention si l'utilisateur n'a pas les droits suffisants, pas besoin des tabs */}
+
                             {/* Utilisateur */}
                             <div className="d-flex align-items-center gap-2 p-2 mt-3 settings-item">
                                 {/* Icône */}
                                 <div className="d-flex align-items-center justify-content-center settings-item-icon">
-                                    {getUserRoleIcon(auth.level)}
+                                    {getUserRole(auth.level)?.icon}
                                 </div>
 
                                 {/* Identifiant et rôle */}
                                 <div className="d-flex flex-column flex-grow-1 settings-item-name">
                                     <span className="settings-item-ellipsis-text">{auth.login}</span>
-                                    <div className="d-flex align-items-center gap-2 settings-item-role">{getUserRoleLabel(auth.level)}</div>
+                                    <div className="d-flex align-items-center gap-2 settings-item-role">
+                                        {getUserRole(auth.level)?.label}
+                                    </div>
                                 </div>
 
                                 {/* Mot de passe */}
                                 <Button
-                                    // TODO : ouvrir une modale mot de passe
+                                    // TODO : ouvrir une nouvelle modale mot de passe
                                     // onClick={() => showPlayerModal(p, 'update')}
                                     className="settings-item-button"
                                     style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
@@ -508,15 +506,17 @@ const Settings = () => {
 
                                     {/* Gestion utilisateurs */}
                                     <div className="settings-form mt-3">
-                                        <SettingsUsers
-                                            login={auth.login}
-                                            users={users}
-                                            formData={formUpdateUser}
-                                            setFormData={setFormUpdateUser}
-                                            modalOptions={modalOptionsUpdateUser}
-                                            setModalOptions={setModalOptionsUpdateUser}
-                                            onConfirm={openCloseConfirmModal}
-                                        />
+                                        {users && users.length > 0 && (
+                                            <SettingsUserList
+                                                login={auth.login}
+                                                users={users}
+                                                title={t('settings.users')}
+                                                setFormData={setFormUpdateUser}
+                                                modalOptions={modalOptionsUpdateUser}
+                                                setModalOptions={setModalOptionsUpdateUser}
+                                                onConfirm={openCloseConfirmModal}
+                                            />
+                                        )}
                                     </div>
                                 </>
                             )}
@@ -527,7 +527,6 @@ const Settings = () => {
                     {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUpdateUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === formUpdateUser.id)}
-                            getUserRole={getUserRoleLabel}
                             formData={formUpdateUser}
                             setFormData={setFormUpdateUser}
                             modalOptions={modalOptionsUpdateUser}

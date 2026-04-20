@@ -8,7 +8,7 @@ import { Message } from '../../../components/shared';
 
 import './SettingsModal.css';
 
-const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit }) => {
+const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -96,7 +96,7 @@ const SettingsModal = ({ user, getUserRole, formData, setFormData, modalOptions,
                                     </Badge>
 
                                     <Badge bg="warning" text="dark" className="fs-6 p-2 mt-2 d-inline-flex align-items-center">
-                                        {getUserRole(user.level)}
+                                        {user.role?.label}
                                     </Badge>
                                 </div>
 
