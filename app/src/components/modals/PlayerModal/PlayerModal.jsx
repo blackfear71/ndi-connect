@@ -207,7 +207,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Modification du participant */}
                         <div className="modal-group">
-                            <div className="modal-group-content gap-2">
+                            <div className="modal-group-content">
                                 <TextInput
                                     title={t('edition.updateName')}
                                     icon={<PiUserListFill />}

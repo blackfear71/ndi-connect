@@ -157,7 +157,7 @@ const EditionPlayers = ({
                                     <TextInput
                                         name={'name'}
                                         ref={nameInputRef}
-                                        className={'edition-players-entry'}
+                                        className={'edition-players-entry'} // TODO : voir si className est toujours utile une fois remplacé par la modale
                                         placeholder={t('edition.name')}
                                         value={formPlayer.name}
                                         onChange={handleChange}

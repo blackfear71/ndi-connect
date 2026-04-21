@@ -57,22 +57,7 @@
     border-left: 4px solid #fdd343;
 }
 
-.settings-subtitle {
-    color: white;
-    font-size: x-large;
-    font-style: italic;
-}
 
-.settings-subtitle .badge {
-    background-color: #29334d !important;
-    border: 2px solid #4a4a4c !important;
-    color: #fdd343 !important;
-    word-wrap: break-word;
-    white-space: normal;
-    text-align: left;
-    flex-shrink: 1;
-    min-width: 0;
-}
 
 
 

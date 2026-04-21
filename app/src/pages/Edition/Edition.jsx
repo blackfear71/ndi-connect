@@ -95,7 +95,11 @@ const Edition = () => {
         message: null,
         isSubmitting: false
     });
-    const [modalOptionsReward, setModalOptionsReward] = useState({ isOpen: false, message: null, isSubmitting: false });
+    const [modalOptionsReward, setModalOptionsReward] = useState({
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
 
     // API states
     const [edition, setEdition] = useState();

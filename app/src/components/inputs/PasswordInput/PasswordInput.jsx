@@ -8,7 +8,7 @@ import './PasswordInput.css';
 /**
  * Saisie de mot de passe
  */
-const PasswordInput = ({ ref, name, placeholder, value, handleChange }) => {
+const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, maxLength, required = false }) => {
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 
@@ -20,22 +20,47 @@ const PasswordInput = ({ ref, name, placeholder, value, handleChange }) => {
     };
 
     return (
-        <InputGroup className="mt-2">
-            <Form.Control
-                ref={ref}
-                type={showPassword ? 'text' : 'password'}
-                name={name}
-                placeholder={placeholder}
-                className="password-input"
-                value={value}
-                onChange={handleChange}
-                maxLength={100}
-                required
-            />
-            <Button onClick={() => toggleVisibility()} tabIndex={-1} className="password-input-button">
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </Button>
-        </InputGroup>
+        <div className="d-flex flex-column gap-1">
+            {/* Titre */}
+            {title && (
+                <div className="modal-group-content-title">
+                    {title}
+                    {required && <span className="required-star">*</span>}
+                </div>
+            )}
+
+            <div className="d-flex align-items-center gap-2">
+                {/* Icône */}
+                {icon && <div className="modal-input-icon">{icon}</div>}
+
+                {/* Saisie */}
+                <Form.Group className="w-100" controlId={name}>
+                    <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
+
+                    <InputGroup>
+                        <Form.Control
+                            ref={ref}
+                            type={showPassword ? 'text' : 'password'}
+                            name={name}
+                            placeholder={placeholder}
+                            className="password-input"
+                            value={value}
+                            onChange={onChange}
+                            maxLength={maxLength}
+                            required
+                        />
+
+                        <Button
+                            onClick={() => toggleVisibility()}
+                            tabIndex={-1}
+                            className="d-flex align-items-center password-input-button"
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </Button>
+                    </InputGroup>
+                </Form.Group>
+            </div>
+        </div>
     );
 };
 

@@ -154,6 +154,7 @@
         "settings": "Paramètres"
     },
     "settings": {
+        "addUser": "Ajouter un utilisateur",
         "chooseLevel": "Choisir le niveau",
         "confirmPassword": "Confirmer le mot de passe",
         "createUser": "Créer un utilisateur",
@@ -166,8 +167,9 @@
         "levelDescription2": "Le super administrateur possède tous les droits sur l'application, il peut gérer de manière étendue les éditions, les participants, les cadeaux et les utilisateurs.",
         "login": "Identifiant",
         "manageUser": "Gérer l'utilisateur",
-        "manageUsers": "Gestion des utilisateurs",
+        "manageUsers": "Gestion",
         "newPassword": "Nouveau mot de passe",
+        "noUsers": "Aucun utilisateur",
         "oldPassword": "Ancien mot de passe",
         "password": "Mot de passe",
         "resetPassword": "Réinitialiser le mot de passe",
@@ -175,7 +177,6 @@
         "showCreateUserForm": "Créer un utilisateur",
         "unknownLevel": "Rôle inconnu",
         "updateLevel": "Modifier le rôle",
-        "updatePassword": "Modifier le mot de passe",
-        "users": "Utilisateurs"
+        "updatePassword": "Modifier le mot de passe"
     }
 }

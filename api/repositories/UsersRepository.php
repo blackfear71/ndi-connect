@@ -12,7 +12,7 @@ class UsersRepository extends Model
     {
         $data['token'] = $token;
 
-        $sql = "SELECT login, level FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
+        $sql = "SELECT id, login, level FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($data);
         return $stmt->fetch(PDO::FETCH_ASSOC);

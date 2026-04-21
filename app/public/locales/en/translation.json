@@ -154,6 +154,7 @@
         "settings": "Settings"
     },
     "settings": {
+        "addUser": "Add a user",
         "chooseLevel": "Choose level",
         "confirmPassword": "Confirm password",
         "createUser": "Create user",
@@ -166,8 +167,9 @@
         "levelDescription2": "The super administrator has full rights on the application; he can fully manage editions, participants, gifts and users.",
         "login": "Username",
         "manageUser": "Manage user",
-        "manageUsers": "User management",
+        "manageUsers": "Management",
         "newPassword": "New password",
+        "noUsers": "No users",
         "oldPassword": "Old password",
         "password": "Password",
         "resetPassword": "Reset password",
@@ -175,7 +177,6 @@
         "showCreateUserForm": "Create user",
         "unknownLevel": "Unknown role",
         "updateLevel": "Edit role",
-        "updatePassword": "Change password",
-        "users": "Users"
+        "updatePassword": "Change password"
     }
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { Button, Spinner } from 'react-bootstrap';
+import { Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
-import { FaKey, FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
+import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -12,8 +12,8 @@ import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
 
-import { SettingsCreateUser, SettingsPassword, SettingsUserList } from '../../components/features';
-import { ConfirmModal, SettingsModal } from '../../components/modals';
+import { SettingsCreateUser, SettingsUser, SettingsUserList } from '../../components/features';
+import { ConfirmModal, PasswordModal, SettingsModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
@@ -62,9 +62,18 @@ const Settings = () => {
         message: null,
         isSubmitting: false
     });
-    const [modalOptionsUpdateUser, setModalOptionsUpdateUser] = useState({ isOpen: false, message: null, isSubmitting: false });
+    const [modalOptionsPassword, setModalOptionsPassword] = useState({
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
+    const [modalOptionsUser, setModalOptionsUser] = useState({
+        action: '', // TODO à gérer entre création/update
+        isOpen: false,
+        message: null,
+        isSubmitting: false
+    });
     const [showCreateUserForm, setShowCreateUserForm] = useState(false);
-    const [showPasswordForm, setShowPasswordForm] = useState(false);
 
     // API states
     const [users, setUsers] = useState([]);
@@ -111,6 +120,10 @@ const Settings = () => {
                 )
                 .subscribe();
         } else {
+            // TODO : ici il manque une initialisation de la liste avec au moins
+            //        l'utilisateur connecté ou autre chose (chercher ses données
+            //        en base ? construire un objet avec les données d'auth ?)
+            //        pour envoyer à <SettingsUser /> si pas SUPER ADMIN
             setIsLoading(false);
         }
     }, [auth]);
@@ -157,14 +170,19 @@ const Settings = () => {
     };
 
     /**
-     * Affiche ou masque la saisie de mot de passe
+     * Ouverture/fermeture de la modale de modification mot de passe
      */
-    const showHidePasswordForm = () => {
+    const openClosePasswordModal = () => {
         // Ouverture ou fermeture
-        setShowPasswordForm((prev) => !prev);
+        setModalOptionsPassword((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen,
+            message: null,
+            isSubmitting: false
+        }));
 
-        // Réinitialisation du formulaire à la fermeture (c'est-à-dire si le formulaire était précédemment ouvert)
-        showPasswordForm && resetFormPassword();
+        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
+        modalOptionsPassword.isOpen && resetFormPassword();
     };
 
     /**
@@ -173,6 +191,7 @@ const Settings = () => {
     const handleSubmitPassword = () => {
         setMessage(null);
         setIsSubmitting(true);
+        setModalOptionsPassword((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -181,15 +200,19 @@ const Settings = () => {
         subscriptionUsers
             .pipe(
                 map((dataUsers) => {
-                    showHidePasswordForm();
+                    openClosePasswordModal();
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    setMessage({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsPassword((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
+                    setModalOptionsPassword((prev) => ({ ...prev, isSubmitting: false }));
                     setIsSubmitting(false);
                 })
             )
@@ -267,7 +290,7 @@ const Settings = () => {
      */
     const openCloseUpdateUserModal = () => {
         // Ouverture ou fermeture
-        setModalOptionsUpdateUser((prev) => ({
+        setModalOptionsUser((prev) => ({
             ...prev,
             isOpen: !prev.isOpen,
             message: null,
@@ -275,7 +298,7 @@ const Settings = () => {
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsUpdateUser.isOpen && resetFormUpdateUser();
+        modalOptionsUser.isOpen && resetFormUpdateUser();
     };
 
     /**
@@ -284,7 +307,7 @@ const Settings = () => {
      */
     const handleResetPassword = (id) => {
         setMessage(null);
-        setModalOptionsUpdateUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setModalOptionsUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -293,7 +316,7 @@ const Settings = () => {
         subscriptionUsers
             .pipe(
                 map((dataUsers) => {
-                    setModalOptionsUpdateUser((prev) => ({
+                    setModalOptionsUser((prev) => ({
                         ...prev,
                         message: {
                             code: dataUsers.response.message,
@@ -304,14 +327,14 @@ const Settings = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    setModalOptionsUpdateUser((prev) => ({
+                    setModalOptionsUser((prev) => ({
                         ...prev,
                         message: { code: err?.response?.message, type: err?.response?.status }
                     }));
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsUpdateUser((prev) => ({ ...prev, isSubmitting: false }));
+                    setModalOptionsUser((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
@@ -322,7 +345,7 @@ const Settings = () => {
      */
     const handleSubmitUpdateUser = () => {
         setMessage(null);
-        setModalOptionsUpdateUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setModalOptionsUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
@@ -336,20 +359,20 @@ const Settings = () => {
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
-                    if (auth.login === dataUsers.response.data.find((u) => u.id === formUpdateUser.id)?.login) {
+                    if (auth.id === dataUsers.response.data.find((u) => u.id === formUpdateUser.id)?.id) {
                         refreshAuth(false);
                     }
                 }),
                 take(1),
                 catchError((err) => {
-                    setModalOptionsUpdateUser((prev) => ({
+                    setModalOptionsUser((prev) => ({
                         ...prev,
                         message: { code: err?.response?.message, type: err?.response?.status }
                     }));
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsUpdateUser((prev) => ({ ...prev, isSubmitting: false }));
+                    setModalOptionsUser((prev) => ({ ...prev, isSubmitting: false }));
                 })
             )
             .subscribe();
@@ -441,96 +464,90 @@ const Settings = () => {
 
                             {/* TODO : faire des Tabs avec des composants pour chaque tab, attention si l'utilisateur n'a pas les droits suffisants, pas besoin des tabs */}
 
-                            {/* Utilisateur */}
-                            <div className="d-flex align-items-center gap-2 p-2 mt-3 settings-item">
-                                {/* Icône */}
-                                <div className="d-flex align-items-center justify-content-center settings-item-icon">
-                                    {getUserRole(auth.level)?.icon}
-                                </div>
-
-                                {/* Identifiant et rôle */}
-                                <div className="d-flex flex-column flex-grow-1 settings-item-name">
-                                    <span className="settings-item-ellipsis-text">{auth.login}</span>
-                                    <div className="d-flex align-items-center gap-2 settings-item-role">
-                                        {getUserRole(auth.level)?.label}
-                                    </div>
-                                </div>
-
-                                {/* Mot de passe */}
-                                <Button
-                                    // TODO : ouvrir une nouvelle modale mot de passe
-                                    // onClick={() => showPlayerModal(p, 'update')}
-                                    className="settings-item-button"
-                                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                                    disabled={isSubmitting}
+                            {auth.level >= UserRole.SUPERADMIN ? (
+                                <Tabs
+                                    variant="underline"
+                                    defaultActiveKey="user"
+                                    id="justify-tab-example"
+                                    className="mb-3 edition-tabs" // TODO : style à mettre en commun
+                                    justify
                                 >
-                                    <FaKey color={isSubmitting ? 'gray' : 'white'} />
-                                </Button>
-                            </div>
-
-                            {/* Description */}
-                            {auth.level !== '' && (
-                                <p className="text-white mt-2 px-2 py-1 settings-description">
-                                    {t(`settings.levelDescription${auth.level}`)}
-                                </p>
-                            )}
-
-                            {/* Gestion mot de passe */}
-                            <div className="settings-form mt-3">
-                                <SettingsPassword
-                                    formData={formPassword}
-                                    setFormData={setFormPassword}
-                                    showForm={showPasswordForm}
-                                    showFormMethod={showHidePasswordForm}
-                                    setMessage={setMessage}
-                                    onSubmit={handleSubmitPassword}
-                                    isSubmitting={isSubmitting}
-                                />
-                            </div>
-
-                            {/* Utilisateurs */}
-                            {auth.level >= UserRole.SUPERADMIN && (
-                                <>
-                                    {/* Création utilisateur */}
-                                    <div className="settings-form mt-3">
-                                        <SettingsCreateUser
-                                            formData={formCreateUser}
-                                            setFormData={setFormCreateUser}
-                                            showForm={showCreateUserForm}
-                                            showFormMethod={showHideCreateUserForm}
-                                            setMessage={setMessage}
-                                            onSubmit={handleSubmitCreateUser}
+                                    {/* Utilisateur connecté */}
+                                    <Tab eventKey="user" title={t('settings.level0')}>
+                                        <SettingsUser
+                                            user={users.find((u) => u.id === auth.id)}
+                                            formPassword={formPassword}
+                                            setFormPassword={setFormPassword}
+                                            setModalOptionsPassword={setModalOptionsPassword}
                                             isSubmitting={isSubmitting}
                                         />
-                                    </div>
+                                    </Tab>
 
                                     {/* Gestion utilisateurs */}
-                                    <div className="settings-form mt-3">
-                                        {users && users.length > 0 && (
+                                    <Tab eventKey="users" title={t('settings.manageUsers')}>
+                                        {/* Création utilisateur */}
+                                        {/* TODO : à remplacer par une modale */}
+                                        <div className="settings-form mt-3">
+                                            <SettingsCreateUser
+                                                formData={formCreateUser}
+                                                setFormData={setFormCreateUser}
+                                                showForm={showCreateUserForm}
+                                                showFormMethod={showHideCreateUserForm}
+                                                setMessage={setMessage}
+                                                onSubmit={handleSubmitCreateUser}
+                                                isSubmitting={isSubmitting}
+                                            />
+                                        </div>
+
+                                        {/* Gestion utilisateurs */}
+                                        <div className="settings-form mt-3">
+                                            {/* TODO : gérer liste vide à l'intérieur comme EditionPlayers */}
                                             <SettingsUserList
                                                 login={auth.login}
                                                 users={users}
-                                                title={t('settings.users')}
                                                 setFormData={setFormUpdateUser}
-                                                modalOptions={modalOptionsUpdateUser}
-                                                setModalOptions={setModalOptionsUpdateUser}
+                                                modalOptions={modalOptionsUser}
+                                                setModalOptions={setModalOptionsUser}
                                                 onConfirm={openCloseConfirmModal}
                                             />
-                                        )}
-                                    </div>
+                                        </div>
+                                    </Tab>
+                                </Tabs>
+                            ) : (
+                                <>
+                                    {/* Utilisateur connecté */}
+                                    <SettingsUser
+                                        user={users.find((u) => u.id === auth.id)}
+                                        formPassword={formPassword}
+                                        setFormPassword={setFormPassword}
+                                        setModalOptionsPassword={setModalOptionsPassword}
+                                        isSubmitting={isSubmitting}
+                                    />
                                 </>
                             )}
                         </>
                     )}
 
-                    {/* Modale de modification d'utilisateur' */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUpdateUser.isOpen && (
+                    {/* Modale de modification de mot de passe */}
+                    {auth.isLoggedIn && modalOptionsPassword.isOpen && (
+                        <PasswordModal
+                            formData={formPassword}
+                            setFormData={setFormPassword}
+                            modalOptions={modalOptionsPassword}
+                            setModalOptions={setModalOptionsPassword}
+                            onClose={openClosePasswordModal}
+                            onSubmit={handleSubmitPassword}
+                        />
+                    )}
+
+                    {/* Modale de modification d'utilisateur */}
+                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === formUpdateUser.id)}
                             formData={formUpdateUser}
                             setFormData={setFormUpdateUser}
-                            modalOptions={modalOptionsUpdateUser}
-                            setModalOptions={setModalOptionsUpdateUser}
+                            modalOptions={modalOptionsUser}
+                            setModalOptions={setModalOptionsUser}
                             onReset={handleResetPassword}
                             onClose={openCloseUpdateUserModal}
                             onSubmit={handleSubmitUpdateUser}

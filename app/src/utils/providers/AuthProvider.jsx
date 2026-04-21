@@ -20,9 +20,10 @@ const AuthProvider = ({ children }) => {
 
     // Local states
     const [auth, setAuth] = useState({
-        isLoggedIn: false,
+        id: null,
         login: null,
-        level: 0
+        level: 0,
+        isLoggedIn: false
     });
     const [authLoading, setAuthLoading] = useState(true);
     const [authMessage, setAuthMessage] = useState(null);
@@ -151,9 +152,10 @@ const AuthProvider = ({ children }) => {
      */
     const persistAuth = (data) => {
         setAuth({
-            isLoggedIn: true,
+            id: data.id,
             login: data.login,
-            level: data.level
+            level: data.level,
+            isLoggedIn: true
         });
     };
     /**
@@ -161,9 +163,10 @@ const AuthProvider = ({ children }) => {
      */
     const resetAuth = () => {
         setAuth({
-            isLoggedIn: false,
+            id: null,
             login: null,
-            level: 0
+            level: 0,
+            isLoggedIn: false
         });
     };
 

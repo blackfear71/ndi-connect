@@ -1,3 +1,4 @@
+/* TODO : en faire un style commun */
 .edition-tabs .nav-link {
     color: white !important;
     border-color: white !important;
@@ -8,6 +9,7 @@
     border-color: #ffcf68 !important;
 }
 
+/* TODO : style à mettre en commun avec settings */
 .edition-empty {
     background-color: #163c76;
     color: white;

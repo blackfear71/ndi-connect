@@ -130,8 +130,8 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
 
                         {/* Formulaire */}
                         <div className="modal-group">
-                            {/* Nom */}
                             <div className="modal-group-content gap-2">
+                                {/* Nom */}
                                 <TextInput
                                     title={t('edition.name')}
                                     icon={<IoGiftSharp />}

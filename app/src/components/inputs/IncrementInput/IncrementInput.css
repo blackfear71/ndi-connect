@@ -8,7 +8,8 @@
     color: black !important;
 }
 
-.increment-input-button:hover {
+.increment-input-button:hover,
+.increment-input-button:active {
     background-color: #e9ecef !important;
     border-color: #adb5bd !important;
 }
