@@ -43,12 +43,7 @@ const SettingsUsers = ({ users, setFormData, setModalOptions, onConfirm, isSubmi
             {/* Liste */}
             {users && users.length > 0 ? (
                 <div className="mt-3">
-                    <UserList
-                        users={users}
-                        onConfirm={onConfirm}
-                        showUserModal={showUserModal}
-                        isSubmitting={isSubmitting}
-                    />
+                    <UserList users={users} onConfirm={onConfirm} showUserModal={showUserModal} isSubmitting={isSubmitting} />
                 </div>
             ) : (
                 <div className="px-2 py-3 mt-2 page-empty">{t('settings.noUsers')}</div>

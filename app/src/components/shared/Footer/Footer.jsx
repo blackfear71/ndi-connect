@@ -6,6 +6,9 @@ import flagFr from '../../../assets/icons/flag-fr.svg';
 
 import './Footer.css';
 
+/**
+ * Pied de page
+ */
 const Footer = () => {
     // Traductions
     const { i18n, t } = useTranslation();

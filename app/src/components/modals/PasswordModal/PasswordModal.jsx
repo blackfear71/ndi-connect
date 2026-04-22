@@ -7,6 +7,9 @@ import { HiKey, HiOutlineKey } from 'react-icons/hi2';
 import { PasswordInput } from '../../inputs';
 import { Message } from '../../shared';
 
+/**
+ * Modale mot de passe
+ */
 const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();

@@ -168,6 +168,7 @@
         "login": "Username",
         "manageUser": "Manage user",
         "manageUsers": "Management",
+        "me": "(me)",
         "newPassword": "New password",
         "noUsers": "No users",
         "oldPassword": "Old password",

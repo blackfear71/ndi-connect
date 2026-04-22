@@ -12,6 +12,9 @@ import { Message } from '../../../components/shared';
 
 import { EnumAction } from '../../../enums';
 
+/**
+ * Modale cadeau
+ */
 const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();

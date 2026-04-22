@@ -8,6 +8,9 @@ import { Message } from '../../../components/shared';
 
 import './SettingsModal.css';
 
+/**
+ * Modale utilisateur
+ */
 const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();

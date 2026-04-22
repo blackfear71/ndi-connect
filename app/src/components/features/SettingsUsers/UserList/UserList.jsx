@@ -38,7 +38,9 @@ const UserList = ({ users, onConfirm, showUserModal, isSubmitting }) => {
 
                     {/* Identifiant et rôle */}
                     <div className="d-flex flex-column flex-grow-1 settings-item-name">
-                        <span className="settings-item-ellipsis-text">{u.login}</span>
+                        <span className="settings-item-ellipsis-text">
+                            {u.login} {u.login === auth.login && t('settings.me')}
+                        </span>
                         <div className="d-flex align-items-center gap-2 settings-item-role">{u.role?.label}</div>
                     </div>
 

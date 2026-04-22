@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { HiKey } from 'react-icons/hi2';
 
 /**
- * Gestion des utilisateurs
+ * Gestion de l'utilisateur connecté
  */
 const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPassword, isSubmitting }) => {
     // Traductions

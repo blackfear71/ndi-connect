@@ -5,7 +5,7 @@ import { Footer, NavBar } from '../../../components/shared';
 import './Layout.css';
 
 /**
- * Composant zone d'affichage globale
+ * Zone d'affichage globale
  */
 const Layout = () => {
     return (

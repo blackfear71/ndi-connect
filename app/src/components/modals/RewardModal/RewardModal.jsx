@@ -14,6 +14,9 @@ import { EnumUserRole } from '../../../enums';
 
 import './RewardModal.css';
 
+/**
+ * Modale récompense
+ */
 const RewardModal = ({
     player,
     gifts,

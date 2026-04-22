@@ -9,7 +9,7 @@ import { EnumAction } from '../../../enums';
 import './PictureInput.css';
 
 /**
- * Saisie d'image avec aperçu et suppression
+ * Saisie image avec aperçu et suppression
  */
 const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmitting, required = false }) => {
     // Traductions

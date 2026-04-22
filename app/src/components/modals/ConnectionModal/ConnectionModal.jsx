@@ -11,6 +11,9 @@ import { useAuth } from '../../../utils/context/AuthContext';
 
 import './ConnectionModal.css';
 
+/**
+ * Modale de connexion
+ */
 const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { setAuthMessage } = useAuth();

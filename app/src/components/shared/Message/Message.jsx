@@ -6,6 +6,9 @@ import { useTranslation } from 'react-i18next';
 
 import { getMessageTranslationKey } from '../../../utils/helpers/messageHelper';
 
+/**
+ * Message
+ */
 const Message = ({ code, params = {}, type = 'error', setMessage }) => {
     // Traductions
     const { t } = useTranslation();

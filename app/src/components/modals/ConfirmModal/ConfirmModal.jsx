@@ -6,6 +6,9 @@ import { FaQuestionCircle } from 'react-icons/fa';
 
 import { Message } from '../../../components/shared';
 
+/**
+ * Modale de confirmation
+ */
 const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction }) => {
     // Traductions
     const { t } = useTranslation();
