@@ -1,3 +1,4 @@
+export { default as ConfirmInput } from './ConfirmInput/ConfirmInput';
 export { default as DateInput } from './DateInput/DateInput';
 export { default as IncrementInput } from './IncrementInput/IncrementInput';
 export { default as PasswordInput } from './PasswordInput/PasswordInput';

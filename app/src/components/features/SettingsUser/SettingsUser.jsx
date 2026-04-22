@@ -48,7 +48,7 @@ const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPass
                     style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                     disabled={isSubmitting}
                 >
-                    <HiKey color={isSubmitting ? 'gray' : 'white'} />
+                    <HiKey className="svg-large" color={isSubmitting ? 'gray' : 'white'} />
                 </Button>
             </div>
 

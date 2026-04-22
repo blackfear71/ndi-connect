@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa6';
 import { HiIdentification, HiKey } from 'react-icons/hi';
 
-import { PasswordInput, SelectInput, TextInput } from '../../../components/inputs';
+import { ConfirmInput, PasswordInput, SelectInput, TextInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
 import { EnumAction } from '../../../enums';
@@ -21,7 +22,6 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
 
     // Local states
     const loginInputRef = useRef(null);
-    const [confirmReset, setConfirmReset] = useState(false);
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -62,21 +62,6 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
             ...prev,
             level: parseInt(e.target.value)
         }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission (réinitialisation mot de passe)
-     * @param {*} e Evènement
-     */
-    const handleReset = (e) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Remise en place des boutons de confirmation de réinitialisation de mot de passe
-        setConfirmReset(false);
-
-        // Soumets le formulaire
-        onReset(user.id);
     };
 
     /**
@@ -127,6 +112,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
                     <Modal.Header closeButton>
                         <Modal.Title>
+                            <FaUser />
                             {modalOptions.action === EnumAction.CREATE ? t('settings.createUser') : t('settings.manageUser')}
                         </Modal.Title>
                     </Modal.Header>
@@ -221,24 +207,11 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                         {modalOptions.action === EnumAction.UPDATE && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
-                                    <div className="modal-section-title mt-3">{t('settings.resetPassword')}</div>
-
-                                    {/* Confirmation de réinitialisation */}
-                                    {!confirmReset ? (
-                                        <Button type="button" className="settings-button mt-2" onClick={() => setConfirmReset(true)}>
-                                            {t('common.reset')}
-                                        </Button>
-                                    ) : (
-                                        <div className="d-flex gap-2 mt-2">
-                                            <Button type="button" variant="secondary" onClick={() => setConfirmReset(false)}>
-                                                {t('common.cancel')}
-                                            </Button>
-
-                                            <Button type="button" variant="danger" onClick={(event) => handleReset(event)}>
-                                                {t('common.confirm')}
-                                            </Button>
-                                        </div>
-                                    )}
+                                    <ConfirmInput
+                                        title={t('settings.resetPassword')}
+                                        buttonLabel={t('common.reset')}
+                                        onConfirm={() => onReset(user.id)}
+                                    />
                                 </div>
                             </div>
                         )}

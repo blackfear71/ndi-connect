@@ -49,35 +49,16 @@
     background-color: #1f375e !important;
 }
 
+.settings-item-button .svg-large {
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0;
+}
+
 .settings-description {
     text-align: justify;
     border-radius: 5px;
     background-color: #162f57;
     border: 1px solid #1f375e;
     border-left: 4px solid #fdd343;
-}
-
-
-
-
-
-
-
-
-/* TODO : à nettoyer (supprimer) */
-.settings-button {
-    background-color: #163c76 !important;
-    color: white !important;
-    border: none !important;
-    height: 36px;
-    cursor: pointer;
-}
-
-.settings-button:hover,
-.settings-button:active {
-    background-color: #0a2f68 !important;
-}
-
-.settings-description-border {
-    border-left: solid 4px white;
 }

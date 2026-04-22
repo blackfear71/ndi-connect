@@ -4,11 +4,11 @@
 - EditionModal    : icone -> OK | refonte -> OK
 - GiftModal       : icone -> OK | refonte -> OK
 - PlayerModal     : icone -> OK | refonte -> OK
-- Settings        :               refonte -> ??
-- SettingsModal   : icone -> ?? | refonte -> ??
+- Settings        :               refonte -> OK
+- SettingsModal   : icone -> OK | refonte -> OK
+- PasswordModal   : icone -> OK | refonte -> OK
 
 - utiliser ou supprimer la police Quicksand
-- supprimer .modal-body .modal-section-title
 - TODOs à vérifier */
 
 /* Commun */
@@ -139,6 +139,19 @@
     background-color: #163c76 !important;
 }
 
+.btn-modal-action.btn-red {
+    background-color: #f33e3e !important;
+    border-color: #ba2f2f !important;
+    color: white !important;
+}
+
+.btn-modal-action.btn-red:hover,
+.btn-modal-action.btn-red:active {
+    background-color: #ba2f2f !important;
+    border-color: #ba2f2f !important;
+    color: white !important;
+}
+
 .btn-modal-outline-action {
     background-color: transparent !important;
     border: 2px solid #8892a4 !important;
@@ -172,12 +185,6 @@
 .modal-body {
     padding: 0 !important;
     word-wrap: break-word;
-}
-
-.modal-body .modal-section-title {
-    background-color: #e3e3e3;
-    padding: 10px;
-    border-radius: 5px;
 }
 
 .modal-body .modal-group {
