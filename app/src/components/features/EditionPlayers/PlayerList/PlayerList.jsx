@@ -6,7 +6,7 @@ import { IoGiftSharp } from 'react-icons/io5';
 
 import { useAuth } from '../../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../../enums';
+import { EnumAction, EnumUserRole } from '../../../../enums';
 
 /**
  * Liste des participants
@@ -61,7 +61,7 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
                     </div>
 
                     {/* Supression */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                         <Button
                             onClick={() => handleDelete(p)}
                             className="edition-button"
@@ -83,9 +83,9 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
                     </Button>
 
                     {/* Modification */}
-                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => showPlayerModal(p, 'update')}
+                            onClick={() => showPlayerModal(p, EnumAction.UPDATE)}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

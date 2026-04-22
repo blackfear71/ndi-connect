@@ -1,2 +1,2 @@
-export { default as Action } from './Action';
-export { default as UserRole } from './UserRole';
+export { default as EnumAction } from './EnumAction';
+export { default as EnumUserRole } from './EnumUserRole';

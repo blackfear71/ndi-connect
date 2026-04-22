@@ -18,7 +18,7 @@ import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 
-import { UserRole } from '../../enums';
+import { EnumUserRole } from '../../enums';
 
 import './Settings.css';
 
@@ -100,7 +100,7 @@ const Settings = () => {
         }
 
         // Récupération des données utilisateurs
-        if (auth.level >= UserRole.SUPERADMIN) {
+        if (auth.level >= EnumUserRole.SUPERADMIN) {
             const usersService = new UsersService();
 
             const subscriptionUsers = usersService.getAllUsers();
@@ -164,11 +164,11 @@ const Settings = () => {
      */
     const getUserRole = (level) => {
         switch (level) {
-            case UserRole.USER:
+            case EnumUserRole.USER:
                 return { label: t(`settings.level${level}`), icon: <FaUser size={18} /> };
-            case UserRole.ADMIN:
+            case EnumUserRole.ADMIN:
                 return { label: t(`settings.level${level}`), icon: <FaUserPlus size={18} /> };
-            case UserRole.SUPERADMIN:
+            case EnumUserRole.SUPERADMIN:
                 return { label: t(`settings.level${level}`), icon: <FaStar size={18} /> };
             default:
                 return { label: t('settings.unknownLevel'), icon: <FaQuestionCircle size={18} /> };
@@ -468,7 +468,7 @@ const Settings = () => {
                                 {t('settings.settingsTitle')}
                             </h1>
 
-                            {auth.level >= UserRole.SUPERADMIN ? (
+                            {auth.level >= EnumUserRole.SUPERADMIN ? (
                                 <Tabs
                                     variant="underline"
                                     defaultActiveKey="user"
@@ -539,7 +539,7 @@ const Settings = () => {
                     )}
 
                     {/* Modale de modification d'utilisateur */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsUser.isOpen && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === formUpdateUser.id)}
                             formData={formUpdateUser}
@@ -553,7 +553,7 @@ const Settings = () => {
                     )}
 
                     {/* Modale de confirmation */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}
                             setModalOptions={setModalOptionsConfirm}

@@ -8,7 +8,7 @@ import { GrMoney } from 'react-icons/gr';
 
 import { useAuth } from '../../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../../enums';
+import { EnumAction, EnumUserRole } from '../../../../enums';
 
 /**
  * Liste des cadeaux
@@ -127,7 +127,7 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                     </div>
 
                     {/* Supression */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                         <Button
                             onClick={() => handleDelete(g)}
                             className="edition-button"
@@ -139,9 +139,9 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                     )}
 
                     {/* Modification */}
-                    {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => showGiftModal(g, 'update')}
+                            onClick={() => showGiftModal(g, EnumAction.UPDATE)}
                             className="edition-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

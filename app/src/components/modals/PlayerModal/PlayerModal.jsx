@@ -12,8 +12,11 @@ import { Message } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../enums';
+import { EnumUserRole } from '../../../enums';
 
+/**
+ * Modale participant
+ */
 const PlayerModal = ({ players, player, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Contexte
     const { auth } = useAuth();
@@ -61,7 +64,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             case 'add':
                 setFormData((prev) => {
                     const currentDelta = parseInt(prev.delta) || 0;
-                    const nextDelta = currentDelta < 0 ? (auth.level >= UserRole.SUPERADMIN ? currentDelta + 1 : 0) : currentDelta + 1;
+                    const nextDelta = currentDelta < 0 ? (auth.level >= EnumUserRole.SUPERADMIN ? currentDelta + 1 : 0) : currentDelta + 1;
 
                     return {
                         ...prev,
@@ -73,7 +76,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                 setFormData((prev) => {
                     const currentDelta = parseInt(prev.delta) || 0;
                     const nextDelta =
-                        auth.level >= UserRole.SUPERADMIN && currentDelta <= 0 ? currentDelta - 1 : Math.max(0, currentDelta - 1);
+                        auth.level >= EnumUserRole.SUPERADMIN && currentDelta <= 0 ? currentDelta - 1 : Math.max(0, currentDelta - 1);
 
                     return {
                         ...prev,
@@ -137,7 +140,12 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         // Contrôle que les points sont > 0
         const delta = parseInt(formData.delta, 10);
 
-        if (formData.delta === null || formData.delta === undefined || isNaN(delta) || (auth.level < UserRole.SUPERADMIN && delta < 0)) {
+        if (
+            formData.delta === null ||
+            formData.delta === undefined ||
+            isNaN(delta) ||
+            (auth.level < EnumUserRole.SUPERADMIN && delta < 0)
+        ) {
             setMessage({ code: 'errors.invalidPoints', type: 'error' });
             return;
         }

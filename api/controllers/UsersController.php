@@ -1,7 +1,7 @@
 <?php
 require_once 'core/functions/Auth.php';
 
-require_once 'enums/UserRole.php';
+require_once 'enums/EnumUserRole.php';
 
 require_once 'services/UsersService.php';
 
@@ -65,7 +65,7 @@ class UsersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Lecture de tous les enregistrements
             $users = $this->service->getAllUsers();
@@ -189,7 +189,7 @@ class UsersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $created = $this->service->createUser($user['login'], $data);
@@ -225,7 +225,7 @@ class UsersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $newPassword = $this->service->resetPassword($user['login'], $id);
@@ -300,7 +300,7 @@ class UsersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $users = $this->service->updateUser($user['login'], $data);
@@ -336,7 +336,7 @@ class UsersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $users = $this->service->deleteUser($id, $user['login']);

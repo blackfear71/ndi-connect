@@ -10,6 +10,8 @@ import { IoGiftSharp } from 'react-icons/io5';
 import { TextInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
+import { EnumAction } from '../../../enums';
+
 const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
@@ -26,7 +28,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
             setMessage(null);
 
             // Focus à la création
-            modalOptions.action === 'create' && nameInputRef.current?.focus();
+            modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 

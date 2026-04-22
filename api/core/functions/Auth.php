@@ -1,5 +1,5 @@
 <?php
-require_once 'enums/UserRole.php';
+require_once 'enums/EnumUserRole.php';
 
 require_once 'services/UsersService.php';
 

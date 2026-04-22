@@ -1,6 +1,6 @@
 <?php
 
-enum UserRole: int
+enum EnumUserRole: int
 {
     case SUPERADMIN = 2;
     case ADMIN = 1;

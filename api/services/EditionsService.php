@@ -184,7 +184,7 @@ class EditionsService
 
         // Traitement de l'image
         switch ($action) {
-            case 'insert':
+            case EnumAction::CREATE->value:
                 // Import de la nouvelle image
                 $fileName = FileHelper::uploadImage('images', $file);
 
@@ -194,7 +194,7 @@ class EditionsService
                 }
 
                 return $fileName;
-            case 'delete':
+            case EnumAction::DELETE->value:
                 // Suppression de l'ancienne image (hors création)
                 if ($picture) {
                     FileHelper::deleteFile('images', $picture);

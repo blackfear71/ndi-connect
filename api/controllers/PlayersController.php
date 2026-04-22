@@ -1,7 +1,7 @@
 <?php
 require_once 'core/functions/Auth.php';
 
-require_once 'enums/UserRole.php';
+require_once 'enums/EnumUserRole.php';
 
 require_once 'services/PlayersService.php';
 
@@ -30,7 +30,7 @@ class PlayersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
             $players = $this->service->createPlayer($idEdition, $user, $data);
@@ -63,7 +63,7 @@ class PlayersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::ADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
             $players = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
@@ -96,7 +96,7 @@ class PlayersController
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, UserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
             $players = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);

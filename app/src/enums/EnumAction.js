@@ -1,10 +1,10 @@
 /**
  * Actions
  */
-const Action = {
+const EnumAction = {
     CREATE: 'create',
     DELETE: 'delete',
     UPDATE: 'update'
 };
 
-export default Action;
+export default EnumAction;

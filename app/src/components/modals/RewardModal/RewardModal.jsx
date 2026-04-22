@@ -10,7 +10,7 @@ import { Message } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../enums';
+import { EnumUserRole } from '../../../enums';
 
 import './RewardModal.css';
 
@@ -124,7 +124,7 @@ const RewardModal = ({
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN ? t('edition.manageGifts') : t('edition.informations')}
+                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
@@ -165,7 +165,7 @@ const RewardModal = ({
                         </div>
 
                         {/* Attribution cadeaux */}
-                        {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+                        {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     {gifts.length > 0 ? (
@@ -205,7 +205,7 @@ const RewardModal = ({
                                                 className="d-flex align-items-center justify-content-between pt-2 pb-2 gap-2 reward-modal-gift-row"
                                             >
                                                 <div className="reward-modal-gift-name">{r.name}</div>
-                                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                                                     <Button
                                                         onClick={() => handleDelete(r)}
                                                         className="d-flex align-items-center justify-content-center modal-button-delete"
@@ -243,7 +243,7 @@ const RewardModal = ({
                                 {t('common.close')}
                             </Button>
 
-                            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && obtainableGifts.length > 0 && (
+                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
                                 <Button type="submit" variant="modal-action">
                                     {t('common.validate')}
                                     {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}

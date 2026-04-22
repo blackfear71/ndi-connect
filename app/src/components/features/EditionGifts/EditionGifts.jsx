@@ -4,7 +4,7 @@ import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../enums';
+import { EnumAction, EnumUserRole } from '../../../enums';
 
 import './EditionGifts.css';
 
@@ -50,9 +50,9 @@ const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onCon
     return (
         <>
             {/* Ajout */}
-            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                 <div className="d-grid">
-                    <Button variant="outline-action" onClick={() => showGiftModal(null, 'create')}>
+                    <Button variant="outline-action" onClick={() => showGiftModal(null, EnumAction.CREATE)}>
                         <IoAddCircleOutline size={25} />
                         {t('edition.addGift')}
                     </Button>

@@ -4,6 +4,8 @@ import { Button, Form, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaTrashCan } from 'react-icons/fa6';
 
+import { EnumAction } from '../../../enums';
+
 import './PictureInput.css';
 
 /**
@@ -67,7 +69,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                 setPreviewUrl(URL.createObjectURL(file));
                 setFileName(file.name);
 
-                onChange && onChange(file, 'insert');
+                onChange && onChange(file, EnumAction.CREATE);
             } else {
                 setMessage({ code: 'errors.invalidFileType', type: 'error' });
 
@@ -90,7 +92,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
             fileInputRef.current.value = '';
         }
 
-        onChange && onChange(null, 'delete');
+        onChange && onChange(null, EnumAction.DELETE);
     };
 
     return (

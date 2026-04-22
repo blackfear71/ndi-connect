@@ -8,6 +8,11 @@ import { IoCalendarNumberOutline, IoImageOutline, IoLocationOutline } from 'reac
 import { DateInput, PictureInput, TextareaInput, TextInput, TimeInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
+import { EnumAction } from '../../../enums';
+
+/**
+ * Modale édition
+ */
 const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
     // Traductions
     const { t } = useTranslation();
@@ -24,7 +29,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
             setMessage(null);
 
             // Focus à la création
-            modalOptions.action === 'create' && locationInputRef.current?.focus();
+            modalOptions.action === EnumAction.CREATE && locationInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
@@ -52,10 +57,10 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
      */
     const handleChangeFile = (file, action) => {
         switch (action) {
-            case 'delete':
+            case EnumAction.DELETE:
                 setFormData((prev) => ({ ...prev, picture: null, pictureAction: action }));
                 break;
-            case 'insert':
+            case EnumAction.CREATE:
                 setFormData((prev) => ({ ...prev, picture: file, pictureAction: action }));
                 break;
             default:
@@ -73,7 +78,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
         e.preventDefault();
 
         // Contrôles si pas de suppression
-        if (modalOptions.action !== 'delete') {
+        if (modalOptions.action !== EnumAction.DELETE) {
             // Contrôle la date renseignée
             if (!formData.startDate) {
                 setMessage({ code: 'errors.invalidStartDate', type: 'error' });

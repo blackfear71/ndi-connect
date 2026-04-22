@@ -9,7 +9,7 @@ import { TextInput } from '../../../components/inputs';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { UserRole } from '../../../enums';
+import { EnumAction, EnumUserRole } from '../../../enums';
 
 import './EditionPlayers.css';
 
@@ -139,7 +139,7 @@ const EditionPlayers = ({
 
     return (
         <>
-            {auth.isLoggedIn && auth.level >= UserRole.ADMIN && (
+            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                 <>
                     {/* Ajout */}
                     <div className="d-grid mb-2">
@@ -152,7 +152,7 @@ const EditionPlayers = ({
                     {/* Saisie */}
                     {showEntry && (
                         <fieldset disabled={isSubmitting}>
-                            <Form onSubmit={(event) => handleSubmit(event, 'create')} className="d-flex align-items-center gap-2">
+                            <Form onSubmit={(event) => handleSubmit(event, EnumAction.CREATE)} className="d-flex align-items-center gap-2">
                                 <div className="flex-fill">
                                     <TextInput
                                         name={'name'}

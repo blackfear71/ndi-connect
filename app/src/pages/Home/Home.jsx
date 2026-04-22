@@ -15,7 +15,7 @@ import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 
-import { UserRole } from '../../enums';
+import { EnumAction, EnumUserRole } from '../../enums';
 
 import './Home.css';
 
@@ -216,7 +216,7 @@ const Home = () => {
         });
 
         // Images (s'il y a une image à traiter)
-        formEdition.pictureAction === 'insert' && formEdition.picture && formData.append('picture', formEdition.picture);
+        formEdition.pictureAction === EnumAction.CREATE && formEdition.picture && formData.append('picture', formEdition.picture);
 
         return formData;
     };
@@ -266,11 +266,11 @@ const Home = () => {
                     {/* Grille */}
                     <div className="gap-2 mt-3 home-grid">
                         {/* Ajout */}
-                        {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+                        {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                             <Button
                                 variant="outline-action"
                                 className="d-flex align-items-center home-grid-btn-action"
-                                onClick={() => openCloseEditionModal('create')}
+                                onClick={() => openCloseEditionModal(EnumAction.CREATE)}
                             >
                                 <IoAddCircleOutline size={30} />
                                 {t('home.addEdition')}
@@ -336,7 +336,7 @@ const Home = () => {
                     </div>
 
                     {/* Modale de création d'édition */}
-                    {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
                         <EditionModal
                             formData={formEdition}
                             setFormData={setFormEdition}

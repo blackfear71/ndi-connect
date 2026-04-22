@@ -147,7 +147,7 @@ class UsersService
         $user = $this->repository->getActiveUserDataById($data['id']);
 
         // Contrôle dernier admin actif si changement de rôle
-        if ($user && $user['level'] == UserRole::SUPERADMIN->value && $data['level'] != UserRole::SUPERADMIN->value) {
+        if ($user && $user['level'] == EnumUserRole::SUPERADMIN->value && $data['level'] != EnumUserRole::SUPERADMIN->value) {
             if ($this->repository->isLastAdmin()) {
                 return false;
             }
@@ -173,7 +173,7 @@ class UsersService
         $user = $this->repository->getActiveUserDataById($id);
 
         // Contrôle dernier admin actif si suppression
-        if ($user && $user['level'] == UserRole::SUPERADMIN->value) {
+        if ($user && $user['level'] == EnumUserRole::SUPERADMIN->value) {
             if ($this->repository->isLastAdmin()) {
                 return false;
             }
@@ -211,7 +211,7 @@ class UsersService
 
         return $login && $password && $confirmPassword
             && $password === $confirmPassword
-            && is_numeric($level) && $level >= UserRole::USER->value && $level <= UserRole::SUPERADMIN->value;
+            && is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
     }
 
     /**
@@ -235,7 +235,7 @@ class UsersService
     {
         $level = $data['level'] ?? null;
 
-        return is_numeric($level) && $level >= UserRole::USER->value && $level <= UserRole::SUPERADMIN->value;
+        return is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
     }
 
     /**

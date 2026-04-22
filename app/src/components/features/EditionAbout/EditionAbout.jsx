@@ -11,7 +11,7 @@ import { ProgressCard, TableCard, TextCard } from '../../../components/ui';
 import { useAuth } from '../../../utils/context/AuthContext';
 import { getLocalizedDate, getLocalizedDuration, getLocalizedTime } from '../../../utils/helpers/dateHelper';
 
-import { UserRole } from '../../../enums';
+import { EnumAction, EnumUserRole } from '../../../enums';
 
 /**
  * A propos
@@ -99,10 +99,10 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
     return (
         <>
             {/* Actions */}
-            {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && (
+            {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                 <div className="d-flex gap-2 mb-2">
                     {/* Modifier */}
-                    <Button variant="outline-action" onClick={() => onEdit('update')}>
+                    <Button variant="outline-action" onClick={() => onEdit(EnumAction.UPDATE)}>
                         <FaWandMagicSparkles size={15} />
                         {t('common.update')}
                     </Button>

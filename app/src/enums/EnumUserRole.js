@@ -1,10 +1,10 @@
 /**
  * Rôles utilisateur
  */
-const UserRole = {
+const EnumUserRole = {
     SUPERADMIN: 2,
     ADMIN: 1,
     USER: 0
 };
 
-export default UserRole;
+export default EnumUserRole;

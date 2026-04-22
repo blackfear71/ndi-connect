@@ -147,7 +147,7 @@ class PlayersService
         $giveaway = $data['giveaway'] ?? null;
         $giveawayId = $data['giveawayId'] ?? null;
 
-        $isDeltaValid = is_numeric($delta) && ($userLevel == UserRole::SUPERADMIN->value || $delta >= 0);
+        $isDeltaValid = is_numeric($delta) && ($userLevel == EnumUserRole::SUPERADMIN->value || $delta >= 0);
         $isGiveawayValid = $isCreate || (is_numeric($giveaway) && is_numeric($giveawayId) && (($giveaway > 0 && $giveawayId != 0) || ($giveaway == 0 && $giveawayId == 0)));
 
         return $name

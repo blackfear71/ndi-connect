@@ -68,7 +68,7 @@ class UsersRepository extends Model
     {
         $sql = "SELECT COUNT(*) AS nbAdmin FROM {$this->table} WHERE level = :level AND is_active = 1";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['level' => UserRole::SUPERADMIN->value]);
+        $stmt->execute(['level' => EnumUserRole::SUPERADMIN->value]);
         $count = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return ($count['nbAdmin'] == 1);

@@ -18,7 +18,7 @@ import { useAuth } from '../../utils/context/AuthContext';
 import { useSse } from '../../utils/context/SseContext';
 import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
 
-import { UserRole } from '../../enums';
+import { EnumAction, EnumUserRole } from '../../enums';
 
 import './Edition.css';
 
@@ -267,7 +267,7 @@ const Edition = () => {
         });
 
         // Images (s'il y a une image à traiter)
-        formEdition.pictureAction === 'insert' && formEdition.picture && formData.append('picture', formEdition.picture);
+        formEdition.pictureAction === EnumAction.CREATE && formEdition.picture && formData.append('picture', formEdition.picture);
 
         return formData;
     };
@@ -316,8 +316,7 @@ const Edition = () => {
         let subscriptionPlayers = null;
 
         switch (action) {
-            // TODO : utiliser l'enum Action pour les actions create/update/delete... + renommer les enum en EnumXXX
-            case 'create':
+            case EnumAction.CREATE:
                 setIsSubmitting(true);
 
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
@@ -326,7 +325,7 @@ const Edition = () => {
                     delta: formPlayer.delta
                 });
                 break;
-            case 'update':
+            case EnumAction.UPDATE:
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
                 subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
@@ -341,13 +340,13 @@ const Edition = () => {
         subscriptionPlayers
             ?.pipe(
                 map((dataPlayers) => {
-                    action === 'update' ? openClosePlayerModal('') : resetFormPlayer();
+                    action === EnumAction.UPDATE ? openClosePlayerModal('') : resetFormPlayer();
                     setPlayers(dataPlayers.response.data);
                     setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    action === 'update'
+                    action === EnumAction.UPDATE
                         ? setModalOptionsPlayer((prev) => ({
                               ...prev,
                               message: { code: err?.response?.message, type: err?.response?.status }
@@ -356,7 +355,9 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    action === 'update' ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+                    action === EnumAction.UPDATE
+                        ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false }))
+                        : setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -403,7 +404,7 @@ const Edition = () => {
         let subscriptionGifts = null;
 
         switch (action) {
-            case 'create':
+            case EnumAction.CREATE:
                 setIsSubmitting(true);
 
                 subscriptionGifts = giftsService.createGift(edition.id, {
@@ -413,7 +414,7 @@ const Edition = () => {
                     quantity: formGift.quantity
                 });
                 break;
-            case 'update':
+            case EnumAction.UPDATE:
                 setModalOptionsGift((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
                 subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
@@ -433,7 +434,7 @@ const Edition = () => {
                 }),
                 take(1),
                 catchError((err) => {
-                    action === 'update'
+                    action === EnumAction.UPDATE
                         ? setModalOptionsGift((prev) => ({
                               ...prev,
                               message: { code: err?.response?.message, type: err?.response?.status }
@@ -442,7 +443,9 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    action === 'update' ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false })) : setIsSubmitting(false);
+                    action === EnumAction.UPDATE
+                        ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false }))
+                        : setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -805,7 +808,7 @@ const Edition = () => {
                                 </Tabs>
 
                                 {/* Modale de modification/suppression d'édition */}
-                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
                                     <EditionModal
                                         formData={formEdition}
                                         setFormData={setFormEdition}
@@ -817,7 +820,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de cadeau */}
-                                {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsGift.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && modalOptionsGift.isOpen && (
                                     <GiftModal
                                         gift={gifts.find((g) => g.id === formGift.id)}
                                         formData={formGift}
@@ -830,7 +833,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de modification de participant */}
-                                {auth.isLoggedIn && auth.level >= UserRole.ADMIN && modalOptionsPlayer.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && modalOptionsPlayer.isOpen && (
                                     <PlayerModal
                                         players={players}
                                         player={players.find((p) => p.id === formPlayer.id)}
@@ -860,7 +863,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de confirmation */}
-                                {auth.isLoggedIn && auth.level >= UserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
                                     <ConfirmModal
                                         modalOptions={modalOptionsConfirm}
                                         setModalOptions={setModalOptionsConfirm}
