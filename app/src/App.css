@@ -44,6 +44,26 @@
     color: #d43636 !important;
 }
 
+/* Pages */
+.page-empty {
+    background-color: #163c76;
+    color: white;
+    font-size: large;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px dashed #4f6280;
+}
+
+.page-tabs .nav-link {
+    color: white !important;
+    border-color: white !important;
+}
+
+.page-tabs .nav-link.active {
+    color: #ffcf68 !important;
+    border-color: #ffcf68 !important;
+}
+
 /* Boutons */
 .btn-action {
     display: flex !important;

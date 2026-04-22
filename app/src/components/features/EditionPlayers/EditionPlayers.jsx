@@ -192,7 +192,7 @@ const EditionPlayers = ({
                     />
                 </div>
             ) : (
-                <div className="px-2 py-3 mt-2 edition-empty">{t('edition.noPlayers')}</div>
+                <div className="px-2 py-3 mt-2 page-empty">{t('edition.noPlayers')}</div>
             )}
         </>
     );

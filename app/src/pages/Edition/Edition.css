@@ -1,24 +1,3 @@
-/* TODO : en faire un style commun */
-.edition-tabs .nav-link {
-    color: white !important;
-    border-color: white !important;
-}
-
-.edition-tabs .nav-link.active {
-    color: #ffcf68 !important;
-    border-color: #ffcf68 !important;
-}
-
-/* TODO : style à mettre en commun avec settings */
-.edition-empty {
-    background-color: #163c76;
-    color: white;
-    font-size: large;
-    text-align: center;
-    border-radius: 5px;
-    border: 2px dashed #4f6280;
-}
-
 .edition-picture-wrapper {
     position: absolute;
     top: 60px;

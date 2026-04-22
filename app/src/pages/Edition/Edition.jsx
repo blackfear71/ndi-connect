@@ -316,6 +316,7 @@ const Edition = () => {
         let subscriptionPlayers = null;
 
         switch (action) {
+            // TODO : utiliser l'enum Action pour les actions create/update/delete... + renommer les enum en EnumXXX
             case 'create':
                 setIsSubmitting(true);
 
@@ -759,7 +760,7 @@ const Edition = () => {
                                     variant="underline"
                                     defaultActiveKey="players"
                                     id="justify-tab-example"
-                                    className="mb-3 edition-tabs"
+                                    className="mb-3 page-tabs"
                                     justify
                                 >
                                     {/* Participants */}

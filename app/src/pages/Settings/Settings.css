@@ -64,12 +64,7 @@
 
 
 
-/* TODO : à nettoyer */
-.settings-form .form-control {
-    border: none !important;
-    box-shadow: none !important;
-}
-
+/* TODO : à nettoyer (supprimer) */
 .settings-button {
     background-color: #163c76 !important;
     color: white !important;

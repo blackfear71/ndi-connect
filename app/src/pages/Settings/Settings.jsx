@@ -12,7 +12,7 @@ import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
 
-import { SettingsCreateUser, SettingsUser, SettingsUserList } from '../../components/features';
+import { SettingsCreateUser, SettingsUser, SettingsUsers } from '../../components/features';
 import { ConfirmModal, PasswordModal, SettingsModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
@@ -77,6 +77,7 @@ const Settings = () => {
 
     // API states
     const [users, setUsers] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
 
     /**
      * Lancement initial de la page
@@ -107,7 +108,10 @@ const Settings = () => {
             subscriptionUsers
                 .pipe(
                     map((dataUsers) => {
-                        setUsers(processUserDatas(dataUsers.response.data));
+                        const processedUsers = processUserDatas(dataUsers.response.data);
+
+                        setUsers(processedUsers);
+                        setCurrentUser(processedUsers.find((u) => u.id === auth.id));
                     }),
                     take(1),
                     catchError((err) => {
@@ -120,10 +124,12 @@ const Settings = () => {
                 )
                 .subscribe();
         } else {
-            // TODO : ici il manque une initialisation de la liste avec au moins
-            //        l'utilisateur connecté ou autre chose (chercher ses données
-            //        en base ? construire un objet avec les données d'auth ?)
-            //        pour envoyer à <SettingsUser /> si pas SUPER ADMIN
+            setCurrentUser({
+                id: auth.id,
+                login: auth.login,
+                level: auth.level,
+                role: getUserRole(auth.level)
+            });
             setIsLoading(false);
         }
     }, [auth]);
@@ -462,20 +468,18 @@ const Settings = () => {
                                 {t('settings.settingsTitle')}
                             </h1>
 
-                            {/* TODO : faire des Tabs avec des composants pour chaque tab, attention si l'utilisateur n'a pas les droits suffisants, pas besoin des tabs */}
-
                             {auth.level >= UserRole.SUPERADMIN ? (
                                 <Tabs
                                     variant="underline"
                                     defaultActiveKey="user"
                                     id="justify-tab-example"
-                                    className="mb-3 edition-tabs" // TODO : style à mettre en commun
+                                    className="mb-3 page-tabs"
                                     justify
                                 >
                                     {/* Utilisateur connecté */}
                                     <Tab eventKey="user" title={t('settings.level0')}>
                                         <SettingsUser
-                                            user={users.find((u) => u.id === auth.id)}
+                                            user={currentUser}
                                             formPassword={formPassword}
                                             setFormPassword={setFormPassword}
                                             setModalOptionsPassword={setModalOptionsPassword}
@@ -487,37 +491,31 @@ const Settings = () => {
                                     <Tab eventKey="users" title={t('settings.manageUsers')}>
                                         {/* Création utilisateur */}
                                         {/* TODO : à remplacer par une modale */}
-                                        <div className="settings-form mt-3">
-                                            <SettingsCreateUser
-                                                formData={formCreateUser}
-                                                setFormData={setFormCreateUser}
-                                                showForm={showCreateUserForm}
-                                                showFormMethod={showHideCreateUserForm}
-                                                setMessage={setMessage}
-                                                onSubmit={handleSubmitCreateUser}
-                                                isSubmitting={isSubmitting}
-                                            />
-                                        </div>
+                                        <SettingsCreateUser
+                                            formData={formCreateUser}
+                                            setFormData={setFormCreateUser}
+                                            showForm={showCreateUserForm}
+                                            showFormMethod={showHideCreateUserForm}
+                                            setMessage={setMessage}
+                                            onSubmit={handleSubmitCreateUser}
+                                            isSubmitting={isSubmitting}
+                                        />
 
                                         {/* Gestion utilisateurs */}
-                                        <div className="settings-form mt-3">
-                                            {/* TODO : gérer liste vide à l'intérieur comme EditionPlayers */}
-                                            <SettingsUserList
-                                                login={auth.login}
-                                                users={users}
-                                                setFormData={setFormUpdateUser}
-                                                modalOptions={modalOptionsUser}
-                                                setModalOptions={setModalOptionsUser}
-                                                onConfirm={openCloseConfirmModal}
-                                            />
-                                        </div>
+                                        <SettingsUsers
+                                            users={users}
+                                            setFormData={setFormUpdateUser}
+                                            setModalOptions={setModalOptionsUser}
+                                            onConfirm={openCloseConfirmModal}
+                                            isSubmitting={isSubmitting}
+                                        />
                                     </Tab>
                                 </Tabs>
                             ) : (
                                 <>
                                     {/* Utilisateur connecté */}
                                     <SettingsUser
-                                        user={users.find((u) => u.id === auth.id)}
+                                        user={currentUser}
                                         formPassword={formPassword}
                                         setFormPassword={setFormPassword}
                                         setModalOptionsPassword={setModalOptionsPassword}
