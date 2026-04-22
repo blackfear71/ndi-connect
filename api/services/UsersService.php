@@ -88,7 +88,7 @@ class UsersService
         $data = $this->processDataUser($data);
 
         if ($this->repository->create($login, $data)) {
-            return true;
+            return $this->getAllUsers();
         }
 
         return null;

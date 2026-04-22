@@ -4,7 +4,7 @@ import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 
 import { useAuth } from '../../../../utils/context/AuthContext';
 
-import { EnumUserRole } from '../../../../enums';
+import { EnumAction, EnumUserRole } from '../../../../enums';
 
 /**
  * Liste des utilisateurs
@@ -24,6 +24,7 @@ const UserList = ({ users, onConfirm, showUserModal, isSubmitting }) => {
         // Ouverture de la modale de confirmation
         onConfirm({
             content: t('settings.deleteUser', { name: user.login }),
+            action: 'deleteUser',
             data: user.id
         });
     };
@@ -58,7 +59,7 @@ const UserList = ({ users, onConfirm, showUserModal, isSubmitting }) => {
 
                     {/* Modification */}
                     <Button
-                        onClick={() => showUserModal(u)}
+                        onClick={() => showUserModal(u, EnumAction.UPDATE)}
                         className="settings-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}

@@ -1,21 +1,39 @@
-.settings-modal-badges {
-    max-width: 100%;
+.settings-modal-user {
+    background-color: #1d509e;
 }
 
-.settings-modal-ellipsis {
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.settings-modal-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #fdd343;
+    color: black;
+}
+
+.settings-modal-name {
+    color: white;
+    min-width: 0;
 }
 
 .settings-modal-ellipsis-text {
-    overflow: hidden;
+    overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    vertical-align: middle;
+    min-width: 0;
+    font-size: large;
 }
 
-.settings-modal-border {
-    border-left: solid 4px #d0d0d0;
+.settings-modal-role {
+    text-transform: uppercase;
+    font-size: x-small;
+    font-weight: 600;
+}
+
+.settings-modal-description {
+    text-align: justify;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #fdd343;
 }

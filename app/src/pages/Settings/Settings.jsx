@@ -8,17 +8,17 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { of } from 'rxjs';
-import { catchError, finalize, map, switchMap, take } from 'rxjs/operators';
+import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
 
-import { SettingsCreateUser, SettingsUser, SettingsUsers } from '../../components/features';
+import { SettingsUser, SettingsUsers } from '../../components/features';
 import { ConfirmModal, PasswordModal, SettingsModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 
-import { EnumUserRole } from '../../enums';
+import { EnumAction, EnumUserRole } from '../../enums';
 
 import './Settings.css';
 
@@ -42,14 +42,11 @@ const Settings = () => {
         newPassword: '',
         confirmPassword: ''
     });
-    const [formCreateUser, setFormCreateUser] = useState({
+    const [formUser, setFormUser] = useState({
+        id: null,
         login: '',
         password: '',
         confirmPassword: '',
-        level: ''
-    });
-    const [formUpdateUser, setFormUpdateUser] = useState({
-        id: null,
         level: ''
     });
     const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +54,7 @@ const Settings = () => {
     const [message, setMessage] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
         content: '',
+        action: '',
         data: null,
         isOpen: false,
         message: null,
@@ -68,12 +66,11 @@ const Settings = () => {
         isSubmitting: false
     });
     const [modalOptionsUser, setModalOptionsUser] = useState({
-        action: '', // TODO à gérer entre création/update
+        action: '',
         isOpen: false,
         message: null,
         isSubmitting: false
     });
-    const [showCreateUserForm, setShowCreateUserForm] = useState(false);
 
     // API states
     const [users, setUsers] = useState([]);
@@ -237,74 +234,20 @@ const Settings = () => {
     };
 
     /**
-     * Affiche ou masque la saisie de nouvel utilisateur
+     * Ouverture/fermeture de la modale de création/modification d'utilisateur
      */
-    const showHideCreateUserForm = () => {
-        // Ouverture ou fermeture
-        setShowCreateUserForm((prev) => !prev);
-
-        // Réinitialisation du formulaire à la fermeture (c'est-à-dire si le formulaire était précédemment ouvert)
-        showCreateUserForm.isOpen && resetFormCreateUser();
-    };
-
-    /**
-     * Création d'un utilisateur
-     */
-    const handleSubmitCreateUser = () => {
-        setMessage(null);
-        setIsSubmitting(true);
-
-        const usersService = new UsersService();
-
-        usersService
-            .createUser(formCreateUser)
-            .pipe(
-                map((dataUser) => {
-                    setMessage({ code: dataUser.response.message, type: dataUser.response.status });
-                }),
-                switchMap(() => usersService.getAllUsers()),
-                map((dataUsers) => {
-                    showHideCreateUserForm();
-                    setUsers(processUserDatas(dataUsers.response.data));
-                }),
-                take(1),
-                catchError((err) => {
-                    setMessage({ code: err?.response?.message, type: err?.response?.status });
-                    return of();
-                }),
-                finalize(() => {
-                    setIsSubmitting(false);
-                })
-            )
-            .subscribe();
-    };
-
-    /**
-     * Réinitialisation formulaire (création utilisateur)
-     */
-    const resetFormCreateUser = () => {
-        setFormCreateUser({
-            login: '',
-            password: '',
-            confirmPassword: '',
-            level: ''
-        });
-    };
-
-    /**
-     * Ouverture/fermeture de la modale de modification d'utilisateur
-     */
-    const openCloseUpdateUserModal = () => {
+    const openCloseUserModal = (openAction) => {
         // Ouverture ou fermeture
         setModalOptionsUser((prev) => ({
             ...prev,
+            action: openAction,
             isOpen: !prev.isOpen,
             message: null,
             isSubmitting: false
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsUser.isOpen && resetFormUpdateUser();
+        modalOptionsUser.isOpen && resetFormUser();
     };
 
     /**
@@ -347,25 +290,42 @@ const Settings = () => {
     };
 
     /**
-     * Modification d'un utilisateur
+     * Création/modification d'un utilisateur
      */
-    const handleSubmitUpdateUser = () => {
+    const handleSubmitUser = (action) => {
         setMessage(null);
         setModalOptionsUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.updateUser(formUpdateUser);
+        let subscriptionUsers = null;
+
+        switch (action) {
+            case EnumAction.CREATE:
+                subscriptionUsers = usersService.createUser({
+                    login: formUser.login,
+                    password: formUser.password,
+                    confirmPassword: formUser.confirmPassword,
+                    level: formUser.level
+                });
+                break;
+            case EnumAction.UPDATE:
+                subscriptionUsers = usersService.updateUser({
+                    id: formUser.id,
+                    level: formUser.level
+                });
+                break;
+        }
 
         subscriptionUsers
-            .pipe(
+            ?.pipe(
                 map((dataUsers) => {
-                    openCloseUpdateUserModal();
+                    openCloseUserModal();
                     setUsers(processUserDatas(dataUsers.response.data));
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
-                    if (auth.id === dataUsers.response.data.find((u) => u.id === formUpdateUser.id)?.id) {
+                    if (auth.id === dataUsers.response.data.find((u) => u.id === formUser.id)?.id) {
                         refreshAuth(false);
                     }
                 }),
@@ -385,11 +345,14 @@ const Settings = () => {
     };
 
     /**
-     * Réinitialisation formulaire (modification utilisateur)
+     * Réinitialisation formulaire (création/modification utilisateur)
      */
-    const resetFormUpdateUser = () => {
-        setFormUpdateUser({
+    const resetFormUser = () => {
+        setFormUser({
             id: null,
+            login: '',
+            password: '',
+            confirmPassword: '',
             level: ''
         });
     };
@@ -402,6 +365,7 @@ const Settings = () => {
         if (confirmOptions) {
             setModalOptionsConfirm({
                 content: confirmOptions.content,
+                action: confirmOptions.action,
                 data: confirmOptions.data,
                 isOpen: !modalOptionsConfirm.isOpen,
                 message: null,
@@ -410,11 +374,24 @@ const Settings = () => {
         } else {
             setModalOptionsConfirm({
                 content: '',
+                action: '',
                 data: null,
                 isOpen: false,
                 message: null,
                 isSubmitting: false
             });
+        }
+    };
+
+    /**
+     * Méthode centralisée d'action à la confirmation
+     */
+    const handleConfirmAction = () => {
+        switch (modalOptionsConfirm.action) {
+            case 'deleteUser':
+                return handleDeleteUser(modalOptionsConfirm.data);
+            default:
+                return;
         }
     };
 
@@ -489,22 +466,10 @@ const Settings = () => {
 
                                     {/* Gestion utilisateurs */}
                                     <Tab eventKey="users" title={t('settings.manageUsers')}>
-                                        {/* Création utilisateur */}
-                                        {/* TODO : à remplacer par une modale */}
-                                        <SettingsCreateUser
-                                            formData={formCreateUser}
-                                            setFormData={setFormCreateUser}
-                                            showForm={showCreateUserForm}
-                                            showFormMethod={showHideCreateUserForm}
-                                            setMessage={setMessage}
-                                            onSubmit={handleSubmitCreateUser}
-                                            isSubmitting={isSubmitting}
-                                        />
-
-                                        {/* Gestion utilisateurs */}
                                         <SettingsUsers
                                             users={users}
-                                            setFormData={setFormUpdateUser}
+                                            formData={formUser}
+                                            setFormData={setFormUser}
                                             setModalOptions={setModalOptionsUser}
                                             onConfirm={openCloseConfirmModal}
                                             isSubmitting={isSubmitting}
@@ -541,14 +506,14 @@ const Settings = () => {
                     {/* Modale de modification d'utilisateur */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsUser.isOpen && (
                         <SettingsModal
-                            user={users.find((u) => u.id === formUpdateUser.id)}
-                            formData={formUpdateUser}
-                            setFormData={setFormUpdateUser}
+                            user={users.find((u) => u.id === formUser.id)}
+                            formData={formUser}
+                            setFormData={setFormUser}
                             modalOptions={modalOptionsUser}
                             setModalOptions={setModalOptionsUser}
                             onReset={handleResetPassword}
-                            onClose={openCloseUpdateUserModal}
-                            onSubmit={handleSubmitUpdateUser}
+                            onClose={openCloseUserModal}
+                            onSubmit={handleSubmitUser}
                         />
                     )}
 
@@ -558,7 +523,7 @@ const Settings = () => {
                             modalOptions={modalOptionsConfirm}
                             setModalOptions={setModalOptionsConfirm}
                             onClose={openCloseConfirmModal}
-                            onConfirmAction={handleDeleteUser}
+                            onConfirmAction={handleConfirmAction}
                         />
                     )}
                 </>

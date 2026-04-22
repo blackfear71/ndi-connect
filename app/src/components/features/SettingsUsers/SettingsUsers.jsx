@@ -2,12 +2,14 @@ import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
+import { EnumAction } from '../../../enums';
+
 import UserList from './UserList/UserList';
 
 /**
  * Gestion des utilisateurs
  */
-const SettingsUsers = ({ users, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+const SettingsUsers = ({ users, formData, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -15,26 +17,27 @@ const SettingsUsers = ({ users, setFormData, setModalOptions, onConfirm, isSubmi
      * Affiche la modale de modification d'un utilisateur
      * @param {*} user Données utilisateur
      */
-    const showUserModal = (user) => {
+    const showUserModal = (user, action) => {
         if (user) {
             setFormData({
+                ...formData,
                 id: user.id,
                 level: user.level
             });
-
-            setModalOptions((prev) => ({
-                ...prev,
-                isOpen: !prev.isOpen
-            }));
         }
+
+        setModalOptions((prev) => ({
+            ...prev,
+            action: action,
+            isOpen: !prev.isOpen
+        }));
     };
 
     return (
         <>
             {/* Ajout */}
             <div className="d-grid mb-2">
-                {/* TODO : ouvrir la modale de création/modification */}
-                <Button variant="outline-action" onClick={() => showHidePlayerEntry(true)}>
+                <Button variant="outline-action" onClick={() => showUserModal(null, EnumAction.CREATE)}>
                     <IoAddCircleOutline size={25} />
                     {t('settings.addUser')}
                 </Button>

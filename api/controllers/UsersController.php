@@ -192,12 +192,12 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($user['login'], $data);
+            $result = $this->service->createUser($user['login'], $data);
 
-            if ($created === true) {
+            if ($result !== null && $result !== false) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
-            } else if ($created === false) {
+                ResponseHelper::success($result, 'MSG_CREATION_SUCCESS');
+            } else if ($result !== null && $result === false) {
                 // Alerte
                 ResponseHelper::warning(null, 'WRN_USER_EXISTS', 409);
             } else {
@@ -303,12 +303,12 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $users = $this->service->updateUser($user['login'], $data);
+            $result = $this->service->updateUser($user['login'], $data);
 
-            if ($users !== null && $users !== false) {
+            if ($result !== null && $result !== false) {
                 // Succès
-                ResponseHelper::success($users, 'MSG_UPDATE_SUCCESS');
-            } else if ($users !== null && $users === false) {
+                ResponseHelper::success($result, 'MSG_UPDATE_SUCCESS');
+            } else if ($result !== null && $result === false) {
                 // Alerte
                 ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
             } else {
@@ -339,12 +339,12 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $users = $this->service->deleteUser($id, $user['login']);
+            $result = $this->service->deleteUser($id, $user['login']);
 
-            if ($users !== null && $users !== false) {
+            if ($result !== null && $result !== false) {
                 // Succès
-                ResponseHelper::success($users, 'MSG_DELETION_SUCCESS');
-            } else if ($users !== null && $users === false) {
+                ResponseHelper::success($result, 'MSG_DELETION_SUCCESS');
+            } else if ($result !== null && $result === false) {
                 // Alerte
                 ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
             } else {
