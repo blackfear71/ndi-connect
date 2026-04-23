@@ -143,15 +143,16 @@ const SearchBar = () => {
             <div className="search-bar-wrapper">
                 <FaSearch className="d-flex align-items-center justify-content-center search-bar-icon search-icon" />
 
-                <TextInput
-                    name={'search'}
-                    ref={inputRef}
-                    className={'search-bar-text'}
-                    placeholder={t('navbar.search')}
-                    value={searchText}
-                    onFocus={handleFocus}
-                    onChange={handleChange}
-                />
+                <div className="search-bar-text">
+                    <TextInput
+                        name={'search'}
+                        ref={inputRef}
+                        placeholder={t('navbar.search')}
+                        value={searchText}
+                        onFocus={handleFocus}
+                        onChange={handleChange}
+                    />
+                </div>
 
                 {searchText && (
                     <FaTimes

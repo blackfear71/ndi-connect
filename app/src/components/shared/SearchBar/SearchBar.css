@@ -5,7 +5,7 @@
     overflow: hidden;
 }
 
-.search-bar-text {
+.search-bar-text .form-control {
     border: none !important;
     padding-left: 40px !important;
     padding-right: 40px !important;
@@ -15,7 +15,7 @@
     color: white !important;
 }
 
-.search-bar-text::placeholder {
+.search-bar-text .form-control::placeholder {
     color: #c6cedd !important;
 }
 
