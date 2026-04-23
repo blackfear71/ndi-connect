@@ -26,6 +26,8 @@
     align-self: flex-end;
 }
 
-.text-card-content-toggle:hover {
+.text-card-content-toggle:hover,
+.text-card-content-toggle:active {
+    background-color: transparent !important;
     color: #fdd343;
 }
