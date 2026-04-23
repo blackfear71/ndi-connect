@@ -16,7 +16,7 @@ import { EnumAction, EnumUserRole } from '../../../enums';
 /**
  * A propos
  */
-const EditionAbout = ({ edition, onEdit, onConfirm }) => {
+const EditionAbout = ({ edition, onEdit, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -102,13 +102,13 @@ const EditionAbout = ({ edition, onEdit, onConfirm }) => {
             {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                 <div className="d-flex gap-2 mb-2">
                     {/* Modifier */}
-                    <Button variant="outline-action" onClick={() => onEdit(EnumAction.UPDATE)}>
+                    <Button variant="outline-action" onClick={() => onEdit(EnumAction.UPDATE)} disabled={isSubmitting}>
                         <FaWandMagicSparkles size={15} />
                         {t('common.update')}
                     </Button>
 
                     {/* Supprimer */}
-                    <Button variant="outline-action" className="btn-red" onClick={onConfirm}>
+                    <Button variant="outline-action" className="btn-red" onClick={onConfirm} disabled={isSubmitting}>
                         <FaTrashCan size={15} />
                         {t('common.delete')}
                     </Button>

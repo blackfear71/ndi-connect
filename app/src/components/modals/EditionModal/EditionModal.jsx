@@ -13,7 +13,7 @@ import { EnumAction } from '../../../enums';
 /**
  * Modale édition
  */
-const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
+const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -128,7 +128,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={modalOptions.isSubmitting}>
+            <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -194,7 +194,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                     value={formData.picture}
                                     setMessage={setMessage}
                                     onChange={handleChangeFile}
-                                    isSubmitting={modalOptions.isSubmitting}
+                                    isSubmitting={isSubmitting}
                                 />
                             </div>
                         </div>
@@ -240,13 +240,13 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
 
                         {/* Boutons d'action */}
                         <div className="modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action">
+                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
                                 {t(getButtonFromAction(modalOptions.action))}
-                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         </div>
                     </Modal.Footer>

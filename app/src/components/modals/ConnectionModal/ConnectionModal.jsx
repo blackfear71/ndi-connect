@@ -130,11 +130,11 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
 
                         {/* Boutons d'action */}
                         <div className="modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action">
+                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
                                 {t('navbar.connect')}
                                 {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>

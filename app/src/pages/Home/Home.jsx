@@ -45,8 +45,9 @@ const Home = () => {
         challenge: ''
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false, message: null, isSubmitting: false });
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false, message: null });
 
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
@@ -154,8 +155,7 @@ const Home = () => {
             ...prev,
             action: openAction,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -167,7 +167,8 @@ const Home = () => {
      */
     const handleSubmit = () => {
         setMessage(null);
-        setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsEdition((prev) => ({ ...prev, message: null }));
 
         // Formatage des données
         const body = formatDataEdition();
@@ -195,7 +196,7 @@ const Home = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsEdition((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -271,6 +272,7 @@ const Home = () => {
                                 variant="outline-action"
                                 className="d-flex align-items-center home-grid-btn-action"
                                 onClick={() => openCloseEditionModal(EnumAction.CREATE)}
+                                disabled={isSubmitting}
                             >
                                 <IoAddCircleOutline size={30} />
                                 {t('home.addEdition')}
@@ -286,6 +288,7 @@ const Home = () => {
                                         variant="outline-action"
                                         className="d-flex align-items-center home-grid-btn-action btn-yellow"
                                         onClick={showYearsOfEditions}
+                                        disabled={isSubmitting}
                                     >
                                         <IoChevronBackOutline size={25} />
                                         {t('common.return')}
@@ -298,6 +301,7 @@ const Home = () => {
                                             variant="action"
                                             className="home-grid-btn-location"
                                             onClick={() => navigate(`/edition/${edition.id}`)}
+                                            disabled={isSubmitting}
                                         >
                                             <span className="home-grid-btn-label">{edition.location}</span>
                                             <span className="home-grid-btn-badge">
@@ -317,6 +321,7 @@ const Home = () => {
                                             variant="action"
                                             className="home-grid-btn-year"
                                             onClick={() => showEditionsByYear(year)}
+                                            disabled={isSubmitting}
                                         >
                                             <span className="home-grid-btn-label">{year.year}</span>
                                             <span className="home-grid-btn-badge">
@@ -344,6 +349,7 @@ const Home = () => {
                             setModalOptions={setModalOptionsEdition}
                             onClose={openCloseEditionModal}
                             onSubmit={handleSubmit}
+                            isSubmitting={isSubmitting}
                         />
                     )}
                 </>

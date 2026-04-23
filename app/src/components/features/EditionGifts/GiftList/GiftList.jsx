@@ -13,7 +13,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des cadeaux
  */
-const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubmitting }) => {
+const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -102,7 +102,7 @@ const GiftList = ({ gifts, title, getIconColor, onConfirm, showGiftModal, isSubm
                     {/* Icône */}
                     <div
                         className="d-flex align-items-center justify-content-center edition-item-icon"
-                        style={{ backgroundColor: getIconColor(g.name) }}
+                        style={{ backgroundColor: g.color }}
                     >
                         {g.name.charAt(0).toUpperCase()}
                     </div>

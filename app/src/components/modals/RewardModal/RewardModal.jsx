@@ -20,14 +20,14 @@ import './RewardModal.css';
 const RewardModal = ({
     player,
     gifts,
-    getIconColor,
     formData,
     setFormData,
     modalOptions,
     setModalOptions,
     onClose,
     onSubmit,
-    onConfirm
+    onConfirm,
+    isSubmitting
 }) => {
     // Contexte
     const { auth } = useAuth();
@@ -122,7 +122,7 @@ const RewardModal = ({
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={modalOptions.isSubmitting}>
+            <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -136,7 +136,7 @@ const RewardModal = ({
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
                             <div
                                 className="d-flex align-items-center justify-content-center reward-modal-icon"
-                                style={{ backgroundColor: getIconColor(player.name) }}
+                                style={{ backgroundColor: player.color }}
                             >
                                 {player.name.charAt(0).toUpperCase()}
                             </div>
@@ -212,7 +212,7 @@ const RewardModal = ({
                                                     <Button
                                                         onClick={() => handleDelete(r)}
                                                         className="d-flex align-items-center justify-content-center modal-button-delete"
-                                                        disabled={modalOptions.isSubmitting}
+                                                        disabled={isSubmitting}
                                                     >
                                                         <FaTrashCan />
                                                     </Button>
@@ -242,14 +242,14 @@ const RewardModal = ({
 
                         {/* Boutons d'action */}
                         <div className="modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.close')}
                             </Button>
 
                             {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
-                                <Button type="submit" variant="modal-action">
+                                <Button type="submit" variant="modal-action" disabled={isSubmitting}>
                                     {t('common.validate')}
-                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                    {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                                 </Button>
                             )}
                         </div>

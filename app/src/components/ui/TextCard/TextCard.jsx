@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaArrowRightLong, FaArrowUpLong } from 'react-icons/fa6';
 
@@ -52,7 +53,7 @@ const TextCard = ({ icon, title, text, limit = 200 }) => {
                 <div className="text-card-content">{textContent.text}</div>
 
                 {textContent.isLong && (
-                    <button className="d-flex align-items-center p-0 mt-2 gap-1 text-card-content-toggle" onClick={toggle}>
+                    <Button className="d-flex align-items-center p-0 mt-2 gap-1 text-card-content-toggle" onClick={toggle}>
                         {textContent.expanded ? (
                             <>
                                 {t('common.readLess')}
@@ -64,7 +65,7 @@ const TextCard = ({ icon, title, text, limit = 200 }) => {
                                 <FaArrowRightLong size={10} />
                             </>
                         )}
-                    </button>
+                    </Button>
                 )}
             </div>
         </div>

@@ -11,7 +11,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des participants
  */
-const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPlayerModal, isSubmitting }) => {
+const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -39,7 +39,7 @@ const PlayerList = ({ players, getIconColor, onConfirm, showRewardModal, showPla
                     {/* Icône */}
                     <div
                         className="d-flex align-items-center justify-content-center edition-item-icon"
-                        style={{ backgroundColor: getIconColor(p.name) }}
+                        style={{ backgroundColor: p.color }}
                     >
                         {p.name.charAt(0).toUpperCase()}
                     </div>

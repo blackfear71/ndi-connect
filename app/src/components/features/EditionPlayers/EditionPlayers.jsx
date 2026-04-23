@@ -1,17 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { Button, Form, Spinner } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 import { IoAddCircleOutline } from 'react-icons/io5';
-
-import { TextInput } from '../../../components/inputs';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
 import { EnumAction, EnumUserRole } from '../../../enums';
-
-import './EditionPlayers.css';
 
 import PlayerList from './PlayerList/PlayerList';
 
@@ -20,16 +13,10 @@ import PlayerList from './PlayerList/PlayerList';
  */
 const EditionPlayers = ({
     players,
-    getIconColor,
-    formPlayer,
     setFormPlayer,
-    resetFormPlayer,
     setModalOptionsPlayer,
-    formReward,
     setFormReward,
     setModalOptionsReward,
-    setMessage,
-    onSubmit,
     onConfirm,
     isSubmitting
 }) => {
@@ -39,74 +26,19 @@ const EditionPlayers = ({
     // Traductions
     const { t } = useTranslation();
 
-    // Local states
-    const nameInputRef = useRef(null);
-    const [showEntry, setShowEntry] = useState(false);
-
     /**
-     * Met le curseur sur la zone de saisie à l'ouverture
-     */
-    useEffect(() => {
-        showEntry && nameInputRef.current?.focus();
-    }, [showEntry]);
-
-    /**
-     * Affiche ou masque la saisie de participant
-     * @param {*} show Indicateur d'affichage
-     */
-    const showHidePlayerEntry = (show) => {
-        // Affiche ou masque la saisie
-        setShowEntry(show);
-
-        // Réinitialise le formulaire
-        !show && resetFormPlayer();
-    };
-
-    /**
-     * Met à jour le formulaire à la saisie (création)
-     * @param {*} e Evènement
-     */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormPlayer((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission
-     * @param {*} e Evènement
-     * @param {*} action Action à réaliser
-     */
-    const handleSubmit = (e, action) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle que le nom est renseigné
-        if (!formPlayer.name) {
-            setMessage({ code: 'errors.invalidName', type: 'error' });
-            return;
-        }
-
-        // Masque la saisie
-        setShowEntry(false);
-
-        // Soumets le formulaire
-        onSubmit(action);
-    };
-
-    /**
-     * Affiche la modale de modification/suppression d'un participant
+     * Affiche la modale de création/modification d'un participant
      * @param {*} player Données participant
      * @param {*} action Action à réaliser
      */
     const showPlayerModal = (player, action) => {
-        setShowEntry(false);
-
         if (player) {
             setFormPlayer({
-                ...formPlayer,
                 id: player.id,
                 name: player.name,
-                delta: 0
+                delta: 0,
+                giveaway: 0,
+                giveawayId: 0
             });
         }
 
@@ -122,12 +54,11 @@ const EditionPlayers = ({
      * @param {*} player Données participant
      */
     const showRewardModal = (player) => {
-        setShowEntry(false);
-
         if (player) {
             setFormReward({
-                ...formReward,
-                idPlayer: player.id
+                idReward: null,
+                idPlayer: player.id,
+                idGift: 0
             });
         }
 
@@ -139,44 +70,14 @@ const EditionPlayers = ({
 
     return (
         <>
+            {/* Ajout */}
             {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
-                <>
-                    {/* Ajout */}
-                    <div className="d-grid mb-2">
-                        <Button variant="outline-action" onClick={() => showHidePlayerEntry(true)}>
-                            <IoAddCircleOutline size={25} />
-                            {t('edition.addPlayer')}
-                        </Button>
-                    </div>
-
-                    {/* Saisie */}
-                    {showEntry && (
-                        <fieldset disabled={isSubmitting}>
-                            <Form onSubmit={(event) => handleSubmit(event, EnumAction.CREATE)} className="d-flex align-items-center gap-2">
-                                <div className="flex-fill">
-                                    <TextInput
-                                        name={'name'}
-                                        ref={nameInputRef}
-                                        className={'edition-players-entry'} // TODO : voir si className est toujours utile une fois remplacé par la modale
-                                        placeholder={t('edition.name')}
-                                        value={formPlayer.name}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required={true}
-                                    />
-                                </div>
-
-                                <Button onClick={() => showHidePlayerEntry(false)} className="edition-button">
-                                    <FaTimes />
-                                </Button>
-
-                                <Button type="submit" className="edition-button">
-                                    {isSubmitting ? <Spinner animation="border" role="status" variant="light" size="sm" /> : <FaCheck />}
-                                </Button>
-                            </Form>
-                        </fieldset>
-                    )}
-                </>
+                <div className="d-grid">
+                    <Button variant="outline-action" onClick={() => showPlayerModal(null, EnumAction.CREATE)} disabled={isSubmitting}>
+                        <IoAddCircleOutline size={25} />
+                        {t('edition.addPlayer')}
+                    </Button>
+                </div>
             )}
 
             {/* Liste */}
@@ -184,7 +85,6 @@ const EditionPlayers = ({
                 <div className="mt-3">
                     <PlayerList
                         players={players}
-                        getIconColor={getIconColor}
                         onConfirm={onConfirm}
                         showRewardModal={showRewardModal}
                         showPlayerModal={showPlayerModal}

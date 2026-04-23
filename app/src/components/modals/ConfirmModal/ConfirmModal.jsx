@@ -9,7 +9,7 @@ import { Message } from '../../../components/shared';
 /**
  * Modale de confirmation
  */
-const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction }) => {
+const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -45,7 +45,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction 
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={modalOptions.isSubmitting}>
+            <fieldset disabled={isSubmitting}>
                 <Form onSubmit={handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
@@ -78,14 +78,14 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction 
 
                         {/* Boutons d'action */}
                         <div className="modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.cancel')}
                             </Button>
 
                             {onConfirmAction && (
-                                <Button type="submit" variant="modal-action">
+                                <Button type="submit" variant="modal-action" disabled={isSubmitting}>
                                     {t('common.validate')}
-                                    {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                    {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                                 </Button>
                             )}
                         </div>

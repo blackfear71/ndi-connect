@@ -57,19 +57,16 @@ const Settings = () => {
         action: '',
         data: null,
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsPassword, setModalOptionsPassword] = useState({
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsUser, setModalOptionsUser] = useState({
         action: '',
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
 
     // API states
@@ -105,7 +102,7 @@ const Settings = () => {
             subscriptionUsers
                 .pipe(
                     map((dataUsers) => {
-                        const processedUsers = processUserDatas(dataUsers.response.data);
+                        const processedUsers = processUsersData(dataUsers.response.data);
 
                         setUsers(processedUsers);
                         setCurrentUser(processedUsers.find((u) => u.id === auth.id));
@@ -147,7 +144,7 @@ const Settings = () => {
      * @param {*} usersData Données utilisateurs
      * @returns Données utilisateurs enrichies
      */
-    const processUserDatas = (usersData) => {
+    const processUsersData = (usersData) => {
         return usersData.map((user) => ({
             ...user,
             role: getUserRole(user.level)
@@ -180,8 +177,7 @@ const Settings = () => {
         setModalOptionsPassword((prev) => ({
             ...prev,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -194,7 +190,7 @@ const Settings = () => {
     const handleSubmitPassword = () => {
         setMessage(null);
         setIsSubmitting(true);
-        setModalOptionsPassword((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setModalOptionsPassword((prev) => ({ ...prev, message: null }));
 
         const usersService = new UsersService();
 
@@ -215,7 +211,6 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsPassword((prev) => ({ ...prev, isSubmitting: false }));
                     setIsSubmitting(false);
                 })
             )
@@ -242,8 +237,7 @@ const Settings = () => {
             ...prev,
             action: openAction,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -256,7 +250,8 @@ const Settings = () => {
      */
     const handleResetPassword = (id) => {
         setMessage(null);
-        setModalOptionsUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsUser((prev) => ({ ...prev, message: null }));
 
         const usersService = new UsersService();
 
@@ -283,7 +278,7 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsUser((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -294,7 +289,7 @@ const Settings = () => {
      */
     const handleSubmitUser = (action) => {
         setMessage(null);
-        setModalOptionsUser((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setModalOptionsUser((prev) => ({ ...prev, message: null }));
 
         const usersService = new UsersService();
 
@@ -302,6 +297,8 @@ const Settings = () => {
 
         switch (action) {
             case EnumAction.CREATE:
+                setIsSubmitting(true);
+
                 subscriptionUsers = usersService.createUser({
                     login: formUser.login,
                     password: formUser.password,
@@ -310,6 +307,8 @@ const Settings = () => {
                 });
                 break;
             case EnumAction.UPDATE:
+                setIsSubmitting(true);
+
                 subscriptionUsers = usersService.updateUser({
                     id: formUser.id,
                     level: formUser.level
@@ -321,7 +320,7 @@ const Settings = () => {
             ?.pipe(
                 map((dataUsers) => {
                     openCloseUserModal();
-                    setUsers(processUserDatas(dataUsers.response.data));
+                    setUsers(processUsersData(dataUsers.response.data));
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
@@ -338,7 +337,7 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsUser((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -368,8 +367,7 @@ const Settings = () => {
                 action: confirmOptions.action,
                 data: confirmOptions.data,
                 isOpen: !modalOptionsConfirm.isOpen,
-                message: null,
-                isSubmitting: false
+                message: null
             });
         } else {
             setModalOptionsConfirm({
@@ -377,8 +375,7 @@ const Settings = () => {
                 action: '',
                 data: null,
                 isOpen: false,
-                message: null,
-                isSubmitting: false
+                message: null
             });
         }
     };
@@ -400,7 +397,8 @@ const Settings = () => {
      */
     const handleDeleteUser = () => {
         setMessage(null);
-        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const usersService = new UsersService();
 
@@ -410,7 +408,7 @@ const Settings = () => {
             .pipe(
                 map((dataUsers) => {
                     openCloseConfirmModal();
-                    setUsers(processUserDatas(dataUsers.response.data));
+                    setUsers(processUsersData(dataUsers.response.data));
                     setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
@@ -419,7 +417,7 @@ const Settings = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -500,6 +498,7 @@ const Settings = () => {
                             setModalOptions={setModalOptionsPassword}
                             onClose={openClosePasswordModal}
                             onSubmit={handleSubmitPassword}
+                            isSubmitting={isSubmitting}
                         />
                     )}
 
@@ -514,6 +513,7 @@ const Settings = () => {
                             onReset={handleResetPassword}
                             onClose={openCloseUserModal}
                             onSubmit={handleSubmitUser}
+                            isSubmitting={isSubmitting}
                         />
                     )}
 
@@ -524,6 +524,7 @@ const Settings = () => {
                             setModalOptions={setModalOptionsConfirm}
                             onClose={openCloseConfirmModal}
                             onConfirmAction={handleConfirmAction}
+                            isSubmitting={isSubmitting}
                         />
                     )}
                 </>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -12,20 +12,23 @@ import { Message } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { EnumUserRole } from '../../../enums';
+import { EnumAction, EnumUserRole } from '../../../enums';
 
 /**
  * Modale participant
  */
-const PlayerModal = ({ players, player, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit }) => {
+const PlayerModal = ({ players, player, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
 
+    // Local states
+    const nameInputRef = useRef(null);
+
     // Constantes
-    const availablePlayers = players.filter((p) => p.id !== player.id);
+    const availablePlayers = player && players.filter((p) => p.id !== player.id);
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -34,6 +37,9 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
             setMessage(null);
+
+            // Focus à la création
+            modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
@@ -64,7 +70,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             case 'add':
                 setFormData((prev) => {
                     const currentDelta = parseInt(prev.delta) || 0;
-                    const nextDelta = currentDelta < 0 ? (auth.level >= EnumUserRole.SUPERADMIN ? currentDelta + 1 : 0) : currentDelta + 1;
+                    const nextDelta = currentDelta < 0 && auth.level < EnumUserRole.SUPERADMIN ? 0 : currentDelta + 1;
 
                     return {
                         ...prev,
@@ -75,12 +81,19 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             case 'remove':
                 setFormData((prev) => {
                     const currentDelta = parseInt(prev.delta) || 0;
-                    const nextDelta =
-                        auth.level >= EnumUserRole.SUPERADMIN && currentDelta <= 0 ? currentDelta - 1 : Math.max(0, currentDelta - 1);
+                    let nextDelta;
+
+                    if (auth.level >= EnumUserRole.SUPERADMIN) {
+                        // SUPERADMIN : peut aller en négatif, limité par les points du joueur
+                        nextDelta = player ? Math.max(-player.points, currentDelta - 1) : Math.max(0, currentDelta - 1);
+                    } else {
+                        // Autres : jamais en dessous de 0
+                        nextDelta = Math.max(0, currentDelta - 1);
+                    }
 
                     return {
                         ...prev,
-                        delta: Math.max(-player.points, nextDelta)
+                        delta: nextDelta
                     };
                 });
                 break;
@@ -137,7 +150,13 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         // Empêche le rechargement de la page
         e.preventDefault();
 
-        // Contrôle que les points sont > 0
+        // Contrôle le nom renseigné
+        if (!formData.name) {
+            setMessage({ code: 'errors.invalidName', type: 'error' });
+            return;
+        }
+
+        // Contrôle que les points sont >= 0 (sauf SUPERADMIN)
         const delta = parseInt(formData.delta, 10);
 
         if (
@@ -150,27 +169,24 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             return;
         }
 
-        // Contrôle le nom renseigné
-        if (!formData.name) {
-            setMessage({ code: 'errors.invalidName', type: 'error' });
-            return;
-        }
+        // Contrôles des points (modification)
+        if (action === EnumAction.UPDATE) {
+            // Contrôle le don de points
+            if (
+                (formData.giveawayId !== null && formData.giveawayId !== undefined && formData.giveawayId !== 0 && !formData.giveaway) ||
+                (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayId)
+            ) {
+                setMessage({ code: 'errors.invalidGiveaway', type: 'error' });
+                return;
+            }
 
-        // Contrôle le don de points
-        if (
-            (formData.giveawayId !== null && formData.giveawayId !== undefined && formData.giveawayId !== 0 && !formData.giveaway) ||
-            (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayId)
-        ) {
-            setMessage({ code: 'errors.invalidGiveaway', type: 'error' });
-            return;
-        }
+            // Contrôle les points restants
+            const giveaway = parseInt(formData.giveaway, 10);
 
-        // Contrôle les points restants
-        const giveaway = parseInt(formData.giveaway, 10);
-
-        if (player.points + delta - giveaway < 0) {
-            setMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
-            return;
+            if (player.points + delta - giveaway < 0) {
+                setMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
+                return;
+            }
         }
 
         // Soumets le formulaire
@@ -190,36 +206,39 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={modalOptions.isSubmitting}>
+            <fieldset disabled={isSubmitting}>
                 <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUser />
-                            {t('edition.managePlayer')}
+                            {modalOptions.action === EnumAction.CREATE ? t('edition.addPlayer') : t('edition.managePlayer')}
                         </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         {/* Nombre de points */}
-                        <div className="modal-group">
-                            <div className="modal-group-content">
-                                {/* Titre */}
-                                <div className="modal-group-content-title">{t('edition.points')}</div>
+                        {modalOptions.action === EnumAction.UPDATE && (
+                            <div className="modal-group">
+                                <div className="modal-group-content">
+                                    {/* Titre */}
+                                    <div className="modal-group-content-title">{t('edition.points')}</div>
 
-                                {/* Valeur */}
-                                <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
-                                    {player?.points ?? 0}
+                                    {/* Valeur */}
+                                    <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                        {player?.points ?? 0}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Modification du participant */}
                         <div className="modal-group">
                             <div className="modal-group-content">
                                 <TextInput
-                                    title={t('edition.updateName')}
+                                    title={modalOptions.action === EnumAction.CREATE ? t('edition.name') : t('edition.updateName')}
                                     icon={<PiUserListFill />}
                                     name="name"
+                                    ref={nameInputRef}
                                     placeholder={t('edition.name')}
                                     value={formData.name}
                                     onChange={handleChange}
@@ -244,7 +263,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                         </div>
 
                         {/* Don de points */}
-                        {player?.points > 0 && availablePlayers.length > 0 && (
+                        {modalOptions.action === EnumAction.UPDATE && player?.points > 0 && availablePlayers.length > 0 && (
                             <div className="modal-group">
                                 <div className="modal-group-content gap-2">
                                     {/* Choix du participant */}
@@ -286,13 +305,13 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                         {/* Boutons d'action */}
                         <div className="modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()}>
+                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action">
+                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
                                 {t('common.validate')}
-                                {modalOptions.isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
+                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
                             </Button>
                         </div>
                     </Modal.Footer>

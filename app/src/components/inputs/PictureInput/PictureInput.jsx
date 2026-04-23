@@ -110,10 +110,10 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                 {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Parcourir */}
-                <Form.Group controlId={name}>
+                <Form.Group controlId={isSubmitting ? undefined : name}>
                     <Form.Label
                         className="d-flex align-items-center justify-content-center picture-input-button rounded p-3 m-0"
-                        style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                        style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.65 : 1 }}
                     >
                         {t('common.browse')}
                     </Form.Label>

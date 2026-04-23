@@ -74,31 +74,26 @@ const Edition = () => {
         action: '',
         data: null,
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsEdition, setModalOptionsEdition] = useState({
         action: '',
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsGift, setModalOptionsGift] = useState({
         action: '',
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({
         action: '',
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({
         isOpen: false,
-        message: null,
-        isSubmitting: false
+        message: null
     });
 
     // API states
@@ -118,8 +113,8 @@ const Edition = () => {
             .pipe(
                 map((dataEdition) => {
                     setEdition(dataEdition.response.data.edition);
-                    setGifts(dataEdition.response.data.gifts);
-                    setPlayers(dataEdition.response.data.players);
+                    setGifts(processGiftsData(dataEdition.response.data.gifts));
+                    setPlayers(processPlayersData(dataEdition.response.data.players));
 
                     setFormEdition({
                         location: dataEdition.response.data.edition.location,
@@ -150,18 +145,20 @@ const Edition = () => {
     useEffect(() => {
         // Mise à jour des cadeaux depuis le SSE
         if (events?.gifts) {
-            if (JSON.stringify(gifts) !== JSON.stringify(events.gifts)) {
-                setGifts(events.gifts);
-            }
+            setGifts((prev) => {
+                const next = processGiftsData(events.gifts);
+                return JSON.stringify(prev) !== JSON.stringify(next) ? next : prev;
+            });
         }
 
         // Mise à jour des participants depuis le SSE
         if (events?.players) {
-            if (JSON.stringify(players) !== JSON.stringify(events.players)) {
-                setPlayers(events.players);
-            }
+            setPlayers((prev) => {
+                const next = processPlayersData(events.players);
+                return JSON.stringify(prev) !== JSON.stringify(next) ? next : prev;
+            });
         }
-    }, [events, gifts, players]);
+    }, [events]);
 
     /**
      * Si un message d'authentification est défini on l'affiche
@@ -173,6 +170,30 @@ const Edition = () => {
             setAuthMessage(null);
         }
     }, [authMessage, setAuthMessage]);
+
+    /**
+     * Enrichit les données participants avec la couleur
+     * @param {*} usersData Données participants
+     * @returns Données participants enrichies
+     */
+    const processPlayersData = (playersData) => {
+        return playersData.map((player) => ({
+            ...player,
+            color: getIconColor(player.name)
+        }));
+    };
+
+    /**
+     * Enrichit les données cadeaux avec la couleur
+     * @param {*} usersData Données cadeaux
+     * @returns Données cadeaux enrichies
+     */
+    const processGiftsData = (giftsData) => {
+        return giftsData.map((gift) => ({
+            ...gift,
+            color: getIconColor(gift.name)
+        }));
+    };
 
     /**
      * Détermine une couleur d'icône en fonction du texte fourni
@@ -207,8 +228,7 @@ const Edition = () => {
             ...prev,
             action: openAction,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -220,7 +240,8 @@ const Edition = () => {
      */
     const handleSubmitEdition = () => {
         setMessage(null);
-        setModalOptionsEdition((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsEdition((prev) => ({ ...prev, message: null }));
 
         // Formatage des données
         const body = formatDataEdition();
@@ -246,7 +267,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsEdition((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -297,8 +318,7 @@ const Edition = () => {
             ...prev,
             action: openAction,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -318,6 +338,7 @@ const Edition = () => {
         switch (action) {
             case EnumAction.CREATE:
                 setIsSubmitting(true);
+                setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
                     id_edition: edition.id,
@@ -326,7 +347,8 @@ const Edition = () => {
                 });
                 break;
             case EnumAction.UPDATE:
-                setModalOptionsPlayer((prev) => ({ ...prev, message: null, isSubmitting: true }));
+                setIsSubmitting(true);
+                setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
                 subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
                     name: formPlayer.name,
@@ -340,24 +362,20 @@ const Edition = () => {
         subscriptionPlayers
             ?.pipe(
                 map((dataPlayers) => {
-                    action === EnumAction.UPDATE ? openClosePlayerModal('') : resetFormPlayer();
-                    setPlayers(dataPlayers.response.data);
+                    openClosePlayerModal('');
+                    setPlayers(processPlayersData(dataPlayers.response.data));
                     setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    action === EnumAction.UPDATE
-                        ? setModalOptionsPlayer((prev) => ({
-                              ...prev,
-                              message: { code: err?.response?.message, type: err?.response?.status }
-                          }))
-                        : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsPlayer((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    action === EnumAction.UPDATE
-                        ? setModalOptionsPlayer((prev) => ({ ...prev, isSubmitting: false }))
-                        : setIsSubmitting(false);
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -385,8 +403,7 @@ const Edition = () => {
             ...prev,
             action: openAction,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -406,6 +423,7 @@ const Edition = () => {
         switch (action) {
             case EnumAction.CREATE:
                 setIsSubmitting(true);
+                setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
                 subscriptionGifts = giftsService.createGift(edition.id, {
                     id_edition: edition.id,
@@ -415,7 +433,8 @@ const Edition = () => {
                 });
                 break;
             case EnumAction.UPDATE:
-                setModalOptionsGift((prev) => ({ ...prev, message: null, isSubmitting: true }));
+                setIsSubmitting(true);
+                setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
                 subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
                     name: formGift.name,
@@ -429,23 +448,19 @@ const Edition = () => {
             ?.pipe(
                 map((dataGifts) => {
                     openCloseGiftModal('');
-                    setGifts(dataGifts.response.data);
+                    setGifts(processGiftsData(dataGifts.response.data));
                     setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                 }),
                 take(1),
                 catchError((err) => {
-                    action === EnumAction.UPDATE
-                        ? setModalOptionsGift((prev) => ({
-                              ...prev,
-                              message: { code: err?.response?.message, type: err?.response?.status }
-                          }))
-                        : setMessage({ code: err?.response?.message, type: err?.response?.status });
+                    setModalOptionsGift((prev) => ({
+                        ...prev,
+                        message: { code: err?.response?.message, type: err?.response?.status }
+                    }));
                     return of();
                 }),
                 finalize(() => {
-                    action === EnumAction.UPDATE
-                        ? setModalOptionsGift((prev) => ({ ...prev, isSubmitting: false }))
-                        : setIsSubmitting(false);
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -471,8 +486,7 @@ const Edition = () => {
         setModalOptionsReward((prev) => ({
             ...prev,
             isOpen: !prev.isOpen,
-            message: null,
-            isSubmitting: false
+            message: null
         }));
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
@@ -484,7 +498,8 @@ const Edition = () => {
      */
     const handleSubmitReward = () => {
         setMessage(null);
-        setModalOptionsReward((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsReward((prev) => ({ ...prev, message: null }));
 
         const rewardsService = new RewardsService();
 
@@ -494,8 +509,8 @@ const Edition = () => {
             .pipe(
                 map((dataRewards) => {
                     openCloseRewardModal();
-                    setGifts(dataRewards.response.data.gifts);
-                    setPlayers(dataRewards.response.data.players);
+                    setGifts(processGiftsData(dataRewards.response.data.gifts));
+                    setPlayers(processPlayersData(dataRewards.response.data.players));
                     setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
                 }),
                 take(1),
@@ -507,7 +522,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsReward((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -535,8 +550,7 @@ const Edition = () => {
                 action: confirmOptions.action,
                 data: confirmOptions.data,
                 isOpen: !modalOptionsConfirm.isOpen,
-                message: null,
-                isSubmitting: false
+                message: null
             });
         } else {
             setModalOptionsConfirm({
@@ -544,8 +558,7 @@ const Edition = () => {
                 action: '',
                 data: null,
                 isOpen: false,
-                message: null,
-                isSubmitting: false
+                message: null
             });
         }
     };
@@ -588,7 +601,8 @@ const Edition = () => {
      */
     const handleDeleteEdition = () => {
         setMessage(null);
-        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const editionsService = new EditionsService();
 
@@ -616,7 +630,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -627,7 +641,8 @@ const Edition = () => {
      */
     const handleDeleteGift = (idGift) => {
         setMessage(null);
-        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const giftsService = new GiftsService();
 
@@ -637,7 +652,7 @@ const Edition = () => {
             .pipe(
                 map((dataGifts) => {
                     openCloseConfirmModal();
-                    setGifts(dataGifts.response.data);
+                    setGifts(processGiftsData(dataGifts.response.data));
                     setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                 }),
                 take(1),
@@ -649,7 +664,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -660,7 +675,8 @@ const Edition = () => {
      */
     const handleDeletePlayer = (idPlayer) => {
         setMessage(null);
-        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const playersService = new PlayersService();
 
@@ -670,7 +686,7 @@ const Edition = () => {
             .pipe(
                 map((dataPlayers) => {
                     openCloseConfirmModal();
-                    setPlayers(dataPlayers.response.data);
+                    setPlayers(processPlayersData(dataPlayers.response.data));
                     setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                 }),
                 take(1),
@@ -682,7 +698,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -693,7 +709,8 @@ const Edition = () => {
      */
     const handleDeleteReward = (idReward) => {
         setMessage(null);
-        setModalOptionsConfirm((prev) => ({ ...prev, message: null, isSubmitting: true }));
+        setIsSubmitting(true);
+        setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const rewardsService = new RewardsService();
 
@@ -703,8 +720,8 @@ const Edition = () => {
             .pipe(
                 map((dataRewards) => {
                     openCloseConfirmModal();
-                    setGifts(dataRewards.response.data.gifts);
-                    setPlayers(dataRewards.response.data.players);
+                    setGifts(processGiftsData(dataRewards.response.data.gifts));
+                    setPlayers(processPlayersData(dataRewards.response.data.players));
                     setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
                 }),
                 take(1),
@@ -716,7 +733,7 @@ const Edition = () => {
                     return of();
                 }),
                 finalize(() => {
-                    setModalOptionsConfirm((prev) => ({ ...prev, isSubmitting: false }));
+                    setIsSubmitting(false);
                 })
             )
             .subscribe();
@@ -770,16 +787,10 @@ const Edition = () => {
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
                                             players={players}
-                                            getIconColor={getIconColor}
-                                            formPlayer={formPlayer}
                                             setFormPlayer={setFormPlayer}
-                                            resetFormPlayer={resetFormPlayer}
                                             setModalOptionsPlayer={setModalOptionsPlayer}
-                                            formReward={formReward}
                                             setFormReward={setFormReward}
                                             setModalOptionsReward={setModalOptionsReward}
-                                            setMessage={setMessage}
-                                            onSubmit={handleSubmitPlayer}
                                             onConfirm={openCloseConfirmModal}
                                             isSubmitting={isSubmitting}
                                         />
@@ -789,7 +800,6 @@ const Edition = () => {
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
                                             gifts={gifts}
-                                            getIconColor={getIconColor}
                                             setFormData={setFormGift}
                                             setModalOptions={setModalOptionsGift}
                                             onConfirm={openCloseConfirmModal}
@@ -803,6 +813,7 @@ const Edition = () => {
                                             edition={edition}
                                             onEdit={openCloseEditionModal}
                                             onConfirm={handleConfirmDeleteEdition}
+                                            isSubmitting={isSubmitting}
                                         />
                                     </Tab>
                                 </Tabs>
@@ -816,6 +827,7 @@ const Edition = () => {
                                         setModalOptions={setModalOptionsEdition}
                                         onClose={openCloseEditionModal}
                                         onSubmit={handleSubmitEdition}
+                                        isSubmitting={isSubmitting}
                                     />
                                 )}
 
@@ -829,6 +841,7 @@ const Edition = () => {
                                         setModalOptions={setModalOptionsGift}
                                         onClose={openCloseGiftModal}
                                         onSubmit={handleSubmitGift}
+                                        isSubmitting={isSubmitting}
                                     />
                                 )}
 
@@ -843,6 +856,7 @@ const Edition = () => {
                                         setModalOptions={setModalOptionsPlayer}
                                         onClose={openClosePlayerModal}
                                         onSubmit={handleSubmitPlayer}
+                                        isSubmitting={isSubmitting}
                                     />
                                 )}
 
@@ -851,7 +865,6 @@ const Edition = () => {
                                     <RewardModal
                                         player={players.find((p) => p.id === formReward.idPlayer)}
                                         gifts={gifts}
-                                        getIconColor={getIconColor}
                                         formData={formReward}
                                         setFormData={setFormReward}
                                         modalOptions={modalOptionsReward}
@@ -859,6 +872,7 @@ const Edition = () => {
                                         onClose={openCloseRewardModal}
                                         onSubmit={handleSubmitReward}
                                         onConfirm={openCloseConfirmModal}
+                                        isSubmitting={isSubmitting}
                                     />
                                 )}
 
@@ -869,6 +883,7 @@ const Edition = () => {
                                         setModalOptions={setModalOptionsConfirm}
                                         onClose={openCloseConfirmModal}
                                         onConfirmAction={handleConfirmAction}
+                                        isSubmitting={isSubmitting}
                                     />
                                 )}
                             </>

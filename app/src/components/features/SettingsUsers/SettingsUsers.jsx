@@ -14,7 +14,7 @@ const SettingsUsers = ({ users, formData, setFormData, setModalOptions, onConfir
     const { t } = useTranslation();
 
     /**
-     * Affiche la modale de modification d'un utilisateur
+     * Affiche la modale de création/modification d'un utilisateur
      * @param {*} user Données utilisateur
      */
     const showUserModal = (user, action) => {
@@ -37,7 +37,7 @@ const SettingsUsers = ({ users, formData, setFormData, setModalOptions, onConfir
         <>
             {/* Ajout */}
             <div className="d-grid mb-2">
-                <Button variant="outline-action" onClick={() => showUserModal(null, EnumAction.CREATE)}>
+                <Button variant="outline-action" onClick={() => showUserModal(null, EnumAction.CREATE)} disabled={isSubmitting}>
                     <IoAddCircleOutline size={25} />
                     {t('settings.addUser')}
                 </Button>

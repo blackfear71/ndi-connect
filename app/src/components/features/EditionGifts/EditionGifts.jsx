@@ -13,8 +13,7 @@ import GiftList from './GiftList/GiftList';
 /**
  * Liste des cadeaux
  */
-// TODO : voir pour les getIconColor aussi pour l'appliquer à la liste au lieu d'envoyer la méthode
-const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -52,7 +51,7 @@ const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onCon
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                 <div className="d-grid">
-                    <Button variant="outline-action" onClick={() => showGiftModal(null, EnumAction.CREATE)}>
+                    <Button variant="outline-action" onClick={() => showGiftModal(null, EnumAction.CREATE)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
                         {t('edition.addGift')}
                     </Button>
@@ -68,7 +67,6 @@ const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onCon
                             <GiftList
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
-                                getIconColor={getIconColor}
                                 onConfirm={onConfirm}
                                 showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
@@ -82,7 +80,6 @@ const EditionGifts = ({ gifts, getIconColor, setFormData, setModalOptions, onCon
                             <GiftList
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
-                                getIconColor={getIconColor}
                                 onConfirm={onConfirm}
                                 showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
