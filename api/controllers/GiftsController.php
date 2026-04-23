@@ -24,6 +24,36 @@ class GiftsController
     }
 
     /**
+     * Lecture des enregistrements d'une édition
+     */
+    public function getEditionGifts($idEdition)
+    {
+        try {
+            // Lecture de tous les enregistrements
+            $gifts = $this->service->getEditionGifts($idEdition);
+
+            if ($gifts !== null) {
+                // Succès
+                ResponseHelper::success($gifts);
+            } else {
+                // Échec de la lecture
+                ResponseHelper::error(
+                    'ERR_GIFTS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des cadeaux dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
+            }
+        } catch (Exception $e) {
+            // Exception levée
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
      * Insertion d'un enregistrement
      */
     public function createGift($token, $idEdition, $data)
@@ -33,11 +63,11 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $gifts = $this->service->createGift($idEdition, $user['login'], $data);
+            $created = $this->service->createGift($idEdition, $user['login'], $data);
 
-            if ($gifts !== null) {
+            if ($created) {
                 // Succès
-                ResponseHelper::success($gifts, 'MSG_CREATION_SUCCESS');
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
             } else {
                 // Échec de la création
                 ResponseHelper::error(
@@ -66,11 +96,11 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
-            $gifts = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
+            $updated = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
 
-            if ($gifts !== null) {
+            if ($updated) {
                 // Succès
-                ResponseHelper::success($gifts, 'MSG_UPDATE_SUCCESS');
+                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
             } else {
                 // Échec de la modification
                 ResponseHelper::error(
@@ -99,11 +129,11 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $gifts = $this->service->deleteGift($idEdition, $idGift, $user['login']);
+            $deleted = $this->service->deleteGift($idEdition, $idGift, $user['login']);
 
-            if ($gifts !== null) {
+            if ($deleted) {
                 // Succès
-                ResponseHelper::success($gifts, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
             } else {
                 // Échec de la suppression
                 ResponseHelper::error(

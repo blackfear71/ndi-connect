@@ -44,7 +44,7 @@ const RewardModal = ({
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
         }
     }, [modalOptions?.isOpen]);
 
@@ -52,7 +52,7 @@ const RewardModal = ({
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -77,14 +77,14 @@ const RewardModal = ({
 
         // Contrôle cadeau sélectionné
         if (!formData.idGift) {
-            setMessage({ code: 'errors.invalidGift', type: 'error' });
+            setModalMessage({ code: 'errors.invalidGift', type: 'error' });
             return;
         } else {
             // Contrôle que les points sont >= valeur du cadeau
             const selectedGift = obtainableGifts.find((g) => g.id === formData.idGift);
 
             if (!selectedGift || player.points < selectedGift.value) {
-                setMessage({ code: 'errors.invalidGiftPoints', type: 'error' });
+                setModalMessage({ code: 'errors.invalidGiftPoints', type: 'error' });
                 return;
             }
         }
@@ -235,7 +235,7 @@ const RewardModal = ({
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

@@ -23,7 +23,7 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
 
             // Focus
             passwordInputRef.current?.focus();
@@ -34,7 +34,7 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -57,19 +57,19 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
 
         // Contrôle que les mots de passe sont renseignés
         if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
-            setMessage({ code: 'errors.invalidPassword', type: 'error' });
+            setModalMessage({ code: 'errors.invalidPassword', type: 'error' });
             return;
         }
 
         // Contrôle que le nouveau mot de passe est différent de l'ancien
         if (formData.oldPassword === formData.newPassword) {
-            setMessage({ code: 'errors.passwordIdentical', type: 'error' });
+            setModalMessage({ code: 'errors.passwordIdentical', type: 'error' });
             return;
         }
 
         // Contrôle que les nouveaux mots de passe correspondent
         if (formData.newPassword !== formData.confirmPassword) {
-            setMessage({ code: 'errors.passwordMatch', type: 'error' });
+            setModalMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
 
@@ -139,7 +139,7 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

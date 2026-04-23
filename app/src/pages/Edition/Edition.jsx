@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { of } from 'rxjs';
+import { forkJoin, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
@@ -361,10 +361,13 @@ const Edition = () => {
 
         subscriptionPlayers
             ?.pipe(
+                map((dataPlayer) => {
+                    setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
+                }),
+                switchMap(() => playersService.getEditionPlayers(edition.id)),
                 map((dataPlayers) => {
                     openClosePlayerModal('');
                     setPlayers(processPlayersData(dataPlayers.response.data));
-                    setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
@@ -446,10 +449,13 @@ const Edition = () => {
 
         subscriptionGifts
             ?.pipe(
+                map((dataGift) => {
+                    setMessage({ code: dataGift.response.message, type: dataGift.response.status });
+                }),
+                switchMap(() => giftsService.getEditionGifts(edition.id)),
                 map((dataGifts) => {
                     openCloseGiftModal('');
                     setGifts(processGiftsData(dataGifts.response.data));
-                    setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                 }),
                 take(1),
                 catchError((err) => {
@@ -502,16 +508,23 @@ const Edition = () => {
         setModalOptionsReward((prev) => ({ ...prev, message: null }));
 
         const rewardsService = new RewardsService();
+        const giftsService = new GiftsService();
+        const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.postReward(edition.id, formReward);
+        const subscriptionRewards = rewardsService.createReward(edition.id, formReward);
+        const subscriptionGifts = giftsService.getEditionGifts(edition.id);
+        const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 
         subscriptionRewards
             .pipe(
-                map((dataRewards) => {
+                map((dataReward) => {
+                    setMessage({ code: dataReward.response.message, type: dataReward.response.status });
+                }),
+                switchMap(() => forkJoin([subscriptionGifts, subscriptionPlayers])),
+                map(([dataGifts, dataPlayers]) => {
                     openCloseRewardModal();
-                    setGifts(processGiftsData(dataRewards.response.data.gifts));
-                    setPlayers(processPlayersData(dataRewards.response.data.players));
-                    setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                    setGifts(processGiftsData(dataGifts.response.data));
+                    setPlayers(processPlayersData(dataPlayers.response.data));
                 }),
                 take(1),
                 catchError((err) => {
@@ -650,10 +663,13 @@ const Edition = () => {
 
         subscriptionGifts
             .pipe(
+                map((dataGift) => {
+                    setMessage({ code: dataGift.response.message, type: dataGift.response.status });
+                }),
+                switchMap(() => giftsService.getEditionGifts(edition.id)),
                 map((dataGifts) => {
                     openCloseConfirmModal();
                     setGifts(processGiftsData(dataGifts.response.data));
-                    setMessage({ code: dataGifts.response.message, type: dataGifts.response.status });
                 }),
                 take(1),
                 catchError((err) => {
@@ -684,10 +700,13 @@ const Edition = () => {
 
         subscriptionPlayers
             .pipe(
+                map((dataPlayer) => {
+                    setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
+                }),
+                switchMap(() => playersService.getEditionPlayers(edition.id)),
                 map((dataPlayers) => {
                     openCloseConfirmModal();
                     setPlayers(processPlayersData(dataPlayers.response.data));
-                    setMessage({ code: dataPlayers.response.message, type: dataPlayers.response.status });
                 }),
                 take(1),
                 catchError((err) => {
@@ -713,16 +732,23 @@ const Edition = () => {
         setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const rewardsService = new RewardsService();
+        const giftsService = new GiftsService();
+        const playersService = new PlayersService();
 
         const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
+        const subscriptionGifts = giftsService.getEditionGifts(edition.id);
+        const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 
         subscriptionRewards
             .pipe(
-                map((dataRewards) => {
+                map((dataReward) => {
+                    setMessage({ code: dataReward.response.message, type: dataReward.response.status });
+                }),
+                switchMap(() => forkJoin([subscriptionGifts, subscriptionPlayers])),
+                map(([dataGifts, dataPlayers]) => {
                     openCloseConfirmModal();
-                    setGifts(processGiftsData(dataRewards.response.data.gifts));
-                    setPlayers(processPlayersData(dataRewards.response.data.players));
-                    setMessage({ code: dataRewards.response.message, type: dataRewards.response.status });
+                    setGifts(processGiftsData(dataGifts.response.data));
+                    setPlayers(processPlayersData(dataPlayers.response.data));
                 }),
                 take(1),
                 catchError((err) => {

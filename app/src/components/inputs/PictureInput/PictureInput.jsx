@@ -69,7 +69,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                 setPreviewUrl(URL.createObjectURL(file));
                 setFileName(file.name);
 
-                onChange && onChange(file, EnumAction.CREATE);
+                onChange?.(file, EnumAction.CREATE);
             } else {
                 setMessage({ code: 'errors.invalidFileType', type: 'error' });
 
@@ -92,7 +92,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
             fileInputRef.current.value = '';
         }
 
-        onChange && onChange(null, EnumAction.DELETE);
+        onChange?.(null, EnumAction.DELETE);
     };
 
     return (

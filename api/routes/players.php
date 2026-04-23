@@ -4,6 +4,11 @@ require_once 'controllers/PlayersController.php';
 $database = new Database();
 $db = $database->getConnection();
 
+$router->get('/players/edition/:idEdition', function ($params) use ($db) {
+    // Appel contrôleur
+    (new PlayersController($db))->getEditionPlayers($params['idEdition']);
+});
+
 $router->post('/players/create/:idEdition', function ($params) use ($db) {
     // Token
     $token = $_COOKIE['token'] ?? null;

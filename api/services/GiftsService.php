@@ -74,9 +74,9 @@ class GiftsService
             return null;
         }
 
-        // Insertion et récupération des cadeaux de l'édition
+        // Insertion
         if ($idEdition && $this->repository->create($login, $data)) {
-            return $this->getEditionGifts($idEdition);
+            return true;
         }
 
         return null;
@@ -95,9 +95,9 @@ class GiftsService
             return null;
         }
 
-        // Modification et récupération des cadeaux de l'édition
+        // Modification
         if ($idEdition && $idGift && $this->repository->update($idGift, $login, $data)) {
-            return $this->getEditionGifts($idEdition);
+            return true;
         }
 
         return null;
@@ -108,9 +108,9 @@ class GiftsService
      */
     public function deleteGift($idEdition, $idGift, $login)
     {
-        // Suppression logique du cadeau et récupération des cadeaux de l'édition
+        // Suppression logique du cadeau
         if ($idEdition && $idGift && $this->repository->logicalDelete($idGift, $login)) {
-            return $this->getEditionGifts($idEdition);
+            return true;
         }
 
         return null;

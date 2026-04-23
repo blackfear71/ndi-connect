@@ -29,7 +29,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
 
             // Focus à la création
             modalOptions.action === EnumAction.CREATE && loginInputRef.current?.focus();
@@ -40,7 +40,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -75,19 +75,19 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
 
         // Contrôle que les données sont renseignées (création)
         if (action === EnumAction.CREATE && (!formData.login || !formData.password || !formData.confirmPassword)) {
-            setMessage({ code: 'errors.invalidUserData', type: 'error' });
+            setModalMessage({ code: 'errors.invalidUserData', type: 'error' });
             return;
         }
 
         // Contrôle que le niveau est correct
         if (formData.level === '' || isNaN(formData.level) || formData.level < 0 || formData.level > 2) {
-            setMessage({ code: 'errors.invalidLevel', type: 'error' });
+            setModalMessage({ code: 'errors.invalidLevel', type: 'error' });
             return;
         }
 
         // Contrôle que les mots de passe correspondent (création)
         if (action === EnumAction.CREATE && formData.password !== formData.confirmPassword) {
-            setMessage({ code: 'errors.passwordMatch', type: 'error' });
+            setModalMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
 
@@ -225,7 +225,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

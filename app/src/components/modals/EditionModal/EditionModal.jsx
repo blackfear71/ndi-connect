@@ -26,7 +26,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
 
             // Focus à la création
             modalOptions.action === EnumAction.CREATE && locationInputRef.current?.focus();
@@ -37,7 +37,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -81,25 +81,25 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
         if (modalOptions.action !== EnumAction.DELETE) {
             // Contrôle la date renseignée
             if (!formData.startDate) {
-                setMessage({ code: 'errors.invalidStartDate', type: 'error' });
+                setModalMessage({ code: 'errors.invalidStartDate', type: 'error' });
                 return;
             }
 
             // Contrôle l'heure de début renseignée
             if (!formData.startTime) {
-                setMessage({ code: 'errors.invalidStartTime', type: 'error' });
+                setModalMessage({ code: 'errors.invalidStartTime', type: 'error' });
                 return;
             }
 
             // Contrôle l'heure de fin renseignée
             if (!formData.endTime) {
-                setMessage({ code: 'errors.invalidEndTime', type: 'error' });
+                setModalMessage({ code: 'errors.invalidEndTime', type: 'error' });
                 return;
             }
 
             // Contrôle le lieu renseigné
             if (!formData.location) {
-                setMessage({ code: 'errors.invalidLocation', type: 'error' });
+                setModalMessage({ code: 'errors.invalidLocation', type: 'error' });
                 return;
             }
         }
@@ -192,7 +192,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                     icon={<IoImageOutline />}
                                     name={'picture'}
                                     value={formData.picture}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                     onChange={handleChangeFile}
                                     isSubmitting={isSubmitting}
                                 />
@@ -233,7 +233,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

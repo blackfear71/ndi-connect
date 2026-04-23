@@ -36,7 +36,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
 
             // Focus à la création
             modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
@@ -47,7 +47,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -152,7 +152,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
         // Contrôle le nom renseigné
         if (!formData.name) {
-            setMessage({ code: 'errors.invalidName', type: 'error' });
+            setModalMessage({ code: 'errors.invalidName', type: 'error' });
             return;
         }
 
@@ -165,7 +165,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             isNaN(delta) ||
             (auth.level < EnumUserRole.SUPERADMIN && delta < 0)
         ) {
-            setMessage({ code: 'errors.invalidPoints', type: 'error' });
+            setModalMessage({ code: 'errors.invalidPoints', type: 'error' });
             return;
         }
 
@@ -176,7 +176,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                 (formData.giveawayId !== null && formData.giveawayId !== undefined && formData.giveawayId !== 0 && !formData.giveaway) ||
                 (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayId)
             ) {
-                setMessage({ code: 'errors.invalidGiveaway', type: 'error' });
+                setModalMessage({ code: 'errors.invalidGiveaway', type: 'error' });
                 return;
             }
 
@@ -184,7 +184,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
             const giveaway = parseInt(formData.giveaway, 10);
 
             if (player.points + delta - giveaway < 0) {
-                setMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
+                setModalMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
                 return;
             }
         }
@@ -298,7 +298,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

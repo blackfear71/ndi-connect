@@ -19,7 +19,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
         }
     }, [modalOptions?.isOpen]);
 
@@ -27,7 +27,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -71,7 +71,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

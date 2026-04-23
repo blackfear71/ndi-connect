@@ -24,6 +24,36 @@ class PlayersController
     }
 
     /**
+     * Lecture des enregistrements d'une édition
+     */
+    public function getEditionPlayers($idEdition)
+    {
+        try {
+            // Lecture de tous les enregistrements
+            $players = $this->service->getEditionPlayers($idEdition);
+
+            if ($players !== null) {
+                // Succès
+                ResponseHelper::success($players);
+            } else {
+                // Échec de la lecture
+                ResponseHelper::error(
+                    'ERR_PLAYERS_NOT_FOUND',
+                    400,
+                    'Erreur lors de la récupération des participants dans ' . __FUNCTION__ . ' de ' . self::controllerName
+                );
+            }
+        } catch (Exception $e) {
+            // Exception levée
+            ResponseHelper::error(
+                $e->getMessage(),
+                500,
+                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
+            );
+        }
+    }
+
+    /**
      * Insertion d'un enregistrement
      */
     public function createPlayer($token, $idEdition, $data)
@@ -33,11 +63,11 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $players = $this->service->createPlayer($idEdition, $user, $data);
+            $created = $this->service->createPlayer($idEdition, $user, $data);
 
-            if ($players !== null) {
+            if ($created) {
                 // Succès
-                ResponseHelper::success($players, 'MSG_CREATION_SUCCESS');
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
             } else {
                 // Échec de la création
                 ResponseHelper::error(
@@ -66,11 +96,11 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Modification d'un enregistrement
-            $players = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
+            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
 
-            if ($players !== null) {
+            if ($updated) {
                 // Succès
-                ResponseHelper::success($players, 'MSG_UPDATE_SUCCESS');
+                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
             } else {
                 // Échec de la modification
                 ResponseHelper::error(
@@ -99,11 +129,11 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $players = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
+            $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
 
-            if ($players !== null) {
+            if ($deleted) {
                 // Succès
-                ResponseHelper::success($players, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
             } else {
                 // Échec de la suppression
                 ResponseHelper::error(

@@ -65,9 +65,9 @@ class PlayersService
             return null;
         }
 
-        // Insertion et récupération des participants de l'édition
+        // Insertion
         if ($idEdition && $this->repository->createPlayer($user['login'], $data)) {
-            return $this->getEditionPlayers($idEdition);
+            return true;
         }
 
         return null;
@@ -83,7 +83,7 @@ class PlayersService
             return null;
         }
 
-        // Modifications et récupération des participants de l'édition
+        // Modifications
         $dataPlayer = $this->processDataPlayer($data);
 
         if ($idEdition && $idPlayer && $this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
@@ -92,7 +92,7 @@ class PlayersService
                 $this->updatePlayerDelta($data['giveawayId'], $user['login'], $data['giveaway']);
             }
 
-            return $this->getEditionPlayers($idEdition);
+            return true;
         }
 
         return null;
@@ -129,9 +129,9 @@ class PlayersService
      */
     public function deletePlayer($idEdition, $idPlayer, $login)
     {
-        // Suppression logique du participant et récupération des participants de l'édition
+        // Suppression logique du participant
         if ($idEdition && $idPlayer && $this->repository->logicalDelete($idPlayer, $login)) {
-            return $this->getEditionPlayers($idEdition);
+            return true;
         }
 
         return null;

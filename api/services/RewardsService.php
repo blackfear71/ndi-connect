@@ -94,15 +94,9 @@ class RewardsService
         if ($idEdition && $idPlayer && $this->repository->create($login, $dataReward)) {
             $dataPlayer = $this->processDataPlayer($player, $gift);
 
-            // Suppression des points du participant et récupération des données
+            // Suppression des points du participant
             if ($this->getPlayersService()->updatePlayerPoints($idPlayer, $login, $dataPlayer)) {
-                // Récupération des données cadeaux
-                $data['gifts'] = $this->getGiftsService()->getEditionGifts($idEdition);
-
-                // Récupération des données participants
-                $data['players'] = $this->getPlayersService()->getEditionPlayers($idEdition);
-
-                return $data;
+                return true;
             }
         }
 
@@ -121,13 +115,7 @@ class RewardsService
         if ($idEdition && $idReward && $reward && $this->repository->logicalDelete($idReward, $login)) {
             // Récupération des points pour le participant
             if ($this->getPlayersService()->updatePlayerDelta($reward['id_player'], $login, $reward['points'])) {
-                // Récupération des données cadeaux
-                $data['gifts'] = $this->getGiftsService()->getEditionGifts($idEdition);
-
-                // Récupération des données participants
-                $data['players'] = $this->getPlayersService()->getEditionPlayers($idEdition);
-
-                return $data;
+                return true;
             }
         }
 

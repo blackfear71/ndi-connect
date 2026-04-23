@@ -17,10 +17,19 @@ class GiftsService {
     }
 
     /**
+     * Récupération de tous les cadeaux d'une édition
+     * @returns Liste des cadeaux
+     */
+    getEditionGifts = (idEdition) => {
+        const url = `${this.apiUrl}/edition/${idEdition}`;
+        return ajax.get(url, this.headers);
+    };
+
+    /**
      * Création d'un nouveau cadeau
      * @param {*} idEdition Identifiant édition
      * @param {*} body Données cadeau
-     * @returns Données cadeau créé
+     * @returns Données retour
      */
     createGift = (idEdition, body) => {
         const url = `${this.apiUrl}/create/${idEdition}`;
@@ -38,7 +47,7 @@ class GiftsService {
      * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant cadeau
      * @param {*} body Données cadeau
-     * @returns Données cadeau à jour
+     * @returns Données retour
      */
     updateGift = (idEdition, idGift, body) => {
         const url = `${this.apiUrl}/update/${idEdition}/${idGift}`;
@@ -55,7 +64,7 @@ class GiftsService {
      * Suppression d'un cadeau
      * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant cadeau
-     * @returns Message retour
+     * @returns Données retour
      */
     deleteGift = (idEdition, idGift) => {
         const url = `${this.apiUrl}/delete/${idEdition}/${idGift}`;

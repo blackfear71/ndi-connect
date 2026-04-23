@@ -88,7 +88,7 @@ class UsersService
         $data = $this->processDataUser($data);
 
         if ($this->repository->create($login, $data)) {
-            return $this->getAllUsers();
+            return true;
         }
 
         return null;
@@ -153,12 +153,12 @@ class UsersService
             }
         }
 
-        // Modification et récupération des utilisateurs
+        // Modification
         $id = $data['id'];
         unset($data['id']);
 
         if ($this->repository->update($id, $login, $data)) {
-            return $this->getAllUsers();
+            return true;
         }
 
         return null;
@@ -179,9 +179,9 @@ class UsersService
             }
         }
 
-        // Suppression logique de l'utilisateur et récupération des utilisateurs restants
+        // Suppression logique de l'utilisateur
         if ($id && $this->repository->logicalDelete($id, $login)) {
-            return $this->getAllUsers();
+            return true;
         }
 
         return null;

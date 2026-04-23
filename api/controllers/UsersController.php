@@ -192,14 +192,14 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $result = $this->service->createUser($user['login'], $data);
+            $created = $this->service->createUser($user['login'], $data);
 
-            if ($result !== null && $result !== false) {
+            if ($created !== null && $created !== false) {
                 // Succès
-                ResponseHelper::success($result, 'MSG_CREATION_SUCCESS');
-            } else if ($result !== null && $result === false) {
+                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+            } elseif ($created !== null && $created === false) {
                 // Alerte
-                ResponseHelper::warning(null, 'WRN_USER_EXISTS', 409);
+                ResponseHelper::warning('WRN_USER_EXISTS', 409);
             } else {
                 // Échec de la création
                 ResponseHelper::error(
@@ -303,14 +303,14 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $result = $this->service->updateUser($user['login'], $data);
+            $updated = $this->service->updateUser($user['login'], $data);
 
-            if ($result !== null && $result !== false) {
+            if ($updated !== null && $updated !== false) {
                 // Succès
-                ResponseHelper::success($result, 'MSG_UPDATE_SUCCESS');
-            } else if ($result !== null && $result === false) {
+                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+            } elseif ($updated !== null && $updated === false) {
                 // Alerte
-                ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
+                ResponseHelper::warning('WRN_LAST_ADMIN', 403);
             } else {
                 // Échec de la modification
                 ResponseHelper::error(
@@ -339,14 +339,14 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $result = $this->service->deleteUser($id, $user['login']);
+            $deleted = $this->service->deleteUser($id, $user['login']);
 
-            if ($result !== null && $result !== false) {
+            if ($deleted !== null && $deleted !== false) {
                 // Succès
-                ResponseHelper::success($result, 'MSG_DELETION_SUCCESS');
-            } else if ($result !== null && $result === false) {
+                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
+            } elseif ($deleted !== null && $deleted === false) {
                 // Alerte
-                ResponseHelper::warning(null, 'WRN_LAST_ADMIN', 403);
+                ResponseHelper::warning('WRN_LAST_ADMIN', 403);
             } else {
                 // Échec de la suppression
                 ResponseHelper::error(

@@ -28,7 +28,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
     useEffect(() => {
         if (modalOptions?.isOpen) {
             // Réinitialisation du message
-            setMessage(null);
+            setModalMessage(null);
 
             // Focus à la création
             modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
@@ -39,7 +39,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
      * Définit le message affiché
      * @param {*} message Message à afficher
      */
-    const setMessage = (message) => {
+    const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
@@ -76,7 +76,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
 
         // Contrôle le nom renseigné
         if (!formData.name) {
-            setMessage({ code: 'errors.invalidName', type: 'error' });
+            setModalMessage({ code: 'errors.invalidName', type: 'error' });
             return;
         }
 
@@ -84,7 +84,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
         const value = parseInt(formData.value, 10);
 
         if (!formData.value || isNaN(value) || value <= 0) {
-            setMessage({ code: 'errors.invalidValue', type: 'error' });
+            setModalMessage({ code: 'errors.invalidValue', type: 'error' });
             return;
         }
 
@@ -92,13 +92,13 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
         const quantity = parseInt(formData.quantity, 10);
 
         if (!formData.quantity || isNaN(quantity) || quantity < 0) {
-            setMessage({ code: 'errors.invalidQuantity', type: 'error' });
+            setModalMessage({ code: 'errors.invalidQuantity', type: 'error' });
             return;
         }
 
         // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
         if (gift && quantity < gift.rewardCount) {
-            setMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
+            setModalMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
             return;
         }
 
@@ -188,7 +188,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                     code={modalOptions.message.code}
                                     params={modalOptions.message.params}
                                     type={modalOptions.message.type}
-                                    setMessage={setMessage}
+                                    setMessage={setModalMessage}
                                 />
                             </div>
                         )}

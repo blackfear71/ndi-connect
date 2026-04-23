@@ -4,6 +4,11 @@ require_once 'controllers/GiftsController.php';
 $database = new Database();
 $db = $database->getConnection();
 
+$router->get('/gifts/edition/:idEdition', function ($params) use ($db) {
+    // Appel contrôleur
+    (new GiftsController($db))->getEditionGifts($params['idEdition']);
+});
+
 $router->post('/gifts/create/:idEdition', function ($params) use ($db) {
     // Token
     $token = $_COOKIE['token'] ?? null;

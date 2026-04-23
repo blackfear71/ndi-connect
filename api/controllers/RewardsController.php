@@ -33,11 +33,11 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
 
             // Insertion d'un enregistrement
-            $playersAndGifts = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
+            $created = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
 
-            if ($playersAndGifts !== null) {
+            if ($created) {
                 // Succès
-                ResponseHelper::success($playersAndGifts, 'MSG_REWARD_SUCCESS');
+                ResponseHelper::success(null, 'MSG_REWARD_SUCCESS');
             } else {
                 // Échec de la création
                 ResponseHelper::error(
@@ -66,11 +66,11 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
 
             // Suppression logique d'un enregistrement
-            $playersAndGifts = $this->service->deleteReward($user['login'], $idEdition, $idReward);
+            $deleted = $this->service->deleteReward($user['login'], $idEdition, $idReward);
 
-            if ($playersAndGifts) {
+            if ($deleted) {
                 // Succès
-                ResponseHelper::success($playersAndGifts, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
             } else {
                 // Échec de la suppression
                 ResponseHelper::error(

@@ -7,7 +7,7 @@ import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { of } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { UsersService } from '../../api';
@@ -318,10 +318,13 @@ const Settings = () => {
 
         subscriptionUsers
             ?.pipe(
+                map((dataUser) => {
+                    setMessage({ code: dataUser.response.message, type: dataUser.response.status });
+                }),
+                switchMap(() => usersService.getAllUsers()),
                 map((dataUsers) => {
                     openCloseUserModal();
                     setUsers(processUsersData(dataUsers.response.data));
-                    setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
 
                     // Rafraichissement du contexte d'authentification si l'utilisateur modifié est l'utilisateur courant
                     if (auth.id === dataUsers.response.data.find((u) => u.id === formUser.id)?.id) {
@@ -406,10 +409,13 @@ const Settings = () => {
 
         subscriptionUsers
             .pipe(
+                map((dataUser) => {
+                    setMessage({ code: dataUser.response.message, type: dataUser.response.status });
+                }),
+                switchMap(() => usersService.getAllUsers()),
                 map((dataUsers) => {
                     openCloseConfirmModal();
                     setUsers(processUsersData(dataUsers.response.data));
-                    setMessage({ code: dataUsers.response.message, type: dataUsers.response.status });
                 }),
                 take(1),
                 catchError((err) => {

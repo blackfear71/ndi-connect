@@ -25,7 +25,7 @@ if (str_starts_with($uri, '/sse')) {
     header("Cache-Control: no-cache");
     header("Connection: keep-alive");
     header("X-Accel-Buffering: no");
-} else if (in_array($origin, $allowedOrigins)) {
+} elseif (in_array($origin, $allowedOrigins)) {
     // CORS complet API classique
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
@@ -52,17 +52,17 @@ $router = new Router();
 // Dispatch vers le bon groupe de routes
 if (str_starts_with($uri, '/editions')) {
     require_once __DIR__ . '/routes/editions.php';
-} else if (str_starts_with($uri, '/gifts')) {
+} elseif (str_starts_with($uri, '/gifts')) {
     require_once __DIR__ . '/routes/gifts.php';
-} else if (str_starts_with($uri, '/players')) {
+} elseif (str_starts_with($uri, '/players')) {
     require_once __DIR__ . '/routes/players.php';
-} else if (str_starts_with($uri, '/rewards')) {
+} elseif (str_starts_with($uri, '/rewards')) {
     require_once __DIR__ . '/routes/rewards.php';
-} else if (str_starts_with($uri, '/serve-file')) {
+} elseif (str_starts_with($uri, '/serve-file')) {
     require_once __DIR__ . '/routes/serve-file.php';
-} else if (str_starts_with($uri, '/sse')) {
+} elseif (str_starts_with($uri, '/sse')) {
     require_once __DIR__ . '/routes/sse.php';
-} else if (str_starts_with($uri, '/users')) {
+} elseif (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {
     ResponseHelper::error(
