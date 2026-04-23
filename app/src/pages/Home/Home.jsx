@@ -334,7 +334,9 @@ const Home = () => {
                                 </>
                             )
                         ) : (
-                            <div className="d-flex align-items-center justify-content-center px-2 py-3 home-empty">
+                            <div
+                                className={`d-flex align-items-center justify-content-center px-2 py-3 home-empty ${auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN ? '' : ' home-empty-full'}`}
+                            >
                                 {t('home.noEdition')}
                             </div>
                         )}

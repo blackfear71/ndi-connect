@@ -9,7 +9,6 @@ const TextInput = ({
     name,
     ref,
     type = 'text',
-    className,
     placeholder,
     value,
     onFocus,
@@ -41,7 +40,6 @@ const TextInput = ({
                         ref={ref}
                         type={type}
                         name={name}
-                        className={className}
                         placeholder={placeholder}
                         value={value}
                         onFocus={onFocus}

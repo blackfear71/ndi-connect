@@ -4,7 +4,7 @@ import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaLock, FaUserCircle } from 'react-icons/fa';
 
-import { TextInput } from '../../../components/inputs';
+import { PasswordInput, TextInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
@@ -94,27 +94,30 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
 
                                 {/* Formulaire */}
                                 <div className="d-flex align-items-center gap-2">
-                                    <TextInput
-                                        title={t('navbar.login')}
-                                        name={'login'}
-                                        ref={loginInputRef}
-                                        placeholder={t('navbar.login')}
-                                        value={formData.login}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required={true}
-                                    />
+                                    <div className="connection-modal-field">
+                                        <TextInput
+                                            title={t('navbar.login')}
+                                            name={'login'}
+                                            ref={loginInputRef}
+                                            placeholder={t('navbar.login')}
+                                            value={formData.login}
+                                            onChange={handleChange}
+                                            maxLength={100}
+                                            required={true}
+                                        />
+                                    </div>
 
-                                    <TextInput
-                                        title={t('navbar.password')}
-                                        name={'password'}
-                                        type={'password'}
-                                        placeholder={t('navbar.password')}
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        maxLength={100}
-                                        required={true}
-                                    />
+                                    <div className="connection-modal-field">
+                                        <PasswordInput
+                                            title={t('navbar.password')}
+                                            name={'password'}
+                                            placeholder={t('navbar.password')}
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            maxLength={100}
+                                            required={true}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -12,10 +12,7 @@
     color: #8892a4;
 }
 
-.connection-modal-label {
-    font-size: small;
-    font-weight: 600;
-    color: #8892a4;
-    text-transform: uppercase;
-    margin-bottom: 4px !important;
+.connection-modal-field {
+    flex: 1 1 0%;
+    min-width: 0;
 }
