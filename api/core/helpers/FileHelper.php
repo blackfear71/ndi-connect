@@ -67,9 +67,8 @@ class FileHelper
         }
 
         // Détection du type MIME
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $filePath);
-        finfo_close($finfo);
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($filePath);
 
         // Envoi du fichier
         header('Content-Type: ' . $mimeType);
@@ -87,6 +86,7 @@ class FileHelper
     {
         // Contrôle fichier reçu
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
+            LoggerHelper::log('Fichier non renseigné');
             throw new Exception('ERR_INVALID_FILE', 400);
         }
 
@@ -97,6 +97,7 @@ class FileHelper
         $fileSize = $file['size'] ?? 0;
 
         if ($fileSize > $serverMaxSize) {
+            LoggerHelper::log("Fichier " . $file['name'] . " trop volumineux : $fileSize > $serverMaxSize octets");
             throw new Exception('ERR_FILE_TOO_LARGE', 400);
         }
 
@@ -107,6 +108,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
+            LoggerHelper::log('Dossier serveur introuvable');
             throw new Exception('ERR_ENV_FILES_DIR_MISSING', 500);
         }
 
@@ -122,6 +124,7 @@ class FileHelper
         $imageInfo = getimagesize($fileTmp);
 
         if ($imageInfo === false) {
+            LoggerHelper::log('Fichier ' . $file['name'] . ' invalide');
             throw new Exception('ERR_INVALID_IMAGE', 400);
         }
 
@@ -150,23 +153,27 @@ class FileHelper
                 case 'image/webp':
                     // Si déjà en WebP, copie directe
                     if (!move_uploaded_file($fileTmp, $destinationPath)) {
+                        LoggerHelper::log("Envoi échoué dans $destinationPath");
                         throw new Exception('ERR_UPLOAD_FAILED', 400);
                     }
-                    
+
                     return $newFileName;
 
                 default:
+                    LoggerHelper::log("Type MIME invalide : $mimeType");
                     throw new Exception('ERR_INVALID_FORMAT', 400);
             }
 
             // Compression WebP s'il ne l'était pas déjà
             if (!imagewebp($image, $destinationPath, 100)) {
+                LoggerHelper::log('Conversion WebP échouée');
                 throw new Exception('ERR_WEBP_CONVERSION_FAILED', 400);
             }
 
             // Réponse finale
             return $newFileName;
         } catch (Exception $e) {
+            LoggerHelper::log("Erreur lors de l'envoi de l'image : " . $e->getMessage());
             throw new Exception($e->getMessage(), $e->getCode());
         }
     }
@@ -205,6 +212,7 @@ class FileHelper
     {
         // Contrôle fichier renseigné
         if (empty($fileName)) {
+            LoggerHelper::log('Fichier non renseigné');
             throw new Exception('ERR_INVALID_FILENAME', 400);
         }
 
@@ -215,6 +223,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
+            LoggerHelper::log('Dossier serveur introuvable');
             throw new Exception('ERR_ENV_FILES_DIR_MISSING', 500);
         }
 
@@ -223,16 +232,21 @@ class FileHelper
 
         // Contrôle que le dossier existe
         if (!is_dir($uploadDir)) {
-            throw new Exception('ERR_INVALID_DIRECTORY', 400);
+            LoggerHelper::log("Dossier de destination introuvable : $uploadDir");
+            // throw new Exception('ERR_INVALID_DIRECTORY', 400);
+            return false;
         }
 
         // Contrôle que le fichier existe
         if (!file_exists($filePath)) {
-            throw new Exception('ERR_FILE_NOT_FOUND', 404);
+            LoggerHelper::log("Fichier introuvable : $filePath");
+            // throw new Exception('ERR_FILE_NOT_FOUND', 404);
+            return false;
         }
 
         // Tentative de suppression
         if (!unlink($filePath)) {
+            LoggerHelper::log("Impossible de supprimer le fichier : $filePath");
             throw new Exception('ERR_DELETION_FILE_FAILED', 500);
         }
 

@@ -57,11 +57,11 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
      */
     const handleChangeFile = (file, action) => {
         switch (action) {
-            case EnumAction.DELETE:
-                setFormData((prev) => ({ ...prev, picture: null, pictureAction: action }));
-                break;
             case EnumAction.CREATE:
                 setFormData((prev) => ({ ...prev, picture: file, pictureAction: action }));
+                break;
+            case EnumAction.DELETE:
+                setFormData((prev) => ({ ...prev, picture: null, pictureAction: action }));
                 break;
             default:
                 setFormData((prev) => ({ ...prev, picture: null, pictureAction: null }));
