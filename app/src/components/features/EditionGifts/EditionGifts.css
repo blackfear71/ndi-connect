@@ -1,11 +1,11 @@
 .edition-gifts-sort {
-    background-color: transparent !important;
-    border: 2px solid #163c76 !important;
-    color: white !important;
+    background-color: var(--color-bg-transparent) !important;
+    border: 2px solid var(--color-border-primary) !important;
+    color: var(--color-bg-white) !important;
     cursor: pointer;
 }
 
 .edition-gifts-sort:hover,
 .edition-gifts-sort:active {
-    background-color: #0a2f68 !important;
+    background-color: var(--color-bg-validate-hover) !important;
 }

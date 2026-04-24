@@ -53,9 +53,7 @@ const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPass
             </div>
 
             {/* Description */}
-            {user.level !== '' && (
-                <div className="text-white mt-3 px-2 py-1 settings-description">{t(`settings.levelDescription${user.level}`)}</div>
-            )}
+            {user.level !== '' && <div className="mt-3 px-2 py-1 settings-description">{t(`settings.levelDescription${user.level}`)}</div>}
         </>
     );
 };

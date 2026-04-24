@@ -1,5 +1,5 @@
 .settings-modal-user {
-    background-color: #1d509e;
+    background-color: var(--color-bg-tertiary);
 }
 
 .settings-modal-icon {
@@ -7,12 +7,12 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #fdd343;
-    color: black;
+    background-color: var(--color-bg-icon);
+    color: var(--color-bg-black);
 }
 
 .settings-modal-name {
-    color: white;
+    color: var(--color-text-white);
     min-width: 0;
 }
 
@@ -33,7 +33,7 @@
 .settings-modal-description {
     text-align: justify;
     border-radius: 5px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-left: 4px solid #fdd343;
+    background-color: var(--color-bg-gray-lighter);
+    border: 1px solid var(--color-border-gray-light);
+    border-left: 4px solid var(--color-bg-icon);
 }

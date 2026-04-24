@@ -168,7 +168,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
 
                                 {/* Description du niveau sélectionné */}
                                 {formData.level !== '' && (
-                                    <div className="text-muted px-2 py-1 settings-modal-description">
+                                    <div className="px-2 py-1 settings-modal-description">
                                         {t(`settings.levelDescription${formData.level}`)}
                                     </div>
                                 )}

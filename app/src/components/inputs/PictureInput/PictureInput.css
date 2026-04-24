@@ -1,18 +1,18 @@
 .picture-input-button {
-    background-color: #1d509e;
-    border: 2px solid #163c76;
-    color: white;
+    background-color: var(--color-bg-tertiary);
+    border: 2px solid var(--color-border-primary);
+    color: var(--color-bg-white);
     height: 34px;
     cursor: pointer;
 }
 
 .picture-input-button:hover,
 .picture-input-button:active {
-    background-color: #163c76 !important;
+    background-color: var(--color-bg-secondary) !important;
 }
 
 .picture-input-preview-wrapper {
-    color: #8892a4;
+    color: var(--color-text-secondary);
 }
 
 .picture-input-preview-content {
@@ -26,5 +26,5 @@
     min-width: 0;
     object-fit: contain;
     flex: 0 1 auto;
-    background-color: #e3e3e3;
+    background-color: var(--color-bg-gray-light);
 }

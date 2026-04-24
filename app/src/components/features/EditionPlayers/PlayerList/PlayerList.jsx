@@ -64,7 +64,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
                     {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                         <Button
                             onClick={() => handleDelete(p)}
-                            className="edition-button"
+                            className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}
                         >
@@ -75,7 +75,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
                     {/* Cadeaux */}
                     <Button
                         onClick={() => showRewardModal(p)}
-                        className="edition-button"
+                        className="edition-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}
                     >
@@ -86,7 +86,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
                             onClick={() => showPlayerModal(p, EnumAction.UPDATE)}
-                            className="edition-button"
+                            className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}
                         >

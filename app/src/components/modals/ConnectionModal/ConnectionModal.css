@@ -3,13 +3,13 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #edeff5;
-    border: 2px solid #d1d5e5;
+    background-color: var(--color-bg-gray-lighter);
+    border: 2px solid var(--color-border-gray-light);
 }
 
 .connection-modal-lock-text {
     font-size: small;
-    color: #8892a4;
+    color: var(--color-text-secondary);
 }
 
 .connection-modal-field {

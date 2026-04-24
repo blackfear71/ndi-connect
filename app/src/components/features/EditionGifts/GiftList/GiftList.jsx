@@ -83,8 +83,8 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
     return (
         <>
             {/* Titre & tri */}
-            <div className="d-flex align-items-center justify-content-between gap-2 edition-subtitle">
-                <Badge pill bg="warning">
+            <div className="d-flex align-items-center justify-content-between gap-2">
+                <Badge pill bg="warning" className="edition-subtitle-badge">
                     {title}
                 </Badge>
 
@@ -130,7 +130,7 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
                     {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                         <Button
                             onClick={() => handleDelete(g)}
-                            className="edition-button"
+                            className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}
                         >
@@ -142,7 +142,7 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
                             onClick={() => showGiftModal(g, EnumAction.UPDATE)}
-                            className="edition-button"
+                            className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}
                         >

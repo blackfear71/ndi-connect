@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import './assets/fonts/fonts.css';
+import './assets/styles/theme.css';
 
 import './utils/i18n';
 
