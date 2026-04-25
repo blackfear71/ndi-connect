@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'repositories/UsersRepository.php';
 
 class UsersService
@@ -9,7 +10,7 @@ class UsersService
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->repository = new UsersRepository($db);
@@ -18,7 +19,7 @@ class UsersService
     /**
      * Contrôle authentification
      */
-    public function checkAuth($token)
+    public function checkAuth(string $token): array|false
     {
         return $this->repository->checkAuth($token);
     }
@@ -26,7 +27,7 @@ class UsersService
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         return $this->repository->getAllUsers();
     }
@@ -34,7 +35,7 @@ class UsersService
     /**
      * Connexion utilisateur
      */
-    public function connect($data)
+    public function connect(array $data): ?array
     {
         // Contrôle des données
         if (!$this->isValidConnectionData($data)) {
@@ -64,7 +65,7 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect($login)
+    public function disconnect(string $login): bool
     {
         return $this->repository->updateToken($login, NULL);
     }
@@ -72,7 +73,7 @@ class UsersService
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser($login, $data)
+    public function createUser(string $login, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidCreateUserData($data)) {
@@ -97,7 +98,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword($login, $id)
+    public function resetPassword(string $login, int|string $id): ?string
     {
         // Modification
         $newPassword = $this->generatePassword(15);
@@ -113,7 +114,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword($login, $data)
+    public function updatePassword(string $login, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidPasswordData($data)) {
@@ -136,7 +137,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser($login, $data)
+    public function updateUser(string $login, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidUpdateUserData($data)) {
@@ -167,7 +168,7 @@ class UsersService
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser($id, $login)
+    public function deleteUser(int|string $id, string $login): ?bool
     {
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
         $user = $this->repository->getActiveUserDataById($id);
@@ -190,7 +191,7 @@ class UsersService
     /**
      * Contrôle des données saisies (connexion)
      */
-    private function isValidConnectionData($data)
+    private function isValidConnectionData(array $data): bool
     {
         $login = trim($data['login'] ?? '');
         $password = trim($data['password'] ?? '');
@@ -202,7 +203,7 @@ class UsersService
     /**
      * Contrôle des données saisies (création utilisateur)
      */
-    private function isValidCreateUserData($data)
+    private function isValidCreateUserData(array $data): bool
     {
         $login = trim($data['login'] ?? '');
         $password = trim($data['password'] ?? '');
@@ -217,7 +218,7 @@ class UsersService
     /**
      * Contrôle des données saisies (modification mot de passe)
      */
-    private function isValidPasswordData($data)
+    private function isValidPasswordData(array $data): bool
     {
         $oldPassword = trim($data['oldPassword'] ?? '');
         $newPassword = trim($data['newPassword'] ?? '');
@@ -231,7 +232,7 @@ class UsersService
     /**
      * Contrôle des données saisies (modification utilisateur)
      */
-    private function isValidUpdateUserData($data)
+    private function isValidUpdateUserData(array $data): bool
     {
         $level = $data['level'] ?? null;
 
@@ -241,7 +242,7 @@ class UsersService
     /**
      * Génère un mot de passe aléatoire
      */
-    private function generatePassword($length = 12)
+    private function generatePassword(int $length = 12): string
     {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $charactersLength = strlen($characters);
@@ -257,7 +258,7 @@ class UsersService
     /**
      * Formate les données avant traitement SQL
      */
-    private function processDataPassword($password)
+    private function processDataPassword(string $password): array
     {
         $sqlData = [
             'password' => password_hash($password, PASSWORD_DEFAULT)
@@ -269,7 +270,7 @@ class UsersService
     /**
      * Formate les données avant traitement SQL
      */
-    private function processDataUser($data)
+    private function processDataUser(array $data): array
     {
         $sqlData = [
             'login'    => $data['login'],

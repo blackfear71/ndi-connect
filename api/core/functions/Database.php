@@ -8,7 +8,7 @@ class Database
     /**
      * Connexion à la base de données
      */
-    public function getConnection()
+    public function getConnection(): PDO
     {
         $this->conn = null;
 
@@ -25,16 +25,13 @@ class Database
             'password' => self::$env['DB_PASS'] ?? '',
         ];
 
-        try {
-            $this->conn = new PDO(
-                "mysql:host=" . $sql['host'] . ";port=" . $sql['port'] . ";dbname=" . $sql['database'] . ";charset=utf8mb4",
-                $sql['username'],
-                $sql['password']
-            );
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $exception) {
-            echo "Erreur de connexion : " . $exception->getMessage();
-        }
+        $this->conn = new PDO(
+            "mysql:host=" . $sql['host'] . ";port=" . $sql['port'] . ";dbname=" . $sql['database'] . ";charset=utf8mb4",
+            $sql['username'],
+            $sql['password']
+        );
+
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $this->conn;
     }

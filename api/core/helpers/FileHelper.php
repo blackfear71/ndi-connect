@@ -1,6 +1,8 @@
 <?php
 class FileHelper
 {
+    private const helperName = 'FileHelper';
+    
     private static $env = null;
 
     /**
@@ -8,7 +10,7 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function checkFile($destination, $fileName)
+    public static function checkFile(string $destination, string|null $fileName): ?string
     {
         // Contrôle données renseignées
         if (!$fileName || !$destination) {
@@ -33,13 +35,10 @@ class FileHelper
     /**
      * Renvoie le fichier demandé
      */
-    public static function serveFile()
+    public static function serveFile(?string $destination, ?string $file): void
     {
-        $destination = isset($_GET['destination']) ? basename($_GET['destination']) : null;
-        $file = isset($_GET['file']) ? basename($_GET['file']) : null;
-
         if (!$destination || !$file) {
-            ResponseHelper::error('ERR_MISSING_PARAMS', 400, 'Paramètres manquants.');
+            ResponseHelper::error(MessageHelper::ERR_MISSING_PARAMS, [__FUNCTION__, self::helperName]);
             exit;
         }
 
@@ -53,7 +52,7 @@ class FileHelper
         }
 
         if (!$filesDir || !is_dir($filesDir)) {
-            ResponseHelper::error('ERR_FORBIDDEN_FILE', 403, 'Chemin de fichier non autorisé.');
+            ResponseHelper::error(MessageHelper::ERR_FORBIDDEN_FILE, [__FUNCTION__, self::helperName]);
             exit;
         }
 
@@ -62,7 +61,7 @@ class FileHelper
 
         // Vérification existence du fichier
         if (!is_file($filePath)) {
-            ResponseHelper::error('ERR_FILE_NOT_FOUND', 404, "Fichier introuvable : $file");
+            ResponseHelper::error(MessageHelper::ERR_FILE_NOT_FOUND, [$file]);
             exit;
         }
 
@@ -73,7 +72,11 @@ class FileHelper
         // Envoi du fichier
         header('Content-Type: ' . $mimeType);
         header('Content-Length: ' . filesize($filePath));
-        readfile($filePath);
+
+        if (readfile($filePath) === false) {
+            ResponseHelper::error(MessageHelper::ERR_FILE_NOT_FOUND, [$file]);
+        }
+
         exit;
     }
 
@@ -82,12 +85,11 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $file Fichier
      */
-    public static function uploadImage($destination, $file)
+    public static function uploadImage(string $destination, array $file): string
     {
         // Contrôle fichier reçu
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-            LoggerHelper::log('Fichier non renseigné');
-            throw new Exception('ERR_INVALID_FILE', 400);
+            throw new Exception('ERR_INVALID_FILE');
         }
 
         // Contrôle taille du fichier
@@ -97,8 +99,7 @@ class FileHelper
         $fileSize = $file['size'] ?? 0;
 
         if ($fileSize > $serverMaxSize) {
-            LoggerHelper::log("Fichier " . $file['name'] . " trop volumineux : $fileSize > $serverMaxSize octets");
-            throw new Exception('ERR_FILE_TOO_LARGE', 400);
+            throw new Exception('ERR_FILE_TOO_LARGE');
         }
 
         // Récupération du dossier des fichiers depuis le fichier .env
@@ -108,8 +109,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            LoggerHelper::log('Dossier serveur introuvable');
-            throw new Exception('ERR_ENV_FILES_DIR_MISSING', 500);
+            throw new Exception('ERR_ENV_FILES_DIR_MISSING');
         }
 
         $uploadDir = self::$env['FILES_DIR'] . '/' . $destination;
@@ -124,8 +124,7 @@ class FileHelper
         $imageInfo = getimagesize($fileTmp);
 
         if ($imageInfo === false) {
-            LoggerHelper::log('Fichier ' . $file['name'] . ' invalide');
-            throw new Exception('ERR_INVALID_IMAGE', 400);
+            throw new Exception('ERR_INVALID_IMAGE');
         }
 
         // Récupération du type MIME
@@ -135,54 +134,55 @@ class FileHelper
         // Conversion éventuelle en WebP
         $destinationPath = $uploadDir . '/' . $newFileName;
 
-        try {
-            switch ($mimeType) {
-                case 'image/jpeg':
-                    // JPEG
-                    $image = imagecreatefromjpeg($fileTmp);
-                    break;
+        switch ($mimeType) {
+            case 'image/jpeg':
+                // JPEG
+                $image = imagecreatefromjpeg($fileTmp);
 
-                case 'image/png':
-                    // PNG
-                    $image = imagecreatefrompng($fileTmp);
-                    imagepalettetotruecolor($image);
-                    imagealphablending($image, true);
-                    imagesavealpha($image, true);
-                    break;
+                if (!$image) {
+                    throw new Exception('ERR_CREATION_IMAGE_FAILED');
+                }
+                break;
 
-                case 'image/webp':
-                    // Si déjà en WebP, copie directe
-                    if (!move_uploaded_file($fileTmp, $destinationPath)) {
-                        LoggerHelper::log("Envoi échoué dans $destinationPath");
-                        throw new Exception('ERR_UPLOAD_FAILED', 400);
-                    }
+            case 'image/png':
+                // PNG
+                $image = imagecreatefrompng($fileTmp);
 
-                    return $newFileName;
+                if (!$image) {
+                    throw new Exception('ERR_CREATION_IMAGE_FAILED');
+                }
 
-                default:
-                    LoggerHelper::log("Type MIME invalide : $mimeType");
-                    throw new Exception('ERR_INVALID_FORMAT', 400);
-            }
+                imagepalettetotruecolor($image);
+                imagealphablending($image, true);
+                imagesavealpha($image, true);
+                break;
 
-            // Compression WebP s'il ne l'était pas déjà
-            if (!imagewebp($image, $destinationPath, 100)) {
-                LoggerHelper::log('Conversion WebP échouée');
-                throw new Exception('ERR_WEBP_CONVERSION_FAILED', 400);
-            }
+            case 'image/webp':
+                // Si déjà en WebP, copie directe
+                if (!move_uploaded_file($fileTmp, $destinationPath)) {
+                    throw new Exception('ERR_UPLOAD_FAILED');
+                }
 
-            // Réponse finale
-            return $newFileName;
-        } catch (Exception $e) {
-            LoggerHelper::log("Erreur lors de l'envoi de l'image : " . $e->getMessage());
-            throw new Exception($e->getMessage(), $e->getCode());
+                return $newFileName;
+
+            default:
+                throw new Exception('ERR_INVALID_FORMAT');
         }
+
+        // Compression WebP s'il ne l'était pas déjà
+        if (!imagewebp($image, $destinationPath, 100)) {
+            throw new Exception('ERR_WEBP_CONVERSION_FAILED');
+        }
+
+        // Réponse finale
+        return $newFileName;
     }
 
     /**
      * Convertit une taille en bytes
      * Ex : 2M -> 2048
      */
-    private static function convertToBytes($value)
+    private static function convertToBytes(string $value): int
     {
         $value = trim($value);
         $last = strtolower($value[strlen($value) - 1]);
@@ -208,12 +208,11 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function deleteFile($destination, $fileName)
+    public static function deleteFile(string $destination, string $fileName): bool
     {
         // Contrôle fichier renseigné
         if (empty($fileName)) {
-            LoggerHelper::log('Fichier non renseigné');
-            throw new Exception('ERR_INVALID_FILENAME', 400);
+            throw new Exception('ERR_INVALID_FILE');
         }
 
         // Chargement de l'environnement si nécessaire
@@ -223,8 +222,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            LoggerHelper::log('Dossier serveur introuvable');
-            throw new Exception('ERR_ENV_FILES_DIR_MISSING', 500);
+            throw new Exception('ERR_ENV_FILES_DIR_MISSING');
         }
 
         $uploadDir = rtrim(self::$env['FILES_DIR'], '/') . '/' . trim($destination, '/');
@@ -232,22 +230,17 @@ class FileHelper
 
         // Contrôle que le dossier existe
         if (!is_dir($uploadDir)) {
-            LoggerHelper::log("Dossier de destination introuvable : $uploadDir");
-            // throw new Exception('ERR_INVALID_DIRECTORY', 400);
             return false;
         }
 
         // Contrôle que le fichier existe
         if (!file_exists($filePath)) {
-            LoggerHelper::log("Fichier introuvable : $filePath");
-            // throw new Exception('ERR_FILE_NOT_FOUND', 404);
             return false;
         }
 
         // Tentative de suppression
         if (!unlink($filePath)) {
-            LoggerHelper::log("Impossible de supprimer le fichier : $filePath");
-            throw new Exception('ERR_DELETION_FILE_FAILED', 500);
+            throw new Exception('ERR_DELETION_FILE_FAILED');
         }
 
         return true;

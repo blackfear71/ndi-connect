@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
@@ -16,7 +17,7 @@ class UsersController
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(object $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -26,7 +27,7 @@ class UsersController
     /**
      * Contrôle authentification
      */
-    public function checkAuth($token, $initLoad = false)
+    public function checkAuth(string $token, bool $initLoad = false): void
     {
         try {
             // Contrôle authentification
@@ -41,31 +42,23 @@ class UsersController
                     ResponseHelper::success();
                 } else {
                     // Échec de l'authentification
-                    ResponseHelper::error(
-                        'ERR_INVALID_AUTH',
-                        401,
-                        'Authentification incorrecte dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                    );
+                    ResponseHelper::error(MessageHelper::ERR_INVALID_AUTH, [__FUNCTION__, self::controllerName]);
                 }
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllUsers($token)
+    public function getAllUsers(string $token): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Lecture de tous les enregistrements
             $users = $this->service->getAllUsers();
@@ -75,26 +68,18 @@ class UsersController
                 ResponseHelper::success($users);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(
-                    'ERR_USERS_NOT_FOUND',
-                    400,
-                    'Erreur lors de la récupération des utilisateurs dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                ResponseHelper::error(MessageHelper::ERR_USERS_NOT_FOUND, [__FUNCTION__, self::controllerName]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Connexion utilisateur
      */
-    public function connect($data)
+    public function connect(array $data): void
     {
         try {
             // Connexion utilisateur
@@ -118,29 +103,21 @@ class UsersController
                 unset($user['token']);
 
                 // Succès
-                ResponseHelper::success($user, 'MSG_LOGIN_SUCCESS');
+                ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
             } else {
                 // Échec de la connexion
-                ResponseHelper::error(
-                    'ERR_LOGIN_FAILED',
-                    401,
-                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login']
-                );
+                ResponseHelper::error(MessageHelper::ERR_LOGIN_FAILED, [__FUNCTION__, self::controllerName, $data['login']]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect($token)
+    public function disconnect(string $token): void
     {
         try {
             // Contrôle authentification
@@ -155,106 +132,78 @@ class UsersController
                     setcookie('token', '', time() - 3600, '/');
 
                     // Succès
-                    ResponseHelper::success(null, 'MSG_LOGOUT_SUCCESS');
+                    ResponseHelper::success(null, MessageHelper::MSG_LOGOUT_SUCCESS);
                 } else {
                     // Échec de la déconnexion
-                    ResponseHelper::error(
-                        'ERR_LOGOUT_FAILED',
-                        401,
-                        'Erreur lors de la déconnexion dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
-                    );
+                    ResponseHelper::error(MessageHelper::ERR_LOGOUT_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
                 }
             } else {
                 // Utilisateur non trouvé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                ResponseHelper::error(MessageHelper::ERR_UNAUTHORIZED_ACTION, [__FUNCTION__, self::controllerName]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser($token, $data)
+    public function createUser(string $token, array $data): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
             $created = $this->service->createUser($user['login'], $data);
 
             if ($created !== null && $created !== false) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
             } elseif ($created !== null && $created === false) {
                 // Alerte
-                ResponseHelper::warning('WRN_USER_EXISTS', 409);
+                ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$data['login']]);
             } else {
                 // Échec de la création
-                ResponseHelper::error(
-                    'ERR_CREATION_FAILED',
-                    400,
-                    'Erreur lors de la création de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $data['login'] . ' (utilisateur niveau ' . $data['level'] . ')'
-                );
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword($token, $id)
+    public function resetPassword(string $token, int|string $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
             $newPassword = $this->service->resetPassword($user['login'], $id);
 
             if ($newPassword) {
                 // Succès
-                ResponseHelper::info($newPassword, 'MSG_RESET_PASSWORD_SUCCESS');
+                ResponseHelper::info($newPassword, MessageHelper::MSG_RESET_PASSWORD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(
-                    'ERR_CREATION_FAILED',
-                    400,
-                    'Erreur lors de la réinitialisation du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
-                );
+                ResponseHelper::error(MessageHelper::ERR_RESET_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $id]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword($token, $data)
+    public function updatePassword(string $token, array $data): void
     {
         try {
             // Contrôle authentification
@@ -266,102 +215,74 @@ class UsersController
 
                 if ($updated) {
                     // Succès
-                    ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+                    ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
                 } else {
                     // Échec de la modification
-                    ResponseHelper::error(
-                        'ERR_UPDATE_FAILED',
-                        400,
-                        'Erreur lors de la modification du mot de passe dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour le login : ' . $user['login']
-                    );
+                    ResponseHelper::error(MessageHelper::ERR_UPDATE_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
                 }
             } else {
                 // Utilisateur non trouvé
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    401,
-                    'Échec d\'authentification dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                ResponseHelper::error(MessageHelper::ERR_UNAUTHORIZED_ACTION, [__FUNCTION__, self::controllerName]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser($token, $data)
+    public function updateUser(string $token, array $data): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $updated = $this->service->updateUser($user['login'], $data);
 
             if ($updated !== null && $updated !== false) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
             } elseif ($updated !== null && $updated === false) {
                 // Alerte
-                ResponseHelper::warning('WRN_LAST_ADMIN', 403);
+                ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(
-                    'ERR_UPDATE_FAILED',
-                    400,
-                    'Erreur lors de la modification de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $data['id']
-                );
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $data['id'], json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteUser($token, $id)
+    public function deleteUser(string $token, int|string $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteUser($id, $user['login']);
 
             if ($deleted !== null && $deleted !== false) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } elseif ($deleted !== null && $deleted === false) {
                 // Alerte
-                ResponseHelper::warning('WRN_LAST_ADMIN', 403);
+                ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(
-                    'ERR_DELETION_FAILED',
-                    400,
-                    'Erreur lors de la suppression de l\'utilisateur dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
-                );
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $id]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 }

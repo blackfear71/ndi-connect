@@ -1,10 +1,11 @@
 <?php
+// Imports
 require_once 'controllers/UsersController.php';
 
-$database = new Database();
-$db = $database->getConnection();
-
-$router->get('/users/checkAuth', function () use ($db) {
+/**
+ * Contrôle authentification
+ */
+$router->get('/users/checkAuth', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -15,7 +16,10 @@ $router->get('/users/checkAuth', function () use ($db) {
     (new UsersController($db))->checkAuth($token, $initLoad);
 });
 
-$router->get('/users/all', function () use ($db) {
+/**
+ * Lecture de tous les enregistrements
+ */
+$router->get('/users/all', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -23,7 +27,10 @@ $router->get('/users/all', function () use ($db) {
     (new UsersController($db))->getAllUsers($token);
 });
 
-$router->post('/users/connect', function () use ($db) {
+/**
+ * Connexion utilisateur
+ */
+$router->post('/users/connect', function () use ($db): void {
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -31,7 +38,10 @@ $router->post('/users/connect', function () use ($db) {
     (new UsersController($db))->connect($data);
 });
 
-$router->post('/users/disconnect', function () use ($db) {
+/**
+ * Déconnexion utilisateur
+ */
+$router->post('/users/disconnect', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -39,7 +49,10 @@ $router->post('/users/disconnect', function () use ($db) {
     (new UsersController($db))->disconnect($token);
 });
 
-$router->post('/users/create', function () use ($db) {
+/**
+ * Insertion d'un enregistrement
+ */
+$router->post('/users/create', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -50,7 +63,10 @@ $router->post('/users/create', function () use ($db) {
     (new UsersController($db))->createUser($token, $data);
 });
 
-$router->patch('/users/password', function () use ($db) {
+/**
+ * Modification d'un enregistrement
+ */
+$router->patch('/users/password', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -61,7 +77,10 @@ $router->patch('/users/password', function () use ($db) {
     (new UsersController($db))->updatePassword($token, $data);
 });
 
-$router->patch('/users/reset/:id', function ($params) use ($db) {
+/**
+ * Modification d'un enregistrement
+ */
+$router->patch('/users/reset/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -69,7 +88,10 @@ $router->patch('/users/reset/:id', function ($params) use ($db) {
     (new UsersController($db))->resetPassword($token, $params['id']);
 });
 
-$router->patch('/users/update', function () use ($db) {
+/**
+ * Modification d'un enregistrement
+ */
+$router->patch('/users/update', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -80,7 +102,10 @@ $router->patch('/users/update', function () use ($db) {
     (new UsersController($db))->updateUser($token, $data);
 });
 
-$router->delete('/users/delete/:id', function ($params) use ($db) {
+/**
+ * Suppression logique d'un enregistrement
+ */
+$router->delete('/users/delete/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 

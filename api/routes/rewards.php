@@ -1,10 +1,11 @@
 <?php
+// Imports
 require_once 'controllers/RewardsController.php';
 
-$database = new Database();
-$db = $database->getConnection();
-
-$router->post('/rewards/reward/:idEdition', function ($params) use ($db) {
+/**
+ * Insertion d'un enregistrement
+ */
+$router->post('/rewards/reward/:idEdition', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -15,7 +16,10 @@ $router->post('/rewards/reward/:idEdition', function ($params) use ($db) {
     (new RewardsController($db))->createReward($token, $params['idEdition'], $data);
 });
 
-$router->delete('/rewards/delete/:idEdition/:idReward', function ($params) use ($db) {
+/**
+ * Suppression logique d'un enregistrement
+ */
+$router->delete('/rewards/delete/:idEdition/:idReward', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 

@@ -8,7 +8,7 @@ class LoggerHelper
      * @param $message Message à logguer
      * @param $level Niveau de gravité (ex: ERROR, INFO, WARNING)
      */
-    public static function log($message, $level = 'ERROR')
+    public static function log(string $message, string $level = 'ERROR'): void
     {
         // Récupération du dossier de logs depuis le fichier .env
         if (self::$env === null) {

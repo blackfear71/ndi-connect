@@ -7,7 +7,7 @@ class Model
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
     }
@@ -15,7 +15,7 @@ class Model
     /**
      * Lecture de tous les enregistrements
      */
-    public function all()
+    public function all(): array
     {
         $sql = "SELECT * FROM {$this->table} WHERE is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->query($sql);
@@ -25,7 +25,7 @@ class Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function find($id)
+    public function find(int|string $id): array|false
     {
         $sql = "SELECT * FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -36,7 +36,7 @@ class Model
     /**
      * Insertion d'un enregistrement (table à colonnes dynamiques)
      */
-    public function create($login, $data)
+    public function create(string $login, array $data): string
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['created_by'] = $login;
@@ -54,7 +54,7 @@ class Model
     /**
      * Modification d'un enregistrement par Id
      */
-    public function update($id, $login, $data)
+    public function update(int|string $id, string $login, array $data): bool
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
@@ -75,7 +75,7 @@ class Model
     /**
      * Suppression logique d'un enregistrement
      */
-    public function logicalDelete($id, $login)
+    public function logicalDelete(int|string $id, string $login): bool
     {
         $data['deleted_at'] = date('Y-m-d H:i:s');
         $data['deleted_by'] = $login;
@@ -95,7 +95,7 @@ class Model
     /**
      * Suppression physique d'un enregistrement
      */
-    public function physicalDelete($id)
+    public function physicalDelete(int|string $id): bool
     {
         $sql = "DELETE FROM {$this->table} WHERE id = :id";
         $stmt = $this->db->prepare($sql);

@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 
@@ -15,7 +16,7 @@ class RewardsService
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->repository = new RewardsRepository($db);
@@ -24,7 +25,7 @@ class RewardsService
     /**
      * Instancie le GiftsService si besoin
      */
-    private function getGiftsService()
+    private function getGiftsService(): GiftsService
     {
         if ($this->giftsService === null) {
             $this->giftsService = new GiftsService($this->db);
@@ -36,7 +37,7 @@ class RewardsService
     /**
      * Instancie le PlayersService si besoin
      */
-    private function getPlayersService()
+    private function getPlayersService(): PlayersService
     {
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
@@ -48,7 +49,7 @@ class RewardsService
     /**
      * Récupération du nombre d'attributions d'un cadeau
      */
-    public function getRewardCount($idGift)
+    public function getRewardCount(int|string $idGift): int
     {
         return $this->repository->getRewardCount($idGift);
     }
@@ -56,7 +57,7 @@ class RewardsService
     /**
      * Récupération des cadeaux d'un participant
      */
-    public function getPlayerRewards($id)
+    public function getPlayerRewards(int|string $id): array
     {
         return $this->repository->getPlayerRewards($id);
     }
@@ -64,7 +65,7 @@ class RewardsService
     /**
      * Attribution d'un cadeau
      */
-    public function createReward($login, $idEdition, $idGift, $idPlayer)
+    public function createReward(string $login, int|string $idEdition, int|string $idGift, int|string $idPlayer): ?bool
     {
         // Récupération du cadeau
         $gift = $this->getGiftsService()->getGift($idGift);
@@ -106,7 +107,7 @@ class RewardsService
     /**
      * Suppression logique de l'attribution d'un cadeau
      */
-    public function deleteReward($login, $idEdition, $idReward)
+    public function deleteReward(string $login, int|string $idEdition, int|string $idReward): ?bool
     {
         // Récupération de l'attribution du cadeau du participant
         $reward = $this->repository->find($idReward);
@@ -125,7 +126,7 @@ class RewardsService
     /**
      * Contrôle de cohérence des données
      */
-    private function isValidRewardData($gift, $rewardCount, $player)
+    private function isValidRewardData(array $gift, int $rewardCount, array $player): bool
     {
         // Contrôle quantité restante
         $remainingQuantity = $gift['quantity'] - $rewardCount;
@@ -140,7 +141,7 @@ class RewardsService
     /**
      * Formate les données avant traitement SQL (attribution)
      */
-    private function processDataReward($player, $gift)
+    private function processDataReward(array $player, array $gift): array
     {
         $sqlData = [
             'id_player' => $player['id'],
@@ -154,7 +155,7 @@ class RewardsService
     /**
      * Formate les données avant traitement SQL (participant)
      */
-    private function processDataPlayer($player, $gift)
+    private function processDataPlayer(array $player, array $gift): array
     {
         $sqlData = [
             'points' => $player['points'] - $gift['value']

@@ -4,7 +4,7 @@ class EnvironmentHelper
     /**
      * Chargement du fichier d'environnement
      */
-    public static function loadEnv($path)
+    public static function loadEnv(string $path): array
     {
         if (!file_exists($path)) {
             return [];

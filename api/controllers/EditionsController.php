@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumAction.php';
@@ -17,7 +18,7 @@ class EditionsController
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -27,7 +28,7 @@ class EditionsController
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllEditions()
+    public function getAllEditions(): void
     {
         try {
             // Lecture de tous les enregistrements
@@ -38,26 +39,18 @@ class EditionsController
                 ResponseHelper::success($editions);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(
-                    'ERR_EDITIONS_NOT_FOUND',
-                    400,
-                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                ResponseHelper::error(MessageHelper::ERR_EDITIONS_NOT_FOUND, [__FUNCTION__, self::controllerName]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition($id)
+    public function getEdition(int|string $id): void
     {
         try {
             $edition = $this->service->getEdition($id);
@@ -67,26 +60,18 @@ class EditionsController
                 ResponseHelper::success($edition);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(
-                    'ERR_EDITION_NOT_FOUND',
-                    404,
-                    'Edition non trouvée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
-                );
+                ResponseHelper::error(MessageHelper::ERR_EDITION_NOT_FOUND, [__FUNCTION__, self::controllerName, $id]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Lecture des éditions recherchées
      */
-    public function getSearchEditions($search)
+    public function getSearchEditions(string $search): void
     {
         try {
             // Lecture de tous les enregistrements recherchés
@@ -97,118 +82,86 @@ class EditionsController
                 ResponseHelper::success($editions);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(
-                    'ERR_EDITIONS_NOT_FOUND',
-                    400,
-                    'Erreur lors de la récupération des éditions dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour la recherche : ' . $search
-                );
+                ResponseHelper::error(MessageHelper::ERR_EDITIONS_SEARCH, [__FUNCTION__, self::controllerName, $search]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition($token, $data, $file)
+    public function createEdition(string $token, array $data, array $file): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
             $created = $this->service->createEdition($user['login'], $data, $file);
 
             if ($created) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(
-                    'ERR_CREATION_FAILED',
-                    400,
-                    'Erreur lors de la création de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
-                );
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                $e->getCode() ?: 500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition($token, $id, $data, $file)
+    public function updateEdition(string $token, int|string $id, array $data, array $file): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
             $edition = $this->service->updateEdition($id, $user['login'], $data, $file);
 
             if ($edition) {
                 // Succès
-                ResponseHelper::success($edition, 'MSG_UPDATE_SUCCESS');
+                ResponseHelper::success($edition, MessageHelper::MSG_UPDATE_SUCCESS);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(
-                    'ERR_UPDATE_FAILED',
-                    400,
-                    'Erreur lors de la modification de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id . ' - ' . json_encode($data)
-                );
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $id, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                $e->getCode() ?: 500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition($token, $id)
+    public function deleteEdition(string $token, int|string $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteEdition($id, $user['login']);
 
             if ($deleted) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(
-                    'ERR_DELETION_FAILED',
-                    400,
-                    'Erreur lors de la suppression de l\'édition dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $id
-                );
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $id]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 }

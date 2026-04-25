@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
@@ -16,7 +17,7 @@ class PlayersController
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -26,7 +27,7 @@ class PlayersController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers($idEdition)
+    public function getEditionPlayers(int|string $idEdition): void
     {
         try {
             // Lecture de tous les enregistrements
@@ -37,118 +38,86 @@ class PlayersController
                 ResponseHelper::success($players);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(
-                    'ERR_PLAYERS_NOT_FOUND',
-                    400,
-                    'Erreur lors de la récupération des participants dans ' . __FUNCTION__ . ' de ' . self::controllerName
-                );
+                ResponseHelper::error(MessageHelper::ERR_PLAYERS_NOT_FOUND, [__FUNCTION__, self::controllerName]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createPlayer($token, $idEdition, $data)
+    public function createPlayer(string $token, int|string $idEdition, array $data): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
             $created = $this->service->createPlayer($idEdition, $user, $data);
 
             if ($created) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_CREATION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(
-                    'ERR_CREATION_FAILED',
-                    400,
-                    'Erreur lors de la création du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
-                );
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer($token, $idEdition, $idPlayer, $data)
+    public function updatePlayer(string $token, int|string $idEdition, int|string $idPlayer, array $data): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
             $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
 
             if ($updated) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_UPDATE_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(
-                    'ERR_UPDATE_FAILED',
-                    400,
-                    'Erreur lors de la modification du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer . ' - ' . json_encode($data)
-                );
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idPlayer, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deletePlayer($token, $idEdition, $idPlayer)
+    public function deletePlayer(string $token, int|string $idEdition, int|string $idPlayer): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
 
             if ($deleted) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(
-                    'ERR_DELETION_FAILED',
-                    400,
-                    'Erreur lors de la suppression du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idPlayer
-                );
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idPlayer]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 }

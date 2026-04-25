@@ -1,15 +1,19 @@
 <?php
+// Imports
 require_once 'controllers/GiftsController.php';
 
-$database = new Database();
-$db = $database->getConnection();
-
-$router->get('/gifts/edition/:idEdition', function ($params) use ($db) {
+/**
+ * Lecture des enregistrements d'une édition
+ */
+$router->get('/gifts/edition/:idEdition', function (array $params) use ($db): void {
     // Appel contrôleur
     (new GiftsController($db))->getEditionGifts($params['idEdition']);
 });
 
-$router->post('/gifts/create/:idEdition', function ($params) use ($db) {
+/**
+ * Insertion d'un enregistrement
+ */
+$router->post('/gifts/create/:idEdition', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -20,7 +24,10 @@ $router->post('/gifts/create/:idEdition', function ($params) use ($db) {
     (new GiftsController($db))->createGift($token, $params['idEdition'], $data);
 });
 
-$router->patch('/gifts/update/:idEdition/:idGift', function ($params) use ($db) {
+/**
+ * Modification d'un enregistrement
+ */
+$router->patch('/gifts/update/:idEdition/:idGift', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -31,7 +38,10 @@ $router->patch('/gifts/update/:idEdition/:idGift', function ($params) use ($db) 
     (new GiftsController($db))->updateGift($token, $params['idEdition'], $params['idGift'], $data);
 });
 
-$router->delete('/gifts/delete/:idEdition/:idGift', function ($params) use ($db) {
+/**
+ * Suppression logique d'un enregistrement
+ */
+$router->delete('/gifts/delete/:idEdition/:idGift', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 

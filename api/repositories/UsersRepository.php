@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Model.php';
 
 class UsersRepository extends Model
@@ -8,7 +9,7 @@ class UsersRepository extends Model
     /**
      * Contrôle authentification
      */
-    public function checkAuth($token)
+    public function checkAuth(string $token): array|false
     {
         $data['token'] = $token;
 
@@ -21,7 +22,7 @@ class UsersRepository extends Model
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         $sql = "SELECT id, login, level FROM {$this->table} WHERE is_active = 1 ORDER BY login ASC";
         $stmt = $this->db->query($sql);
@@ -31,7 +32,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur actif (via login)
      */
-    public function getActiveUserDataByLogin($login)
+    public function getActiveUserDataByLogin(string $login): array|false
     {
         $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -42,7 +43,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur actif (via id)
      */
-    public function getActiveUserDataById($id)
+    public function getActiveUserDataById(int|string $id): array|false
     {
         $sql = "SELECT id, login, level FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -53,7 +54,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur (tous statuts)
      */
-    public function getUserDataByLogin($login)
+    public function getUserDataByLogin(string $login): array|false
     {
         $sql = "SELECT id, login, level FROM {$this->table} WHERE login = :login";
         $stmt = $this->db->prepare($sql);
@@ -64,7 +65,7 @@ class UsersRepository extends Model
     /**
      * Vérifie si l'utilisateur est le dernier super admin actif
      */
-    public function isLastAdmin()
+    public function isLastAdmin(): bool
     {
         $sql = "SELECT COUNT(*) AS nbAdmin FROM {$this->table} WHERE level = :level AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -77,7 +78,7 @@ class UsersRepository extends Model
     /**
      * Mise à jour token de connexion
      */
-    public function updateToken($login, $token)
+    public function updateToken(string $login, ?string $token): bool
     {
         $data['token'] = $token;
         $data['token_expires_at'] = $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL;

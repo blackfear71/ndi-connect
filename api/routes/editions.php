@@ -1,20 +1,27 @@
 <?php
+// Imports
 require_once 'controllers/EditionsController.php';
 
-$database = new Database();
-$db = $database->getConnection();
-
-$router->get('/editions/all', function () use ($db) {
+/**
+ * Lecture de tous les enregistrements
+ */
+$router->get('/editions/all', function () use ($db): void {
     // Appel contrôleur
     (new EditionsController($db))->getAllEditions();
 });
 
-$router->get('/editions/find/:id', function ($params) use ($db) {
+/**
+ * Lecture d'un enregistrement
+ */
+$router->get('/editions/find/:id', function (array $params) use ($db): void {
     // Appel contrôleur
     (new EditionsController($db))->getEdition($params['id']);
 });
 
-$router->post('/editions/search', function () use ($db) {
+/**
+ * Lecture des éditions recherchées
+ */
+$router->post('/editions/search', function () use ($db): void {
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -22,7 +29,10 @@ $router->post('/editions/search', function () use ($db) {
     (new EditionsController($db))->getSearchEditions($data['search']);
 });
 
-$router->post('/editions/create', function () use ($db) {
+/**
+ * Insertion d'un enregistrement
+ */
+$router->post('/editions/create', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -30,7 +40,10 @@ $router->post('/editions/create', function () use ($db) {
     (new EditionsController($db))->createEdition($token, $_POST, $_FILES);
 });
 
-$router->post('/editions/update/:id', function ($params) use ($db) {
+/**
+ * Modification d'un enregistrement
+ */
+$router->post('/editions/update/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -38,7 +51,10 @@ $router->post('/editions/update/:id', function ($params) use ($db) {
     (new EditionsController($db))->updateEdition($token, $params['id'], $_POST, $_FILES);
 });
 
-$router->delete('/editions/delete/:id', function ($params) use ($db) {
+/**
+ * Suppression logique d'un enregistrement
+ */
+$router->delete('/editions/delete/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 

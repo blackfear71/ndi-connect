@@ -4,16 +4,20 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'erreur
      */
-    public static function error($message, $code = 500, $logMessage = null)
+    public static function error(string $code, array $args = []): void
     {
-        if ($logMessage) {
-            LoggerHelper::log($logMessage, 'ERROR');
-        }
+        // Message et code HTTP
+        $logMessage = MessageHelper::message($code, ...$args);
+        $httpCode = MessageHelper::httpCode($code);
 
-        http_response_code($code);
+        // Log
+        LoggerHelper::log($logMessage, 'ERROR');
+
+        // Réponse
+        http_response_code($httpCode);
         echo json_encode([
             'status' => 'error',
-            'message' => $message,
+            'message' => $code,
             'data' => null
         ]);
     }
@@ -21,12 +25,13 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'info
      */
-    public static function info($data = null, $message = '')
+    public static function info(mixed $data = null, string $code = ''): void
     {
+        // Réponse
         http_response_code(200);
         echo json_encode([
             'status' => 'info',
-            'message' => $message,
+            'message' => $code,
             'data' => $data
         ]);
     }
@@ -34,22 +39,25 @@ class ResponseHelper
     /**
      * Gestion du retour SSE
      */
-    public static function sse($logMessage = null)
+    public static function sse(string $code, array $args = []): void
     {
-        if ($logMessage) {
-            LoggerHelper::log($logMessage, 'SSE');
-        }
+        // Message
+        $logMessage = MessageHelper::message($code, ...$args);
+
+        // Log
+        LoggerHelper::log($logMessage, 'SSE');
     }
 
     /**
      * Gestion du retour en cas de succès
      */
-    public static function success($data = null, $message = '')
+    public static function success(mixed $data = null, string $code = ''): void
     {
+        // Réponse
         http_response_code(200);
         echo json_encode([
             'status' => 'success',
-            'message' => $message,
+            'message' => $code,
             'data' => $data
         ]);
     }
@@ -57,12 +65,20 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'alerte
      */
-    public static function warning($message = '', $code = 400)
+    public static function warning(string $code = '', array $args = []): void
     {
-        http_response_code($code);
+        // Message et code HTTP
+        $logMessage = MessageHelper::message($code, ...$args);
+        $httpCode = MessageHelper::httpCode($code);
+
+        // Log
+        LoggerHelper::log($logMessage, 'ERROR');
+
+        // Réponse
+        http_response_code($httpCode);
         echo json_encode([
             'status' => 'warning',
-            'message' => $message,
+            'message' => $code,
             'data' => null
         ]);
     }

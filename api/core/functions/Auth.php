@@ -1,18 +1,17 @@
 <?php
+// Imports
 require_once 'enums/EnumUserRole.php';
 
 require_once 'services/UsersService.php';
 
 class Auth
 {
-    private const helperName = 'AuthHelper';
-
     private $service;
 
     /**
      * Constructeur
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->service = new UsersService($db);
     }
@@ -20,40 +19,20 @@ class Auth
     /**
      * Contrôle authentification et niveau utilisateur
      */
-    public function checkAuthAndLevel($token, $minimumLevel, $method, $controller)
+    public function checkAuthAndLevel(string $token, int $minimumLevel): array
     {
-        try {
-            // Contrôle authentification
-            $user = $this->service->checkAuth($token);
+        // Contrôle authentification
+        $user = $this->service->checkAuth($token);
 
-            if (!$user) {
-                ResponseHelper::error(
-                    'ERR_INVALID_AUTH',
-                    401,
-                    "Authentification invalide dans $method de $controller"
-                );
-                exit;
-            }
-
-            // Contrôle du niveau utilisateur
-            if ($user['level'] < $minimumLevel) {
-                // Action non autorisée
-                ResponseHelper::error(
-                    'ERR_UNAUTHORIZED_ACTION',
-                    403,
-                    "Action non autorisée dans $method de $controller"
-                );
-                exit;
-            }
-
-            return $user;
-        } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::helperName . ' : ' . $e->getMessage() . '',
-            );
+        if (!$user) {
+            throw new Exception(MessageHelper::ERR_INVALID_AUTH);
         }
+
+        // Contrôle du niveau utilisateur
+        if ($user['level'] < $minimumLevel) {
+            throw new Exception(MessageHelper::ERR_UNAUTHORIZED_ACTION);
+        }
+
+        return $user;
     }
 }

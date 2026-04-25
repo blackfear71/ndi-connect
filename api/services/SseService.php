@@ -5,7 +5,7 @@ class SseService
     /**
      * Initialisation des paramètres SSE
      */
-    public function initializeSse()
+    public function initializeSse(): void
     {
         // Évite la limite de temps PHP
         set_time_limit(0);
@@ -21,7 +21,7 @@ class SseService
     /**
      * Génère un bloc SSE (event + data)
      */
-    public function getSseEvent($event, $data)
+    public function getSseEvent(string $event, mixed $data): string
     {
         return "event: {$event}\n"
             . "data: " . (is_string($data) ? $data : json_encode($data)) . "\n\n";

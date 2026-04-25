@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
@@ -16,7 +17,7 @@ class RewardsController
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -26,66 +27,50 @@ class RewardsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createReward($token, $idEdition, $data)
+    public function createReward(string $token, int|string $idEdition, array $data): void
     {
         try {
             // Contrôle autorisation et niveau
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
             $created = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
 
             if ($created) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_REWARD_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(
-                    'ERR_CREATION_FAILED',
-                    400,
-                    'Erreur lors de l\'attribution du cadeau dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . json_encode($data)
-                );
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward($token, $idEdition, $idReward)
+    public function deleteReward(string $token, int|string $idEdition, int|string $idReward): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value, __FUNCTION__, self::controllerName);
+            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteReward($user['login'], $idEdition, $idReward);
 
             if ($deleted) {
                 // Succès
-                ResponseHelper::success(null, 'MSG_DELETION_SUCCESS');
+                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(
-                    'ERR_DELETION_FAILED',
-                    400,
-                    'Erreur lors de la suppression du cadeau du participant dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' pour l\'id : ' . $idReward
-                );
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idReward]);
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::error(
-                $e->getMessage(),
-                500,
-                'Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage()
-            );
+            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
         }
     }
 }

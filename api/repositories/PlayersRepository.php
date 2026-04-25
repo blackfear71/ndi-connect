@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Model.php';
 
 class PlayersRepository extends Model
@@ -8,7 +9,7 @@ class PlayersRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers($id)
+    public function getEditionPlayers(int|string $id): array
     {
         $sql = "SELECT id, name, points FROM {$this->table} WHERE id_edition = :id AND is_active = 1 ORDER BY name ASC";
         $stmt = $this->db->prepare($sql);
@@ -19,7 +20,7 @@ class PlayersRepository extends Model
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers($id, $login)
+    public function deletePlayers(int|string $id, string $login): bool
     {
         $data['deleted_at'] = date('Y-m-d H:i:s');
         $data['deleted_by'] = $login;
@@ -39,7 +40,7 @@ class PlayersRepository extends Model
     /**
      * Insertion d'un joueur
      */
-    public function createPlayer($login, $data)
+    public function createPlayer(string $login, array $data): string
     {
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['created_by'] = $login;
@@ -54,7 +55,7 @@ class PlayersRepository extends Model
     /**
      * Modification d'un joueur par Id
      */
-    public function updatePlayer($id, $login, $data)
+    public function updatePlayer(int|string $id, string $login, array $data): bool
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;
@@ -70,7 +71,7 @@ class PlayersRepository extends Model
     /**
      * Modification d'un joueur par Id (don ou récupération de points)
      */
-    public function updatePlayerDelta($id, $login, $delta)
+    public function updatePlayerDelta(int|string $id, string $login, int $delta): bool
     {
         $data['delta'] = $delta;
         $data['updated_at'] = date('Y-m-d H:i:s');
@@ -87,7 +88,7 @@ class PlayersRepository extends Model
     /**
      * Modification des points d'un joueur par Id
      */
-    public function updatePlayerPoints($id, $login, $data)
+    public function updatePlayerPoints(int|string $id, string $login, array $data): bool
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
         $data['updated_by'] = $login;

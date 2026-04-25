@@ -449,7 +449,7 @@ const Settings = () => {
                                 {t('settings.settingsTitle')}
                             </h1>
 
-                            {auth.level >= EnumUserRole.SUPERADMIN ? (
+                            {auth.level >= EnumUserRole.SUPERADMIN && currentUser && users ? (
                                 <Tabs
                                     variant="underline"
                                     defaultActiveKey="user"
@@ -483,13 +483,15 @@ const Settings = () => {
                             ) : (
                                 <>
                                     {/* Utilisateur connecté */}
-                                    <SettingsUser
-                                        user={currentUser}
-                                        formPassword={formPassword}
-                                        setFormPassword={setFormPassword}
-                                        setModalOptionsPassword={setModalOptionsPassword}
-                                        isSubmitting={isSubmitting}
-                                    />
+                                    {currentUser && (
+                                        <SettingsUser
+                                            user={currentUser}
+                                            formPassword={formPassword}
+                                            setFormPassword={setFormPassword}
+                                            setModalOptionsPassword={setModalOptionsPassword}
+                                            isSubmitting={isSubmitting}
+                                        />
+                                    )}
                                 </>
                             )}
                         </>

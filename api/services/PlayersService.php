@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/PlayersRepository.php';
@@ -13,7 +14,7 @@ class PlayersService
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->repository = new PlayersRepository($db);
@@ -22,7 +23,7 @@ class PlayersService
     /**
      * Instancie le RewardsService si besoin
      */
-    private function getRewardsService()
+    private function getRewardsService(): RewardsService
     {
         if ($this->rewardsService === null) {
             $this->rewardsService = new RewardsService($this->db);
@@ -34,7 +35,7 @@ class PlayersService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers($id)
+    public function getEditionPlayers(int|string $id): array
     {
         // Liste des participants
         $players = $this->repository->getEditionPlayers($id);
@@ -50,7 +51,7 @@ class PlayersService
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer($id)
+    public function getPlayer(int|string $id): array|false
     {
         return $this->repository->find($id);
     }
@@ -58,7 +59,7 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer($idEdition, $user, $data)
+    public function createPlayer(int|string $idEdition, array $user, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidPlayerData($user['level'], $data, true)) {
@@ -76,7 +77,7 @@ class PlayersService
     /**
      * Modification d'un participant
      */
-    public function updatePlayer($idEdition, $idPlayer, $user, $data)
+    public function updatePlayer(int|string $idEdition, int|string $idPlayer, array $user, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidPlayerData($user['level'], $data, false)) {
@@ -101,7 +102,7 @@ class PlayersService
     /**
      * Modification des points d'un participant
      */
-    public function updatePlayerPoints($idPlayer, $login, $data)
+    public function updatePlayerPoints(int|string $idPlayer, string $login, array $data): bool
     {
         // Modification des points d'un participant
         return $this->repository->updatePlayerPoints($idPlayer, $login, $data);
@@ -110,7 +111,7 @@ class PlayersService
     /**
      * Modification des points d'un participant par ajout
      */
-    public function updatePlayerDelta($idPlayer, $login, $delta)
+    public function updatePlayerDelta(int|string $idPlayer, string $login, int $delta): bool
     {
         // Modification des points d'un participant
         return $this->repository->updatePlayerDelta($idPlayer, $login, $delta);
@@ -119,7 +120,7 @@ class PlayersService
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers($id, $login)
+    public function deletePlayers(int|string $id, string $login): bool
     {
         return $this->repository->deletePlayers($id, $login);
     }
@@ -127,7 +128,7 @@ class PlayersService
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer($idEdition, $idPlayer, $login)
+    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): ?bool
     {
         // Suppression logique du participant
         if ($idEdition && $idPlayer && $this->repository->logicalDelete($idPlayer, $login)) {
@@ -140,7 +141,7 @@ class PlayersService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData($userLevel, $data, $isCreate)
+    private function isValidPlayerData(int $userLevel, array $data, bool $isCreate): bool
     {
         $name = trim($data['name'] ?? '');
         $delta = $data['delta'] ?? null;
@@ -158,7 +159,7 @@ class PlayersService
     /**
      * Formate les données avant traitement SQL (participant)
      */
-    private function processDataPlayer($data)
+    private function processDataPlayer(array $data): array
     {
         $sqlData = [
             'name'  => $data['name'],

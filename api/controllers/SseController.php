@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 require_once 'services/SseService.php';
@@ -16,7 +17,7 @@ class SseController
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->service = new SseService();
@@ -25,7 +26,7 @@ class SseController
     /**
      * Instancie le GiftsService si besoin
      */
-    private function getGiftsService()
+    private function getGiftsService(): GiftsService
     {
         if ($this->giftsService === null) {
             $this->giftsService = new GiftsService($this->db);
@@ -37,7 +38,7 @@ class SseController
     /**
      * Instancie le PlayersService si besoin
      */
-    private function getPlayersService()
+    private function getPlayersService(): PlayersService
     {
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
@@ -49,7 +50,7 @@ class SseController
     /**
      * Flux SSE de récupération des participants et cadeaux d'une édition
      */
-    public function getSseEdition($id)
+    public function getSseEdition(int|string $id): void
     {
         // Contrôle id renseigné
         if ($id === null) {
@@ -96,7 +97,7 @@ class SseController
                     }
                 } catch (Exception $e) {
                     // Échec de la lecture
-                    ResponseHelper::sse('Erreur lors de la récupération des cadeaux dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage());
+                    ResponseHelper::sse(MessageHelper::ERR_SSE_GIFTS, [__FUNCTION__, self::controllerName, $e->getMessage()]);
                 }
 
                 // Evènement de récupération des participants
@@ -115,7 +116,7 @@ class SseController
                     }
                 } catch (Exception $e) {
                     // Échec de la lecture
-                    ResponseHelper::sse('Erreur lors de la récupération des participants dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage());
+                    ResponseHelper::sse(MessageHelper::ERR_SSE_PLAYERS, [__FUNCTION__, self::controllerName, $e->getMessage()]);
                 }
 
                 // Pause avant la prochaine boucle
@@ -123,7 +124,7 @@ class SseController
             }
         } catch (Exception $e) {
             // Exception levée
-            ResponseHelper::sse('Exception levée dans ' . __FUNCTION__ . ' de ' . self::controllerName . ' : ' . $e->getMessage());
+            ResponseHelper::sse(MessageHelper::ERR_UNKNOWN_ERROR, [__FUNCTION__, self::controllerName, $e->getMessage()]);
 
             // Message d'erreur
             echo $this->service->getSseEvent('fatal_error', 'Exception levée SSE');

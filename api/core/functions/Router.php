@@ -6,7 +6,7 @@ class Router
     /**
      * Ajout route suppression
      */
-    public function delete($path, $callback)
+    public function delete(string $path, callable $callback): void
     {
         $this->addRoute('DELETE', $path, $callback);
     }
@@ -14,7 +14,7 @@ class Router
     /**
      * Ajout route lecture
      */
-    public function get($path, $callback)
+    public function get(string $path, callable $callback): void
     {
         $this->addRoute('GET', $path, $callback);
     }
@@ -22,7 +22,7 @@ class Router
     /**
      * Ajout route options
      */
-    public function options($path, $callback)
+    public function options(string $path, callable $callback): void
     {
         $this->addRoute('OPTIONS', $path, $callback);
     }
@@ -30,7 +30,7 @@ class Router
     /**
      * Ajout route modification
      */
-    public function patch($path, $callback)
+    public function patch(string $path, callable $callback): void
     {
         $this->addRoute('PATCH', $path, $callback);
     }
@@ -38,7 +38,7 @@ class Router
     /**
      * Ajout route création
      */
-    public function post($path, $callback)
+    public function post(string $path, callable $callback): void
     {
         $this->addRoute('POST', $path, $callback);
     }
@@ -46,7 +46,7 @@ class Router
     /**
      * Ajout de route
      */
-    private function addRoute($method, $path, $callback)
+    private function addRoute(string $method, string $path, callable $callback): void
     {
         $pattern = preg_replace('#:([\w]+)#', '(?P<\1>[^/]+)', $path);
         $pattern = '#^' . $pattern . '$#';
@@ -56,7 +56,7 @@ class Router
     /**
      * Recherche dynamique de la route et lancement
      */
-    public function run()
+    public function run(): mixed
     {
         $method = $_SERVER['REQUEST_METHOD'];
 
@@ -70,7 +70,7 @@ class Router
             $uri = substr($uri, strlen($scriptDir));
         }
 
-        // Assure que l'URI commence par un /
+        // Assure que l'URI commence par un / et déclenche la route
         $uri = '/' . ltrim($uri, '/');
 
         foreach ($this->routes as $route) {
@@ -81,10 +81,8 @@ class Router
         }
 
         // Si aucune route ne correspond
-        ResponseHelper::error(
-            'ERR_ROUTE_NOT_FOUND',
-            404,
-            "Route non trouvée dans Router.php : $uri"
-        );
+        ResponseHelper::error(MessageHelper::ERR_ROUTE_NOT_FOUND, [$uri]);
+
+        return null;
     }
 }

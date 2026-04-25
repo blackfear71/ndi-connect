@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Model.php';
 
 class EditionsRepository extends Model
@@ -9,7 +10,7 @@ class EditionsRepository extends Model
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllEditions()
+    public function getAllEditions(): array
     {
         $sql = "SELECT e.id, e.location, e.start_date AS 'startDate', e.end_date AS 'endDate', COUNT(p.id) AS 'playerCount' FROM {$this->table} AS e
         LEFT JOIN {$this->playersTable} AS p ON p.id_edition = e.id AND p.is_active = 1
@@ -23,7 +24,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEdition($id)
+    public function getEdition(int|string $id): array|false
     {
         $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate', picture, theme, challenge FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -34,7 +35,7 @@ class EditionsRepository extends Model
     /**
      * Lecture des éditions recherchées
      */
-    public function getSearchEditions($search)
+    public function getSearchEditions(string $search): array
     {
         $sql = "SELECT id, location, start_date AS 'startDate', end_date AS 'endDate', theme, challenge FROM {$this->table} WHERE (CAST(start_date AS CHAR) LIKE :search OR location LIKE :search) AND is_active = 1 ORDER BY id ASC";
         $stmt = $this->db->prepare($sql);
@@ -45,7 +46,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEditionPicture($id)
+    public function getEditionPicture(int|string $id): string|null|false
     {
         $sql = "SELECT picture FROM {$this->table} WHERE id = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);

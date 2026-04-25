@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Model.php';
 
 class RewardsRepository extends Model
@@ -9,7 +10,7 @@ class RewardsRepository extends Model
     /**
      * Lecture du nombre d'enregistrements
      */
-    public function getRewardCount($id)
+    public function getRewardCount(int|string $id): int
     {
         $sql = "SELECT COUNT(id) AS rewardCount FROM {$this->table} WHERE id_gift = :id AND is_active = 1";
         $stmt = $this->db->prepare($sql);
@@ -22,7 +23,7 @@ class RewardsRepository extends Model
     /**
      * Lecture des enregistrements d'un participant (y compris les cadeaux supprimés)
      */
-    public function getPlayerRewards($id)
+    public function getPlayerRewards(int|string $id): array
     {
         $sql = "SELECT r.id, r.id_gift AS idGift, g.name FROM {$this->table} AS r
         LEFT JOIN {$this->giftsTable} AS g ON g.id = r.id_gift

@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 
@@ -15,7 +16,7 @@ class EditionsService
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->repository = new EditionsRepository($db);
@@ -24,7 +25,7 @@ class EditionsService
     /**
      * Instancie le GiftsService si besoin
      */
-    private function getGiftsService()
+    private function getGiftsService(): GiftsService
     {
         if ($this->giftsService === null) {
             $this->giftsService = new GiftsService($this->db);
@@ -36,7 +37,7 @@ class EditionsService
     /**
      * Instancie le PlayersService si besoin
      */
-    private function getPlayersService()
+    private function getPlayersService(): PlayersService
     {
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
@@ -48,7 +49,7 @@ class EditionsService
     /**
      * Lecture de tous les enregistrements
      */
-    public function getAllEditions()
+    public function getAllEditions(): array
     {
         return $this->repository->getAllEditions();
     }
@@ -56,7 +57,7 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition($id)
+    public function getEdition(int|string $id): ?array
     {
         $edition = null;
 
@@ -84,7 +85,7 @@ class EditionsService
     /**
      * Lecture des éditions recherchées
      */
-    public function getSearchEditions($search)
+    public function getSearchEditions(string $search): array
     {
         if (empty($search)) {
             return [];
@@ -96,7 +97,7 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition($login, $data, $file)
+    public function createEdition(string $login, array $data, ?array $file): ?string
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -114,7 +115,7 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition($id, $login, $data, $file)
+    public function updateEdition(int|string $id, string $login, array $data, ?array $file): ?array
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -137,7 +138,7 @@ class EditionsService
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition($id, $login)
+    public function deleteEdition(int|string $id, string $login): bool
     {
         // Suppression logique des cadeaux
         $this->getGiftsService()->deleteGifts($id, $login);
@@ -152,7 +153,7 @@ class EditionsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidEditionData($data)
+    private function isValidEditionData(array $data): bool
     {
         $location = trim($data['location'] ?? '');
         $startDate = $data['startDate'] ?? null;
@@ -177,7 +178,7 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage($id, $action, $file)
+    private function uploadImage(int|string|null $id, ?string $action, ?array $file): ?string
     {
         // Récupération des données de l'édition
         $picture = $id ? $this->repository->getEditionPicture($id) : null;
@@ -210,7 +211,7 @@ class EditionsService
     /**
      * Formate les données avant traitement SQL
      */
-    private function processDataEdition($data)
+    private function processDataEdition(array $data): array
     {
         $startDate = new DateTime($data['startDate'] . ' ' . $data['startTime']);
         $endDate = new DateTime($data['startDate'] . ' ' . $data['endTime']);

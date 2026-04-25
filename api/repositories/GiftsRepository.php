@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'core/functions/Model.php';
 
 class GiftsRepository extends Model
@@ -9,7 +10,7 @@ class GiftsRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts($id)
+    public function getEditionGifts(int|string $id): array
     {
         $sql = "SELECT g.id, g.name, g.value, g.quantity, COUNT(r.id) AS rewardCount FROM {$this->table} AS g
         LEFT JOIN {$this->rewardsTable} AS r ON r.id_gift = g.id AND r.is_active = 1
@@ -26,7 +27,7 @@ class GiftsRepository extends Model
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts($id, $login)
+    public function deleteGifts(int|string $id, string $login): bool
     {
         $data['deleted_at'] = date('Y-m-d H:i:s');
         $data['deleted_by'] = $login;

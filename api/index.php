@@ -2,11 +2,21 @@
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
+
 require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
 require_once __DIR__ . '/core/helpers/FileHelper.php';
 require_once __DIR__ . '/core/helpers/LoggerHelper.php';
 require_once __DIR__ . '/core/helpers/MessageHelper.php';
 require_once __DIR__ . '/core/helpers/ResponseHelper.php';
+
+// Connexion BDD
+try {
+    $database = new Database();
+    $db = $database->getConnection();
+} catch (Exception $e) {
+    ResponseHelper::error(MessageHelper::ERR_DB_CONNECTION);
+    exit;
+}
 
 // Préparation de l'URI
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
@@ -38,11 +48,7 @@ if (in_array($origin, $allowedOrigins)) {
     }
 } elseif (!empty($origin)) {
     // Blocage des origines non autorisées
-    ResponseHelper::error(
-        'ERR_ORIGIN_NOT_ALLOWED',
-        403,
-        "Origine non autorisée dans index.php : $origin"
-    );
+    ResponseHelper::error(MessageHelper::ERR_ORIGIN_NOT_ALLOWED, [$origin]);
     exit;
 }
 
@@ -70,11 +76,7 @@ if (str_starts_with($uri, '/editions')) {
 } elseif (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {
-    ResponseHelper::error(
-        'ERR_UNKNOWN_ENDPOINT',
-        404,
-        "Endpoint inconnu dans index.php : $uri"
-    );
+    ResponseHelper::error(MessageHelper::ERR_UNKNOWN_ENDPOINT, [$uri]);
     exit;
 }
 

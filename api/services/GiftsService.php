@@ -1,4 +1,5 @@
 <?php
+// Imports
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/GiftsRepository.php';
@@ -13,7 +14,7 @@ class GiftsService
     /**
      * Constructeur par défaut
      */
-    public function __construct($db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->repository = new GiftsRepository($db);
@@ -22,7 +23,7 @@ class GiftsService
     /**
      * Instancie le RewardsService si besoin
      */
-    private function getRewardsService()
+    private function getRewardsService(): RewardsService
     {
         if ($this->rewardsService === null) {
             $this->rewardsService = new RewardsService($this->db);
@@ -34,7 +35,7 @@ class GiftsService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts($id)
+    public function getEditionGifts(int|string $id): array
     {
         // Récupération des cadeaux
         $gifts = $this->repository->getEditionGifts($id);
@@ -51,7 +52,7 @@ class GiftsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getGift($id)
+    public function getGift(int|string $id): array|false
     {
         return $this->repository->find($id);
     }
@@ -59,7 +60,7 @@ class GiftsService
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts($id, $login)
+    public function deleteGifts(int|string $id, string $login): bool
     {
         return $this->repository->deleteGifts($id, $login);
     }
@@ -67,7 +68,7 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift($idEdition, $login, $data)
+    public function createGift(int|string $idEdition, string $login, array $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidGiftData($data)) {
@@ -85,7 +86,7 @@ class GiftsService
     /**
      * Modification d'un cadeau
      */
-    public function updateGift($idEdition, $idGift, $login, $data)
+    public function updateGift(int|string $idEdition, int|string $idGift, string $login, array $data): ?bool
     {
         // Récupération du nombre d'attributions du cadeau
         $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
@@ -106,7 +107,7 @@ class GiftsService
     /**
      * Suppression logique d'un cadeau
      */
-    public function deleteGift($idEdition, $idGift, $login)
+    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): ?bool
     {
         // Suppression logique du cadeau
         if ($idEdition && $idGift && $this->repository->logicalDelete($idGift, $login)) {
@@ -119,7 +120,7 @@ class GiftsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData($data, $rewardCount = null)
+    private function isValidGiftData(array $data, ?int $rewardCount = null): bool
     {
         $name = trim($data['name'] ?? '');
         $value = $data['value'] ?? null;

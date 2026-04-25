@@ -1,6 +1,7 @@
 {
     "errors": {
         "creationFailed": "Creation failed",
+        "creationImageFailed": "Image creation failed",
         "deletionFailed": "Deletion failed",
         "deletionFileFailed": "File deletion failed",
         "editionNotFound": "Edition not found",
@@ -10,11 +11,9 @@
         "fileNotFound": "File not found",
         "giftsNotFound": "Gifts not found",
         "invalidAuth": "Invalid authentication",
-        "invalidDirectory": "Destination folder does not exist",
         "invalidEndTime": "Invalid end time",
         "invalidFile": "Invalid file received",
         "invalidFileType": "The selected file type is not allowed",
-        "invalidFilename": "Filename is missing",
         "invalidFormat": "Invalid file format",
         "invalidImage": "The file is not an image",
         "invalidGift": "A gift must be selected",
@@ -38,11 +37,11 @@
         "passwordIdentical": "The new password must be different from the old one",
         "passwordMatch": "Passwords do not match",
         "playersNotFound": "Players not found",
-        "routeNotFound": "Route not found",
+        "resetPasswordFailed": "Password reset failed",
         "unauthorizedAction": "Unauthorized action",
-        "unknownEndpoint": "Unknown endpoint",
         "unknownError": "An unknown error occurred",
         "updateFailed": "Update failed",
+        "updatePasswordFailed": "Password update failed",
         "uploadFailed": "Image upload failed",
         "usersNotFound": "Users not found",
         "webpConversionFailed": "Error while converting image to WebP format"

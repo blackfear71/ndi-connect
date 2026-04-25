@@ -119,7 +119,9 @@ const AuthProvider = ({ children }) => {
                             type: dataUser.response.status,
                             target: 'page'
                         };
+
                         resolve();
+                        resetAuth();
 
                         // Redirection avec message ou affichage du message selon la page d'origine
                         if (redirectPages.includes(pathname)) {
@@ -137,9 +139,6 @@ const AuthProvider = ({ children }) => {
                         setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'page' });
                         reject(err?.response?.message);
                         return of();
-                    }),
-                    finalize(() => {
-                        resetAuth();
                     })
                 )
                 .subscribe();
