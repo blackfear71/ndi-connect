@@ -1,36 +1,49 @@
 <?php
-// ini_set('display_errors', 0);                                                    // Ne pas afficher les erreurs à l'écran
-// ini_set('log_errors', 1);                                                        // Activer le logging
-// ini_set('error_log', __DIR__ . '/../logs/error_logs_' . date('Y-m-d') . '.log'); // Chemin vers le fichier de log
-// error_reporting(E_ALL);                                                          // Reporter toutes les erreurs
-
-// Paramètres CORS
-$allowedOrigins = [
-    'http://localhost:3000', // CRA
-    'http://localhost:5173', // Vite
-    'http://ndi-connect.ddns.net',
-    'https://ndi-connect.ddns.net',
-];
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+// Imports
+require_once __DIR__ . '/core/functions/Database.php';
+require_once __DIR__ . '/core/functions/Router.php';
+require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
+require_once __DIR__ . '/core/helpers/FileHelper.php';
+require_once __DIR__ . '/core/helpers/LoggerHelper.php';
+require_once __DIR__ . '/core/helpers/MessageHelper.php';
+require_once __DIR__ . '/core/helpers/ResponseHelper.php';
 
 // Préparation de l'URI
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
-$uri = substr($_SERVER['REQUEST_URI'], strlen($basePath));
+$uri = strtok(substr($_SERVER['REQUEST_URI'], strlen($basePath)), '?');
 
-if (str_starts_with($uri, '/sse')) {
-    // CORS pour SSE
-    header("Access-Control-Allow-Origin: $origin");
-    header("Content-Type: text/event-stream");
-    header("Cache-Control: no-cache");
-    header("Connection: keep-alive");
-    header("X-Accel-Buffering: no");
-} elseif (in_array($origin, $allowedOrigins)) {
-    // CORS complet API classique
-    header("Access-Control-Allow-Origin: $origin");
-    header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-    header("Access-Control-Allow-Credentials: true");
+// Paramètres CORS
+$allowedOrigins = [
+    'http://localhost:3000',        // CRA
+    'http://localhost:5173',        // Vite
+    'http://ndi-connect.ddns.net',  // HTTP
+    'https://ndi-connect.ddns.net', // HTTPS
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+    if (str_starts_with($uri, '/sse')) {
+        // CORS pour SSE
+        header("Access-Control-Allow-Origin: $origin");
+        header("Content-Type: text/event-stream");
+        header("Cache-Control: no-cache");
+        header("Connection: keep-alive");
+        header("X-Accel-Buffering: no");
+    } else {
+        // CORS pour API classique
+        header("Access-Control-Allow-Origin: $origin");
+        header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+        header("Access-Control-Allow-Credentials: true");
+    }
+} elseif (!empty($origin)) {
+    // Blocage des origines non autorisées
+    ResponseHelper::error(
+        'ERR_ORIGIN_NOT_ALLOWED',
+        403,
+        "Origine non autorisée dans index.php : $origin"
+    );
+    exit;
 }
 
 // Gestion du preflight OPTIONS global
@@ -39,17 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Imports
-require_once __DIR__ . '/core/functions/Database.php';
-require_once __DIR__ . '/core/functions/Router.php';
-require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
-require_once __DIR__ . '/core/helpers/FileHelper.php';
-require_once __DIR__ . '/core/helpers/LoggerHelper.php';
-require_once __DIR__ . '/core/helpers/ResponseHelper.php';
-
+// Dispatch vers le bon groupe de routes
 $router = new Router();
 
-// Dispatch vers le bon groupe de routes
 if (str_starts_with($uri, '/editions')) {
     require_once __DIR__ . '/routes/editions.php';
 } elseif (str_starts_with($uri, '/gifts')) {
@@ -73,4 +78,5 @@ if (str_starts_with($uri, '/editions')) {
     exit;
 }
 
+// Lance la route
 $router->run();
