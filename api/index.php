@@ -23,29 +23,27 @@ $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = strtok(substr($_SERVER['REQUEST_URI'], strlen($basePath)), '?');
 
 // Paramètres CORS
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowedOrigins = [
     'http://localhost:3000',        // CRA
     'http://localhost:5173',        // Vite
     'http://ndi-connect.ddns.net',  // HTTP
     'https://ndi-connect.ddns.net', // HTTPS
 ];
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-if (in_array($origin, $allowedOrigins)) {
-    if (str_starts_with($uri, '/sse')) {
-        // CORS pour SSE
-        header("Access-Control-Allow-Origin: $origin");
-        header("Content-Type: text/event-stream");
-        header("Cache-Control: no-cache");
-        header("Connection: keep-alive");
-        header("X-Accel-Buffering: no");
-    } else {
-        // CORS pour API classique
-        header("Access-Control-Allow-Origin: $origin");
-        header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-        header("Access-Control-Allow-Credentials: true");
-    }
+if (str_starts_with($uri, '/sse')) {
+    // CORS pour SSE (pas de contrôle sur l'origine pour le SSE)
+    header("Access-Control-Allow-Origin: $origin");
+    header("Content-Type: text/event-stream");
+    header("Cache-Control: no-cache");
+    header("Connection: keep-alive");
+    header("X-Accel-Buffering: no");
+} elseif (in_array($origin, $allowedOrigins)) {
+    // CORS pour API classique
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Allow-Credentials: true");
 } elseif (!empty($origin)) {
     // Blocage des origines non autorisées
     ResponseHelper::error(MessageHelper::ERR_ORIGIN_NOT_ALLOWED, [$origin]);
