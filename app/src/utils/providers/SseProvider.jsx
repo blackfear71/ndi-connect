@@ -64,10 +64,9 @@ const SseProvider = ({ children }) => {
             }
         };
 
-        // Forçage reconnexion en cas d'erreur
+        // Fermeture en cas d'erreur
         source.onerror = () => {
             source.close();
-            setTimeout(createSseConnection, 5000);
         };
 
         // Evènement d'initialisation de la connexion SSE
@@ -75,6 +74,12 @@ const SseProvider = ({ children }) => {
 
         // Evènement de maintien de la connexion SSE
         source.addEventListener('is_alive', () => {});
+
+        // Evènement de fermeture de la connexion
+        source.addEventListener('is_closing', () => {
+            source.close();
+            createSseConnection();
+        });
 
         // Evènement de récupération des cadeaux
         source.addEventListener('get_gifts', (event) => {

@@ -69,11 +69,21 @@ class SseController
         $lastGiftsHash = null;
         $lastPlayersHash = null;
 
-        // Boucle infinie de récupération des données
+        $startTime = time();
+        $maxDuration = 30;
+
+        // Boucle de récupération des données
         try {
             while (true) {
                 // Coupe la connexion si le client se déconnecte
                 if (connection_aborted()) {
+                    break;
+                }
+
+                // Fermeture propre avant le timeout Nginx du serveur (60s)
+                if ((time() - $startTime) >= $maxDuration) {
+                    echo $this->service->getSseEvent('is_closing', 'ok');
+                    flush();
                     break;
                 }
 
