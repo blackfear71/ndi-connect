@@ -9,7 +9,7 @@ class UsersRepository extends Model
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string $token): array|false
+    public function checkAuth(string|null $token): array|false
     {
         $data['token'] = $token;
 
@@ -78,7 +78,7 @@ class UsersRepository extends Model
     /**
      * Mise à jour token de connexion
      */
-    public function updateToken(string $login, ?string $token): bool
+    public function updateToken(string $login, string|null $token): bool
     {
         $data['token'] = $token;
         $data['token_expires_at'] = $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL;

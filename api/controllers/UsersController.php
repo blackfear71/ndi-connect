@@ -27,7 +27,7 @@ class UsersController
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string $token, bool $initLoad = false): void
+    public function checkAuth(string|null $token, bool $initLoad = false): void
     {
         try {
             // Contrôle authentification

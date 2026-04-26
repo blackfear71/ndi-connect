@@ -57,7 +57,7 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int|string $id): ?array
+    public function getEdition(int|string $id): array|null
     {
         $edition = null;
 
@@ -97,7 +97,7 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(string $login, array $data, ?array $file): ?string
+    public function createEdition(string $login, array $data, array|null $file): string|null
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -115,7 +115,7 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int|string $id, string $login, array $data, ?array $file): ?array
+    public function updateEdition(int|string $id, string $login, array $data, array|null $file): array|null
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -178,7 +178,7 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage(int|string|null $id, ?string $action, ?array $file): ?string
+    private function uploadImage(int|string|null $id, string|null $action, array|null $file): string|null
     {
         // Récupération des données de l'édition
         $picture = $id ? $this->repository->getEditionPicture($id) : null;

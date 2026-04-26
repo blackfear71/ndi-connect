@@ -10,7 +10,7 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function checkFile(string $destination, string|null $fileName): ?string
+    public static function checkFile(string $destination, string|null $fileName): string|null
     {
         // Contrôle données renseignées
         if (!$fileName || !$destination) {
@@ -35,7 +35,7 @@ class FileHelper
     /**
      * Renvoie le fichier demandé
      */
-    public static function serveFile(?string $destination, ?string $file): void
+    public static function serveFile(string|null $destination, string|null $file): void
     {
         if (!$destination || !$file) {
             ResponseHelper::error(MessageHelper::ERR_MISSING_PARAMS, [__FUNCTION__, self::helperName]);

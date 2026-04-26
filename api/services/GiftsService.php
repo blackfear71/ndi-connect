@@ -68,7 +68,7 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift(int|string $idEdition, string $login, array $data): ?bool
+    public function createGift(int|string $idEdition, string $login, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidGiftData($data)) {
@@ -86,7 +86,7 @@ class GiftsService
     /**
      * Modification d'un cadeau
      */
-    public function updateGift(int|string $idEdition, int|string $idGift, string $login, array $data): ?bool
+    public function updateGift(int|string $idEdition, int|string $idGift, string $login, array $data): bool|null
     {
         // Récupération du nombre d'attributions du cadeau
         $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
@@ -107,7 +107,7 @@ class GiftsService
     /**
      * Suppression logique d'un cadeau
      */
-    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): ?bool
+    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): bool|null
     {
         // Suppression logique du cadeau
         if ($idEdition && $idGift && $this->repository->logicalDelete($idGift, $login)) {
@@ -120,7 +120,7 @@ class GiftsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData(array $data, ?int $rewardCount = null): bool
+    private function isValidGiftData(array $data, int|null $rewardCount = null): bool
     {
         $name = trim($data['name'] ?? '');
         $value = $data['value'] ?? null;

@@ -19,7 +19,7 @@ class UsersService
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string $token): array|false
+    public function checkAuth(string|null $token): array|false
     {
         return $this->repository->checkAuth($token);
     }
@@ -35,7 +35,7 @@ class UsersService
     /**
      * Connexion utilisateur
      */
-    public function connect(array $data): ?array
+    public function connect(array $data): array|null
     {
         // Contrôle des données
         if (!$this->isValidConnectionData($data)) {
@@ -73,7 +73,7 @@ class UsersService
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser(string $login, array $data): ?bool
+    public function createUser(string $login, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidCreateUserData($data)) {
@@ -98,7 +98,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(string $login, int|string $id): ?string
+    public function resetPassword(string $login, int|string $id): string|null
     {
         // Modification
         $newPassword = $this->generatePassword(15);
@@ -114,7 +114,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(string $login, array $data): ?bool
+    public function updatePassword(string $login, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidPasswordData($data)) {
@@ -137,7 +137,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $login, array $data): ?bool
+    public function updateUser(string $login, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidUpdateUserData($data)) {
@@ -168,7 +168,7 @@ class UsersService
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int|string $id, string $login): ?bool
+    public function deleteUser(int|string $id, string $login): bool|null
     {
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
         $user = $this->repository->getActiveUserDataById($id);

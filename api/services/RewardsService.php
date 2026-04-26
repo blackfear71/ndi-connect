@@ -65,7 +65,7 @@ class RewardsService
     /**
      * Attribution d'un cadeau
      */
-    public function createReward(string $login, int|string $idEdition, int|string $idGift, int|string $idPlayer): ?bool
+    public function createReward(string $login, int|string $idEdition, int|string $idGift, int|string $idPlayer): bool|null
     {
         // Récupération du cadeau
         $gift = $this->getGiftsService()->getGift($idGift);
@@ -107,7 +107,7 @@ class RewardsService
     /**
      * Suppression logique de l'attribution d'un cadeau
      */
-    public function deleteReward(string $login, int|string $idEdition, int|string $idReward): ?bool
+    public function deleteReward(string $login, int|string $idEdition, int|string $idReward): bool|null
     {
         // Récupération de l'attribution du cadeau du participant
         $reward = $this->repository->find($idReward);

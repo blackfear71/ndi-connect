@@ -59,7 +59,7 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer(int|string $idEdition, array $user, array $data): ?bool
+    public function createPlayer(int|string $idEdition, array $user, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidPlayerData($user['level'], $data, true)) {
@@ -77,7 +77,7 @@ class PlayersService
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int|string $idEdition, int|string $idPlayer, array $user, array $data): ?bool
+    public function updatePlayer(int|string $idEdition, int|string $idPlayer, array $user, array $data): bool|null
     {
         // Contrôle des données
         if (!$this->isValidPlayerData($user['level'], $data, false)) {
@@ -128,7 +128,7 @@ class PlayersService
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): ?bool
+    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): bool|null
     {
         // Suppression logique du participant
         if ($idEdition && $idPlayer && $this->repository->logicalDelete($idPlayer, $login)) {
