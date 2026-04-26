@@ -70,7 +70,7 @@ class SseController
         $lastPlayersHash = null;
 
         $startTime = time();
-        $maxDuration = 30;
+        $maxDuration = 50;
 
         // Boucle de récupération des données
         try {
