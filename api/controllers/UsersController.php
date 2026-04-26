@@ -31,7 +31,7 @@ class UsersController
     {
         try {
             // Contrôle authentification
-            $user = $this->service->checkAuth($token);
+            $user = $token ? $this->service->checkAuth($token) : null;
 
             if ($user) {
                 // Succès

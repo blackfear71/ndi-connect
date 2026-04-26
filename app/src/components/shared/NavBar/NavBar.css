@@ -72,6 +72,7 @@
     white-space: normal !important;
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
+    color: var(--color-text-primary) !important;
 }
 
 .navbar-dropdown-item:first-child {
