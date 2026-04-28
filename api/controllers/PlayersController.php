@@ -10,9 +10,9 @@ class PlayersController
 {
     private const controllerName = 'PlayersController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private PlayersService $service;
 
     /**
      * Constructeur par défaut
@@ -106,7 +106,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
+            $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user->login);
 
             if ($deleted) {
                 // Succès

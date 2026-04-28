@@ -10,9 +10,9 @@ class RewardsController
 {
     private const controllerName = 'RewardsController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private RewardsService $service;
 
     /**
      * Constructeur par défaut
@@ -34,7 +34,7 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
+            $created = $this->service->createReward($user->login, $idEdition, RewardInputDTO::fromArray($data));
 
             if ($created) {
                 // Succès
@@ -59,7 +59,7 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteReward($user['login'], $idEdition, $idReward);
+            $deleted = $this->service->deleteReward($user->login, $idEdition, $idReward);
 
             if ($deleted) {
                 // Succès

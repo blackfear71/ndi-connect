@@ -1,4 +1,7 @@
 <?php
+
+// TODO : attention au SSE qui plante actuellement, à cause de la conversion en objets ?
+
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
@@ -8,6 +11,8 @@ require_once __DIR__ . '/core/helpers/FileHelper.php';
 require_once __DIR__ . '/core/helpers/LoggerHelper.php';
 require_once __DIR__ . '/core/helpers/MessageHelper.php';
 require_once __DIR__ . '/core/helpers/ResponseHelper.php';
+
+require_once __DIR__ . '/models/dtos/ApiResponseDTO.php';
 
 // Connexion BDD
 try {

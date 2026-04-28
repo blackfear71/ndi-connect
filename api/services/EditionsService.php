@@ -1,5 +1,7 @@
 <?php
 // Imports
+require_once 'models/dtos/EditionOutputDTO.php';
+
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 
@@ -7,11 +9,10 @@ require_once 'repositories/EditionsRepository.php';
 
 class EditionsService
 {
-    private $giftsService = null;
-    private $playersService = null;
-
-    private $db;
-    private $repository;
+    private PDO $db;
+    private ?GiftsService $giftsService = null;
+    private ?PlayersService $playersService = null;
+    private EditionsRepository $repository;
 
     /**
      * Constructeur par défaut
@@ -42,7 +43,7 @@ class EditionsService
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
         }
-        
+
         return $this->playersService;
     }
 
@@ -51,35 +52,60 @@ class EditionsService
      */
     public function getAllEditions(): array
     {
-        return $this->repository->getAllEditions();
+        $data = $this->repository->getAllEditions();
+
+        return array_map(fn($edition) => new EditionOutputDTO(
+            id: $edition->id,
+            location: $edition->location,
+            startDate: $edition->startDate,
+            endDate: $edition->endDate,
+            playerCount: $edition->playerCount
+        ), $data);
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int|string $id): array|null
+    public function getEdition(int|string $id): ?EditionResponseDTO
     {
-        $edition = null;
-
-        if ($id) {
-            $data = $this->repository->getEdition($id);
-
-            if ($data) {
-                // Vérification image existante et génération URL
-                $data['picture'] = FileHelper::checkFile('images', $data['picture']);
-
-                // Récupération des données édition
-                $edition['edition'] = $data;
-
-                // Récupération des données cadeaux
-                $edition['gifts'] = $this->getGiftsService()->getEditionGifts($id);
-
-                // Récupération des données participants
-                $edition['players'] = $this->getPlayersService()->getEditionPlayers($id);
-            }
+        // Contrôle données renseignées
+        if (!$id) {
+            return null;
         }
 
-        return $edition;
+        // Lecture de l'édition
+        $data = $this->repository->getEdition($id);
+
+        if (!$data) {
+            return null;
+        }
+
+        // Vérification image existante et génération URL
+        $picture = FileHelper::checkFile('images', $data->picture);
+
+        // Formatage des données édition
+        $edition = new EditionOutputDTO(
+            id: $data->id,
+            location: $data->location,
+            startDate: $data->startDate,
+            endDate: $data->endDate,
+            picture: $picture,
+            theme: $data->theme,
+            challenge: $data->challenge
+        );
+
+        // Récupération des données cadeaux
+        $gifts = $this->getGiftsService()->getEditionGifts($id);
+
+        // Récupération des données participants
+        $players = $this->getPlayersService()->getEditionPlayers($id);
+
+        // Récupération des données édition
+        return new EditionResponseDTO(
+            edition: $edition,
+            gifts: $gifts,
+            players: $players
+        );
     }
 
     /**
@@ -91,60 +117,103 @@ class EditionsService
             return [];
         }
 
-        return $this->repository->getSearchEditions(trim($search));
+        $data = $this->repository->getSearchEditions(trim($search));
+
+        return array_map(fn($edition) => new EditionOutputDTO(
+            id: $edition->id,
+            location: $edition->location,
+            startDate: $edition->startDate,
+            endDate: $edition->endDate,
+            playerCount: $edition->playerCount
+        ), $data);
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(string $login, array $data, array|null $file): string|null
+    public function createEdition(string $login, EditionInputDTO $data, ?array $file): ?string
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
             return null;
         }
 
+        // Traitement des dates
+        $startDate = new \DateTimeImmutable($data->startDate . ' ' . $data->startTime);
+        $endDate = new \DateTimeImmutable($data->startDate . ' ' . $data->endTime);
+        $endDate = $endDate->modify('+1 day');
+
         // Traitement de l'image
-        $data['picture'] = $this->uploadImage(null, $data['pictureAction'] ?? null, $file['picture'] ?? null);
+        $picture = $this->uploadImage(null, $data->pictureAction ?? null, $file['picture'] ?? null);
+
+        // Construction de l'objet
+        $edition = new Edition(
+            location: $data->location,
+            startDate: $startDate,
+            endDate: $endDate,
+            picture: $picture,
+            theme: $data->theme,
+            challenge: $data->challenge,
+            createdBy: $login
+        );
 
         // Insertion
-        $data = $this->processDataEdition($data);
-        return $this->repository->create($login, $data);
+        return $this->repository->createEdition($edition);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int|string $id, string $login, array $data, array|null $file): array|null
+    public function updateEdition(int|string $id, string $login, EditionInputDTO $data, ?array $file): ?array
     {
         // Contrôle des données
-        if (!$this->isValidEditionData($data)) {
+        if (!$id || !$this->isValidEditionData($data)) {
             return null;
         }
 
+        // Traitement des dates
+        $startDate = new \DateTimeImmutable($data->startDate . ' ' . $data->startTime);
+        $endDate = new \DateTimeImmutable($data->startDate . ' ' . $data->endTime);
+        $endDate = $endDate->modify('+1 day');
+
         // Traitement de l'image
-        $data['picture'] = $this->uploadImage($id, $data['pictureAction'] ?? null, $file['picture'] ?? null);
+        $picture = $this->uploadImage($id, $data->pictureAction ?? null, $file['picture'] ?? null);
+
+        // Construction de l'objet
+        $edition = new Edition(
+            id: $data->id,
+            location: $data->location,
+            startDate: $startDate,
+            endDate: $endDate,
+            picture: $picture,
+            theme: $data->theme,
+            challenge: $data->challenge,
+            updatedBy: $login
+        );
 
         // Modification
-        $data = $this->processDataEdition($data);
-
-        if ($id && $this->repository->update($id, $login, $data)) {
-            return $this->getEdition($id);
+        if (!$this->repository->updateEdition($id, $edition)) {
+            return null;
         }
 
-        return null;
+        // Lecture de l'édition
+        return $this->getEdition($id);
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(int|string $id, string $login): bool
+    public function deleteEdition(int|string $id, string $login): ?bool
     {
         // Suppression logique des cadeaux
-        $this->getGiftsService()->deleteGifts($id, $login);
+        if (!$this->getGiftsService()->deleteGifts($id, $login)) {
+            return null;
+        }
 
         // Suppression logique des participants
-        $this->getPlayersService()->deletePlayers($id, $login);
+        if (!$this->getPlayersService()->deletePlayers($id, $login)) {
+            return null;
+        }
 
         // Suppression logique de l'édition
         return $this->repository->logicalDelete($id, $login);
@@ -153,12 +222,12 @@ class EditionsService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidEditionData(array $data): bool
+    private function isValidEditionData(EditionInputDTO $data): bool
     {
-        $location = trim($data['location'] ?? '');
-        $startDate = $data['startDate'] ?? null;
-        $startTime = $data['startTime'] ?? null;
-        $endTime = $data['endTime'] ?? null;
+        $location = trim($data->location ?? '');
+        $startDate = $data->startDate ?? null;
+        $startTime = $data->startTime ?? null;
+        $endTime = $data->endTime ?? null;
 
         // Contrôle date
         $formatD = 'Y-m-d';
@@ -178,9 +247,9 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage(int|string|null $id, string|null $action, array|null $file): string|null
+    private function uploadImage(int|string|null $id, ?string $action, ?array $file): ?string
     {
-        // Récupération des données de l'édition
+        // Récupération de l'image de l'édition
         $picture = $id ? $this->repository->getEditionPicture($id) : null;
 
         // Traitement de l'image
@@ -197,35 +266,14 @@ class EditionsService
                 return $fileName;
             case EnumAction::DELETE->value:
                 // Suppression de l'ancienne image (hors création)
-                if ($picture) {
-                    FileHelper::deleteFile('images', $picture);
+                if (!$picture) {
+                    return null;
                 }
 
-                return null;
+                FileHelper::deleteFile('images', $picture);
             default:
                 // Si pas d'action alors on laisse en l'état
                 return $picture;
         }
-    }
-
-    /**
-     * Formate les données avant traitement SQL
-     */
-    private function processDataEdition(array $data): array
-    {
-        $startDate = new DateTime($data['startDate'] . ' ' . $data['startTime']);
-        $endDate = new DateTime($data['startDate'] . ' ' . $data['endTime']);
-        $endDate->modify('+1 day');
-
-        $sqlData = [
-            'location'   => $data['location'],
-            'start_date' => $startDate->format('Y-m-d H:i:s'),
-            'end_date'   => $endDate->format('Y-m-d H:i:s'),
-            'picture'    => $data['picture'],
-            'theme'      => $data['theme'],
-            'challenge'  => $data['challenge']
-        ];
-
-        return $sqlData;
     }
 }

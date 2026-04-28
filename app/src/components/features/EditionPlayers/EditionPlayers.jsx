@@ -36,9 +36,9 @@ const EditionPlayers = ({
             setFormPlayer({
                 id: player.id,
                 name: player.name,
-                delta: 0,
+                points: 0,
                 giveaway: 0,
-                giveawayId: 0
+                giveawayPlayerId: 0
             });
         }
 

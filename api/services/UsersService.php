@@ -1,11 +1,13 @@
 <?php
 // Imports
+require_once 'models/dtos/UserOutputDTO.php';
+
 require_once 'repositories/UsersRepository.php';
 
 class UsersService
 {
-    private $db;
-    private $repository;
+    private PDO $db;
+    private UsersRepository $repository;
 
     /**
      * Constructeur par défaut
@@ -19,9 +21,25 @@ class UsersService
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string|null $token): array|false
+    public function checkAuth(?string $token): ?UserOutputDTO
     {
-        return $this->repository->checkAuth($token);
+        // Contrôle des données
+        if (!$token) {
+            return null;
+        }
+
+        $data = $this->repository->checkAuth($token);
+
+        if (!$data) {
+            return null;
+        }
+
+        // Récupération des données utilisateur
+        return new UserOutputDTO(
+            id: $data->id,
+            login: $data->login,
+            level: $data->level
+        );
     }
 
     /**
@@ -29,13 +47,21 @@ class UsersService
      */
     public function getAllUsers(): array
     {
-        return $this->repository->getAllUsers();
+        // Lecture des utilisateurs
+        $data = $this->repository->getAllUsers();
+
+        // Récupération des données utilisateurs
+        return array_map(fn($user) => new UserOutputDTO(
+            id: $user->id,
+            login: $user->login,
+            level: $user->level
+        ), $data);
     }
 
     /**
      * Connexion utilisateur
      */
-    public function connect(array $data): array|null
+    public function connect(UserInputDTO $data): ?UserOutputDTO
     {
         // Contrôle des données
         if (!$this->isValidConnectionData($data)) {
@@ -43,23 +69,27 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataByLogin($data['login']);
+        $user = $this->repository->getActiveUserDataByLogin($data->login);
 
         // Contrôle mot de passe incorrect
-        if (!$user || !password_verify($data['password'], $user['password'])) {
+        if (!$user || !password_verify($data->password, $user->password)) {
             return null;
         }
 
-        // Stockage token
-        $user['token'] = bin2hex(random_bytes(32));
-        $update = $this->repository->updateToken($data['login'], $user['token']);
+        // Stockage nouveau token
+        $token = bin2hex(random_bytes(32));
 
-        if ($update) {
-            unset($user['password']);
-            return $user;
+        if (!$this->repository->updateToken($user, $token)) {
+            return null;
         }
 
-        return null;
+        // Récupération des données utilisateur
+        return new UserOutputDTO(
+            id: $user->id,
+            login: $user->login,
+            token: $token,
+            level: $user->level
+        );
     }
 
     /**
@@ -67,13 +97,17 @@ class UsersService
      */
     public function disconnect(string $login): bool
     {
-        return $this->repository->updateToken($login, NULL);
+        // Récupération de l'utilisateur
+        $user = $this->repository->getActiveUserDataByLogin($login);
+
+        // Suppression token de connexion
+        return $this->repository->updateToken($user, NULL);
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser(string $login, array $data): bool|null
+    public function createUser(string $login, UserInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidCreateUserData($data)) {
@@ -81,40 +115,43 @@ class UsersService
         }
 
         // Contrôle login existant
-        if ($this->repository->getUserDataByLogin($data['login'])) {
+        if ($this->repository->getUserDataByLogin($data->login)) {
             return false;
         }
 
+        // Construction de l'objet
+        $user = new User(
+            login: $data->login,
+            password: password_hash($data->password, PASSWORD_DEFAULT),
+            level: $data->level,
+            createdBy: $login
+        );
+
         // Insertion
-        $data = $this->processDataUser($data);
-
-        if ($this->repository->create($login, $data)) {
-            return true;
-        }
-
-        return null;
+        return $this->repository->createUser($user);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(string $login, int|string $id): string|null
+    public function resetPassword(int|string $id, string $login): ?string
     {
-        // Modification
+        // Formatage des données mot de passe
         $newPassword = $this->generatePassword(15);
-        $data = $this->processDataPassword($newPassword);
+        $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
-        if ($this->repository->update($id, $login, $data)) {
-            return $newPassword;
+        // Modification
+        if (!$this->repository->updatePassword($id, $login, $hash)) {
+            return null;
         }
 
-        return null;
+        return $newPassword;
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(string $login, array $data): bool|null
+    public function updatePassword(string $login, UserInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidPasswordData($data)) {
@@ -125,19 +162,23 @@ class UsersService
         $user = $this->repository->getActiveUserDataByLogin($login);
 
         // Contrôle ancien mot de passe incorrect
-        if (!$user || !password_verify($data['oldPassword'], $user['password'])) {
+        if (!$user || !password_verify($data->oldPassword, $user->password)) {
             return null;
         }
 
+        // Formatage des données mot de passe
+        $hash = password_hash($data->password, PASSWORD_DEFAULT);
+
         // Modification
-        $data = $this->processDataPassword($data['newPassword']);
-        return $this->repository->update($user['id'], $login, $data);
+        $data = $this->processDataPassword($data->password);
+
+        return $this->repository->updatePassword($user->id, $user->login, $hash);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $login, array $data): bool|null
+    public function updateUser(string $login, UserInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$this->isValidUpdateUserData($data)) {
@@ -145,56 +186,53 @@ class UsersService
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataById($data['id']);
+        $user = $this->repository->getActiveUserDataById($data->id);
 
         // Contrôle dernier admin actif si changement de rôle
-        if ($user && $user['level'] == EnumUserRole::SUPERADMIN->value && $data['level'] != EnumUserRole::SUPERADMIN->value) {
-            if ($this->repository->isLastAdmin()) {
-                return false;
-            }
+        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+            return false;
         }
+
+        // Construction de l'objet
+        $user = new User(
+            id: $user->id,
+            level: $data->level,
+            updatedBy: $login
+        );
 
         // Modification
-        $id = $data['id'];
-        unset($data['id']);
-
-        if ($this->repository->update($id, $login, $data)) {
-            return true;
-        }
-
-        return null;
+        return $this->repository->updateUser($user, $login);
     }
 
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int|string $id, string $login): bool|null
+    public function deleteUser(int|string $id, string $login): ?bool
     {
+        // Contrôle des données
+        if (!$id) {
+            return null;
+        }
+
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
         $user = $this->repository->getActiveUserDataById($id);
 
         // Contrôle dernier admin actif si suppression
-        if ($user && $user['level'] == EnumUserRole::SUPERADMIN->value) {
-            if ($this->repository->isLastAdmin()) {
-                return false;
-            }
+        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+            return false;
         }
 
         // Suppression logique de l'utilisateur
-        if ($id && $this->repository->logicalDelete($id, $login)) {
-            return true;
-        }
-
-        return null;
+        return $this->repository->logicalDelete($id, $login);
     }
 
     /**
      * Contrôle des données saisies (connexion)
      */
-    private function isValidConnectionData(array $data): bool
+    private function isValidConnectionData(UserInputDTO $data): bool
     {
-        $login = trim($data['login'] ?? '');
-        $password = trim($data['password'] ?? '');
+        $login = trim($data->login ?? '');
+        $password = trim($data->password ?? '');
 
         return $login
             && $password;
@@ -203,12 +241,12 @@ class UsersService
     /**
      * Contrôle des données saisies (création utilisateur)
      */
-    private function isValidCreateUserData(array $data): bool
+    private function isValidCreateUserData(UserInputDTO $data): bool
     {
-        $login = trim($data['login'] ?? '');
-        $password = trim($data['password'] ?? '');
-        $confirmPassword = trim($data['confirmPassword'] ?? '');
-        $level = $data['level'] ?? null;
+        $login = trim($data->login ?? '');
+        $password = trim($data->password ?? '');
+        $confirmPassword = trim($data->confirmPassword ?? '');
+        $level = $data->level ?? null;
 
         return $login && $password && $confirmPassword
             && $password === $confirmPassword
@@ -218,11 +256,11 @@ class UsersService
     /**
      * Contrôle des données saisies (modification mot de passe)
      */
-    private function isValidPasswordData(array $data): bool
+    private function isValidPasswordData(UserInputDTO $data): bool
     {
-        $oldPassword = trim($data['oldPassword'] ?? '');
-        $newPassword = trim($data['newPassword'] ?? '');
-        $confirmPassword = trim($data['confirmPassword'] ?? '');
+        $oldPassword = trim($data->oldPassword ?? '');
+        $newPassword = trim($data->password ?? '');
+        $confirmPassword = trim($data->confirmPassword ?? '');
 
         return $oldPassword && $newPassword && $confirmPassword
             && $oldPassword !== $newPassword
@@ -232,9 +270,9 @@ class UsersService
     /**
      * Contrôle des données saisies (modification utilisateur)
      */
-    private function isValidUpdateUserData(array $data): bool
+    private function isValidUpdateUserData(UserInputDTO $data): bool
     {
-        $level = $data['level'] ?? null;
+        $level = $data->level ?? null;
 
         return is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
     }
@@ -253,31 +291,5 @@ class UsersService
         }
 
         return $password;
-    }
-
-    /**
-     * Formate les données avant traitement SQL
-     */
-    private function processDataPassword(string $password): array
-    {
-        $sqlData = [
-            'password' => password_hash($password, PASSWORD_DEFAULT)
-        ];
-
-        return $sqlData;
-    }
-
-    /**
-     * Formate les données avant traitement SQL
-     */
-    private function processDataUser(array $data): array
-    {
-        $sqlData = [
-            'login'    => $data['login'],
-            'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-            'level'    => $data['level']
-        ];
-
-        return $sqlData;
     }
 }

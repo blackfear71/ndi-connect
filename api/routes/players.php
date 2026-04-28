@@ -1,4 +1,6 @@
 <?php
+/** @var PDO $db */
+
 // Imports
 require_once 'controllers/PlayersController.php';
 

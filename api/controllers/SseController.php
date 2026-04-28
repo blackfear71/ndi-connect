@@ -8,11 +8,10 @@ class SseController
 {
     private const controllerName = 'SseController';
 
-    private $giftsService = null;
-    private $playersService = null;
-
-    private $db;
-    private $service;
+    private PDO $db;
+    private SseService $service;
+    private ?GiftsService $giftsService = null;
+    private ?PlayersService $playersService = null;
 
     /**
      * Constructeur par défaut

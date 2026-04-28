@@ -5,15 +5,18 @@ require_once 'core/functions/Auth.php';
 require_once 'enums/EnumAction.php';
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/EditionResponseDTO.php';
+require_once 'models/dtos/EditionInputDTO.php';
+
 require_once 'services/EditionsService.php';
 
 class EditionsController
 {
     private const controllerName = 'EditionsController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private EditionsService $service;
 
     /**
      * Constructeur par défaut
@@ -100,7 +103,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createEdition($user['login'], $data, $file);
+            $created = $this->service->createEdition($user->login, EditionInputDTO::fromArray($data), $file);
 
             if ($created) {
                 // Succès
@@ -125,7 +128,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $edition = $this->service->updateEdition($id, $user['login'], $data, $file);
+            $edition = $this->service->updateEdition($id, $user->login, EditionInputDTO::fromArray($data), $file);
 
             if ($edition) {
                 // Succès
@@ -150,7 +153,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteEdition($id, $user['login']);
+            $deleted = $this->service->deleteEdition($id, $user->login);
 
             if ($deleted) {
                 // Succès

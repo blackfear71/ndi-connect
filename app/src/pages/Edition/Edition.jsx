@@ -57,9 +57,9 @@ const Edition = () => {
     const [formPlayer, setFormPlayer] = useState({
         id: null,
         name: '',
-        delta: 0,
+        points: 0,
         giveaway: 0,
-        giveawayId: 0
+        giveawayPlayerId: 0
     });
     const [formReward, setFormReward] = useState({
         idReward: null,
@@ -117,14 +117,14 @@ const Edition = () => {
                     setPlayers(processPlayersData(dataEdition.response.data.players));
 
                     setFormEdition({
-                        location: dataEdition.response.data.edition.location,
-                        startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
-                        startTime: getLocalizedTime(dataEdition.response.data.edition.startDate),
-                        endTime: getLocalizedTime(dataEdition.response.data.edition.endDate),
-                        picture: dataEdition.response.data.edition.picture,
+                        location: dataEdition.response.data.location,
+                        startDate: getDayFromDate(dataEdition.response.data.startDate),
+                        startTime: getLocalizedTime(dataEdition.response.data.startDate),
+                        endTime: getLocalizedTime(dataEdition.response.data.endDate),
+                        picture: dataEdition.response.data.picture,
                         pictureAction: null,
-                        theme: dataEdition.response.data.edition.theme,
-                        challenge: dataEdition.response.data.edition.challenge
+                        theme: dataEdition.response.data.theme,
+                        challenge: dataEdition.response.data.challenge
                     });
                 }),
                 take(1),
@@ -254,8 +254,8 @@ const Edition = () => {
             .pipe(
                 map((dataEdition) => {
                     // Fermeture modale
-                    openCloseEditionModal('', dataEdition.response.data.edition);
-                    setEdition(dataEdition.response.data.edition);
+                    openCloseEditionModal('', dataEdition.response.data);
+                    setEdition(dataEdition.response.data);
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 take(1),
@@ -343,7 +343,7 @@ const Edition = () => {
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
                     id_edition: edition.id,
                     name: formPlayer.name,
-                    delta: formPlayer.delta
+                    points: formPlayer.points
                 });
                 break;
             case EnumAction.UPDATE:
@@ -352,9 +352,9 @@ const Edition = () => {
 
                 subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
                     name: formPlayer.name,
-                    delta: formPlayer.delta,
+                    points: formPlayer.points,
                     giveaway: formPlayer.giveaway,
-                    giveawayId: formPlayer.giveawayId
+                    giveawayPlayerId: formPlayer.giveawayPlayerId
                 });
                 break;
         }
@@ -391,9 +391,9 @@ const Edition = () => {
         setFormPlayer({
             id: null,
             name: '',
-            delta: 0,
+            points: 0,
             giveaway: 0,
-            giveawayId: 0
+            giveawayPlayerId: 0
         });
     };
 

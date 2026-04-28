@@ -10,9 +10,9 @@ class GiftsController
 {
     private const controllerName = 'GiftsController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private GiftsService $service;
 
     /**
      * Constructeur par défaut
@@ -56,7 +56,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createGift($idEdition, $user['login'], $data);
+            $created = $this->service->createGift($idEdition, $user->login, $data);
 
             if ($created) {
                 // Succès
@@ -81,7 +81,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
+            $updated = $this->service->updateGift($idEdition, $idGift, $user->login, $data);
 
             if ($updated) {
                 // Succès
@@ -106,7 +106,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteGift($idEdition, $idGift, $user['login']);
+            $deleted = $this->service->deleteGift($idEdition, $idGift, $user->login);
 
             if ($deleted) {
                 // Succès

@@ -10,14 +10,14 @@ class UsersController
 {
     private const controllerName = 'UsersController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private UsersService $service;
 
     /**
      * Constructeur par défaut
      */
-    public function __construct(object $db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -27,11 +27,11 @@ class UsersController
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string|null $token, bool $initLoad = false): void
+    public function checkAuth(?string $token, bool $initLoad = false): void
     {
         try {
             // Contrôle authentification
-            $user = $token ? $this->service->checkAuth($token) : null;
+            $user = $this->service->checkAuth($token);
 
             if ($user) {
                 // Succès
@@ -83,13 +83,14 @@ class UsersController
     {
         try {
             // Connexion utilisateur
-            $user = $this->service->connect($data);
+            $user = $this->service->connect(UserInputDTO::fromArray($data));
 
             if ($user) {
                 // Token de connexion
+                // TODO : revoir les paramètres de setcookie
                 setcookie(
                     'token',
-                    $user['token'],
+                    $user->token,
                     [
                         'expires' => time() + 3600 * 24, // 1 jour (identique à la durée stockée en base)
                         'path' => '/',
@@ -100,7 +101,8 @@ class UsersController
                 );
 
                 // Suppression du token pour ne pas le renvoyer dans la réponse
-                unset($user['token']);
+                // TODO : à voir si ça marche j'en doute
+                unset($user->token);
 
                 // Succès
                 ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
@@ -125,17 +127,18 @@ class UsersController
 
             if ($user) {
                 // Déconnexion utilisateur
-                $disconnected = $this->service->disconnect($user['login']);
+                $disconnected = $this->service->disconnect($user->login);
 
                 if ($disconnected) {
                     // Suppression token de connexion
+                    // TODO : revoir les paramètres de setcookie
                     setcookie('token', '', time() - 3600, '/');
 
                     // Succès
                     ResponseHelper::success(null, MessageHelper::MSG_LOGOUT_SUCCESS);
                 } else {
                     // Échec de la déconnexion
-                    ResponseHelper::error(MessageHelper::ERR_LOGOUT_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
+                    ResponseHelper::error(MessageHelper::ERR_LOGOUT_FAILED, [__FUNCTION__, self::controllerName, $user->login]);
                 }
             } else {
                 // Utilisateur non trouvé
@@ -157,7 +160,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($user['login'], $data);
+            $created = $this->service->createUser($user->login, $data);
 
             if ($created !== null && $created !== false) {
                 // Succès
@@ -185,7 +188,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $newPassword = $this->service->resetPassword($user['login'], $id);
+            $newPassword = $this->service->resetPassword($id, $user->login);
 
             if ($newPassword) {
                 // Succès
@@ -211,14 +214,14 @@ class UsersController
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user['login'], $data);
+                $updated = $this->service->updatePassword($user->login, $data);
 
                 if ($updated) {
                     // Succès
                     ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
                 } else {
                     // Échec de la modification
-                    ResponseHelper::error(MessageHelper::ERR_UPDATE_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
+                    ResponseHelper::error(MessageHelper::ERR_UPDATE_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $user->login]);
                 }
             } else {
                 // Utilisateur non trouvé
@@ -240,7 +243,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($user['login'], $data);
+            $updated = $this->service->updateUser($user->login, $data);
 
             if ($updated !== null && $updated !== false) {
                 // Succès
@@ -268,7 +271,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteUser($id, $user['login']);
+            $deleted = $this->service->deleteUser($id, $user->login);
 
             if ($deleted !== null && $deleted !== false) {
                 // Succès

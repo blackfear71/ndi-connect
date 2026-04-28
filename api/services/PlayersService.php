@@ -1,15 +1,17 @@
 <?php
 // Imports
+require_once 'models/dtos/PlayerOutputDTO.php';
+require_once 'models/dtos/RewardOutputDTO.php';
+
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/PlayersRepository.php';
 
 class PlayersService
 {
-    private $rewardsService = null;
-
-    private $db;
-    private $repository;
+    private PDO $db;
+    private ?RewardsService $rewardsService = null;
+    private PlayersRepository $repository;
 
     /**
      * Constructeur par défaut
@@ -28,7 +30,7 @@ class PlayersService
         if ($this->rewardsService === null) {
             $this->rewardsService = new RewardsService($this->db);
         }
-        
+
         return $this->rewardsService;
     }
 
@@ -38,134 +40,187 @@ class PlayersService
     public function getEditionPlayers(int|string $id): array
     {
         // Liste des participants
-        $players = $this->repository->getEditionPlayers($id);
+        $dataPlayers = $this->repository->getEditionPlayers($id);
 
-        // Cadeaux obtenus
-        foreach ($players as &$player) {
-            $player['rewards'] = $this->getRewardsService()->getPlayerRewards($player['id']);
-        }
+        // Récupération des données participants
+        return array_map(function ($player) {
+            $dataRewards = $this->getRewardsService()->getPlayerRewards($player->id);
 
-        return $players;
+            // Formatage des données récompenses
+            $rewards = array_map(fn($reward) => new RewardOutputDTO(
+                id: $reward->id,
+                idGift: $reward->idGift,
+                giftName: $reward->giftName
+            ), $dataRewards);
+
+            // Formatage des données participant
+            return new PlayerOutputDTO(
+                id: $player->id,
+                name: $player->name,
+                points: $player->points,
+                rewards: $rewards
+            );
+        }, $dataPlayers);
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer(int|string $id): array|false
+    public function getPlayer(int|string $id): ?PlayerOutputDTO
     {
-        return $this->repository->find($id);
+        // Lecture du participant
+        $data = $this->repository->getPlayer($id);
+
+        if (!$data) {
+            return null;
+        }
+
+        // Récupération des données participant
+        return new PlayerOutputDTO(
+            id: $data->id,
+            name: $data->name,
+            points: $data->points
+        );
     }
 
     /**
      * Création d'un participant
      */
-    public function createPlayer(int|string $idEdition, array $user, array $data): bool|null
+    public function createPlayer(int|string $idEdition, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$this->isValidPlayerData($user['level'], $data, true)) {
+        if (!$idEdition || !$this->isValidPlayerData($user->level, $data, true)) {
             return null;
         }
 
-        // Insertion
-        if ($idEdition && $this->repository->createPlayer($user['login'], $data)) {
-            return true;
-        }
+        // Construction de l'objet
+        $player = new Player(
+            idEdition: (int) $idEdition,
+            name: $data->name,
+            points: (int) $data->points,
+            createdBy: $user->login,
+        );
 
-        return null;
+        // Insertion
+        return $this->repository->createPlayer($player);
     }
 
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int|string $idEdition, int|string $idPlayer, array $user, array $data): bool|null
+    public function updatePlayer(int|string $idEdition, int|string $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
+        // TODO : chercher les [' et '] restants
+
         // Contrôle des données
-        if (!$this->isValidPlayerData($user['level'], $data, false)) {
+        if (!$idEdition || !$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
             return null;
         }
 
-        // Modifications
-        $dataPlayer = $this->processDataPlayer($data);
+        // Construction de l'objet
+        $player = new Player(
+            id: (int) $idPlayer,
+            name: $data->name,
+            points: (int) ($data->points - $data->giveaway),
+            updatedBy: $user->login,
+        );
 
-        if ($idEdition && $idPlayer && $this->repository->updatePlayer($idPlayer, $user['login'], $dataPlayer)) {
-            // Don de points
-            if ($data['giveaway'] > 0 && $data['giveawayId'] != 0) {
-                $this->updatePlayerDelta($data['giveawayId'], $user['login'], $data['giveaway']);
-            }
-
-            return true;
+        // Modification
+        if (!$this->repository->updatePlayer($player)) {
+            return null;
         }
 
-        return null;
+        // Don de points
+        if ($data->giveaway > 0 && $data->giveawayPlayerId !== null && $data->giveawayPlayerId !== 0) {
+            $giveawayPlayer = new Player(
+                id: (int) $data->giveawayPlayerId,
+                points: (int) $data->giveaway,
+                updatedBy: $user->login,
+            );
+
+            return $this->repository->updatePlayerDelta($giveawayPlayer);
+        }
+
+        return true;
     }
 
     /**
      * Modification des points d'un participant
      */
-    public function updatePlayerPoints(int|string $idPlayer, string $login, array $data): bool
+    // TODO : chercher les "array $data" ou juste "array" pour vérifier s'il y a des oublis
+    public function updatePlayerPoints(int|string $idPlayer, int $points, string $login): bool
     {
+        // Construction de l'objet
+        $player = new Player(
+            id: $idPlayer,
+            points: $points,
+            updatedBy: $login,
+        );
+
         // Modification des points d'un participant
-        return $this->repository->updatePlayerPoints($idPlayer, $login, $data);
+        return $this->repository->updatePlayerPoints($player);
     }
 
     /**
      * Modification des points d'un participant par ajout
      */
-    public function updatePlayerDelta(int|string $idPlayer, string $login, int $delta): bool
+    // TODO : voir pour supprimer cette méthode et utiliser celle au dessus qui est PRESQUE identique (delta à gérer côté service)
+    public function updatePlayerDelta(int|string $idPlayer, int $delta, string $login): bool
     {
+        // Construction de l'objet
+        $player = new Player(
+            id: $idPlayer,
+            points: $delta,
+            updatedBy: $login,
+        );
+
         // Modification des points d'un participant
-        return $this->repository->updatePlayerDelta($idPlayer, $login, $delta);
+        return $this->repository->updatePlayerDelta($player);
     }
 
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int|string $id, string $login): bool
+    public function deletePlayers(int|string $id, string $login): ?bool
     {
+        // Contrôle des données
+        if (!$id) {
+            return null;
+        }
+
+        // Suppression logique de participants d'une édition
         return $this->repository->deletePlayers($id, $login);
     }
 
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): bool|null
+    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): ?bool
     {
-        // Suppression logique du participant
-        if ($idEdition && $idPlayer && $this->repository->logicalDelete($idPlayer, $login)) {
-            return true;
+        // Contrôle des données
+        if (!$idEdition || !$idPlayer) {
+            return null;
         }
 
-        return null;
+        // Suppression logique du participant
+        return $this->repository->logicalDelete($idPlayer, $login);
     }
 
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData(int $userLevel, array $data, bool $isCreate): bool
+    private function isValidPlayerData(int $userLevel, PlayerInputDTO $data, bool $isCreation): bool
     {
-        $name = trim($data['name'] ?? '');
-        $delta = $data['delta'] ?? null;
-        $giveaway = $data['giveaway'] ?? null;
-        $giveawayId = $data['giveawayId'] ?? null;
+        // TODO : revoir ce genre de tests (chercher "function isValid") car selon le type certains tests sont inutiles
+        $name = trim($data->name);
+        $giveaway = $data->giveaway ?? null;
+        $giveawayPlayerId = $data->giveawayPlayerId ?? null;
 
-        $isDeltaValid = is_numeric($delta) && ($userLevel == EnumUserRole::SUPERADMIN->value || $delta >= 0);
-        $isGiveawayValid = $isCreate || (is_numeric($giveaway) && is_numeric($giveawayId) && (($giveaway > 0 && $giveawayId != 0) || ($giveaway == 0 && $giveawayId == 0)));
+        $isPointsValid = is_numeric($data->points) && ($userLevel == EnumUserRole::SUPERADMIN->value || $data->points >= 0);
+        $isGiveawayValid = $isCreation || (is_numeric($giveaway) && is_numeric($giveawayPlayerId) && (($giveaway > 0 && $giveawayPlayerId !== 0) || ($giveaway == 0 && $giveawayPlayerId == 0)));
 
-        return $name
-            && $isDeltaValid
+        return $name !== ''
+            && $isPointsValid
             && $isGiveawayValid;
-    }
-
-    /**
-     * Formate les données avant traitement SQL (participant)
-     */
-    private function processDataPlayer(array $data): array
-    {
-        $sqlData = [
-            'name'  => $data['name'],
-            'delta' => $data['delta'] - $data['giveaway']
-        ];
-
-        return $sqlData;
     }
 }

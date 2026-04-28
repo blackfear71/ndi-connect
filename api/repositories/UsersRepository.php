@@ -2,21 +2,37 @@
 // Imports
 require_once 'core/functions/Model.php';
 
+require_once 'models/entities/User.php';
+
 class UsersRepository extends Model
 {
-    protected $table = 'users';
+    protected string $table = 'users';
 
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string|null $token): array|false
+    public function checkAuth(?string $token): ?User
     {
-        $data['token'] = $token;
+        $sql = "SELECT id, login, level
+            FROM {$this->table}
+            WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
 
-        $sql = "SELECT id, login, level FROM {$this->table} WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'token' => $token
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new User(
+            id: (int) $row['id'],
+            login: $row['login'],
+            level: (int) $row['level']
+        );
     }
 
     /**
@@ -24,42 +40,100 @@ class UsersRepository extends Model
      */
     public function getAllUsers(): array
     {
-        $sql = "SELECT id, login, level FROM {$this->table} WHERE is_active = 1 ORDER BY login ASC";
+        $sql = "SELECT id, login, level
+            FROM {$this->table}
+            WHERE is_active = 1
+            ORDER BY login ASC";
+
         $stmt = $this->db->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(fn($row) => new User(
+            id: (int) $row['id'],
+            login: $row['login'],
+            level: (int) $row['level']
+        ), $stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Récupération données utilisateur actif (via login)
      */
-    public function getActiveUserDataByLogin(string $login): array|false
+    public function getActiveUserDataByLogin(string $login): ?User
     {
-        $sql = "SELECT id, login, password, level FROM {$this->table} WHERE login = :login AND is_active = 1";
+        $sql = "SELECT id, login, password, level
+            FROM {$this->table}
+            WHERE login = :login AND is_active = 1";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['login' => $login]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'login' => $login
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new User(
+            id: (int) $row['id'],
+            login: $row['login'],
+            password: $row['password'],
+            level: (int) $row['level']
+        );
     }
 
     /**
      * Récupération données utilisateur actif (via id)
      */
-    public function getActiveUserDataById(int|string $id): array|false
+    public function getActiveUserDataById(int|string $id): ?User
     {
-        $sql = "SELECT id, login, level FROM {$this->table} WHERE id = :id AND is_active = 1";
+        $sql = "SELECT id, login, level
+            FROM {$this->table}
+            WHERE id = :id AND is_active = 1";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'id' => $id
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new User(
+            id: (int) $row['id'],
+            login: $row['login'],
+            level: (int) $row['level']
+        );
     }
 
     /**
      * Récupération données utilisateur (tous statuts)
      */
-    public function getUserDataByLogin(string $login): array|false
+    public function getUserDataByLogin(string $login): ?User
     {
-        $sql = "SELECT id, login, level FROM {$this->table} WHERE login = :login";
+        $sql = "SELECT id, login, level
+            FROM {$this->table}
+            WHERE login = :login";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['login' => $login]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'login' => $login
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new User(
+            id: (int) $row['id'],
+            login: $row['login'],
+            level: (int) $row['level']
+        );
     }
 
     /**
@@ -67,34 +141,95 @@ class UsersRepository extends Model
      */
     public function isLastAdmin(): bool
     {
-        $sql = "SELECT COUNT(*) AS nbAdmin FROM {$this->table} WHERE level = :level AND is_active = 1";
+        $sql = "SELECT COUNT(*) AS nbAdmin
+            FROM {$this->table}
+            WHERE level = :level AND is_active = 1";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['level' => EnumUserRole::SUPERADMIN->value]);
+        $stmt->execute([
+            'level' => EnumUserRole::SUPERADMIN->value
+        ]);
+
         $count = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return ($count['nbAdmin'] == 1);
     }
 
     /**
-     * Mise à jour token de connexion
+     * Insertion d'un utilisateur
      */
-    public function updateToken(string $login, string|null $token): bool
+    public function createUser(User $user): bool
     {
-        $data['token'] = $token;
-        $data['token_expires_at'] = $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL;
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = $login;
+        $sql = "INSERT INTO {$this->table} (login, password, token, token_expires_at, level, created_at, created_by, is_active)
+            VALUES (:login, :password, :token, :token_expires_at, :level, :created_at, :created_by, :is_active)";
 
-        $fields = [];
-
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
-        }
-
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE login = :login";
         $stmt = $this->db->prepare($sql);
 
-        $data['login'] = $login;
-        return $stmt->execute($data);
+        return $stmt->execute([
+            'login'            => $user->login,
+            'password'         => $user->password,
+            'token'            => $user->token,
+            'level'            => $user->level,
+            'created_at'       => date('Y-m-d H:i:s'),
+            'created_by'       => $user->createdBy,
+            'is_active'        => 1
+        ]);
+    }
+
+    /**
+     * Mise à jour token de connexion
+     */
+    public function updateToken(User $user, ?string $token): bool
+    {
+        $sql = "UPDATE {$this->table}
+            SET token = :token, token_expires_at = :token_expires_at, updated_at = :updated_at, updated_by = :updated_by
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id'               => $user->id,
+            'token'            => $token,
+            'token_expires_at' => $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL,
+            'updated_at'       => date('Y-m-d H:i:s'),
+            'updated_by'       => $user->login
+        ]);
+    }
+
+    /**
+     * Mise à jour mot de passe
+     */
+    public function updatePassword(int|string $id, string $login, string $hash): bool
+    {
+        $sql = "UPDATE {$this->table}
+            SET token = :token, token_expires_at = :token_expires_at, updated_at = :updated_at, updated_by = :updated_by
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id'         => $id,
+            'password'   => $hash,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $login
+        ]);
+    }
+
+    /**
+     * Mise à jour utilisateur
+     */
+    public function updateUser(User $user, string $login): bool
+    {
+        $sql = "UPDATE {$this->table}
+            SET level = :token, updated_at = :updated_at, updated_by = :updated_by
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'level'      => $user->level,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $login
+        ]);
     }
 }

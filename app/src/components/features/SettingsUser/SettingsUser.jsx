@@ -16,8 +16,8 @@ const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPass
         if (user) {
             setFormPassword({
                 ...formPassword,
+                password: '',
                 oldPassword: '',
-                newPassword: '',
                 confirmPassword: ''
             });
         }

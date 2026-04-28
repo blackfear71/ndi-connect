@@ -1,15 +1,17 @@
 <?php
 // Imports
+require_once 'models/dtos/GiftInputDTO.php';
+require_once 'models/dtos/GiftOutputDTO.php';
+
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/GiftsRepository.php';
 
 class GiftsService
 {
-    private $rewardsService = null;
-
-    private $db;
-    private $repository;
+    private PDO $db;
+    private ?RewardsService $rewardsService = null;
+    private GiftsRepository $repository;
 
     /**
      * Constructeur par défaut
@@ -28,7 +30,7 @@ class GiftsService
         if ($this->rewardsService === null) {
             $this->rewardsService = new RewardsService($this->db);
         }
-        
+
         return $this->rewardsService;
     }
 
@@ -37,24 +39,117 @@ class GiftsService
      */
     public function getEditionGifts(int|string $id): array
     {
-        // Récupération des cadeaux
         $gifts = $this->repository->getEditionGifts($id);
 
-        // Calcul du nombre de cadeaux restants
-        foreach ($gifts as &$gift) {
-            $gift['remainingQuantity'] = $gift['quantity'] - $gift['rewardCount'];
-        }
-        unset($gift);
+        return array_map(function ($gift) {
+            // Calcul du nombre de cadeaux restants
+            $remainingQuantity = $gift->quantity - $gift->rewardCount;
 
-        return $gifts;
+            // Récupération des données cadeaux
+            return new GiftOutputDTO(
+                id: $gift->id,
+                idEdition: $gift->idEdition,
+                name: $gift->name,
+                value: $gift->value,
+                quantity: $gift->quantity,
+                rewardCount: $gift->rewardCount,
+                remainingQuantity: $remainingQuantity
+            );
+        }, $gifts);
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function getGift(int|string $id): array|false
+    public function getGift(int|string $id): ?GiftOutputDTO
     {
-        return $this->repository->find($id);
+        // Contrôle des données
+        if (!$id) {
+            return null;
+        }
+
+        // Lecture du cadeau
+        $data = $this->repository->getGift($id);
+
+        if (!$data) {
+            return null;
+        }
+
+        // Récupération des données cadeau
+        return new GiftOutputDTO(
+            id: $data->id,
+            value: $data->value,
+            quantity: $data->quantity
+        );
+    }
+
+    /**
+     * Création d'un cadeau
+     */
+    public function createGift(int|string $idEdition, string $login, GiftInputDTO $data): ?bool
+    {
+        // Contrôle des données
+        if (!$idEdition || !$this->isValidGiftData($data)) {
+            return null;
+        }
+
+        // Construction de l'objet
+        // TODO : des forçages de types à int permettraient de ne pas caster
+        $gift = new Gift(
+            idEdition: (int) $idEdition,
+            name: $data->name,
+            value: $data->value,
+            quantity: $data->quantity,
+            createdBy: $login,
+        );
+
+        // Insertion
+        return $this->repository->createGift($gift);
+    }
+
+    /**
+     * Modification d'un cadeau
+     */
+    public function updateGift(int|string $idEdition, int|string $idGift, string $login, GiftInputDTO $data): ?bool
+    {
+        // Contrôle des données
+        if (!$idEdition || !$idGift) {
+            return null;
+        }
+
+        // Récupération du nombre d'attributions du cadeau
+        $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
+
+        // Contrôle des données
+        if (!$this->isValidGiftData($data, $rewardCount)) {
+            return null;
+        }
+
+        // Construction de l'objet
+        $gift = new Gift(
+            id: (int) $idGift,
+            name: $data->name,
+            value: $data->value,
+            quantity: $data->quantity,
+            updatedBy: $login,
+        );
+
+        // Modification
+        return $this->repository->updateGift($gift);
+    }
+
+    /**
+     * Suppression logique d'un cadeau
+     */
+    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): ?bool
+    {
+        // Contrôle des données
+        if (!$idEdition || !$idGift) {
+            return null;
+        }
+
+        // Suppression logique du cadeau
+        return $this->repository->logicalDelete($idGift, $login);
     }
 
     /**
@@ -66,68 +161,14 @@ class GiftsService
     }
 
     /**
-     * Création d'un cadeau
-     */
-    public function createGift(int|string $idEdition, string $login, array $data): bool|null
-    {
-        // Contrôle des données
-        if (!$this->isValidGiftData($data)) {
-            return null;
-        }
-
-        // Insertion
-        if ($idEdition && $this->repository->create($login, $data)) {
-            return true;
-        }
-
-        return null;
-    }
-
-    /**
-     * Modification d'un cadeau
-     */
-    public function updateGift(int|string $idEdition, int|string $idGift, string $login, array $data): bool|null
-    {
-        // Récupération du nombre d'attributions du cadeau
-        $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
-
-        // Contrôle des données
-        if (!$this->isValidGiftData($data, $rewardCount)) {
-            return null;
-        }
-
-        // Modification
-        if ($idEdition && $idGift && $this->repository->update($idGift, $login, $data)) {
-            return true;
-        }
-
-        return null;
-    }
-
-    /**
-     * Suppression logique d'un cadeau
-     */
-    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): bool|null
-    {
-        // Suppression logique du cadeau
-        if ($idEdition && $idGift && $this->repository->logicalDelete($idGift, $login)) {
-            return true;
-        }
-
-        return null;
-    }
-
-    /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData(array $data, int|null $rewardCount = null): bool
+    private function isValidGiftData(GiftInputDTO $data, ?int $rewardCount = null): bool
     {
-        $name = trim($data['name'] ?? '');
-        $value = $data['value'] ?? null;
-        $quantity = $data['quantity'] ?? null;
+        $name = trim($data->name);
 
-        return $name
-            && is_numeric($value) && $value > 0
-            && is_numeric($quantity) && ($rewardCount != null ? $quantity >= $rewardCount : $quantity >= 0);
+        return $name !== ''
+            && $data->value > 0
+            && ($rewardCount !== null ? $data->quantity >= $rewardCount : $data->quantity >= 0);
     }
 }
