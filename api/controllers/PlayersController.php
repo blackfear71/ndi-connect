@@ -4,6 +4,8 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/PlayerInputDTO.php';
+
 require_once 'services/PlayersService.php';
 
 class PlayersController
@@ -81,7 +83,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
+            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, PlayerInputDTO::fromArray($data));
 
             if ($updated) {
                 // Succès

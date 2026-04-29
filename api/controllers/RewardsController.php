@@ -4,6 +4,8 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/RewardInputDTO.php';
+
 require_once 'services/RewardsService.php';
 
 class RewardsController
@@ -27,14 +29,14 @@ class RewardsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createReward(string $token, int|string $idEdition, array $data): void
+    public function createReward(string $token, array $data): void
     {
         try {
             // Contrôle autorisation et niveau
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($user->login, $idEdition, RewardInputDTO::fromArray($data));
+            $created = $this->service->createReward($user->login, RewardInputDTO::fromArray($data));
 
             if ($created) {
                 // Succès
@@ -52,14 +54,14 @@ class RewardsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward(string $token, int|string $idEdition, int|string $idReward): void
+    public function deleteReward(string $token, int|string $idReward): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteReward($user->login, $idEdition, $idReward);
+            $deleted = $this->service->deleteReward($user->login, $idReward);
 
             if ($deleted) {
                 // Succès

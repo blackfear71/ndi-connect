@@ -64,7 +64,7 @@ class RewardsService
     /**
      * Attribution d'un cadeau
      */
-    public function createReward(string $login, int|string $idEdition, RewardInputDTO $data): ?bool
+    public function createReward(string $login, RewardInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$data) {
@@ -115,10 +115,10 @@ class RewardsService
     /**
      * Suppression logique de l'attribution d'un cadeau
      */
-    public function deleteReward(string $login, int|string $idEdition, int|string $idReward): ?bool
+    public function deleteReward(string $login, int|string $idReward): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$idReward) {
+        if (!$idReward) {
             return null;
         }
 

@@ -23,7 +23,7 @@ class RewardsService {
      * @returns Données retour
      */
     createReward = (idEdition, body) => {
-        const url = `${this.apiUrl}/reward/${idEdition}`;
+        const url = `${this.apiUrl}/create`;
         return ajax({
             url,
             method: 'POST',
@@ -40,7 +40,7 @@ class RewardsService {
      * @returns Données retour
      */
     deleteReward = (idEdition, idReward) => {
-        const url = `${this.apiUrl}/delete/${idEdition}/${idReward}`;
+        const url = `${this.apiUrl}/delete/${idReward}`;
         return ajax({
             url,
             method: 'DELETE',

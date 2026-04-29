@@ -160,8 +160,8 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         const delta = parseInt(formData.points, 10);
 
         if (
-            formData.delta === null ||
-            formData.delta === undefined ||
+            formData.points === null ||
+            formData.points === undefined ||
             isNaN(delta) ||
             (auth.level < EnumUserRole.SUPERADMIN && delta < 0)
         ) {

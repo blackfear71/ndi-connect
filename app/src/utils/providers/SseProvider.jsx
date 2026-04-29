@@ -28,8 +28,27 @@ const SseProvider = ({ children }) => {
             return;
         }
 
-        const source = createSseConnection();
-        return () => source && source.close();
+        let source;
+        let reconnectTimer;
+
+        const initTimer = setTimeout(() => {
+            // Ouverture de la connexion SSE
+            source = createSseConnection();
+
+            // Suivi de l'évènement is_closing dans ce useEffect
+            source.addEventListener('is_closing', () => {
+                source.close();
+                reconnectTimer = setTimeout(() => {
+                    source = createSseConnection();
+                }, 100);
+            });
+        }, 100);
+
+        return () => {
+            clearTimeout(initTimer);
+            clearTimeout(reconnectTimer);
+            source?.close();
+        };
     }, [id]);
 
     /**
@@ -74,12 +93,6 @@ const SseProvider = ({ children }) => {
 
         // Evènement de maintien de la connexion SSE
         source.addEventListener('is_alive', () => {});
-
-        // Evènement de fermeture de la connexion
-        source.addEventListener('is_closing', () => {
-            source.close();
-            createSseConnection();
-        });
 
         // Evènement de récupération des cadeaux
         source.addEventListener('get_gifts', (event) => {

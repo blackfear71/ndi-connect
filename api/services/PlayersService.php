@@ -110,7 +110,7 @@ class PlayersService
      */
     public function updatePlayer(int|string $idEdition, int|string $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
-        // TODO : chercher les [' et '] restants
+        // TODO : chercher les [' et '] restants + les $data passés aux services depuis les controllers (à passer dans les fromData)
 
         // Contrôle des données
         if (!$idEdition || !$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {

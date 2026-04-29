@@ -4,6 +4,8 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/UserInputDTO.php';
+
 require_once 'services/UsersService.php';
 
 class UsersController

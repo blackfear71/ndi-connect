@@ -5,8 +5,8 @@ require_once 'core/functions/Auth.php';
 require_once 'enums/EnumAction.php';
 require_once 'enums/EnumUserRole.php';
 
-require_once 'models/dtos/EditionResponseDTO.php';
 require_once 'models/dtos/EditionInputDTO.php';
+require_once 'models/dtos/EditionResponseDTO.php';
 
 require_once 'services/EditionsService.php';
 
