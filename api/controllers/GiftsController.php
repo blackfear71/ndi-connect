@@ -54,11 +54,14 @@ class GiftsController
     public function createGift(string $token, int|string $idEdition, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = GiftInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createGift($idEdition, $user->login, $data);
+            $created = $this->service->createGift($idEdition, $user->login, $dataDTO);
 
             if ($created) {
                 // Succès
@@ -79,11 +82,14 @@ class GiftsController
     public function updateGift(string $token, int|string $idEdition, int|string $idGift, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = GiftInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($idEdition, $idGift, $user->login, $data);
+            $updated = $this->service->updateGift($idEdition, $idGift, $user->login, $dataDTO);
 
             if ($updated) {
                 // Succès

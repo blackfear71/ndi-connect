@@ -69,17 +69,17 @@ class GiftsService
         }
 
         // Lecture du cadeau
-        $data = $this->repository->getGift($id);
+        $gift = $this->repository->getGift($id);
 
-        if (!$data) {
+        if (!$gift) {
             return null;
         }
 
         // Récupération des données cadeau
         return new GiftOutputDTO(
-            id: $data->id,
-            value: $data->value,
-            quantity: $data->quantity
+            id: $gift->id,
+            value: $gift->value,
+            quantity: $gift->quantity
         );
     }
 

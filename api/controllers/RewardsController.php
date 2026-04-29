@@ -32,11 +32,14 @@ class RewardsController
     public function createReward(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = RewardInputDTO::fromArray($data);
+
             // Contrôle autorisation et niveau
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($user->login, RewardInputDTO::fromArray($data));
+            $created = $this->service->createReward($user->login, $dataDTO);
 
             if ($created) {
                 // Succès

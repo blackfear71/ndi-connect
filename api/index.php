@@ -1,6 +1,6 @@
 <?php
 
-// TODO : attention au SSE qui plante actuellement, à cause de la conversion en objets ?
+// TODO : revoir l'écriture des routes pour que ce soir plus parant que "edition/1/6/58"
 
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';

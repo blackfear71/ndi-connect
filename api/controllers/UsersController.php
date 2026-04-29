@@ -84,8 +84,11 @@ class UsersController
     public function connect(array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Connexion utilisateur
-            $user = $this->service->connect(UserInputDTO::fromArray($data));
+            $user = $this->service->connect($dataDTO);
 
             if ($user) {
                 // Token de connexion
@@ -110,7 +113,7 @@ class UsersController
                 ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
             } else {
                 // Échec de la connexion
-                ResponseHelper::error(MessageHelper::ERR_LOGIN_FAILED, [__FUNCTION__, self::controllerName, $data['login']]);
+                ResponseHelper::error(MessageHelper::ERR_LOGIN_FAILED, [__FUNCTION__, self::controllerName, $dataDTO->login]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -158,18 +161,21 @@ class UsersController
     public function createUser(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($user->login, $data);
+            $created = $this->service->createUser($user->login, $dataDTO);
 
             if ($created !== null && $created !== false) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
             } elseif ($created !== null && $created === false) {
                 // Alerte
-                ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$data['login']]);
+                ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$dataDTO->login]);
             } else {
                 // Échec de la création
                 ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
@@ -211,12 +217,15 @@ class UsersController
     public function updatePassword(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user->login, $data);
+                $updated = $this->service->updatePassword($user->login, $dataDTO);
 
                 if ($updated) {
                     // Succès
@@ -241,11 +250,14 @@ class UsersController
     public function updateUser(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($user->login, $data);
+            $updated = $this->service->updateUser($user->login, $dataDTO);
 
             if ($updated !== null && $updated !== false) {
                 // Succès
@@ -255,7 +267,8 @@ class UsersController
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $data['id'], json_encode($data)]);
+                // TODO : pas bien d'avoir $dataDTO->id ici ? à avoir dans la route ?
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $dataDTO->id, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée

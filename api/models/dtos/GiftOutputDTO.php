@@ -1,7 +1,5 @@
 <?php
 
-// TODO : vérifier que les DTO sont importés dans la bonne couche => tout mettre dans le controller ?
-
 /**
  * Représente un cadeau (DTO)
  */

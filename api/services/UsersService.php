@@ -28,17 +28,17 @@ class UsersService
             return null;
         }
 
-        $data = $this->repository->checkAuth($token);
+        $user = $this->repository->checkAuth($token);
 
-        if (!$data) {
+        if (!$user) {
             return null;
         }
 
         // Récupération des données utilisateur
         return new UserOutputDTO(
-            id: $data->id,
-            login: $data->login,
-            level: $data->level
+            id: $user->id,
+            login: $user->login,
+            level: $user->level
         );
     }
 
@@ -48,14 +48,14 @@ class UsersService
     public function getAllUsers(): array
     {
         // Lecture des utilisateurs
-        $data = $this->repository->getAllUsers();
+        $users = $this->repository->getAllUsers();
 
         // Récupération des données utilisateurs
         return array_map(fn($user) => new UserOutputDTO(
             id: $user->id,
             login: $user->login,
             level: $user->level
-        ), $data);
+        ), $users);
     }
 
     /**
@@ -170,8 +170,6 @@ class UsersService
         $hash = password_hash($data->password, PASSWORD_DEFAULT);
 
         // Modification
-        $data = $this->processDataPassword($data->password);
-
         return $this->repository->updatePassword($user->id, $user->login, $hash);
     }
 
@@ -186,16 +184,16 @@ class UsersService
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataById($data->id);
+        $currentUser = $this->repository->getActiveUserDataById($data->id);
 
         // Contrôle dernier admin actif si changement de rôle
-        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+        if ($currentUser && $currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
             return false;
         }
 
         // Construction de l'objet
         $user = new User(
-            id: $user->id,
+            id: $currentUser->id,
             level: $data->level,
             updatedBy: $login
         );

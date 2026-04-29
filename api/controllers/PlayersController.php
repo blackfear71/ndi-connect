@@ -54,11 +54,14 @@ class PlayersController
     public function createPlayer(string $token, int|string $idEdition, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = PlayerInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createPlayer($idEdition, $user, $data);
+            $created = $this->service->createPlayer($idEdition, $user, $dataDTO);
 
             if ($created) {
                 // Succès
@@ -79,11 +82,14 @@ class PlayersController
     public function updatePlayer(string $token, int|string $idEdition, int|string $idPlayer, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = PlayerInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, PlayerInputDTO::fromArray($data));
+            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $dataDTO);
 
             if ($updated) {
                 // Succès

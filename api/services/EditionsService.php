@@ -1,6 +1,7 @@
 <?php
 // Imports
 require_once 'models/dtos/EditionOutputDTO.php';
+require_once 'models/dtos/EditionResponseDTO.php';
 
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
@@ -52,7 +53,7 @@ class EditionsService
      */
     public function getAllEditions(): array
     {
-        $data = $this->repository->getAllEditions();
+        $editions = $this->repository->getAllEditions();
 
         return array_map(fn($edition) => new EditionOutputDTO(
             id: $edition->id,
@@ -60,7 +61,7 @@ class EditionsService
             startDate: $edition->startDate,
             endDate: $edition->endDate,
             playerCount: $edition->playerCount
-        ), $data);
+        ), $editions);
     }
 
     /**
@@ -74,24 +75,24 @@ class EditionsService
         }
 
         // Lecture de l'édition
-        $data = $this->repository->getEdition($id);
+        $edition = $this->repository->getEdition($id);
 
-        if (!$data) {
+        if (!$edition) {
             return null;
         }
 
         // Vérification image existante et génération URL
-        $picture = FileHelper::checkFile('images', $data->picture);
+        $picture = FileHelper::checkFile('images', $edition->picture);
 
         // Formatage des données édition
         $edition = new EditionOutputDTO(
-            id: $data->id,
-            location: $data->location,
-            startDate: $data->startDate,
-            endDate: $data->endDate,
+            id: $edition->id,
+            location: $edition->location,
+            startDate: $edition->startDate,
+            endDate: $edition->endDate,
             picture: $picture,
-            theme: $data->theme,
-            challenge: $data->challenge
+            theme: $edition->theme,
+            challenge: $edition->challenge
         );
 
         // Récupération des données cadeaux
@@ -117,7 +118,7 @@ class EditionsService
             return [];
         }
 
-        $data = $this->repository->getSearchEditions(trim($search));
+        $editions = $this->repository->getSearchEditions(trim($search));
 
         return array_map(fn($edition) => new EditionOutputDTO(
             id: $edition->id,
@@ -125,7 +126,7 @@ class EditionsService
             startDate: $edition->startDate,
             endDate: $edition->endDate,
             playerCount: $edition->playerCount
-        ), $data);
+        ), $editions);
     }
 
     /**

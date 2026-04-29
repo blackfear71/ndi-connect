@@ -69,17 +69,17 @@ class PlayersService
     public function getPlayer(int|string $id): ?PlayerOutputDTO
     {
         // Lecture du participant
-        $data = $this->repository->getPlayer($id);
+        $player = $this->repository->getPlayer($id);
 
-        if (!$data) {
+        if (!$player) {
             return null;
         }
 
         // Récupération des données participant
         return new PlayerOutputDTO(
-            id: $data->id,
-            name: $data->name,
-            points: $data->points
+            id: $player->id,
+            name: $player->name,
+            points: $player->points
         );
     }
 
@@ -110,8 +110,6 @@ class PlayersService
      */
     public function updatePlayer(int|string $idEdition, int|string $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
-        // TODO : chercher les [' et '] restants + les $data passés aux services depuis les controllers (à passer dans les fromData)
-
         // Contrôle des données
         if (!$idEdition || !$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
             return null;
@@ -147,7 +145,7 @@ class PlayersService
     /**
      * Modification des points d'un participant
      */
-    // TODO : chercher les "array $data" ou juste "array" pour vérifier s'il y a des oublis
+    // TODO : chercher les "array $data" ou juste "array" pour vérifier s'il y a des oublis => OK pour "array $data", reste "array"
     public function updatePlayerPoints(int|string $idPlayer, int $points, string $login): bool
     {
         // Construction de l'objet
@@ -211,7 +209,7 @@ class PlayersService
      */
     private function isValidPlayerData(int $userLevel, PlayerInputDTO $data, bool $isCreation): bool
     {
-        // TODO : revoir ce genre de tests (chercher "function isValid") car selon le type certains tests sont inutiles
+        // TODO : revoir ce genre de tests partout (chercher "function isValid") car selon le type certains tests sont inutiles si pas nullable par exemple
         $name = trim($data->name);
         $giveaway = $data->giveaway ?? null;
         $giveawayPlayerId = $data->giveawayPlayerId ?? null;
