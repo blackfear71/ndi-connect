@@ -1,6 +1,6 @@
 <?php
 
-// TODO : tout tester
+// TODO : tout tester + PR
 
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';
