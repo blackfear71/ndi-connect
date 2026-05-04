@@ -12,7 +12,7 @@ class GiftsRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int|string $id): array
+    public function getEditionGifts(int $id): array
     {
         $sql = "SELECT g.id, g.id_edition, g.name, g.value, g.quantity, COUNT(r.id) AS reward_count
             FROM {$this->table} AS g
@@ -39,7 +39,7 @@ class GiftsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getGift(int|string $id): ?Gift
+    public function getGift(int $id): ?Gift
     {
         $sql = "SELECT id, value, quantity
             FROM {$this->table}
@@ -108,7 +108,7 @@ class GiftsRepository extends Model
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int|string $id, string $login): bool
+    public function deleteGifts(int $id, string $login): bool
     {
         $sql = "UPDATE {$this->table}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active

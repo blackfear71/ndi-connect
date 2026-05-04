@@ -108,11 +108,12 @@ class UsersService {
 
     /**
      * Mise à jour mot de passe
+     * @param {*} id Identifiant utilisateur
      * @param {*} body Données mot de passe
      * @returns Message retour
      */
-    updatePassword = (body) => {
-        const url = `${this.apiUrl}/password`;
+    updatePassword = (id, body) => {
+        const url = `${this.apiUrl}/password/${id}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -124,11 +125,12 @@ class UsersService {
 
     /**
      * Mise à jour utilisateur
+     * @param {*} id Identifiant utilisateur
      * @param {*} body Données utilisateur
      * @returns Liste des utilisateurs
      */
-    updateUser = (body) => {
-        const url = `${this.apiUrl}/update`;
+    updateUser = (id, body) => {
+        const url = `${this.apiUrl}/update/${id}`;
         return ajax({
             url,
             method: 'PATCH',

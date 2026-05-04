@@ -11,7 +11,7 @@ class PlayersRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int|string $id): array
+    public function getEditionPlayers(int $id): array
     {
         $sql = "SELECT id, name, points
             FROM {$this->table}
@@ -33,7 +33,7 @@ class PlayersRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getPlayer(int|string $id): ?Player
+    public function getPlayer(int $id): ?Player
     {
         $sql = "SELECT id, name, points
             FROM {$this->table}
@@ -98,9 +98,9 @@ class PlayersRepository extends Model
     }
 
     /**
-     * Modification d'un joueur par Id (don ou récupération de points)
+     * Modification d'un joueur par Id
      */
-    public function updatePlayerDelta(Player $player): bool
+    public function updatePlayerPoints(Player $player): bool
     {
         $sql = "UPDATE {$this->table}
             SET points = points + :delta, updated_at = :updated_at, updated_by = :updated_by
@@ -117,28 +117,9 @@ class PlayersRepository extends Model
     }
 
     /**
-     * Modification des points d'un joueur par Id
-     */
-    public function updatePlayerPoints(Player $player): bool
-    {
-        $sql = "UPDATE {$this->table}
-            SET points = :points, updated_at = :updated_at, updated_by = :updated_by
-            WHERE id = :id";
-
-        $stmt = $this->db->prepare($sql);
-
-        return $stmt->execute([
-            'id'         => $player->id,
-            'points'     => $player->points,
-            'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => $player->updatedBy
-        ]);
-    }
-
-    /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int|string $id, string $login): bool
+    public function deletePlayers(int $id, string $login): bool
     {
         $sql = "UPDATE {$this->table} 
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active 

@@ -9,7 +9,6 @@ class EditionInputDTO
      * Construteur
      */
     public function __construct(
-        public readonly int     $id            = 0,
         public readonly string  $location      = '',
         public readonly string  $startDate     = '',
         public readonly string  $startTime     = '',
@@ -26,7 +25,6 @@ class EditionInputDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            id: (int) ($data['id'] ?? 0),
             location: $data['location'] ?? '',
             startDate: $data['startDate'] ?? '',
             startTime: $data['startTime'] ?? '',

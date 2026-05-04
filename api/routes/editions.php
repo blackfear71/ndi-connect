@@ -1,4 +1,5 @@
 <?php
+
 /** @var PDO $db */
 
 // Imports
@@ -16,8 +17,11 @@ $router->get('/editions/all', function () use ($db): void {
  * Lecture d'un enregistrement
  */
 $router->get('/editions/find/:id', function (array $params) use ($db): void {
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
+
     // Appel contrôleur
-    (new EditionsController($db))->getEdition($params['id']);
+    (new EditionsController($db))->getEdition($id);
 });
 
 /**
@@ -49,8 +53,11 @@ $router->post('/editions/update/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
+
     // Appel contrôleur
-    (new EditionsController($db))->updateEdition($token, $params['id'], $_POST, $_FILES);
+    (new EditionsController($db))->updateEdition($token, $id, $_POST, $_FILES);
 });
 
 /**
@@ -60,6 +67,9 @@ $router->delete('/editions/delete/:id', function (array $params) use ($db): void
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
+
     // Appel contrôleur
-    (new EditionsController($db))->deleteEdition($token, $params['id']);
+    (new EditionsController($db))->deleteEdition($token, $id);
 });

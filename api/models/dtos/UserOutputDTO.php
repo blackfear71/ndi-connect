@@ -23,7 +23,6 @@ class UserOutputDTO implements \JsonSerializable
         return [
             'id'    => $this->id,
             'login' => $this->login,
-            'token' => $this->token,
             'level' => $this->level
         ];
     }

@@ -194,7 +194,7 @@ const Settings = () => {
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.updatePassword(formPassword);
+        const subscriptionUsers = usersService.updatePassword(auth.id, formPassword);
 
         subscriptionUsers
             .pipe(
@@ -309,8 +309,7 @@ const Settings = () => {
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
 
-                subscriptionUsers = usersService.updateUser({
-                    id: formUser.id,
+                subscriptionUsers = usersService.updateUser(formUser.id, {
                     level: formUser.level
                 });
                 break;

@@ -67,7 +67,7 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int|string $id): ?EditionResponseDTO
+    public function getEdition(int $id): ?EditionResponseDTO
     {
         // Contrôle données renseignées
         if (!$id) {
@@ -132,7 +132,7 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(string $login, EditionInputDTO $data, ?array $file): ?string
+    public function createEdition(EditionInputDTO $data, ?array $file, string $login): ?string
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -145,16 +145,16 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage(null, $data->pictureAction ?? null, $file['picture'] ?? null);
+        $picture = $this->uploadImage(null, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
-            location: $data->location,
+            location: trim($data->location),
             startDate: $startDate,
             endDate: $endDate,
             picture: $picture,
-            theme: $data->theme,
-            challenge: $data->challenge,
+            theme: $data->theme !== null ? trim($data->theme) : null,
+            challenge: $data->challenge !== null ? trim($data->challenge) : null,
             createdBy: $login
         );
 
@@ -165,7 +165,7 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int|string $id, string $login, EditionInputDTO $data, ?array $file): ?array
+    public function updateEdition(int $id, EditionInputDTO $data, ?array $file, string $login): ?EditionResponseDTO
     {
         // Contrôle des données
         if (!$id || !$this->isValidEditionData($data)) {
@@ -178,22 +178,22 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage($id, $data->pictureAction ?? null, $file['picture'] ?? null);
+        $picture = $this->uploadImage($id, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
-            id: $data->id,
-            location: $data->location,
+            id: $id,
+            location: trim($data->location),
             startDate: $startDate,
             endDate: $endDate,
             picture: $picture,
-            theme: $data->theme,
-            challenge: $data->challenge,
+            theme: $data->theme !== null ? trim($data->theme) : null,
+            challenge: $data->challenge !== null ? trim($data->challenge) : null,
             updatedBy: $login
         );
 
         // Modification
-        if (!$this->repository->updateEdition($id, $edition)) {
+        if (!$this->repository->updateEdition($edition)) {
             return null;
         }
 
@@ -204,7 +204,7 @@ class EditionsService
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(int|string $id, string $login): ?bool
+    public function deleteEdition(int $id, string $login): ?bool
     {
         // Suppression logique des cadeaux
         if (!$this->getGiftsService()->deleteGifts($id, $login)) {
@@ -225,30 +225,18 @@ class EditionsService
      */
     private function isValidEditionData(EditionInputDTO $data): bool
     {
-        $location = trim($data->location ?? '');
-        $startDate = $data->startDate ?? null;
-        $startTime = $data->startTime ?? null;
-        $endTime = $data->endTime ?? null;
-
-        // Contrôle date
-        $formatD = 'Y-m-d';
-        $d = DateTime::createFromFormat($formatD, $startDate);
-
-        // Contrôle heures
-        $formatH = 'H:i';
-        $h1 = DateTime::createFromFormat($formatH, $startTime);
-        $h2 = DateTime::createFromFormat($formatH, $endTime);
+        $location = trim($data->location);
 
         return $location
-            && $d && $d->format($formatD) === $startDate
-            && $h1 && $h1->format($formatH) === $startTime
-            && $h2 && $h2->format($formatH) === $endTime;
+            && DataHelper::isValidDateFormat($data->startDate, 'Y-m-d')
+            && DataHelper::isValidDateFormat($data->startTime, 'H:i')
+            && DataHelper::isValidDateFormat($data->endTime, 'H:i');
     }
 
     /**
      * Traitement de l'image
      */
-    private function uploadImage(int|string|null $id, ?string $action, ?array $file): ?string
+    private function uploadImage(?int $id, ?string $action, ?array $file): ?string
     {
         // Récupération de l'image de l'édition
         $picture = $id ? $this->repository->getEditionPicture($id) : null;

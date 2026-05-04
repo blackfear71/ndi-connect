@@ -1,6 +1,4 @@
 <?php
-// TODO : partout voir pour caster les id en INT et revoir le typage partout (chercher int|string)
-
 // Imports
 require_once 'core/functions/Model.php';
 
@@ -14,7 +12,7 @@ class RewardsRepository extends Model
     /**
      * Lecture du nombre d'enregistrements
      */
-    public function getRewardCount(int|string $id): int
+    public function getRewardCount(int $id): int
     {
         $sql = "SELECT COUNT(id) AS reward_count
             FROM {$this->table}
@@ -33,7 +31,7 @@ class RewardsRepository extends Model
     /**
      * Lecture des enregistrements d'un participant (y compris les cadeaux supprimés)
      */
-    public function getPlayerRewards(int|string $id): array
+    public function getPlayerRewards(int $id): array
     {
         $sql = "SELECT r.id, r.id_gift, g.name
             FROM {$this->table} AS r
@@ -56,7 +54,7 @@ class RewardsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getReward(int|string $id): ?Reward
+    public function getReward(int $id): ?Reward
     {
         $sql = "SELECT id, id_player, points
             FROM {$this->table}
@@ -86,7 +84,7 @@ class RewardsRepository extends Model
     public function createReward(Reward $reward): bool
     {
         $sql = "INSERT INTO {$this->table} (id_player, id_gift, points, created_at, created_by, is_active)
-            VALUES (:id_edition, :name, :points, :created_at, :created_by, :is_active)";
+            VALUES (:id_player, :id_gift, :points, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
 

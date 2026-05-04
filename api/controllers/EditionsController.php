@@ -52,7 +52,7 @@ class EditionsController
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int|string $id): void
+    public function getEdition(int $id): void
     {
         try {
             $edition = $this->service->getEdition($id);
@@ -102,7 +102,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createEdition($user->login, EditionInputDTO::fromArray($data), $file);
+            $created = $this->service->createEdition(EditionInputDTO::fromArray($data), $file, $user->login);
 
             if ($created) {
                 // Succès
@@ -120,14 +120,14 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(string $token, int|string $id, array $data, array $file): void
+    public function updateEdition(string $token, int $id, array $data, array $file): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $edition = $this->service->updateEdition($id, $user->login, EditionInputDTO::fromArray($data), $file);
+            $edition = $this->service->updateEdition($id, EditionInputDTO::fromArray($data), $file, $user->login);
 
             if ($edition) {
                 // Succès
@@ -145,7 +145,7 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(string $token, int|string $id): void
+    public function deleteEdition(string $token, int $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur

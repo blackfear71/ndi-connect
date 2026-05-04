@@ -49,7 +49,7 @@ class SseController
     /**
      * Flux SSE de récupération des participants et cadeaux d'une édition
      */
-    public function getSseEdition(int|string $id): void
+    public function getSseEdition(int $id): void
     {
         // Contrôle id renseigné
         if ($id === null) {

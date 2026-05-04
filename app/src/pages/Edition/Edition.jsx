@@ -117,14 +117,14 @@ const Edition = () => {
                     setPlayers(processPlayersData(dataEdition.response.data.players));
 
                     setFormEdition({
-                        location: dataEdition.response.data.location,
-                        startDate: getDayFromDate(dataEdition.response.data.startDate),
-                        startTime: getLocalizedTime(dataEdition.response.data.startDate),
-                        endTime: getLocalizedTime(dataEdition.response.data.endDate),
-                        picture: dataEdition.response.data.picture,
+                        location: dataEdition.response.data.edition.location,
+                        startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
+                        startTime: getLocalizedTime(dataEdition.response.data.edition.startDate),
+                        endTime: getLocalizedTime(dataEdition.response.data.edition.endDate),
+                        picture: dataEdition.response.data.edition.picture,
                         pictureAction: null,
-                        theme: dataEdition.response.data.theme,
-                        challenge: dataEdition.response.data.challenge
+                        theme: dataEdition.response.data.edition.theme,
+                        challenge: dataEdition.response.data.edition.challenge
                     });
                 }),
                 take(1),
@@ -254,8 +254,8 @@ const Edition = () => {
             .pipe(
                 map((dataEdition) => {
                     // Fermeture modale
-                    openCloseEditionModal('', dataEdition.response.data);
-                    setEdition(dataEdition.response.data);
+                    openCloseEditionModal('', dataEdition.response.data.edition);
+                    setEdition(dataEdition.response.data.edition);
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
                 take(1),
@@ -429,7 +429,6 @@ const Edition = () => {
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
                 subscriptionGifts = giftsService.createGift(edition.id, {
-                    id_edition: edition.id,
                     name: formGift.name,
                     value: formGift.value,
                     quantity: formGift.quantity
@@ -511,7 +510,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.createReward(edition.id, formReward);
+        const subscriptionRewards = rewardsService.createReward(formReward.idGift, formReward.idPlayer);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 

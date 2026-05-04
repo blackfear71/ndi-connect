@@ -108,7 +108,7 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                 <PasswordInput
                                     title={t('settings.newPassword')}
                                     icon={<HiKey />}
-                                    name={'newPassword'}
+                                    name={'password'}
                                     placeholder={t('settings.newPassword')}
                                     value={formData.password}
                                     onChange={handleChange}

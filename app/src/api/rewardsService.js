@@ -18,17 +18,15 @@ class RewardsService {
 
     /**
      * Attribution d'un cadeau à un participant
-     * @param {*} idEdition Identifiant de l'édition
      * @param {*} body Données participant et cadeau
      * @returns Données retour
      */
-    createReward = (idEdition, body) => {
-        const url = `${this.apiUrl}/create`;
+    createReward = (idGift, idPlayer) => {
+        const url = `${this.apiUrl}/create/${idGift}/${idPlayer}`;
         return ajax({
             url,
             method: 'POST',
             headers: this.headers,
-            body,
             withCredentials: true
         });
     };

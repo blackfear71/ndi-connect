@@ -34,7 +34,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEdition(int|string $id): ?Edition
+    public function getEdition(int $id): ?Edition
     {
         $sql = "SELECT id, location, start_date, end_date, picture, theme, challenge
             FROM {$this->table}
@@ -87,7 +87,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEditionPicture(int|string $id): ?string
+    public function getEditionPicture(int $id): ?string
     {
         $sql = "SELECT picture
             FROM {$this->table}
@@ -130,15 +130,16 @@ class EditionsRepository extends Model
     /**
      * Modification d'une édition
      */
-    public function updateEdition(int|string $id, Edition $edition): bool
+    public function updateEdition(Edition $edition): bool
     {
         $sql = "UPDATE {$this->table}
-            SET location = :location, start_date = :start_date, end_date = :end_date, picture = :picture, theme = :theme, challenge = :challenge, :updated_at, :updated_by
+            SET location = :location, start_date = :start_date, end_date = :end_date, picture = :picture, theme = :theme, challenge = :challenge, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
+            'id'         => $edition->id,
             'location'   => $edition->location,
             'start_date' => $edition->startDate->format('Y-m-d H:i:s'),
             'end_date'   => $edition->endDate->format('Y-m-d H:i:s'),

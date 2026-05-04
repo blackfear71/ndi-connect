@@ -1,4 +1,5 @@
 <?php
+
 /** @var PDO $db */
 
 // Imports
@@ -68,7 +69,7 @@ $router->post('/users/create', function () use ($db): void {
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/password', function () use ($db): void {
+$router->patch('/users/password/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
@@ -76,7 +77,7 @@ $router->patch('/users/password', function () use ($db): void {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new UsersController($db))->updatePassword($token, $data);
+    (new UsersController($db))->updatePassword($token, $params['id'], $data);
 });
 
 /**
@@ -86,22 +87,28 @@ $router->patch('/users/reset/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
+
     // Appel contrôleur
-    (new UsersController($db))->resetPassword($token, $params['id']);
+    (new UsersController($db))->resetPassword($token, $id);
 });
 
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/update', function () use ($db): void {
+$router->patch('/users/update/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
+
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new UsersController($db))->updateUser($token, $data);
+    (new UsersController($db))->updateUser($token, $id, $data);
 });
 
 /**
@@ -111,6 +118,9 @@ $router->delete('/users/delete/:id', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $id = DataHelper::parseIntParam($params['id']);
+
     // Appel contrôleur
-    (new UsersController($db))->deleteUser($token, $params['id']);
+    (new UsersController($db))->deleteUser($token, $id);
 });

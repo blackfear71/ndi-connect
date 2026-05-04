@@ -37,7 +37,7 @@ class PlayersService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int|string $id): array
+    public function getEditionPlayers(int $id): array
     {
         // Liste des participants
         $dataPlayers = $this->repository->getEditionPlayers($id);
@@ -66,7 +66,7 @@ class PlayersService
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer(int|string $id): ?PlayerOutputDTO
+    public function getPlayer(int $id): ?PlayerOutputDTO
     {
         // Lecture du participant
         $player = $this->repository->getPlayer($id);
@@ -86,7 +86,7 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer(int|string $idEdition, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function createPlayer(int $idEdition, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$this->isValidPlayerData($user->level, $data, true)) {
@@ -95,9 +95,9 @@ class PlayersService
 
         // Construction de l'objet
         $player = new Player(
-            idEdition: (int) $idEdition,
-            name: $data->name,
-            points: (int) $data->points,
+            idEdition: $idEdition,
+            name: trim($data->name),
+            points: $data->points,
             createdBy: $user->login,
         );
 
@@ -108,7 +108,7 @@ class PlayersService
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int|string $idEdition, int|string $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function updatePlayer(int $idEdition, int $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
@@ -117,9 +117,9 @@ class PlayersService
 
         // Construction de l'objet
         $player = new Player(
-            id: (int) $idPlayer,
-            name: $data->name,
-            points: (int) ($data->points - $data->giveaway),
+            id: $idPlayer,
+            name: trim($data->name),
+            points: $data->points - $data->giveaway,
             updatedBy: $user->login,
         );
 
@@ -129,41 +129,23 @@ class PlayersService
         }
 
         // Don de points
-        if ($data->giveaway > 0 && $data->giveawayPlayerId !== null && $data->giveawayPlayerId !== 0) {
+        if ($data->giveaway !== null && $data->giveaway > 0 && $data->giveawayPlayerId !== null && $data->giveawayPlayerId !== 0) {
             $giveawayPlayer = new Player(
-                id: (int) $data->giveawayPlayerId,
-                points: (int) $data->giveaway,
+                id: $data->giveawayPlayerId,
+                points: $data->giveaway,
                 updatedBy: $user->login,
             );
 
-            return $this->repository->updatePlayerDelta($giveawayPlayer);
+            return $this->repository->updatePlayerPoints($giveawayPlayer);
         }
 
         return true;
     }
 
     /**
-     * Modification des points d'un participant
-     */
-    // TODO : chercher les "array $data" ou juste "array" pour vérifier s'il y a des oublis => OK pour "array $data", reste "array"
-    public function updatePlayerPoints(int|string $idPlayer, int $points, string $login): bool
-    {
-        // Construction de l'objet
-        $player = new Player(
-            id: $idPlayer,
-            points: $points,
-            updatedBy: $login,
-        );
-
-        // Modification des points d'un participant
-        return $this->repository->updatePlayerPoints($player);
-    }
-
-    /**
      * Modification des points d'un participant par ajout
      */
-    // TODO : voir pour supprimer cette méthode et utiliser celle au dessus qui est PRESQUE identique (delta à gérer côté service)
-    public function updatePlayerDelta(int|string $idPlayer, int $delta, string $login): bool
+    public function updatePlayerPoints(int $idPlayer, int $delta, string $login): bool
     {
         // Construction de l'objet
         $player = new Player(
@@ -173,13 +155,13 @@ class PlayersService
         );
 
         // Modification des points d'un participant
-        return $this->repository->updatePlayerDelta($player);
+        return $this->repository->updatePlayerPoints($player);
     }
 
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int|string $id, string $login): ?bool
+    public function deletePlayers(int $id, string $login): ?bool
     {
         // Contrôle des données
         if (!$id) {
@@ -193,7 +175,7 @@ class PlayersService
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int|string $idEdition, int|string $idPlayer, string $login): ?bool
+    public function deletePlayer(int $idEdition, int $idPlayer, string $login): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$idPlayer) {
@@ -209,7 +191,6 @@ class PlayersService
      */
     private function isValidPlayerData(int $userLevel, PlayerInputDTO $data, bool $isCreation): bool
     {
-        // TODO : revoir ce genre de tests partout (chercher "function isValid") car selon le type certains tests sont inutiles si pas nullable par exemple
         $name = trim($data->name);
         $giveaway = $data->giveaway ?? null;
         $giveawayPlayerId = $data->giveawayPlayerId ?? null;

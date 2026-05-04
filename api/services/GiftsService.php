@@ -37,7 +37,7 @@ class GiftsService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int|string $id): array
+    public function getEditionGifts(int $id): array
     {
         $gifts = $this->repository->getEditionGifts($id);
 
@@ -61,7 +61,7 @@ class GiftsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getGift(int|string $id): ?GiftOutputDTO
+    public function getGift(int $id): ?GiftOutputDTO
     {
         // Contrôle des données
         if (!$id) {
@@ -86,7 +86,7 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift(int|string $idEdition, string $login, GiftInputDTO $data): ?bool
+    public function createGift(int $idEdition, GiftInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$this->isValidGiftData($data)) {
@@ -94,10 +94,9 @@ class GiftsService
         }
 
         // Construction de l'objet
-        // TODO : des forçages de types à int permettraient de ne pas caster
         $gift = new Gift(
-            idEdition: (int) $idEdition,
-            name: $data->name,
+            idEdition: $idEdition,
+            name: trim($data->name),
             value: $data->value,
             quantity: $data->quantity,
             createdBy: $login,
@@ -110,7 +109,7 @@ class GiftsService
     /**
      * Modification d'un cadeau
      */
-    public function updateGift(int|string $idEdition, int|string $idGift, string $login, GiftInputDTO $data): ?bool
+    public function updateGift(int $idEdition, int $idGift, GiftInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$idGift) {
@@ -127,8 +126,8 @@ class GiftsService
 
         // Construction de l'objet
         $gift = new Gift(
-            id: (int) $idGift,
-            name: $data->name,
+            id: $idGift,
+            name: trim($data->name),
             value: $data->value,
             quantity: $data->quantity,
             updatedBy: $login,
@@ -141,7 +140,7 @@ class GiftsService
     /**
      * Suppression logique d'un cadeau
      */
-    public function deleteGift(int|string $idEdition, int|string $idGift, string $login): ?bool
+    public function deleteGift(int $idEdition, int $idGift, string $login): ?bool
     {
         // Contrôle des données
         if (!$idEdition || !$idGift) {
@@ -155,7 +154,7 @@ class GiftsService
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int|string $id, string $login): bool
+    public function deleteGifts(int $id, string $login): bool
     {
         return $this->repository->deleteGifts($id, $login);
     }

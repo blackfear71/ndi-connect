@@ -21,7 +21,6 @@ class SseService
     /**
      * Génère un bloc SSE (event + data)
      */
-    // TODO : voir si c'est array au lieu de mixed
     public function getSseEvent(string $event, mixed $data): string
     {
         return "event: {$event}\n"

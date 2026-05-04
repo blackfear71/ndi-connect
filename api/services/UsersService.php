@@ -86,8 +86,8 @@ class UsersService
         // Récupération des données utilisateur
         return new UserOutputDTO(
             id: $user->id,
-            login: $user->login,
-            token: $token,
+            login: trim($user->login),
+            token: trim($token),
             level: $user->level
         );
     }
@@ -95,10 +95,10 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(string $login): bool
+    public function disconnect(string $id): bool
     {
         // Récupération de l'utilisateur
-        $user = $this->repository->getActiveUserDataByLogin($login);
+        $user = $this->repository->getActiveUserDataById($id);
 
         // Suppression token de connexion
         return $this->repository->updateToken($user, NULL);
@@ -107,7 +107,7 @@ class UsersService
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser(string $login, UserInputDTO $data): ?bool
+    public function createUser(UserInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
         if (!$this->isValidCreateUserData($data)) {
@@ -115,14 +115,14 @@ class UsersService
         }
 
         // Contrôle login existant
-        if ($this->repository->getUserDataByLogin($data->login)) {
+        if (!$this->repository->checkLoginAvailable($data->login)) {
             return false;
         }
 
         // Construction de l'objet
         $user = new User(
-            login: $data->login,
-            password: password_hash($data->password, PASSWORD_DEFAULT),
+            login: trim($data->login),
+            password: password_hash(trim($data->password), PASSWORD_DEFAULT),
             level: $data->level,
             createdBy: $login
         );
@@ -134,14 +134,14 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(int|string $id, string $login): ?string
+    public function resetPassword(int $id, string $login): ?string
     {
         // Formatage des données mot de passe
         $newPassword = $this->generatePassword(15);
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         // Modification
-        if (!$this->repository->updatePassword($id, $login, $hash)) {
+        if (!$this->repository->updatePassword($id, $hash, $login)) {
             return null;
         }
 
@@ -151,7 +151,7 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(string $login, UserInputDTO $data): ?bool
+    public function updatePassword(int $id, UserInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
         if (!$this->isValidPasswordData($data)) {
@@ -159,10 +159,10 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataByLogin($login);
+        $user = $this->repository->getActiveUserDataById($id);
 
-        // Contrôle ancien mot de passe incorrect
-        if (!$user || !password_verify($data->oldPassword, $user->password)) {
+        // Contrôle cohérence login et ancien mot de passe incorrect
+        if (!$user || $data->login != $user->login || !password_verify($data->oldPassword, $user->password)) {
             return null;
         }
 
@@ -170,21 +170,23 @@ class UsersService
         $hash = password_hash($data->password, PASSWORD_DEFAULT);
 
         // Modification
-        return $this->repository->updatePassword($user->id, $user->login, $hash);
+        return $this->repository->updatePassword($user->id, $hash, $login);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $login, UserInputDTO $data): ?bool
+    public function updateUser(int $id, UserInputDTO $data, string $login): ?bool
     {
+        var_dump($data);
+
         // Contrôle des données
         if (!$this->isValidUpdateUserData($data)) {
             return null;
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $currentUser = $this->repository->getActiveUserDataById($data->id);
+        $currentUser = $this->repository->getActiveUserDataById($id);
 
         // Contrôle dernier admin actif si changement de rôle
         if ($currentUser && $currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
@@ -205,7 +207,7 @@ class UsersService
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int|string $id, string $login): ?bool
+    public function deleteUser(int $id, string $login): ?bool
     {
         // Contrôle des données
         if (!$id) {
@@ -229,8 +231,8 @@ class UsersService
      */
     private function isValidConnectionData(UserInputDTO $data): bool
     {
-        $login = trim($data->login ?? '');
-        $password = trim($data->password ?? '');
+        $login = trim($data->login);
+        $password = trim($data->password);
 
         return $login
             && $password;
@@ -241,13 +243,13 @@ class UsersService
      */
     private function isValidCreateUserData(UserInputDTO $data): bool
     {
-        $login = trim($data->login ?? '');
-        $password = trim($data->password ?? '');
-        $confirmPassword = trim($data->confirmPassword ?? '');
-        $level = $data->level ?? null;
+        $login = trim($data->login);
+        $password = trim($data->password);
+        $confirmPassword = trim($data->confirmPassword);
+        $level = $data->level;
 
-        return $login && $password && $confirmPassword
-            && $password === $confirmPassword
+        return $login
+            && $password && $confirmPassword && $password === $confirmPassword
             && is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
     }
 
@@ -256,9 +258,9 @@ class UsersService
      */
     private function isValidPasswordData(UserInputDTO $data): bool
     {
-        $oldPassword = trim($data->oldPassword ?? '');
-        $newPassword = trim($data->password ?? '');
-        $confirmPassword = trim($data->confirmPassword ?? '');
+        $oldPassword = trim($data->oldPassword);
+        $newPassword = trim($data->password);
+        $confirmPassword = trim($data->confirmPassword);
 
         return $oldPassword && $newPassword && $confirmPassword
             && $oldPassword !== $newPassword

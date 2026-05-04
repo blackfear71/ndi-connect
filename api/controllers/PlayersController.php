@@ -29,7 +29,7 @@ class PlayersController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int|string $idEdition): void
+    public function getEditionPlayers(int $idEdition): void
     {
         try {
             // Lecture de tous les enregistrements
@@ -51,7 +51,7 @@ class PlayersController
     /**
      * Insertion d'un enregistrement
      */
-    public function createPlayer(string $token, int|string $idEdition, array $data): void
+    public function createPlayer(string $token, int $idEdition, array $data): void
     {
         try {
             // Conversion DTO
@@ -79,7 +79,7 @@ class PlayersController
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer(string $token, int|string $idEdition, int|string $idPlayer, array $data): void
+    public function updatePlayer(string $token, int $idEdition, int $idPlayer, array $data): void
     {
         try {
             // Conversion DTO
@@ -107,7 +107,7 @@ class PlayersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deletePlayer(string $token, int|string $idEdition, int|string $idPlayer): void
+    public function deletePlayer(string $token, int $idEdition, int $idPlayer): void
     {
         try {
             // Contrôle authentification et niveau utilisateur

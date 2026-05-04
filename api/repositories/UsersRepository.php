@@ -85,7 +85,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur actif (via id)
      */
-    public function getActiveUserDataById(int|string $id): ?User
+    public function getActiveUserDataById(int $id): ?User
     {
         $sql = "SELECT id, login, level
             FROM {$this->table}
@@ -112,9 +112,9 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur (tous statuts)
      */
-    public function getUserDataByLogin(string $login): ?User
+    public function checkLoginAvailable(string $login): bool
     {
-        $sql = "SELECT id, login, level
+        $sql = "SELECT COUNT(*)
             FROM {$this->table}
             WHERE login = :login";
 
@@ -123,17 +123,7 @@ class UsersRepository extends Model
             'login' => $login
         ]);
 
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row) {
-            return null;
-        }
-
-        return new User(
-            id: (int) $row['id'],
-            login: $row['login'],
-            level: (int) $row['level']
-        );
+        return (int) $stmt->fetchColumn() === 0;
     }
 
     /**
@@ -160,19 +150,18 @@ class UsersRepository extends Model
      */
     public function createUser(User $user): bool
     {
-        $sql = "INSERT INTO {$this->table} (login, password, token, token_expires_at, level, created_at, created_by, is_active)
-            VALUES (:login, :password, :token, :token_expires_at, :level, :created_at, :created_by, :is_active)";
+        $sql = "INSERT INTO {$this->table} (login, password, level, created_at, created_by, is_active)
+            VALUES (:login, :password, :level, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'login'            => $user->login,
-            'password'         => $user->password,
-            'token'            => $user->token,
-            'level'            => $user->level,
-            'created_at'       => date('Y-m-d H:i:s'),
-            'created_by'       => $user->createdBy,
-            'is_active'        => 1
+            'login'      => $user->login,
+            'password'   => $user->password,
+            'level'      => $user->level,
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_by' => $user->createdBy,
+            'is_active'  => 1
         ]);
     }
 
@@ -199,10 +188,10 @@ class UsersRepository extends Model
     /**
      * Mise à jour mot de passe
      */
-    public function updatePassword(int|string $id, string $login, string $hash): bool
+    public function updatePassword(int $id, string $hash, string $login): bool
     {
         $sql = "UPDATE {$this->table}
-            SET token = :token, token_expires_at = :token_expires_at, updated_at = :updated_at, updated_by = :updated_by
+            SET password = :password, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
@@ -221,12 +210,13 @@ class UsersRepository extends Model
     public function updateUser(User $user, string $login): bool
     {
         $sql = "UPDATE {$this->table}
-            SET level = :token, updated_at = :updated_at, updated_by = :updated_by
+            SET level = :level, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
+            'id'         => $user->id,
             'level'      => $user->level,
             'updated_at' => date('Y-m-d H:i:s'),
             'updated_by' => $login

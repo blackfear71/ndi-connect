@@ -15,7 +15,7 @@ class Model
     /**
      * Suppression logique d'un enregistrement
      */
-    public function logicalDelete(int|string $id, string $login): bool
+    public function logicalDelete(int $id, string $login): bool
     {
         $sql = "UPDATE {$this->table}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
@@ -25,8 +25,8 @@ class Model
 
         return $stmt->execute([
             'id'         => $id,
-            'deleted_at' => $login,
-            'deleted_by' => date('Y-m-d H:i:s'),
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_by' => $login,
             'is_active'  => 0
         ]);
     }
@@ -34,7 +34,7 @@ class Model
     /**
      * Suppression physique d'un enregistrement
      */
-    public function physicalDelete(int|string $id): bool
+    public function physicalDelete(int $id): bool
     {
         $sql = "DELETE FROM {$this->table}
             WHERE id = :id";

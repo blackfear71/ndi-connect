@@ -1,11 +1,13 @@
 <?php
 
 // TODO : revoir l'écriture des routes pour que ce soir plus parant que "edition/1/6/58"
+// TODO : tout tester
 
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
 
+require_once __DIR__ . '/core/helpers/DataHelper.php';
 require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
 require_once __DIR__ . '/core/helpers/FileHelper.php';
 require_once __DIR__ . '/core/helpers/LoggerHelper.php';

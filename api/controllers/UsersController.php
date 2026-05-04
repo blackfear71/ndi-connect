@@ -92,7 +92,6 @@ class UsersController
 
             if ($user) {
                 // Token de connexion
-                // TODO : revoir les paramètres de setcookie
                 setcookie(
                     'token',
                     $user->token,
@@ -104,10 +103,6 @@ class UsersController
                         'samesite' => 'Strict'
                     ]
                 );
-
-                // Suppression du token pour ne pas le renvoyer dans la réponse
-                // TODO : à voir si ça marche j'en doute
-                unset($user->token);
 
                 // Succès
                 ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
@@ -132,12 +127,21 @@ class UsersController
 
             if ($user) {
                 // Déconnexion utilisateur
-                $disconnected = $this->service->disconnect($user->login);
+                $disconnected = $this->service->disconnect($user->id);
 
                 if ($disconnected) {
                     // Suppression token de connexion
-                    // TODO : revoir les paramètres de setcookie
-                    setcookie('token', '', time() - 3600, '/');
+                    setcookie(
+                        'token',
+                        '',
+                        [
+                            'expires' => time() - 3600,
+                            'path' => '/',
+                            'secure' => true,
+                            'httponly' => true,
+                            'samesite' => 'Strict'
+                        ]
+                    );
 
                     // Succès
                     ResponseHelper::success(null, MessageHelper::MSG_LOGOUT_SUCCESS);
@@ -168,7 +172,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($user->login, $dataDTO);
+            $created = $this->service->createUser($dataDTO, $user->login);
 
             if ($created !== null && $created !== false) {
                 // Succès
@@ -189,7 +193,7 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(string $token, int|string $id): void
+    public function resetPassword(string $token, int $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
@@ -214,7 +218,7 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(string $token, array $data): void
+    public function updatePassword(string $token, int $id, array $data): void
     {
         try {
             // Conversion DTO
@@ -225,7 +229,7 @@ class UsersController
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user->login, $dataDTO);
+                $updated = $this->service->updatePassword($id, $dataDTO, $user->login);
 
                 if ($updated) {
                     // Succès
@@ -247,7 +251,7 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $token, array $data): void
+    public function updateUser(string $token, int $id, array $data): void
     {
         try {
             // Conversion DTO
@@ -257,7 +261,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($user->login, $dataDTO);
+            $updated = $this->service->updateUser($id, $dataDTO, $user->login);
 
             if ($updated !== null && $updated !== false) {
                 // Succès
@@ -267,8 +271,7 @@ class UsersController
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la modification
-                // TODO : pas bien d'avoir $dataDTO->id ici ? à avoir dans la route ?
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $dataDTO->id, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $id, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -279,7 +282,7 @@ class UsersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteUser(string $token, int|string $id): void
+    public function deleteUser(string $token, int $id): void
     {
         try {
             // Contrôle authentification et niveau utilisateur

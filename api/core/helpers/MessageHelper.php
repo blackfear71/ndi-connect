@@ -19,6 +19,7 @@ class MessageHelper
     const ERR_INVALID_FILE = 'ERR_INVALID_FILE';
     const ERR_INVALID_FORMAT = 'ERR_INVALID_FORMAT';
     const ERR_INVALID_IMAGE = 'ERR_INVALID_IMAGE';
+    const ERR_INVALID_PARAMETER = 'ERR_INVALID_PARAMETER';
     const ERR_LOGIN_FAILED = 'ERR_LOGIN_FAILED';
     const ERR_LOGOUT_FAILED = 'ERR_LOGOUT_FAILED';
     const ERR_MISSING_PARAMS = 'ERR_MISSING_PARAMS';
@@ -67,6 +68,7 @@ class MessageHelper
         self::ERR_INVALID_FILE => 400,
         self::ERR_INVALID_FORMAT => 400,
         self::ERR_INVALID_IMAGE => 400,
+        self::ERR_INVALID_PARAMETER => 400,
         self::ERR_LOGIN_FAILED => 401,
         self::ERR_LOGOUT_FAILED => 401,
         self::ERR_MISSING_PARAMS => 400,
@@ -108,6 +110,7 @@ class MessageHelper
         self::ERR_INVALID_FILE => 'Fichier non renseigné dans %s de %s',
         self::ERR_INVALID_FORMAT => 'Type MIME invalide dans %s de %s',
         self::ERR_INVALID_IMAGE => 'Fichier invalide dans %s de %s',
+        self::ERR_INVALID_PARAMETER => 'Paramètre d\'entrée invalide : %s',
         self::ERR_LOGIN_FAILED => 'Échec d\'authentification dans %s de %s pour le login : %s',
         self::ERR_LOGOUT_FAILED => 'Erreur lors de la déconnexion dans %s de %s pour le login : %s',
         self::ERR_MISSING_PARAMS => 'Paramètres manquants dans %s de %s',

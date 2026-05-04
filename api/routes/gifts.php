@@ -1,4 +1,5 @@
 <?php
+
 /** @var PDO $db */
 
 // Imports
@@ -19,11 +20,14 @@ $router->post('/gifts/create/:idEdition', function (array $params) use ($db): vo
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new GiftsController($db))->createGift($token, $params['idEdition'], $data);
+    (new GiftsController($db))->createGift($token, $idEdition, $data);
 });
 
 /**
@@ -33,11 +37,15 @@ $router->patch('/gifts/update/:idEdition/:idGift', function (array $params) use 
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+    $idGift = DataHelper::parseIntParam($params['idGift']);
+
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new GiftsController($db))->updateGift($token, $params['idEdition'], $params['idGift'], $data);
+    (new GiftsController($db))->updateGift($token, $idEdition, $idGift, $data);
 });
 
 /**
@@ -47,6 +55,10 @@ $router->delete('/gifts/delete/:idEdition/:idGift', function (array $params) use
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+    $idGift = DataHelper::parseIntParam($params['idGift']);
+
     // Appel contrôleur
-    (new GiftsController($db))->deleteGift($token, $params['idEdition'], $params['idGift']);
+    (new GiftsController($db))->deleteGift($token, $idEdition, $idGift);
 });
