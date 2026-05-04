@@ -12,18 +12,18 @@ class GiftsRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int $id): array
+    public function getEditionGifts(int $idEdition): array
     {
         $sql = "SELECT g.id, g.id_edition, g.name, g.value, g.quantity, COUNT(r.id) AS reward_count
             FROM {$this->table} AS g
             LEFT JOIN {$this->rewardsTable} AS r ON r.id_gift = g.id AND r.is_active = 1
-            WHERE g.id_edition = :id AND g.is_active = 1
+            WHERE g.id_edition = :id_edition AND g.is_active = 1
             GROUP BY g.id, g.name, g.value, g.quantity
             ORDER BY g.name ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id_edition' => $idEdition
         ]);
 
         return array_map(fn($row) => new Gift(
@@ -39,7 +39,7 @@ class GiftsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getGift(int $id): ?Gift
+    public function getGift(int $idGift): ?Gift
     {
         $sql = "SELECT id, value, quantity
             FROM {$this->table}
@@ -47,7 +47,7 @@ class GiftsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idGift
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -108,16 +108,16 @@ class GiftsRepository extends Model
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int $id, string $login): bool
+    public function deleteGifts(int $idEdition, string $login): bool
     {
         $sql = "UPDATE {$this->table}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
-            WHERE id_edition = :id";
+            WHERE id_edition = :id_edition";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id'         => $id,
+            'id_edition' => $idEdition,
             'deleted_at' => date('Y-m-d H:i:s'),
             'deleted_by' => $login,
             'is_active'  => 0

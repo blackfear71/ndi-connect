@@ -350,7 +350,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
+                subscriptionPlayers = playersService.updatePlayer(formPlayer.id, {
                     name: formPlayer.name,
                     points: formPlayer.points,
                     giveaway: formPlayer.giveaway,
@@ -438,7 +438,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
-                subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
+                subscriptionGifts = giftsService.updateGift(formGift.id, {
                     name: formGift.name,
                     value: formGift.value,
                     quantity: formGift.quantity
@@ -658,7 +658,7 @@ const Edition = () => {
 
         const giftsService = new GiftsService();
 
-        const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
+        const subscriptionGifts = giftsService.deleteGift(idGift);
 
         subscriptionGifts
             .pipe(
@@ -695,7 +695,7 @@ const Edition = () => {
 
         const playersService = new PlayersService();
 
-        const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
+        const subscriptionPlayers = playersService.deletePlayer(idPlayer);
 
         subscriptionPlayers
             .pipe(
@@ -734,7 +734,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
+        const subscriptionRewards = rewardsService.deleteReward(idReward);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 

@@ -37,9 +37,14 @@ class GiftsService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int $id): array
+    public function getEditionGifts(int $idEdition): ?array
     {
-        $gifts = $this->repository->getEditionGifts($id);
+        // Contrôle des données
+        if (!$idEdition) {
+            return null;
+        }
+
+        $gifts = $this->repository->getEditionGifts($idEdition);
 
         return array_map(function ($gift) {
             // Calcul du nombre de cadeaux restants
@@ -61,15 +66,15 @@ class GiftsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getGift(int $id): ?GiftOutputDTO
+    public function getGift(int $idGift): ?GiftOutputDTO
     {
         // Contrôle des données
-        if (!$id) {
+        if (!$idGift) {
             return null;
         }
 
         // Lecture du cadeau
-        $gift = $this->repository->getGift($id);
+        $gift = $this->repository->getGift($idGift);
 
         if (!$gift) {
             return null;
@@ -109,10 +114,10 @@ class GiftsService
     /**
      * Modification d'un cadeau
      */
-    public function updateGift(int $idEdition, int $idGift, GiftInputDTO $data, string $login): ?bool
+    public function updateGift(int $idGift, GiftInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$idGift) {
+        if (!$idGift) {
             return null;
         }
 
@@ -120,7 +125,7 @@ class GiftsService
         $rewardCount = $this->getRewardsService()->getRewardCount($idGift);
 
         // Contrôle des données
-        if (!$this->isValidGiftData($data, $rewardCount)) {
+        if ($rewardCount === null || !$this->isValidGiftData($data, $rewardCount)) {
             return null;
         }
 
@@ -140,10 +145,10 @@ class GiftsService
     /**
      * Suppression logique d'un cadeau
      */
-    public function deleteGift(int $idEdition, int $idGift, string $login): ?bool
+    public function deleteGift(int $idGift, string $login): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$idGift) {
+        if (!$idGift) {
             return null;
         }
 
@@ -154,9 +159,14 @@ class GiftsService
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int $id, string $login): bool
+    public function deleteGifts(int $idEdition, string $login): ?bool
     {
-        return $this->repository->deleteGifts($id, $login);
+        // Contrôle des données
+        if (!$idEdition) {
+            return null;
+        }
+
+        return $this->repository->deleteGifts($idEdition, $login);
     }
 
     /**

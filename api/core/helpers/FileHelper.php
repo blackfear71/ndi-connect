@@ -12,7 +12,7 @@ class FileHelper
      */
     public static function checkFile(string $destination, ?string $fileName): ?string
     {
-        // Contrôle données renseignées
+        // Contrôle des données
         if (!$fileName || !$destination) {
             return null;
         }

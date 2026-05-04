@@ -32,7 +32,7 @@ class GiftsService {
      * @returns Données retour
      */
     createGift = (idEdition, body) => {
-        const url = `${this.apiUrl}/create/${idEdition}`;
+        const url = `${this.apiUrl}/create/edition/${idEdition}`;
         return ajax({
             url,
             method: 'POST',
@@ -44,13 +44,12 @@ class GiftsService {
 
     /**
      * Mise à jour cadeau
-     * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant cadeau
      * @param {*} body Données cadeau
      * @returns Données retour
      */
-    updateGift = (idEdition, idGift, body) => {
-        const url = `${this.apiUrl}/update/${idEdition}/${idGift}`;
+    updateGift = (idGift, body) => {
+        const url = `${this.apiUrl}/update/${idGift}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -62,12 +61,11 @@ class GiftsService {
 
     /**
      * Suppression d'un cadeau
-     * @param {*} idEdition Identifiant édition
      * @param {*} idGift Identifiant cadeau
      * @returns Données retour
      */
-    deleteGift = (idEdition, idGift) => {
-        const url = `${this.apiUrl}/delete/${idEdition}/${idGift}`;
+    deleteGift = (idGift) => {
+        const url = `${this.apiUrl}/delete/${idGift}`;
         return ajax({
             url,
             method: 'DELETE',

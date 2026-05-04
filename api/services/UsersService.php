@@ -95,10 +95,15 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(string $id): bool
+    public function disconnect(string $idUser): ?bool
     {
+        // Contrôle des données
+        if (!$idUser) {
+            return null;
+        }
+
         // Récupération de l'utilisateur
-        $user = $this->repository->getActiveUserDataById($id);
+        $user = $this->repository->getActiveUserDataById($idUser);
 
         // Suppression token de connexion
         return $this->repository->updateToken($user, NULL);
@@ -134,14 +139,19 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(int $id, string $login): ?string
+    public function resetPassword(int $idUser, string $login): ?string
     {
+        // Contrôle des données
+        if (!$idUser) {
+            return null;
+        }
+
         // Formatage des données mot de passe
         $newPassword = $this->generatePassword(15);
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         // Modification
-        if (!$this->repository->updatePassword($id, $hash, $login)) {
+        if (!$this->repository->updatePassword($idUser, $hash, $login)) {
             return null;
         }
 
@@ -151,15 +161,15 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(int $id, UserInputDTO $data, string $login): ?bool
+    public function updatePassword(int $idUser, UserInputDTO $data, string $login): ?bool
     {
         // Contrôle des données
-        if (!$this->isValidPasswordData($data)) {
+        if (!$idUser || !$this->isValidPasswordData($data)) {
             return null;
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataById($id);
+        $user = $this->repository->getActiveUserDataById($idUser);
 
         // Contrôle cohérence login et ancien mot de passe incorrect
         if (!$user || $data->login != $user->login || !password_verify($data->oldPassword, $user->password)) {
@@ -176,17 +186,15 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(int $id, UserInputDTO $data, string $login): ?bool
+    public function updateUser(int $idUser, UserInputDTO $data, string $login): ?bool
     {
-        var_dump($data);
-
         // Contrôle des données
-        if (!$this->isValidUpdateUserData($data)) {
+        if (!$idUser || !$this->isValidUpdateUserData($data)) {
             return null;
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $currentUser = $this->repository->getActiveUserDataById($id);
+        $currentUser = $this->repository->getActiveUserDataById($idUser);
 
         // Contrôle dernier admin actif si changement de rôle
         if ($currentUser && $currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
@@ -207,15 +215,15 @@ class UsersService
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int $id, string $login): ?bool
+    public function deleteUser(int $idUser, string $login): ?bool
     {
         // Contrôle des données
-        if (!$id) {
+        if (!$idUser) {
             return null;
         }
 
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataById($id);
+        $user = $this->repository->getActiveUserDataById($idUser);
 
         // Contrôle dernier admin actif si suppression
         if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
@@ -223,7 +231,7 @@ class UsersService
         }
 
         // Suppression logique de l'utilisateur
-        return $this->repository->logicalDelete($id, $login);
+        return $this->repository->logicalDelete($idUser, $login);
     }
 
     /**

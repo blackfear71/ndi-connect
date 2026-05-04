@@ -85,7 +85,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur actif (via id)
      */
-    public function getActiveUserDataById(int $id): ?User
+    public function getActiveUserDataById(int $idUser): ?User
     {
         $sql = "SELECT id, login, level
             FROM {$this->table}
@@ -93,7 +93,7 @@ class UsersRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idUser
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -131,18 +131,14 @@ class UsersRepository extends Model
      */
     public function isLastAdmin(): bool
     {
-        $sql = "SELECT COUNT(*) AS nbAdmin
+        $sql = "SELECT COUNT(*)
             FROM {$this->table}
             WHERE level = :level AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'level' => EnumUserRole::SUPERADMIN->value
-        ]);
+        $stmt->execute(['level' => EnumUserRole::SUPERADMIN->value]);
 
-        $count = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return ($count['nbAdmin'] == 1);
+        return (int) $stmt->fetchColumn() === 1;
     }
 
     /**
@@ -188,7 +184,7 @@ class UsersRepository extends Model
     /**
      * Mise à jour mot de passe
      */
-    public function updatePassword(int $id, string $hash, string $login): bool
+    public function updatePassword(int $idUser, string $hash, string $login): bool
     {
         $sql = "UPDATE {$this->table}
             SET password = :password, updated_at = :updated_at, updated_by = :updated_by
@@ -197,7 +193,7 @@ class UsersRepository extends Model
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id'         => $id,
+            'id'         => $idUser,
             'password'   => $hash,
             'updated_at' => date('Y-m-d H:i:s'),
             'updated_by' => $login

@@ -92,28 +92,12 @@ class UsersService {
     };
 
     /**
-     * Réinitialisation mot de passe
-     * @param {*} id Identifiant utilisateur
-     * @returns Message retour
-     */
-    resetPassword = (id) => {
-        const url = `${this.apiUrl}/reset/${id}`;
-        return ajax({
-            url,
-            method: 'PATCH',
-            headers: this.headers,
-            withCredentials: true
-        });
-    };
-
-    /**
      * Mise à jour mot de passe
-     * @param {*} id Identifiant utilisateur
      * @param {*} body Données mot de passe
      * @returns Message retour
      */
-    updatePassword = (id, body) => {
-        const url = `${this.apiUrl}/password/${id}`;
+    updatePassword = (body) => {
+        const url = `${this.apiUrl}/password`;
         return ajax({
             url,
             method: 'PATCH',
@@ -125,12 +109,12 @@ class UsersService {
 
     /**
      * Mise à jour utilisateur
-     * @param {*} id Identifiant utilisateur
+     * @param {*} idUser Identifiant utilisateur
      * @param {*} body Données utilisateur
      * @returns Liste des utilisateurs
      */
-    updateUser = (id, body) => {
-        const url = `${this.apiUrl}/update/${id}`;
+    updateUser = (idUser, body) => {
+        const url = `${this.apiUrl}/update/${idUser}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -141,12 +125,27 @@ class UsersService {
     };
 
     /**
+     * Réinitialisation mot de passe
+     * @param {*} idUser Identifiant utilisateur
+     * @returns Message retour
+     */
+    resetPassword = (idUser) => {
+        const url = `${this.apiUrl}/reset/${idUser}`;
+        return ajax({
+            url,
+            method: 'PATCH',
+            headers: this.headers,
+            withCredentials: true
+        });
+    };
+
+    /**
      * Suppression utilisateur
-     * @param {*} id Identifiant utilisateur
+     * @param {*} idUser Identifiant utilisateur
      * @returns Liste des utilisateurs
      */
-    deleteUser = (id) => {
-        const url = `${this.apiUrl}/delete/${id}`;
+    deleteUser = (idUser) => {
+        const url = `${this.apiUrl}/delete/${idUser}`;
         return ajax({
             url,
             method: 'DELETE',

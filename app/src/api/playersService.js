@@ -18,6 +18,7 @@ class PlayersService {
 
     /**
      * Récupération de tous les participants d'une édition
+     * @param {*} idEdition Identifiant édition
      * @returns Liste des participants
      */
     getEditionPlayers = (idEdition) => {
@@ -32,7 +33,7 @@ class PlayersService {
      * @returns Données retour
      */
     createPlayer = (idEdition, body) => {
-        const url = `${this.apiUrl}/create/${idEdition}`;
+        const url = `${this.apiUrl}/create/edition/${idEdition}`;
         return ajax({
             url,
             method: 'POST',
@@ -44,13 +45,12 @@ class PlayersService {
 
     /**
      * Mise à jour participant
-     * @param {*} idEdition Identifiant édition
      * @param {*} idPlayer Identifiant participant
      * @param {*} body Données participant
      * @returns Données retour
      */
-    updatePlayer = (idEdition, idPlayer, body) => {
-        const url = `${this.apiUrl}/update/${idEdition}/${idPlayer}`;
+    updatePlayer = (idPlayer, body) => {
+        const url = `${this.apiUrl}/update/${idPlayer}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -62,12 +62,11 @@ class PlayersService {
 
     /**
      * Suppression d'un participant
-     * @param {*} idEdition Identifiant édition
      * @param {*} idPlayer Identifiant participant
      * @returns Données retour
      */
-    deletePlayer = (idEdition, idPlayer) => {
-        const url = `${this.apiUrl}/delete/${idEdition}/${idPlayer}`;
+    deletePlayer = (idPlayer) => {
+        const url = `${this.apiUrl}/delete/${idPlayer}`;
         return ajax({
             url,
             method: 'DELETE',

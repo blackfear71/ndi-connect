@@ -37,10 +37,15 @@ class PlayersService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int $id): array
+    public function getEditionPlayers(int $idEdition): ?array
     {
+        // Contrôle des données
+        if (!$idEdition) {
+            return null;
+        }
+
         // Liste des participants
-        $dataPlayers = $this->repository->getEditionPlayers($id);
+        $dataPlayers = $this->repository->getEditionPlayers($idEdition);
 
         // Récupération des données participants
         return array_map(function ($player) {
@@ -66,10 +71,15 @@ class PlayersService
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer(int $id): ?PlayerOutputDTO
+    public function getPlayer(int $idPlayer): ?PlayerOutputDTO
     {
+        // Contrôle des données
+        if (!$idPlayer) {
+            return null;
+        }
+
         // Lecture du participant
-        $player = $this->repository->getPlayer($id);
+        $player = $this->repository->getPlayer($idPlayer);
 
         if (!$player) {
             return null;
@@ -108,10 +118,10 @@ class PlayersService
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int $idEdition, int $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function updatePlayer(int $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
+        if (!$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
             return null;
         }
 
@@ -145,8 +155,13 @@ class PlayersService
     /**
      * Modification des points d'un participant par ajout
      */
-    public function updatePlayerPoints(int $idPlayer, int $delta, string $login): bool
+    public function updatePlayerPoints(int $idPlayer, int $delta, string $login): ?bool
     {
+        // Contrôle des données
+        if (!$idPlayer) {
+            return null;
+        }
+
         // Construction de l'objet
         $player = new Player(
             id: $idPlayer,
@@ -161,24 +176,24 @@ class PlayersService
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int $id, string $login): ?bool
+    public function deletePlayers(int $idEdition, string $login): ?bool
     {
         // Contrôle des données
-        if (!$id) {
+        if (!$idEdition) {
             return null;
         }
 
         // Suppression logique de participants d'une édition
-        return $this->repository->deletePlayers($id, $login);
+        return $this->repository->deletePlayers($idEdition, $login);
     }
 
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int $idEdition, int $idPlayer, string $login): ?bool
+    public function deletePlayer(int $idPlayer, string $login): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$idPlayer) {
+        if (!$idPlayer) {
             return null;
         }
 

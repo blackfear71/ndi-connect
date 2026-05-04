@@ -12,36 +12,32 @@ class RewardsRepository extends Model
     /**
      * Lecture du nombre d'enregistrements
      */
-    public function getRewardCount(int $id): int
+    public function getRewardCount(int $idGift): int
     {
-        $sql = "SELECT COUNT(id) AS reward_count
+        $sql = "SELECT COUNT(id)
             FROM {$this->table}
-            WHERE id_gift = :id AND is_active = 1";
+            WHERE id_gift = :id_gift AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            'id' => $id
-        ]);
+        $stmt->execute(['id_gift' => $idGift]);
 
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        return $result['reward_count'] ?? 0;
+        return (int) $stmt->fetchColumn();
     }
 
     /**
      * Lecture des enregistrements d'un participant (y compris les cadeaux supprimés)
      */
-    public function getPlayerRewards(int $id): array
+    public function getPlayerRewards(int $idPlayer): array
     {
         $sql = "SELECT r.id, r.id_gift, g.name
             FROM {$this->table} AS r
             LEFT JOIN {$this->giftsTable} AS g ON g.id = r.id_gift
-            WHERE r.id_player = :id AND r.is_active = 1
+            WHERE r.id_player = :id_player AND r.is_active = 1
             ORDER BY r.created_at DESC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id_player' => $idPlayer
         ]);
 
         return array_map(fn($row) => new Reward(
@@ -54,7 +50,7 @@ class RewardsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getReward(int $id): ?Reward
+    public function getReward(int $idReward): ?Reward
     {
         $sql = "SELECT id, id_player, points
             FROM {$this->table}
@@ -62,7 +58,7 @@ class RewardsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idReward
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);

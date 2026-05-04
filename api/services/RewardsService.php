@@ -48,24 +48,29 @@ class RewardsService
     /**
      * Récupération du nombre d'attributions d'un cadeau
      */
-    public function getRewardCount(int $idGift): int
+    public function getRewardCount(int $idGift): ?int
     {
+        // Contrôle des données
+        if (!$idGift) {
+            return null;
+        }
+
         return $this->repository->getRewardCount($idGift);
     }
 
     /**
      * Récupération des cadeaux d'un participant
      */
-    public function getPlayerRewards(int $id): array
+    public function getPlayerRewards(int $idPlayer): array
     {
-        return $this->repository->getPlayerRewards($id);
+        return $this->repository->getPlayerRewards($idPlayer);
     }
 
     /**
      * Attribution d'un cadeau
      */
     public function createReward(int $idGift, int $idPlayer, string $login): ?bool
-    {        
+    {
         // Contrôle des données
         if (!$idGift || !$idPlayer) {
             return null;
@@ -89,7 +94,7 @@ class RewardsService
         $rewardCount = $this->getRewardCount($idGift);
 
         // Contrôle attribution autorisée
-        if (!$this->isValidRewardData($gift, $rewardCount, $player)) {
+        if ($rewardCount === null || !$this->isValidRewardData($gift, $rewardCount, $player)) {
             return null;
         }
 

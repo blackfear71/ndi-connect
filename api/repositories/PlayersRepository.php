@@ -11,16 +11,16 @@ class PlayersRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int $id): array
+    public function getEditionPlayers(int $idEdition): array
     {
         $sql = "SELECT id, name, points
             FROM {$this->table}
-            WHERE id_edition = :id AND is_active = 1
+            WHERE id_edition = :id_edition AND is_active = 1
             ORDER BY name ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id_edition' => $idEdition
         ]);
 
         return array_map(fn($row) => new Player(
@@ -33,7 +33,7 @@ class PlayersRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getPlayer(int $id): ?Player
+    public function getPlayer(int $idPlayer): ?Player
     {
         $sql = "SELECT id, name, points
             FROM {$this->table}
@@ -41,7 +41,7 @@ class PlayersRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idPlayer
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -119,16 +119,16 @@ class PlayersRepository extends Model
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int $id, string $login): bool
+    public function deletePlayers(int $idEdition, string $login): bool
     {
         $sql = "UPDATE {$this->table} 
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active 
-            WHERE id_edition = :id";
+            WHERE id_edition = :id_edition";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id'         => $id,
+            'id_edition' => $idEdition,
             'deleted_at' => date('Y-m-d H:i:s'),
             'deleted_by' => $login,
             'is_active'  => 0

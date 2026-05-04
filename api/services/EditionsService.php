@@ -67,15 +67,15 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int $id): ?EditionResponseDTO
+    public function getEdition(int $idEdition): ?EditionResponseDTO
     {
-        // Contrôle données renseignées
-        if (!$id) {
+        // Contrôle des données
+        if (!$idEdition) {
             return null;
         }
 
         // Lecture de l'édition
-        $edition = $this->repository->getEdition($id);
+        $edition = $this->repository->getEdition($idEdition);
 
         if (!$edition) {
             return null;
@@ -96,10 +96,10 @@ class EditionsService
         );
 
         // Récupération des données cadeaux
-        $gifts = $this->getGiftsService()->getEditionGifts($id);
+        $gifts = $this->getGiftsService()->getEditionGifts($idEdition);
 
         // Récupération des données participants
-        $players = $this->getPlayersService()->getEditionPlayers($id);
+        $players = $this->getPlayersService()->getEditionPlayers($idEdition);
 
         // Récupération des données édition
         return new EditionResponseDTO(
@@ -165,10 +165,10 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int $id, EditionInputDTO $data, ?array $file, string $login): ?EditionResponseDTO
+    public function updateEdition(int $idEdition, EditionInputDTO $data, ?array $file, string $login): ?EditionResponseDTO
     {
         // Contrôle des données
-        if (!$id || !$this->isValidEditionData($data)) {
+        if (!$idEdition || !$this->isValidEditionData($data)) {
             return null;
         }
 
@@ -178,11 +178,11 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage($id, $data->pictureAction, $file['picture'] ?? null);
+        $picture = $this->uploadImage($idEdition, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
-            id: $id,
+            id: $idEdition,
             location: trim($data->location),
             startDate: $startDate,
             endDate: $endDate,
@@ -198,26 +198,31 @@ class EditionsService
         }
 
         // Lecture de l'édition
-        return $this->getEdition($id);
+        return $this->getEdition($idEdition);
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(int $id, string $login): ?bool
+    public function deleteEdition(int $idEdition, string $login): ?bool
     {
+        // Contrôle des données
+        if (!$idEdition) {
+            return null;
+        }
+
         // Suppression logique des cadeaux
-        if (!$this->getGiftsService()->deleteGifts($id, $login)) {
+        if (!$this->getGiftsService()->deleteGifts($idEdition, $login)) {
             return null;
         }
 
         // Suppression logique des participants
-        if (!$this->getPlayersService()->deletePlayers($id, $login)) {
+        if (!$this->getPlayersService()->deletePlayers($idEdition, $login)) {
             return null;
         }
 
         // Suppression logique de l'édition
-        return $this->repository->logicalDelete($id, $login);
+        return $this->repository->logicalDelete($idEdition, $login);
     }
 
     /**
@@ -236,10 +241,10 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage(?int $id, ?string $action, ?array $file): ?string
+    private function uploadImage(?int $idEdition, ?string $action, ?array $file): ?string
     {
         // Récupération de l'image de l'édition
-        $picture = $id ? $this->repository->getEditionPicture($id) : null;
+        $picture = $idEdition ? $this->repository->getEditionPicture($idEdition) : null;
 
         // Traitement de l'image
         switch ($action) {

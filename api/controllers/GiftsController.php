@@ -79,7 +79,7 @@ class GiftsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateGift(string $token, int $idEdition, int $idGift, array $data): void
+    public function updateGift(string $token, int $idGift, array $data): void
     {
         try {
             // Conversion DTO
@@ -89,7 +89,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($idEdition, $idGift, $dataDTO, $user->login);
+            $updated = $this->service->updateGift($idGift, $dataDTO, $user->login);
 
             if ($updated) {
                 // Succès
@@ -107,14 +107,14 @@ class GiftsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteGift(string $token, int $idEdition, int $idGift): void
+    public function deleteGift(string $token, int $idGift): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteGift($idEdition, $idGift, $user->login);
+            $deleted = $this->service->deleteGift($idGift, $user->login);
 
             if ($deleted) {
                 // Succès

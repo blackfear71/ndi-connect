@@ -27,11 +27,11 @@ class EditionsService {
 
     /**
      * Récupération d'une édition
-     * @param {*} id Identifiant édition
+     * @param {*} idEdition Identifiant édition
      * @returns Edition
      */
-    getEdition = (id) => {
-        const url = `${this.apiUrl}/find/${id}`;
+    getEdition = (idEdition) => {
+        const url = `${this.apiUrl}/edition/${idEdition}`;
         return ajax.get(url, this.headers);
     };
 
@@ -63,12 +63,12 @@ class EditionsService {
 
     /**
      * Mise à jour édition
-     * @param {*} id Identifiant édition
+     * @param {*} idEdition Identifiant édition
      * @param {*} body Données édition
      * @returns Données édition à jour
      */
-    updateEdition = (id, body) => {
-        const url = `${this.apiUrl}/update/${id}`;
+    updateEdition = (idEdition, body) => {
+        const url = `${this.apiUrl}/update/${idEdition}`;
         return ajax({
             url,
             method: 'POST', // La méthode doit être POST pour remplir $_POST et $_FILES côté back
@@ -80,11 +80,11 @@ class EditionsService {
 
     /**
      * Suppression édition
-     * @param {*} id Identifiant édition
+     * @param {*} idEdition Identifiant édition
      * @returns Message retour
      */
-    deleteEdition = (id) => {
-        const url = `${this.apiUrl}/delete/${id}`;
+    deleteEdition = (idEdition) => {
+        const url = `${this.apiUrl}/delete/${idEdition}`;
         return ajax({
             url,
             method: 'DELETE',

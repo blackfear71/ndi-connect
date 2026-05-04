@@ -34,7 +34,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEdition(int $id): ?Edition
+    public function getEdition(int $idEdition): ?Edition
     {
         $sql = "SELECT id, location, start_date, end_date, picture, theme, challenge
             FROM {$this->table}
@@ -42,7 +42,7 @@ class EditionsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idEdition
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -87,7 +87,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEditionPicture(int $id): ?string
+    public function getEditionPicture(int $idEdition): ?string
     {
         $sql = "SELECT picture
             FROM {$this->table}
@@ -95,7 +95,7 @@ class EditionsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $id
+            'id' => $idEdition
         ]);
 
         $result = $stmt->fetchColumn();

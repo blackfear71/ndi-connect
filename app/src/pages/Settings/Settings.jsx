@@ -194,7 +194,7 @@ const Settings = () => {
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.updatePassword(auth.id, formPassword);
+        const subscriptionUsers = usersService.updatePassword(formPassword);
 
         subscriptionUsers
             .pipe(

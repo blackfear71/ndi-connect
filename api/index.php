@@ -1,6 +1,5 @@
 <?php
 
-// TODO : revoir l'écriture des routes pour que ce soir plus parant que "edition/1/6/58"
 // TODO : tout tester
 
 // Imports

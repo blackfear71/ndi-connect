@@ -8,12 +8,12 @@ require_once 'controllers/RewardsController.php';
 /**
  * Insertion d'un enregistrement
  */
-$router->post('/rewards/create/:idGift/:idPlayer', function (array $params) use ($db): void {
+$router->post('/rewards/create/gift/:idGift/player/:idPlayer', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idGift = DataHelper::parseIntParam($params['idReward']);
+    $idGift = DataHelper::parseIntParam($params['idGift']);
     $idPlayer = DataHelper::parseIntParam($params['idPlayer']);
 
     // Appel contrôleur

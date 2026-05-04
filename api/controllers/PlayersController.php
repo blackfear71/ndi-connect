@@ -79,7 +79,7 @@ class PlayersController
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer(string $token, int $idEdition, int $idPlayer, array $data): void
+    public function updatePlayer(string $token, int $idPlayer, array $data): void
     {
         try {
             // Conversion DTO
@@ -89,7 +89,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $dataDTO);
+            $updated = $this->service->updatePlayer($idPlayer, $user, $dataDTO);
 
             if ($updated) {
                 // Succès
@@ -107,14 +107,14 @@ class PlayersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deletePlayer(string $token, int $idEdition, int $idPlayer): void
+    public function deletePlayer(string $token, int $idPlayer): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user->login);
+            $deleted = $this->service->deletePlayer($idPlayer, $user->login);
 
             if ($deleted) {
                 // Succès
