@@ -95,7 +95,7 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(string $idUser): ?bool
+    public function disconnect(int $idUser): ?bool
     {
         // Contrôle des données
         if (!$idUser) {
@@ -104,6 +104,11 @@ class UsersService
 
         // Récupération de l'utilisateur
         $user = $this->repository->getActiveUserDataById($idUser);
+
+        // Contrôle utilisateur récupéré
+        if (!$user) {
+            return null;
+        }
 
         // Suppression token de connexion
         return $this->repository->updateToken($user, NULL);
@@ -196,8 +201,13 @@ class UsersService
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
         $currentUser = $this->repository->getActiveUserDataById($idUser);
 
+        // Contrôle utilisateur récupéré
+        if (!$currentUser) {
+            return null;
+        }
+
         // Contrôle dernier admin actif si changement de rôle
-        if ($currentUser && $currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+        if ($currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
             return false;
         }
 
@@ -224,6 +234,11 @@ class UsersService
 
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
         $user = $this->repository->getActiveUserDataById($idUser);
+
+        // Contrôle utilisateur récupéré
+        if (!$user) {
+            return null;
+        }
 
         // Contrôle dernier admin actif si suppression
         if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
@@ -258,7 +273,7 @@ class UsersService
 
         return $login
             && $password && $confirmPassword && $password === $confirmPassword
-            && is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
+            && in_array($level, array_column(EnumUserRole::cases(), 'value'));
     }
 
     /**
@@ -280,9 +295,7 @@ class UsersService
      */
     private function isValidUpdateUserData(UserInputDTO $data): bool
     {
-        $level = $data->level ?? null;
-
-        return is_numeric($level) && $level >= EnumUserRole::USER->value && $level <= EnumUserRole::SUPERADMIN->value;
+        return in_array($data->level, array_column(EnumUserRole::cases(), 'value'));
     }
 
     /**

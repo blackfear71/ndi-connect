@@ -129,7 +129,7 @@ class UsersController
                 // Déconnexion utilisateur
                 $disconnected = $this->service->disconnect($user->id);
 
-                if ($disconnected !== null && $disconnected === true) {
+                if ($disconnected) {
                     // Suppression token de connexion
                     setcookie(
                         'token',
@@ -174,10 +174,10 @@ class UsersController
             // Insertion d'un enregistrement
             $created = $this->service->createUser($dataDTO, $user->login);
 
-            if ($created !== null && $created !== false) {
+            if ($created === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
-            } elseif ($created !== null && $created === false) {
+            } elseif ($created === false) {
                 // Alerte
                 ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$dataDTO->login]);
             } else {
@@ -263,10 +263,10 @@ class UsersController
             // Suppression logique d'un enregistrement
             $updated = $this->service->updateUser($idUser, $dataDTO, $user->login);
 
-            if ($updated !== null && $updated !== false) {
+            if ($updated === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
-            } elseif ($updated !== null && $updated === false) {
+            } elseif ($updated === false) {
                 // Alerte
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
@@ -291,10 +291,10 @@ class UsersController
             // Suppression logique d'un enregistrement
             $deleted = $this->service->deleteUser($idUser, $user->login);
 
-            if ($deleted !== null && $deleted !== false) {
+            if ($deleted === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
-            } elseif ($deleted !== null && $deleted === false) {
+            } elseif ($deleted === false) {
                 // Alerte
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {

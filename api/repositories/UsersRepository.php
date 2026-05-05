@@ -111,7 +111,7 @@ class UsersRepository extends Model
     }
 
     /**
-     * Récupération données utilisateur (tous statuts)
+     * Vérifie si le login existe déjà
      */
     public function checkLoginAvailable(string $login): bool
     {

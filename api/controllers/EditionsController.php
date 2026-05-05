@@ -55,6 +55,7 @@ class EditionsController
     public function getEdition(int $idEdition): void
     {
         try {
+            // Lecture d'un enregistrement
             $edition = $this->service->getEdition($idEdition);
 
             if ($edition) {

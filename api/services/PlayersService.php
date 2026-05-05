@@ -204,13 +204,13 @@ class PlayersService
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData(int $userLevel, PlayerInputDTO $data, bool $isCreation): bool
+    private function isValidPlayerData(int $level, PlayerInputDTO $data, bool $isCreation): bool
     {
         $name = trim($data->name);
         $giveaway = $data->giveaway ?? null;
         $giveawayPlayerId = $data->giveawayPlayerId ?? null;
 
-        $isPointsValid = is_numeric($data->points) && ($userLevel == EnumUserRole::SUPERADMIN->value || $data->points >= 0);
+        $isPointsValid = $level == EnumUserRole::SUPERADMIN->value || $data->points >= 0;
         $isGiveawayValid = $isCreation || (is_numeric($giveaway) && is_numeric($giveawayPlayerId) && (($giveaway > 0 && $giveawayPlayerId !== 0) || ($giveaway == 0 && $giveawayPlayerId == 0)));
 
         return $name !== ''

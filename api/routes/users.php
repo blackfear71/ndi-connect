@@ -68,7 +68,7 @@ $router->post('/users/create', function () use ($db): void {
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/password', function (array $params) use ($db): void {
+$router->patch('/users/password', function () use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
