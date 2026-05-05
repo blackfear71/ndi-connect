@@ -38,8 +38,8 @@ const Settings = () => {
 
     // Local states
     const [formPassword, setFormPassword] = useState({
+        password: '',
         oldPassword: '',
-        newPassword: '',
         confirmPassword: ''
     });
     const [formUser, setFormUser] = useState({
@@ -222,8 +222,8 @@ const Settings = () => {
      */
     const resetFormPassword = () => {
         setFormPassword({
+            password: '',
             oldPassword: '',
-            newPassword: '',
             confirmPassword: ''
         });
     };
@@ -309,8 +309,7 @@ const Settings = () => {
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
 
-                subscriptionUsers = usersService.updateUser({
-                    id: formUser.id,
+                subscriptionUsers = usersService.updateUser(formUser.id, {
                     level: formUser.level
                 });
                 break;

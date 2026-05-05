@@ -26,6 +26,7 @@ export const getMessageTranslationKey = (code, params, t) => {
         ERR_INVALID_FILE: 'errors.invalidFile',
         ERR_INVALID_FORMAT: 'errors.invalidFormat',
         ERR_INVALID_IMAGE: 'errors.invalidImage',
+        ERR_INVALID_PARAMETER: 'errors.unknownError',
         ERR_LOGIN_FAILED: 'errors.loginFailed',
         ERR_LOGOUT_FAILED: 'errors.logoutFailed',
         ERR_MISSING_PARAMS: 'errors.unknownError',

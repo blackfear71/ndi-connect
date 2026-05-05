@@ -55,7 +55,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
                             </span>
                             <span className="d-flex align-items-center gap-1 edition-item-counter">
                                 <IoGiftSharp size={15} />
-                                {p?.rewards.length}
+                                {p?.rewards?.length ?? 0}
                             </span>
                         </div>
                     </div>

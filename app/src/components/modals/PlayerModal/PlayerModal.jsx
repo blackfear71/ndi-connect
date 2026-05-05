@@ -69,18 +69,18 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         switch (action) {
             case 'add':
                 setFormData((prev) => {
-                    const currentDelta = parseInt(prev.delta) || 0;
+                    const currentDelta = parseInt(prev.points) || 0;
                     const nextDelta = currentDelta < 0 && auth.level < EnumUserRole.SUPERADMIN ? 0 : currentDelta + 1;
 
                     return {
                         ...prev,
-                        delta: nextDelta
+                        points: nextDelta
                     };
                 });
                 break;
             case 'remove':
                 setFormData((prev) => {
-                    const currentDelta = parseInt(prev.delta) || 0;
+                    const currentDelta = parseInt(prev.points) || 0;
                     let nextDelta;
 
                     if (auth.level >= EnumUserRole.SUPERADMIN) {
@@ -93,7 +93,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
 
                     return {
                         ...prev,
-                        delta: nextDelta
+                        points: nextDelta
                     };
                 });
                 break;
@@ -137,7 +137,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
     const handleChangeSelect = (e) => {
         setFormData((prev) => ({
             ...prev,
-            giveawayId: parseInt(e.target.value)
+            giveawayPlayerId: parseInt(e.target.value)
         }));
     };
 
@@ -157,11 +157,11 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         }
 
         // Contrôle que les points sont >= 0 (sauf SUPERADMIN)
-        const delta = parseInt(formData.delta, 10);
+        const delta = parseInt(formData.points, 10);
 
         if (
-            formData.delta === null ||
-            formData.delta === undefined ||
+            formData.points === null ||
+            formData.points === undefined ||
             isNaN(delta) ||
             (auth.level < EnumUserRole.SUPERADMIN && delta < 0)
         ) {
@@ -173,8 +173,11 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         if (action === EnumAction.UPDATE) {
             // Contrôle le don de points
             if (
-                (formData.giveawayId !== null && formData.giveawayId !== undefined && formData.giveawayId !== 0 && !formData.giveaway) ||
-                (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayId)
+                (formData.giveawayPlayerId !== null &&
+                    formData.giveawayPlayerId !== undefined &&
+                    formData.giveawayPlayerId !== 0 &&
+                    !formData.giveaway) ||
+                (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayPlayerId)
             ) {
                 setModalMessage({ code: 'errors.invalidGiveaway', type: 'error' });
                 return;
@@ -255,7 +258,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                     title={t('edition.givePoints')}
                                     icon={<GiTwoCoins />}
                                     name={'points'}
-                                    value={formData.delta}
+                                    value={formData.points}
                                     onChangeDown={() => handleChangePoints('remove')}
                                     onChangeUp={() => handleChangePoints('add')}
                                 />
@@ -273,7 +276,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                         name={'playerGiveaway'}
                                         defaultOption={{ key: 0, value: 0, label: t('edition.chooseParticipant') }}
                                         options={getGivewayOptions()}
-                                        value={formData.giveawayId}
+                                        value={formData.giveawayPlayerId}
                                         onChange={handleChangeSelect}
                                     />
 

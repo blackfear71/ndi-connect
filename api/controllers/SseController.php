@@ -8,11 +8,10 @@ class SseController
 {
     private const controllerName = 'SseController';
 
-    private $giftsService = null;
-    private $playersService = null;
-
-    private $db;
-    private $service;
+    private PDO $db;
+    private SseService $service;
+    private ?GiftsService $giftsService = null;
+    private ?PlayersService $playersService = null;
 
     /**
      * Constructeur par défaut
@@ -50,10 +49,10 @@ class SseController
     /**
      * Flux SSE de récupération des participants et cadeaux d'une édition
      */
-    public function getSseEdition(int|string $id): void
+    public function getSseEdition(int $idEdition): void
     {
         // Contrôle id renseigné
-        if ($id === null) {
+        if ($idEdition === null) {
             echo $this->service->getSseEvent('error', 'ID d\'édition manquant');
             flush();
             return;
@@ -93,7 +92,7 @@ class SseController
 
                 // Evènement de récupération des cadeaux
                 try {
-                    $gifts = $this->getGiftsService()->getEditionGifts($id);
+                    $gifts = $this->getGiftsService()->getEditionGifts($idEdition);
 
                     if ($gifts !== null) {
                         $newGiftsHash = md5(json_encode($gifts));
@@ -112,7 +111,7 @@ class SseController
 
                 // Evènement de récupération des participants
                 try {
-                    $players = $this->getPlayersService()->getEditionPlayers($id);
+                    $players = $this->getPlayersService()->getEditionPlayers($idEdition);
 
                     if ($players !== null) {
                         $newPlayersHash = md5(json_encode($players));

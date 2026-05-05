@@ -25,9 +25,6 @@ class LoggerHelper
 
             // Nom du fichier, ex : logs/error_logs_2025-06-06.log
             switch ($level) {
-                case 'ERROR':
-                    $filename = $logDir . '/error_logs_' . date('Y-m-d') . '.log';
-                    break;
                 case 'INFO':
                     $filename = $logDir . '/info_logs_' . date('Y-m-d') . '.log';
                     break;
@@ -36,6 +33,10 @@ class LoggerHelper
                     break;
                 case 'WARNING':
                     $filename = $logDir . '/warning_logs_' . date('Y-m-d') . '.log';
+                    break;
+                case 'ERROR':
+                default:
+                    $filename = $logDir . '/error_logs_' . date('Y-m-d') . '.log';
                     break;
             }
 

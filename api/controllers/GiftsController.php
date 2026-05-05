@@ -4,15 +4,17 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/GiftInputDTO.php';
+
 require_once 'services/GiftsService.php';
 
 class GiftsController
 {
     private const controllerName = 'GiftsController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private GiftsService $service;
 
     /**
      * Constructeur par défaut
@@ -27,7 +29,7 @@ class GiftsController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int|string $idEdition): void
+    public function getEditionGifts(int $idEdition): void
     {
         try {
             // Lecture de tous les enregistrements
@@ -49,14 +51,17 @@ class GiftsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createGift(string $token, int|string $idEdition, array $data): void
+    public function createGift(string $token, int $idEdition, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = GiftInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createGift($idEdition, $user['login'], $data);
+            $created = $this->service->createGift($idEdition, $dataDTO, $user->login);
 
             if ($created) {
                 // Succès
@@ -74,14 +79,17 @@ class GiftsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateGift(string $token, int|string $idEdition, int|string $idGift, array $data): void
+    public function updateGift(string $token, int $idGift, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = GiftInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($idEdition, $idGift, $user['login'], $data);
+            $updated = $this->service->updateGift($idGift, $dataDTO, $user->login);
 
             if ($updated) {
                 // Succès
@@ -99,14 +107,14 @@ class GiftsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteGift(string $token, int|string $idEdition, int|string $idGift): void
+    public function deleteGift(string $token, int $idGift): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteGift($idEdition, $idGift, $user['login']);
+            $deleted = $this->service->deleteGift($idGift, $user->login);
 
             if ($deleted) {
                 // Succès

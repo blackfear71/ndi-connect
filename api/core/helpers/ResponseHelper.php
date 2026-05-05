@@ -15,11 +15,11 @@ class ResponseHelper
 
         // Réponse
         http_response_code($httpCode);
-        echo json_encode([
-            'status' => 'error',
-            'message' => $code,
-            'data' => null
-        ]);
+        echo json_encode(new ApiResponseDTO(
+            status: 'error',
+            data: null,
+            message: $code,
+        ));
     }
 
     /**
@@ -29,11 +29,11 @@ class ResponseHelper
     {
         // Réponse
         http_response_code(200);
-        echo json_encode([
-            'status' => 'info',
-            'message' => $code,
-            'data' => $data
-        ]);
+        echo json_encode(new ApiResponseDTO(
+            status: 'info',
+            data: $data,
+            message: $code,
+        ));
     }
 
     /**
@@ -55,11 +55,11 @@ class ResponseHelper
     {
         // Réponse
         http_response_code(200);
-        echo json_encode([
-            'status' => 'success',
-            'message' => $code,
-            'data' => $data
-        ]);
+        echo json_encode(new ApiResponseDTO(
+            status: 'success',
+            data: $data,
+            message: $code,
+        ));
     }
 
     /**
@@ -76,10 +76,10 @@ class ResponseHelper
 
         // Réponse
         http_response_code($httpCode);
-        echo json_encode([
-            'status' => 'warning',
-            'message' => $code,
-            'data' => null
-        ]);
+        echo json_encode(new ApiResponseDTO(
+            status: 'warning',
+            data: null,
+            message: $code,
+        ));
     }
 }

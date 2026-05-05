@@ -56,19 +56,19 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
         e.preventDefault();
 
         // Contrôle que les mots de passe sont renseignés
-        if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
+        if (!formData.oldPassword || !formData.password || !formData.confirmPassword) {
             setModalMessage({ code: 'errors.invalidPassword', type: 'error' });
             return;
         }
 
         // Contrôle que le nouveau mot de passe est différent de l'ancien
-        if (formData.oldPassword === formData.newPassword) {
+        if (formData.oldPassword === formData.password) {
             setModalMessage({ code: 'errors.passwordIdentical', type: 'error' });
             return;
         }
 
         // Contrôle que les nouveaux mots de passe correspondent
-        if (formData.newPassword !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             setModalMessage({ code: 'errors.passwordMatch', type: 'error' });
             return;
         }
@@ -108,9 +108,9 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                 <PasswordInput
                                     title={t('settings.newPassword')}
                                     icon={<HiKey />}
-                                    name={'newPassword'}
+                                    name={'password'}
                                     placeholder={t('settings.newPassword')}
-                                    value={formData.newPassword}
+                                    value={formData.password}
                                     onChange={handleChange}
                                     maxLength={100}
                                     required={true}

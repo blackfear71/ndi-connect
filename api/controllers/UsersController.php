@@ -4,20 +4,22 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/UserInputDTO.php';
+
 require_once 'services/UsersService.php';
 
 class UsersController
 {
     private const controllerName = 'UsersController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private UsersService $service;
 
     /**
      * Constructeur par défaut
      */
-    public function __construct(object $db)
+    public function __construct(PDO $db)
     {
         $this->db = $db;
         $this->auth = new Auth($db);
@@ -27,11 +29,11 @@ class UsersController
     /**
      * Contrôle authentification
      */
-    public function checkAuth(string|null $token, bool $initLoad = false): void
+    public function checkAuth(?string $token, bool $initLoad = false): void
     {
         try {
             // Contrôle authentification
-            $user = $token ? $this->service->checkAuth($token) : null;
+            $user = $this->service->checkAuth($token);
 
             if ($user) {
                 // Succès
@@ -82,14 +84,17 @@ class UsersController
     public function connect(array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Connexion utilisateur
-            $user = $this->service->connect($data);
+            $user = $this->service->connect($dataDTO);
 
             if ($user) {
                 // Token de connexion
                 setcookie(
                     'token',
-                    $user['token'],
+                    $user->token,
                     [
                         'expires' => time() + 3600 * 24, // 1 jour (identique à la durée stockée en base)
                         'path' => '/',
@@ -99,14 +104,11 @@ class UsersController
                     ]
                 );
 
-                // Suppression du token pour ne pas le renvoyer dans la réponse
-                unset($user['token']);
-
                 // Succès
                 ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
             } else {
                 // Échec de la connexion
-                ResponseHelper::error(MessageHelper::ERR_LOGIN_FAILED, [__FUNCTION__, self::controllerName, $data['login']]);
+                ResponseHelper::error(MessageHelper::ERR_LOGIN_FAILED, [__FUNCTION__, self::controllerName, $dataDTO->login]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -125,17 +127,27 @@ class UsersController
 
             if ($user) {
                 // Déconnexion utilisateur
-                $disconnected = $this->service->disconnect($user['login']);
+                $disconnected = $this->service->disconnect($user->id);
 
                 if ($disconnected) {
                     // Suppression token de connexion
-                    setcookie('token', '', time() - 3600, '/');
+                    setcookie(
+                        'token',
+                        '',
+                        [
+                            'expires' => time() - 3600,
+                            'path' => '/',
+                            'secure' => true,
+                            'httponly' => true,
+                            'samesite' => 'Strict'
+                        ]
+                    );
 
                     // Succès
                     ResponseHelper::success(null, MessageHelper::MSG_LOGOUT_SUCCESS);
                 } else {
                     // Échec de la déconnexion
-                    ResponseHelper::error(MessageHelper::ERR_LOGOUT_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
+                    ResponseHelper::error(MessageHelper::ERR_LOGOUT_FAILED, [__FUNCTION__, self::controllerName, $user->id]);
                 }
             } else {
                 // Utilisateur non trouvé
@@ -153,18 +165,21 @@ class UsersController
     public function createUser(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($user['login'], $data);
+            $created = $this->service->createUser($dataDTO, $user->login);
 
-            if ($created !== null && $created !== false) {
+            if ($created === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
-            } elseif ($created !== null && $created === false) {
+            } elseif ($created === false) {
                 // Alerte
-                ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$data['login']]);
+                ResponseHelper::warning(MessageHelper::WRN_USER_EXISTS, [$dataDTO->login]);
             } else {
                 // Échec de la création
                 ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
@@ -178,21 +193,21 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(string $token, int|string $id): void
+    public function resetPassword(string $token, int $idUser): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $newPassword = $this->service->resetPassword($user['login'], $id);
+            $newPassword = $this->service->resetPassword($idUser, $user->login);
 
             if ($newPassword) {
                 // Succès
                 ResponseHelper::info($newPassword, MessageHelper::MSG_RESET_PASSWORD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_RESET_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $id]);
+                ResponseHelper::error(MessageHelper::ERR_RESET_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $idUser]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -206,19 +221,22 @@ class UsersController
     public function updatePassword(string $token, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification
             $user = $this->service->checkAuth($token);
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user['login'], $data);
+                $updated = $this->service->updatePassword($user->id, $dataDTO, $user->login);
 
                 if ($updated) {
                     // Succès
                     ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
                 } else {
                     // Échec de la modification
-                    ResponseHelper::error(MessageHelper::ERR_UPDATE_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $user['login']]);
+                    ResponseHelper::error(MessageHelper::ERR_UPDATE_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $user->id]);
                 }
             } else {
                 // Utilisateur non trouvé
@@ -233,24 +251,27 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $token, array $data): void
+    public function updateUser(string $token, int $idUser, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = UserInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($user['login'], $data);
+            $updated = $this->service->updateUser($idUser, $dataDTO, $user->login);
 
-            if ($updated !== null && $updated !== false) {
+            if ($updated === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
-            } elseif ($updated !== null && $updated === false) {
+            } elseif ($updated === false) {
                 // Alerte
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $data['id'], json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idUser, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -261,24 +282,24 @@ class UsersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteUser(string $token, int|string $id): void
+    public function deleteUser(string $token, int $idUser): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteUser($id, $user['login']);
+            $deleted = $this->service->deleteUser($idUser, $user->login);
 
-            if ($deleted !== null && $deleted !== false) {
+            if ($deleted === true) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
-            } elseif ($deleted !== null && $deleted === false) {
+            } elseif ($deleted === false) {
                 // Alerte
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $id]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idUser]);
             }
         } catch (Exception $e) {
             // Exception levée

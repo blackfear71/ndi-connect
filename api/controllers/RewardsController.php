@@ -10,9 +10,9 @@ class RewardsController
 {
     private const controllerName = 'RewardsController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private RewardsService $service;
 
     /**
      * Constructeur par défaut
@@ -27,21 +27,21 @@ class RewardsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createReward(string $token, int|string $idEdition, array $data): void
+    public function createReward(string $token, int $idGift, int $idPlayer): void
     {
         try {
             // Contrôle autorisation et niveau
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($user['login'], $idEdition, $data['idGift'], $data['idPlayer']);
+            $created = $this->service->createReward($idGift, $idPlayer, $user->login);
 
             if ($created) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode(['idGift' => $idGift, 'idPlayer' => $idPlayer])]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -52,14 +52,14 @@ class RewardsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward(string $token, int|string $idEdition, int|string $idReward): void
+    public function deleteReward(string $token, int $idReward): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteReward($user['login'], $idEdition, $idReward);
+            $deleted = $this->service->deleteReward($idReward, $user->login);
 
             if ($deleted) {
                 // Succès

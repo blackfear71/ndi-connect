@@ -57,9 +57,9 @@ const Edition = () => {
     const [formPlayer, setFormPlayer] = useState({
         id: null,
         name: '',
-        delta: 0,
+        points: 0,
         giveaway: 0,
-        giveawayId: 0
+        giveawayPlayerId: 0
     });
     const [formReward, setFormReward] = useState({
         idReward: null,
@@ -343,18 +343,18 @@ const Edition = () => {
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
                     id_edition: edition.id,
                     name: formPlayer.name,
-                    delta: formPlayer.delta
+                    points: formPlayer.points
                 });
                 break;
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                subscriptionPlayers = playersService.updatePlayer(edition.id, formPlayer.id, {
+                subscriptionPlayers = playersService.updatePlayer(formPlayer.id, {
                     name: formPlayer.name,
-                    delta: formPlayer.delta,
+                    points: formPlayer.points,
                     giveaway: formPlayer.giveaway,
-                    giveawayId: formPlayer.giveawayId
+                    giveawayPlayerId: formPlayer.giveawayPlayerId
                 });
                 break;
         }
@@ -391,9 +391,9 @@ const Edition = () => {
         setFormPlayer({
             id: null,
             name: '',
-            delta: 0,
+            points: 0,
             giveaway: 0,
-            giveawayId: 0
+            giveawayPlayerId: 0
         });
     };
 
@@ -429,7 +429,6 @@ const Edition = () => {
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
                 subscriptionGifts = giftsService.createGift(edition.id, {
-                    id_edition: edition.id,
                     name: formGift.name,
                     value: formGift.value,
                     quantity: formGift.quantity
@@ -439,7 +438,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
-                subscriptionGifts = giftsService.updateGift(edition.id, formGift.id, {
+                subscriptionGifts = giftsService.updateGift(formGift.id, {
                     name: formGift.name,
                     value: formGift.value,
                     quantity: formGift.quantity
@@ -511,7 +510,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.createReward(edition.id, formReward);
+        const subscriptionRewards = rewardsService.createReward(formReward.idGift, formReward.idPlayer);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 
@@ -659,7 +658,7 @@ const Edition = () => {
 
         const giftsService = new GiftsService();
 
-        const subscriptionGifts = giftsService.deleteGift(edition.id, idGift);
+        const subscriptionGifts = giftsService.deleteGift(idGift);
 
         subscriptionGifts
             .pipe(
@@ -696,7 +695,7 @@ const Edition = () => {
 
         const playersService = new PlayersService();
 
-        const subscriptionPlayers = playersService.deletePlayer(edition.id, idPlayer);
+        const subscriptionPlayers = playersService.deletePlayer(idPlayer);
 
         subscriptionPlayers
             .pipe(
@@ -735,7 +734,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.deleteReward(edition.id, idReward);
+        const subscriptionRewards = rewardsService.deleteReward(idReward);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 

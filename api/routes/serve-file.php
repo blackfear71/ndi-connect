@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Renvoie le fichier demandé
  */

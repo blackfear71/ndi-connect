@@ -6,7 +6,7 @@ require_once 'services/UsersService.php';
 
 class Auth
 {
-    private $service;
+    private UsersService $service;
 
     /**
      * Constructeur
@@ -19,7 +19,7 @@ class Auth
     /**
      * Contrôle authentification et niveau utilisateur
      */
-    public function checkAuthAndLevel(string $token, int $minimumLevel): array
+    public function checkAuthAndLevel(string $token, int $minimumLevel): UserOutputDTO
     {
         // Contrôle authentification
         $user = $this->service->checkAuth($token);
@@ -29,7 +29,7 @@ class Auth
         }
 
         // Contrôle du niveau utilisateur
-        if ($user['level'] < $minimumLevel) {
+        if ($user->level < $minimumLevel) {
             throw new Exception(MessageHelper::ERR_UNAUTHORIZED_ACTION);
         }
 

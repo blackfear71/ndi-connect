@@ -2,102 +2,136 @@
 // Imports
 require_once 'core/functions/Model.php';
 
+require_once 'models/entities/Player.php';
+
 class PlayersRepository extends Model
 {
-    protected $table = 'players';
+    protected string $table = 'players';
 
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int|string $id): array
+    public function getEditionPlayers(int $idEdition): array
     {
-        $sql = "SELECT id, name, points FROM {$this->table} WHERE id_edition = :id AND is_active = 1 ORDER BY name ASC";
+        $sql = "SELECT id, name, points
+            FROM {$this->table}
+            WHERE id_edition = :id_edition AND is_active = 1
+            ORDER BY name ASC";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([
+            'id_edition' => $idEdition
+        ]);
+
+        return array_map(fn($row) => new Player(
+            id: (int) $row['id'],
+            name: $row['name'],
+            points: (int) $row['points']
+        ), $stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
-     * Suppression logique des participants d'une édition
+     * Lecture d'un enregistrement par Id
      */
-    public function deletePlayers(int|string $id, string $login): bool
+    public function getPlayer(int $idPlayer): ?Player
     {
-        $data['deleted_at'] = date('Y-m-d H:i:s');
-        $data['deleted_by'] = $login;
-        $data['is_active'] = 0;
+        $sql = "SELECT id, name, points
+            FROM {$this->table}
+            WHERE id = :id AND is_active = 1";
 
-        foreach ($data as $key => $value) {
-            $fields[] = "$key = :$key";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $idPlayer
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
         }
 
-        $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id_edition = :id";
-        $stmt = $this->db->prepare($sql);
-
-        $data['id'] = $id;
-        return $stmt->execute($data);
+        return new Player(
+            id: (int) $row['id'],
+            name: $row['name'],
+            points: (int) $row['points']
+        );
     }
 
     /**
      * Insertion d'un joueur
      */
-    public function createPlayer(string $login, array $data): string
+    public function createPlayer(Player $player): bool
     {
-        $data['created_at'] = date('Y-m-d H:i:s');
-        $data['created_by'] = $login;
+        $sql = "INSERT INTO {$this->table} (id_edition, name, points, created_at, created_by, is_active)
+            VALUES (:id_edition, :name, :points, :created_at, :created_by, :is_active)";
 
-        $sql = "INSERT INTO {$this->table} (id_edition, name, points, created_at, created_by) VALUES (:id_edition, :name, :delta, :created_at, :created_by)";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
 
-        return $this->db->lastInsertId();
+        return $stmt->execute([
+            'id_edition' => $player->idEdition,
+            'name'       => $player->name,
+            'points'     => $player->points,
+            'created_at' => date('Y-m-d H:i:s'),
+            'created_by' => $player->createdBy,
+            'is_active'  => 1
+        ]);
     }
 
     /**
      * Modification d'un joueur par Id
      */
-    public function updatePlayer(int|string $id, string $login, array $data): bool
+    public function updatePlayer(Player $player): bool
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = $login;
+        $sql = "UPDATE {$this->table} 
+            SET name = :name, points = points + :delta, updated_at = :updated_at, updated_by = :updated_by 
+            WHERE id = :id";
 
-        $sql = "UPDATE {$this->table} SET name = :name, points = points + :delta, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
-        $data['id'] = $id;
-
-        return $stmt->execute($data);
+        return $stmt->execute([
+            'id'         => $player->id,
+            'name'       => $player->name,
+            'delta'      => $player->points,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $player->updatedBy
+        ]);
     }
 
     /**
-     * Modification d'un joueur par Id (don ou récupération de points)
+     * Modification d'un joueur par Id
      */
-    public function updatePlayerDelta(int|string $id, string $login, int $delta): bool
+    public function updatePlayerPoints(Player $player): bool
     {
-        $data['delta'] = $delta;
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = $login;
+        $sql = "UPDATE {$this->table}
+            SET points = points + :delta, updated_at = :updated_at, updated_by = :updated_by
+            WHERE id = :id";
 
-        $sql = "UPDATE {$this->table} SET points = points + :delta, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
-        $data['id'] = $id;
-
-        return $stmt->execute($data);
+        return $stmt->execute([
+            'id'         => $player->id,
+            'delta'      => $player->points,
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => $player->updatedBy
+        ]);
     }
 
     /**
-     * Modification des points d'un joueur par Id
+     * Suppression logique des participants d'une édition
      */
-    public function updatePlayerPoints(int|string $id, string $login, array $data): bool
+    public function deletePlayers(int $idEdition, string $login): bool
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
-        $data['updated_by'] = $login;
+        $sql = "UPDATE {$this->table} 
+            SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active 
+            WHERE id_edition = :id_edition";
 
-        $sql = "UPDATE {$this->table} SET points = :points, updated_at = :updated_at, updated_by = :updated_by WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
-        $data['id'] = $id;
-
-        return $stmt->execute($data);
+        return $stmt->execute([
+            'id_edition' => $idEdition,
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_by' => $login,
+            'is_active'  => 0
+        ]);
     }
 }

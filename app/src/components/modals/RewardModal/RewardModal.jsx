@@ -103,7 +103,7 @@ const RewardModal = ({
 
         // Ouverture de la modale de confirmation
         onConfirm({
-            content: t('edition.deleteReward', { gift: reward.name, player: player.name }),
+            content: t('edition.deleteReward', { gift: reward.giftName, player: player.name }),
             action: 'deleteReward',
             data: reward.id
         });
@@ -161,8 +161,8 @@ const RewardModal = ({
                                 <div className="modal-group-content-title">{t('edition.gifts')}</div>
 
                                 {/* Valeur */}
-                                <div className={`modal-group-content-value ${player?.rewards.length > 0 ? 'gold' : 'gray'}`}>
-                                    {player?.rewards.length ?? 0}
+                                <div className={`modal-group-content-value ${player?.rewards?.length > 0 ? 'gold' : 'gray'}`}>
+                                    {player?.rewards?.length ?? 0}
                                 </div>
                             </div>
                         </div>
@@ -200,14 +200,14 @@ const RewardModal = ({
                                 <div className="modal-group-content-title">{t('edition.obtainedGifts')}</div>
 
                                 {/* Liste */}
-                                {player?.rewards.length > 0 ? (
+                                {player?.rewards?.length > 0 ? (
                                     <>
                                         {player.rewards.map((r) => (
                                             <div
                                                 key={r.id}
                                                 className="d-flex align-items-center justify-content-between pt-2 pb-2 gap-2 reward-modal-gift-row"
                                             >
-                                                <div className="reward-modal-gift-name">{r.name}</div>
+                                                <div className="reward-modal-gift-name">{r.giftName}</div>
                                                 {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                                                     <Button
                                                         onClick={() => handleDelete(r)}

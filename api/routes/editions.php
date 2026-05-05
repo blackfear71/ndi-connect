@@ -1,4 +1,6 @@
 <?php
+/** @var PDO $db */
+
 // Imports
 require_once 'controllers/EditionsController.php';
 
@@ -13,9 +15,12 @@ $router->get('/editions/all', function () use ($db): void {
 /**
  * Lecture d'un enregistrement
  */
-$router->get('/editions/find/:id', function (array $params) use ($db): void {
+$router->get('/editions/edition/:idEdition', function (array $params) use ($db): void {
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+
     // Appel contrôleur
-    (new EditionsController($db))->getEdition($params['id']);
+    (new EditionsController($db))->getEdition($idEdition);
 });
 
 /**
@@ -43,21 +48,27 @@ $router->post('/editions/create', function () use ($db): void {
 /**
  * Modification d'un enregistrement
  */
-$router->post('/editions/update/:id', function (array $params) use ($db): void {
+$router->post('/editions/update/:idEdition', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+
     // Appel contrôleur
-    (new EditionsController($db))->updateEdition($token, $params['id'], $_POST, $_FILES);
+    (new EditionsController($db))->updateEdition($token, $idEdition, $_POST, $_FILES);
 });
 
 /**
  * Suppression logique d'un enregistrement
  */
-$router->delete('/editions/delete/:id', function (array $params) use ($db): void {
+$router->delete('/editions/delete/:idEdition', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+
     // Appel contrôleur
-    (new EditionsController($db))->deleteEdition($token, $params['id']);
+    (new EditionsController($db))->deleteEdition($token, $idEdition);
 });

@@ -4,15 +4,17 @@ require_once 'core/functions/Auth.php';
 
 require_once 'enums/EnumUserRole.php';
 
+require_once 'models/dtos/PlayerInputDTO.php';
+
 require_once 'services/PlayersService.php';
 
 class PlayersController
 {
     private const controllerName = 'PlayersController';
 
-    private $db;
-    private $auth;
-    private $service;
+    private PDO $db;
+    private Auth $auth;
+    private PlayersService $service;
 
     /**
      * Constructeur par défaut
@@ -27,7 +29,7 @@ class PlayersController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int|string $idEdition): void
+    public function getEditionPlayers(int $idEdition): void
     {
         try {
             // Lecture de tous les enregistrements
@@ -49,14 +51,17 @@ class PlayersController
     /**
      * Insertion d'un enregistrement
      */
-    public function createPlayer(string $token, int|string $idEdition, array $data): void
+    public function createPlayer(string $token, int $idEdition, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = PlayerInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createPlayer($idEdition, $user, $data);
+            $created = $this->service->createPlayer($idEdition, $user, $dataDTO);
 
             if ($created) {
                 // Succès
@@ -74,14 +79,17 @@ class PlayersController
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer(string $token, int|string $idEdition, int|string $idPlayer, array $data): void
+    public function updatePlayer(string $token, int $idPlayer, array $data): void
     {
         try {
+            // Conversion DTO
+            $dataDTO = PlayerInputDTO::fromArray($data);
+
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($idEdition, $idPlayer, $user, $data);
+            $updated = $this->service->updatePlayer($idPlayer, $user, $dataDTO);
 
             if ($updated) {
                 // Succès
@@ -99,14 +107,14 @@ class PlayersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deletePlayer(string $token, int|string $idEdition, int|string $idPlayer): void
+    public function deletePlayer(string $token, int $idPlayer): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deletePlayer($idEdition, $idPlayer, $user['login']);
+            $deleted = $this->service->deletePlayer($idPlayer, $user->login);
 
             if ($deleted) {
                 // Succès

@@ -1,9 +1,9 @@
 <?php
 class Database
 {
-    private static $env = null;
+    private static ?array $env = null;
 
-    public $conn;
+    public ?PDO $conn;
 
     /**
      * Connexion à la base de données

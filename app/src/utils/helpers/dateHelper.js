@@ -2,7 +2,7 @@ import i18next from 'i18next';
 
 /**
  * Retourne une date au format YYYY-MM-DD (pour les champs de formulaire)
- * @param {string|Date} date Date à convertir
+ * @param {*} date Date à convertir
  * @returns Date formatée
  */
 export const getDayFromDate = (date) => {
@@ -21,8 +21,8 @@ export const getDayFromDate = (date) => {
 
 /**
  * Récupère une date formatée selon la langue active
- * @param date Date à convertir
- * @param options Options Intl.DateTimeFormat
+ * @param {*} date Date à convertir
+ * @param {*} options Options Intl.DateTimeFormat
  * @returns Date formatée
  */
 export const getLocalizedDate = (date, options = {}) => {

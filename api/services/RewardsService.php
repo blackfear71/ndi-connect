@@ -7,11 +7,10 @@ require_once 'repositories/RewardsRepository.php';
 
 class RewardsService
 {
-    private $giftsService = null;
-    private $playersService = null;
-
-    private $db;
-    private $repository;
+    private PDO $db;
+    private ?GiftsService $giftsService = null;
+    private ?PlayersService $playersService = null;
+    private RewardsRepository $repository;
 
     /**
      * Constructeur par défaut
@@ -42,31 +41,41 @@ class RewardsService
         if ($this->playersService === null) {
             $this->playersService = new PlayersService($this->db);
         }
-        
+
         return $this->playersService;
     }
 
     /**
      * Récupération du nombre d'attributions d'un cadeau
      */
-    public function getRewardCount(int|string $idGift): int
+    public function getRewardCount(int $idGift): ?int
     {
+        // Contrôle des données
+        if (!$idGift) {
+            return null;
+        }
+
         return $this->repository->getRewardCount($idGift);
     }
 
     /**
      * Récupération des cadeaux d'un participant
      */
-    public function getPlayerRewards(int|string $id): array
+    public function getPlayerRewards(int $idPlayer): array
     {
-        return $this->repository->getPlayerRewards($id);
+        return $this->repository->getPlayerRewards($idPlayer);
     }
 
     /**
      * Attribution d'un cadeau
      */
-    public function createReward(string $login, int|string $idEdition, int|string $idGift, int|string $idPlayer): bool|null
+    public function createReward(int $idGift, int $idPlayer, string $login): ?bool
     {
+        // Contrôle des données
+        if (!$idGift || !$idPlayer) {
+            return null;
+        }
+
         // Récupération du cadeau
         $gift = $this->getGiftsService()->getGift($idGift);
 
@@ -85,82 +94,65 @@ class RewardsService
         $rewardCount = $this->getRewardCount($idGift);
 
         // Contrôle attribution autorisée
-        if (!$this->isValidRewardData($gift, $rewardCount, $player)) {
+        if ($rewardCount === null || !$this->isValidRewardData($gift, $rewardCount, $player)) {
             return null;
         }
 
-        // Insertion d'un enregistrement
-        $dataReward = $this->processDataReward($player, $gift);
+        // Construction de l'objet
+        $reward = new Reward(
+            idPlayer: $player->id,
+            idGift: $gift->id,
+            points: $gift->value,
+            createdBy: $login,
+        );
 
-        if ($idEdition && $idPlayer && $this->repository->create($login, $dataReward)) {
-            $dataPlayer = $this->processDataPlayer($player, $gift);
-
-            // Suppression des points du participant
-            if ($this->getPlayersService()->updatePlayerPoints($idPlayer, $login, $dataPlayer)) {
-                return true;
-            }
+        // Insertion
+        if (!$this->repository->createReward($reward)) {
+            return null;
         }
 
-        return null;
+        // Suppression des points du participant
+        return $this->getPlayersService()->updatePlayerPoints($idPlayer, -1 * $gift->value, $login);
     }
 
     /**
      * Suppression logique de l'attribution d'un cadeau
      */
-    public function deleteReward(string $login, int|string $idEdition, int|string $idReward): bool|null
+    public function deleteReward(int $idReward, string $login): ?bool
     {
-        // Récupération de l'attribution du cadeau du participant
-        $reward = $this->repository->find($idReward);
-
-        // Suppression logique de l'attribution
-        if ($idEdition && $idReward && $reward && $this->repository->logicalDelete($idReward, $login)) {
-            // Récupération des points pour le participant
-            if ($this->getPlayersService()->updatePlayerDelta($reward['id_player'], $login, $reward['points'])) {
-                return true;
-            }
+        // Contrôle des données
+        if (!$idReward) {
+            return null;
         }
 
-        return null;
+        // Récupération de l'attribution du cadeau du participant
+        $reward = $this->repository->getReward($idReward);
+
+        if (!$reward) {
+            return null;
+        }
+
+        // Suppression logique de l'attribution
+        if (!$this->repository->logicalDelete($idReward, $login)) {
+            return null;
+        }
+
+        // Récupération des points pour le participant
+        return $this->getPlayersService()->updatePlayerPoints($reward->idPlayer, $reward->points, $login);
     }
 
     /**
      * Contrôle de cohérence des données
      */
-    private function isValidRewardData(array $gift, int $rewardCount, array $player): bool
+    private function isValidRewardData(GiftOutputDTO $gift, int $rewardCount, PlayerOutputDTO $player): bool
     {
         // Contrôle quantité restante
-        $remainingQuantity = $gift['quantity'] - $rewardCount;
+        $remainingQuantity = $gift->quantity - $rewardCount;
 
         // Contrôle points participant
-        $enoughPoints = $player['points'] >= $gift['value'];
+        $enoughPoints = $player->points >= $gift->value;
 
         return $remainingQuantity > 0
             && $enoughPoints;
-    }
-
-    /**
-     * Formate les données avant traitement SQL (attribution)
-     */
-    private function processDataReward(array $player, array $gift): array
-    {
-        $sqlData = [
-            'id_player' => $player['id'],
-            'id_gift'   => $gift['id'],
-            'points'    => $gift['value']
-        ];
-
-        return $sqlData;
-    }
-
-    /**
-     * Formate les données avant traitement SQL (participant)
-     */
-    private function processDataPlayer(array $player, array $gift): array
-    {
-        $sqlData = [
-            'points' => $player['points'] - $gift['value']
-        ];
-
-        return $sqlData;
     }
 }

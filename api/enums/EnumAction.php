@@ -1,5 +1,4 @@
 <?php
-
 enum EnumAction: string
 {
     case CREATE = 'create';

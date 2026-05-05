@@ -1,4 +1,6 @@
 <?php
+/** @var PDO $db */
+
 // Imports
 require_once 'controllers/UsersController.php';
 
@@ -80,35 +82,44 @@ $router->patch('/users/password', function () use ($db): void {
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/reset/:id', function (array $params) use ($db): void {
+$router->patch('/users/update/:idUser', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
-    // Appel contrôleur
-    (new UsersController($db))->resetPassword($token, $params['id']);
-});
-
-/**
- * Modification d'un enregistrement
- */
-$router->patch('/users/update', function () use ($db): void {
-    // Token
-    $token = $_COOKIE['token'] ?? null;
+    // Paramètres
+    $idUser = DataHelper::parseIntParam($params['idUser']);
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new UsersController($db))->updateUser($token, $data);
+    (new UsersController($db))->updateUser($token, $idUser, $data);
+});
+
+/**
+ * Modification d'un enregistrement
+ */
+$router->patch('/users/reset/:idUser', function (array $params) use ($db): void {
+    // Token
+    $token = $_COOKIE['token'] ?? null;
+
+    // Paramètres
+    $idUser = DataHelper::parseIntParam($params['idUser']);
+
+    // Appel contrôleur
+    (new UsersController($db))->resetPassword($token, $idUser);
 });
 
 /**
  * Suppression logique d'un enregistrement
  */
-$router->delete('/users/delete/:id', function (array $params) use ($db): void {
+$router->delete('/users/delete/:idUser', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
+    // Paramètres
+    $idUser = DataHelper::parseIntParam($params['idUser']);
+
     // Appel contrôleur
-    (new UsersController($db))->deleteUser($token, $params['id']);
+    (new UsersController($db))->deleteUser($token, $idUser);
 });

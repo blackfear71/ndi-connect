@@ -1,7 +1,7 @@
 <?php
 class Router
 {
-    private $routes = [];
+    private array $routes = [];
 
     /**
      * Ajout route suppression
