@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Représente un utilisateur (DTO)
  */

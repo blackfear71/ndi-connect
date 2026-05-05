@@ -171,8 +171,8 @@ class UsersService
         // Récupération de l'utilisateur pour vérifier le mot de passe
         $user = $this->repository->getActiveUserDataById($idUser);
 
-        // Contrôle cohérence login et ancien mot de passe incorrect
-        if (!$user || $data->login != $user->login || !password_verify($data->oldPassword, $user->password)) {
+        // Contrôle ancien mot de passe incorrect
+        if (!$user || !password_verify($data->oldPassword, $user->password)) {
             return null;
         }
 

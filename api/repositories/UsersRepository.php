@@ -87,7 +87,7 @@ class UsersRepository extends Model
      */
     public function getActiveUserDataById(int $idUser): ?User
     {
-        $sql = "SELECT id, login, level
+        $sql = "SELECT id, login, password, level
             FROM {$this->table}
             WHERE id = :id AND is_active = 1";
 
@@ -105,6 +105,7 @@ class UsersRepository extends Model
         return new User(
             id: (int) $row['id'],
             login: $row['login'],
+            password: $row['password'],
             level: (int) $row['level']
         );
     }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Représente une édition (DTO)
  */

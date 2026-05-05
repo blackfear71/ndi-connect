@@ -1,5 +1,4 @@
 <?php
-
 /** @var PDO $db */
 
 // Imports

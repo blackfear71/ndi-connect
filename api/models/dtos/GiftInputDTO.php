@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Saisie d'un cadeau (DTO)
  */

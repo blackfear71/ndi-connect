@@ -1,7 +1,4 @@
 <?php
-
-// TODO : tout tester + PR
-
 // Imports
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
