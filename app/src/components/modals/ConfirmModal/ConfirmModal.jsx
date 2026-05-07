@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 
-import { Message } from '../../../components/shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 /**
  * Modale de confirmation
@@ -82,12 +82,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
                                 {t('common.cancel')}
                             </Button>
 
-                            {onConfirmAction && (
-                                <Button type="submit" variant="modal-action" disabled={isSubmitting}>
-                                    {t('common.validate')}
-                                    {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                                </Button>
-                            )}
+                            {onConfirmAction && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
                 </Form>

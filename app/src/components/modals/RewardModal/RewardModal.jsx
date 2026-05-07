@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaGift, FaTrashCan } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
 
 import { SelectInput } from '../../../components/inputs';
-import { Message } from '../../../components/shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
@@ -246,11 +246,8 @@ const RewardModal = ({
                                 {t('common.close')}
                             </Button>
 
-                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
-                                <Button type="submit" variant="modal-action" disabled={isSubmitting}>
-                                    {t('common.validate')}
-                                    {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                                </Button>
+                            {onSubmit && auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
+                                <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                             )}
                         </div>
                     </Modal.Footer>

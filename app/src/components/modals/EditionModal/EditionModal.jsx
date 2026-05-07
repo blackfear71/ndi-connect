@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaFlagCheckered, FaRegClock, FaScroll, FaWandMagicSparkles } from 'react-icons/fa6';
 import { IoCalendarNumberOutline, IoImageOutline, IoLocationOutline } from 'react-icons/io5';
 
 import { DateInput, PictureInput, TextareaInput, TextInput, TimeInput } from '../../../components/inputs';
-import { Message } from '../../../components/shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 import { EnumAction } from '../../../enums';
 
@@ -244,10 +244,7 @@ const EditionModal = ({ formData, setFormData, modalOptions, setModalOptions, on
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
-                                {t(getButtonFromAction(modalOptions.action))}
-                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                            </Button>
+                            {onSubmit && <SpinnerButton label={t(getButtonFromAction(modalOptions.action))} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
                 </Form>

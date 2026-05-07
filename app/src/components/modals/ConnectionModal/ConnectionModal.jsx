@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaLock, FaUserCircle } from 'react-icons/fa';
 
 import { PasswordInput, TextInput } from '../../../components/inputs';
-import { Message } from '../../../components/shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
@@ -137,10 +137,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
-                                {t('navbar.connect')}
-                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                            </Button>
+                            {onSubmit && <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
                 </Form>

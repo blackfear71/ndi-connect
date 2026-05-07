@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { FaGift } from 'react-icons/fa6';
 import { GiCardboardBox } from 'react-icons/gi';
@@ -8,7 +8,7 @@ import { GrMoney } from 'react-icons/gr';
 import { IoGiftSharp } from 'react-icons/io5';
 
 import { TextInput } from '../../../components/inputs';
-import { Message } from '../../../components/shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 import { EnumAction } from '../../../enums';
 
@@ -199,10 +199,7 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                 {t('common.close')}
                             </Button>
 
-                            <Button type="submit" variant="modal-action" disabled={isSubmitting}>
-                                {t('common.validate')}
-                                {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
-                            </Button>
+                            {onSubmit && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
                 </Form>
