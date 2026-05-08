@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { HiIdentification, HiKey } from 'react-icons/hi';
@@ -27,11 +27,8 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
      * Réinitialise le message à l'ouverture de la modale
      */
     useEffect(() => {
+        // Focus à la création
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-
-            // Focus à la création
             modalOptions.action === EnumAction.CREATE && loginInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
@@ -106,6 +103,7 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
         }));
     };
 
+    // TODO reste ce formulaire à passer sur formik-yup
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>

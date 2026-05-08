@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaGift, FaTrashCan } from 'react-icons/fa6';
 import { PiListStarBold } from 'react-icons/pi';
 
@@ -17,18 +16,7 @@ import './RewardModal.css';
 /**
  * Modale récompense
  */
-const RewardModal = ({
-    player,
-    gifts,
-    formData,
-    setFormData,
-    modalOptions,
-    setModalOptions,
-    onClose,
-    onSubmit,
-    onConfirm,
-    isSubmitting
-}) => {
+const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -36,17 +24,8 @@ const RewardModal = ({
     const { t } = useTranslation();
 
     // Constantes
-    const obtainableGifts = gifts.filter((g) => g.remainingQuantity > 0 && g.value <= player.points);
-
-    /**
-     * Réinitialise le message à l'ouverture de la modale
-     */
-    useEffect(() => {
-        if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-        }
-    }, [modalOptions?.isOpen]);
+    const obtainableGifts = modalOptions?.obtainableGifts;
+    const player = modalOptions?.player;
 
     /**
      * Définit le message affiché
@@ -61,36 +40,10 @@ const RewardModal = ({
      * @param {*} e Evènement
      */
     const handleChangeSelect = (e) => {
-        setFormData((prev) => ({
+        formData.setValues((prev) => ({
             ...prev,
             idGift: parseInt(e.target.value)
         }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission
-     * @param {*} e Evènement
-     */
-    const handleSubmit = (e) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle cadeau sélectionné
-        if (!formData.idGift) {
-            setModalMessage({ code: 'errors.invalidGift', type: 'error' });
-            return;
-        } else {
-            // Contrôle que les points sont >= valeur du cadeau
-            const selectedGift = obtainableGifts.find((g) => g.id === formData.idGift);
-
-            if (!selectedGift || player.points < selectedGift.value) {
-                setModalMessage({ code: 'errors.invalidGiftPoints', type: 'error' });
-                return;
-            }
-        }
-
-        // Soumets le formulaire
-        onSubmit();
     };
 
     /**
@@ -123,7 +76,7 @@ const RewardModal = ({
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={formData.handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
@@ -171,7 +124,7 @@ const RewardModal = ({
                         {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
-                                    {gifts.length > 0 ? (
+                                    {hasGifts ? (
                                         obtainableGifts.length > 0 ? (
                                             <SelectInput
                                                 title={t('edition.giveGift')}
@@ -179,8 +132,9 @@ const RewardModal = ({
                                                 name={'gift'}
                                                 defaultOption={{ key: 0, value: '', label: t('edition.chooseGift') }}
                                                 options={getGiftOptions()}
-                                                value={formData.idGift}
+                                                value={formData.values.idGift}
                                                 onChange={handleChangeSelect}
+                                                error={formData.submitCount > 0 && t(formData.errors.idGift)}
                                                 required={true}
                                             />
                                         ) : (
@@ -246,7 +200,7 @@ const RewardModal = ({
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
+                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
                                 <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                             )}
                         </div>

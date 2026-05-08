@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Badge, Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
@@ -13,7 +13,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des cadeaux
  */
-const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
+const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -141,7 +141,7 @@ const GiftList = ({ gifts, title, onConfirm, showGiftModal, isSubmitting }) => {
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => showGiftModal(g, EnumAction.UPDATE)}
+                            onClick={() => onOpen(EnumAction.UPDATE, g)}
                             className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

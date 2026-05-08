@@ -13,6 +13,7 @@ const TextInput = ({
     value,
     onFocus,
     onChange,
+    error,
     maxLength,
     inputMode,
     pattern,
@@ -47,8 +48,10 @@ const TextInput = ({
                         maxLength={maxLength}
                         inputMode={inputMode}
                         pattern={pattern}
-                        required={required}
+                        isInvalid={!!error}
                     />
+
+                    {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 /**
  * Saisie liste déroulante
  */
-const SelectInput = ({ title, icon, name, defaultOption, options, value, onChange, required = false }) => {
+const SelectInput = ({ title, icon, name, defaultOption, options, value, onChange, error, required = false }) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -23,7 +23,7 @@ const SelectInput = ({ title, icon, name, defaultOption, options, value, onChang
                 <Form.Group className="w-100" controlId={name}>
                     <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
 
-                    <Form.Select value={value} onChange={onChange} required={required}>
+                    <Form.Select value={value} onChange={onChange} isInvalid={!!error}>
                         {defaultOption && (
                             <option key={defaultOption.key} value={defaultOption.value} hidden>
                                 {defaultOption.label}
@@ -35,6 +35,8 @@ const SelectInput = ({ title, icon, name, defaultOption, options, value, onChang
                             </option>
                         ))}
                     </Form.Select>
+
+                    {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

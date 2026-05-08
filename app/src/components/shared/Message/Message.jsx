@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import i18next from 'i18next';
 import Alert from 'react-bootstrap/Alert';
-import { useTranslation } from 'react-i18next';
 
 import { getMessageTranslationKey } from '../../../utils/helpers/messageHelper';
 

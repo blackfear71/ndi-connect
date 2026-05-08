@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 
 /**
  * Bouton d'action avec confirmation intégrée

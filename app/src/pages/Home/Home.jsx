@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-
-import { Button, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline, IoLocationOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { EditionsService } from '../../api';
+import { Button, Spinner } from 'react-bootstrap';
+import { IoAddCircleOutline, IoCalendarNumberOutline, IoChevronBackOutline, IoLocationOutline } from 'react-icons/io5';
 
 import { EditionModal } from '../../components/modals';
 import { Message } from '../../components/shared';
@@ -17,7 +18,38 @@ import { useAuth } from '../../utils/context/AuthContext';
 
 import { EnumAction, EnumUserRole } from '../../enums';
 
+import { EditionsService } from '../../api';
+
 import './Home.css';
+
+// Valeurs initiales du formulaire
+const initialEditionValues = {
+    location: '',
+    startDate: '',
+    startTime: '',
+    endTime: '',
+    picture: null,
+    pictureAction: null,
+    theme: '',
+    challenge: ''
+};
+
+// Schémas de validation Yup
+const editionValidationSchema = Yup.object({
+    startDate: Yup.string().required('errors.invalidStartDate'),
+    startTime: Yup.string().required('errors.invalidStartTime'),
+    endTime: Yup.string().required('errors.invalidEndTime'),
+    location: Yup.string().required('errors.invalidLocation'),
+    picture: Yup.mixed()
+        .nullable()
+        .test('file-type', 'errors.invalidFileType', (value) => {
+            if (!value) {
+                return true;
+            }
+
+            return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+        })
+});
 
 /**
  * Page d'accueil
@@ -34,20 +66,21 @@ const Home = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [formEdition, setFormEdition] = useState({
-        location: '',
-        startDate: '',
-        startTime: '',
-        endTime: '',
-        picture: null,
-        pictureAction: null,
-        theme: '',
-        challenge: ''
-    });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
-    const [modalOptionsEdition, setModalOptionsEdition] = useState({ action: '', isOpen: false, message: null });
+    const [modalOptionsEdition, setModalOptionsEdition] = useState({
+        action: null,
+        isOpen: false,
+        message: null
+    });
+
+    // Formik
+    const formEdition = useFormik({
+        initialValues: initialEditionValues,
+        validationSchema: editionValidationSchema,
+        onSubmit: (values) => handleSubmitEdition(values)
+    });
 
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
@@ -59,9 +92,8 @@ const Home = () => {
     useEffect(() => {
         const editionsService = new EditionsService();
 
-        const subscriptionEditions = editionsService.getAllEditions();
-
-        subscriptionEditions
+        editionsService
+            .getAllEditions()
             .pipe(
                 map((dataEditions) => {
                     groupByYear(dataEditions.response.data);
@@ -96,6 +128,14 @@ const Home = () => {
             navigate(location.pathname, { replace: true, state: {} });
         }
     }, [authMessage, setAuthMessage, location.state, location.pathname, navigate]);
+
+    /**
+     * Mise à jour du formulaire de l'édition aux changements de sa modale
+     */
+    useEffect(() => {
+        // Réinitialisation à l'ouverture/fermeture de la modale
+        formEdition.resetForm();
+    }, [modalOptionsEdition.isOpen]);
 
     /**
      * Regroupe par année les éditions et trie
@@ -148,6 +188,7 @@ const Home = () => {
 
     /**
      * Ouverture/fermeture de la modale de création d'édition
+     * @param {*} openAction Action à réaliser
      */
     const openCloseEditionModal = (openAction) => {
         // Ouverture ou fermeture
@@ -157,21 +198,19 @@ const Home = () => {
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition();
     };
 
     /**
      * Création édition
+     * @param {*} values Données du formulaire
      */
-    const handleSubmit = () => {
+    const handleSubmitEdition = (values) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsEdition((prev) => ({ ...prev, message: null }));
 
         // Formatage des données
-        const body = formatDataEdition();
+        const body = formatDataEdition(values);
 
         const editionsService = new EditionsService();
 
@@ -184,7 +223,7 @@ const Home = () => {
                 switchMap(() => editionsService.getAllEditions()),
                 map((dataEditions) => {
                     groupByYear(dataEditions.response.data);
-                    openCloseEditionModal('');
+                    openCloseEditionModal();
                     setEditionsByYear([]);
                 }),
                 take(1),
@@ -204,38 +243,25 @@ const Home = () => {
 
     /**
      * Formate les données édition
+     * @param {*} values Données du formulaire
      * @returns Données formatées
      */
-    const formatDataEdition = () => {
+    const formatDataEdition = (values) => {
         const formData = new FormData();
 
         // Champs textes
-        Object.entries(formEdition).forEach(([key, value]) => {
+        Object.entries(values).forEach(([key, value]) => {
             if (key !== 'picture' && value !== null) {
                 formData.append(key, value);
             }
         });
 
         // Images (s'il y a une image à traiter)
-        formEdition.pictureAction === EnumAction.CREATE && formEdition.picture && formData.append('picture', formEdition.picture);
+        if (values.pictureAction === EnumAction.CREATE && values.picture) {
+            formData.append('picture', values.picture);
+        }
 
         return formData;
-    };
-
-    /**
-     * Réinitialisation formulaire (création édition)
-     */
-    const resetFormEdition = () => {
-        setFormEdition({
-            location: '',
-            startDate: '',
-            startTime: '',
-            endTime: '',
-            picture: null,
-            pictureAction: null,
-            theme: '',
-            challenge: ''
-        });
     };
 
     return (
@@ -343,14 +369,12 @@ const Home = () => {
                     </div>
 
                     {/* Modale de création d'édition */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formEdition && modalOptionsEdition.isOpen && (
                         <EditionModal
                             formData={formEdition}
-                            setFormData={setFormEdition}
                             modalOptions={modalOptionsEdition}
                             setModalOptions={setModalOptionsEdition}
                             onClose={openCloseEditionModal}
-                            onSubmit={handleSubmit}
                             isSubmitting={isSubmitting}
                         />
                     )}

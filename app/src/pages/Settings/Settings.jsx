@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-
-import { Spinner, Tab, Tabs } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { FaQuestionCircle } from 'react-icons/fa';
-import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
-import { IoSettingsOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { UsersService } from '../../api';
+import { Spinner, Tab, Tabs } from 'react-bootstrap';
+import { FaQuestionCircle } from 'react-icons/fa';
+import { FaStar, FaUser, FaUserPlus } from 'react-icons/fa6';
+import { IoSettingsOutline } from 'react-icons/io5';
 
 import { SettingsUser, SettingsUsers } from '../../components/features';
 import { ConfirmModal, PasswordModal, SettingsModal } from '../../components/modals';
@@ -20,7 +21,27 @@ import { useAuth } from '../../utils/context/AuthContext';
 
 import { EnumAction, EnumUserRole } from '../../enums';
 
+import { UsersService } from '../../api';
+
 import './Settings.css';
+
+// Valeurs initiales du formulaire
+const initialPasswordValues = {
+    password: '',
+    oldPassword: '',
+    confirmPassword: ''
+};
+
+// Schémas de validation Yup
+const passwordValidationSchema = Yup.object({
+    oldPassword: Yup.string().required('errors.invalidPassword'),
+    password: Yup.string()
+        .required('errors.invalidPassword')
+        .notOneOf([Yup.ref('oldPassword')], 'errors.passwordIdentical'),
+    confirmPassword: Yup.string()
+        .required('errors.invalidPassword')
+        .oneOf([Yup.ref('password')], 'errors.passwordMatch')
+});
 
 /**
  * Paramètres
@@ -37,11 +58,6 @@ const Settings = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [formPassword, setFormPassword] = useState({
-        password: '',
-        oldPassword: '',
-        confirmPassword: ''
-    });
     const [formUser, setFormUser] = useState({
         id: null,
         login: '',
@@ -54,7 +70,7 @@ const Settings = () => {
     const [message, setMessage] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
         content: '',
-        action: '',
+        action: null,
         data: null,
         isOpen: false,
         message: null
@@ -64,9 +80,16 @@ const Settings = () => {
         message: null
     });
     const [modalOptionsUser, setModalOptionsUser] = useState({
-        action: '',
+        action: null,
         isOpen: false,
         message: null
+    });
+
+    // Formik
+    const formPassword = useFormik({
+        initialValues: initialPasswordValues,
+        validationSchema: passwordValidationSchema,
+        onSubmit: (values) => handleSubmitPassword(values)
     });
 
     // API states
@@ -97,9 +120,8 @@ const Settings = () => {
         if (auth.level >= EnumUserRole.SUPERADMIN) {
             const usersService = new UsersService();
 
-            const subscriptionUsers = usersService.getAllUsers();
-
-            subscriptionUsers
+            usersService
+                .getAllUsers()
                 .pipe(
                     map((dataUsers) => {
                         const processedUsers = processUsersData(dataUsers.response.data);
@@ -138,6 +160,14 @@ const Settings = () => {
             setAuthMessage(null);
         }
     }, [authMessage, setAuthMessage]);
+
+    /**
+     * Mise à jour du formulaire de l'édition aux changements de sa modale
+     */
+    useEffect(() => {
+        // Réinitialisation à l'ouverture/fermeture de la modale
+        formPassword.resetForm();
+    }, [modalOptionsPassword.isOpen]);
 
     /**
      * Enrichit les données utilisateurs avec les informations de rôle
@@ -179,24 +209,20 @@ const Settings = () => {
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsPassword.isOpen && resetFormPassword();
     };
 
     /**
      * Modification du mot de passe
      */
-    const handleSubmitPassword = () => {
+    const handleSubmitPassword = (values) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsPassword((prev) => ({ ...prev, message: null }));
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.updatePassword(formPassword);
-
-        subscriptionUsers
+        usersService
+            .updatePassword(values)
             .pipe(
                 map((dataUsers) => {
                     openClosePasswordModal();
@@ -215,17 +241,6 @@ const Settings = () => {
                 })
             )
             .subscribe();
-    };
-
-    /**
-     * Réinitialisation formulaire (modification mot de passe)
-     */
-    const resetFormPassword = () => {
-        setFormPassword({
-            password: '',
-            oldPassword: '',
-            confirmPassword: ''
-        });
     };
 
     /**
@@ -255,9 +270,8 @@ const Settings = () => {
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.resetPassword(id);
-
-        subscriptionUsers
+        usersService
+            .resetPassword(id)
             .pipe(
                 map((dataUsers) => {
                     setModalOptionsUser((prev) => ({
@@ -374,7 +388,7 @@ const Settings = () => {
         } else {
             setModalOptionsConfirm({
                 content: '',
-                action: '',
+                action: null,
                 data: null,
                 isOpen: false,
                 message: null
@@ -404,9 +418,8 @@ const Settings = () => {
 
         const usersService = new UsersService();
 
-        const subscriptionUsers = usersService.deleteUser(modalOptionsConfirm.data);
-
-        subscriptionUsers
+        usersService
+            .deleteUser(modalOptionsConfirm.data)
             .pipe(
                 map((dataUser) => {
                     setMessage({ code: dataUser.response.message, type: dataUser.response.status });
@@ -458,13 +471,7 @@ const Settings = () => {
                                 >
                                     {/* Utilisateur connecté */}
                                     <Tab eventKey="user" title={t('settings.level0')}>
-                                        <SettingsUser
-                                            user={currentUser}
-                                            formPassword={formPassword}
-                                            setFormPassword={setFormPassword}
-                                            setModalOptionsPassword={setModalOptionsPassword}
-                                            isSubmitting={isSubmitting}
-                                        />
+                                        <SettingsUser user={currentUser} onOpen={openClosePasswordModal} isSubmitting={isSubmitting} />
                                     </Tab>
 
                                     {/* Gestion utilisateurs */}
@@ -483,13 +490,7 @@ const Settings = () => {
                                 <>
                                     {/* Utilisateur connecté */}
                                     {currentUser && (
-                                        <SettingsUser
-                                            user={currentUser}
-                                            formPassword={formPassword}
-                                            setFormPassword={setFormPassword}
-                                            setModalOptionsPassword={setModalOptionsPassword}
-                                            isSubmitting={isSubmitting}
-                                        />
+                                        <SettingsUser user={currentUser} onOpen={openClosePasswordModal} isSubmitting={isSubmitting} />
                                     )}
                                 </>
                             )}
@@ -497,20 +498,18 @@ const Settings = () => {
                     )}
 
                     {/* Modale de modification de mot de passe */}
-                    {auth.isLoggedIn && modalOptionsPassword.isOpen && (
+                    {auth.isLoggedIn && formPassword && modalOptionsPassword.isOpen && (
                         <PasswordModal
                             formData={formPassword}
-                            setFormData={setFormPassword}
                             modalOptions={modalOptionsPassword}
                             setModalOptions={setModalOptionsPassword}
                             onClose={openClosePasswordModal}
-                            onSubmit={handleSubmitPassword}
                             isSubmitting={isSubmitting}
                         />
                     )}
 
                     {/* Modale de modification d'utilisateur */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsUser.isOpen && (
+                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formUser && modalOptionsUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === formUser.id)}
                             formData={formUser}

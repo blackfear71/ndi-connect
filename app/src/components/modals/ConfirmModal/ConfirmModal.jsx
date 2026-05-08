@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 
 import { Message, SpinnerButton } from '../../../components/shared';
@@ -12,16 +11,6 @@ import { Message, SpinnerButton } from '../../../components/shared';
 const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
-
-    /**
-     * Réinitialise le message à l'ouverture de la modale
-     */
-    useEffect(() => {
-        if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-        }
-    }, [modalOptions?.isOpen]);
 
     /**
      * Définit le message affiché

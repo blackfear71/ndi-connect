@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaPeopleArrows, FaUserFriends } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
@@ -17,7 +17,7 @@ import { EnumAction, EnumUserRole } from '../../../enums';
 /**
  * Modale participant
  */
-const PlayerModal = ({ players, player, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, isSubmitting }) => {
+const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -28,17 +28,15 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
     const nameInputRef = useRef(null);
 
     // Constantes
-    const availablePlayers = player && players.filter((p) => p.id !== player.id);
+    const availablePlayers = modalOptions?.player && players.filter((p) => p.id !== modalOptions?.player?.id);
+    const player = modalOptions?.player;
 
     /**
      * Réinitialise le message à l'ouverture de la modale
      */
     useEffect(() => {
+        // Focus à la création
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-
-            // Focus à la création
             modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
@@ -52,15 +50,6 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
     };
 
     /**
-     * Met à jour le formulaire à la saisie
-     * @param {*} e Evènement
-     */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
      * Met à jour le formulaire à la saisie d'un numérique
      * @param {*} action Action à réaliser
      */
@@ -68,7 +57,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         // Ajoute ou retire des points selon les droits
         switch (action) {
             case 'add':
-                setFormData((prev) => {
+                formData.setValues((prev) => {
                     const currentDelta = parseInt(prev.points) || 0;
                     const nextDelta = currentDelta < 0 && auth.level < EnumUserRole.SUPERADMIN ? 0 : currentDelta + 1;
 
@@ -79,7 +68,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                 });
                 break;
             case 'remove':
-                setFormData((prev) => {
+                formData.setValues((prev) => {
                     const currentDelta = parseInt(prev.points) || 0;
                     let nextDelta;
 
@@ -108,7 +97,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
         // Donne des points à un autre participant
         switch (action) {
             case 'add':
-                setFormData((prev) => {
+                formData.setValues((prev) => {
                     const currentGiveaway = parseInt(prev.giveaway) || 0;
 
                     return {
@@ -118,7 +107,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                 });
                 break;
             case 'remove':
-                setFormData((prev) => {
+                formData.setValues((prev) => {
                     const currentGiveaway = parseInt(prev.giveaway) || 0;
 
                     return {
@@ -135,65 +124,10 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
      * @param {*} e Evènement
      */
     const handleChangeSelect = (e) => {
-        setFormData((prev) => ({
+        formData.setValues((prev) => ({
             ...prev,
             giveawayPlayerId: parseInt(e.target.value)
         }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission
-     * @param {*} e Evènement
-     * @param {*} action Action à réaliser
-     */
-    const handleSubmit = (e, action) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle le nom renseigné
-        if (!formData.name) {
-            setModalMessage({ code: 'errors.invalidName', type: 'error' });
-            return;
-        }
-
-        // Contrôle que les points sont >= 0 (sauf SUPERADMIN)
-        const delta = parseInt(formData.points, 10);
-
-        if (
-            formData.points === null ||
-            formData.points === undefined ||
-            isNaN(delta) ||
-            (auth.level < EnumUserRole.SUPERADMIN && delta < 0)
-        ) {
-            setModalMessage({ code: 'errors.invalidPoints', type: 'error' });
-            return;
-        }
-
-        // Contrôles des points (modification)
-        if (action === EnumAction.UPDATE) {
-            // Contrôle le don de points
-            if (
-                (formData.giveawayPlayerId !== null &&
-                    formData.giveawayPlayerId !== undefined &&
-                    formData.giveawayPlayerId !== 0 &&
-                    !formData.giveaway) ||
-                (formData.giveaway !== null && formData.giveaway !== undefined && formData.giveaway !== 0 && !formData.giveawayPlayerId)
-            ) {
-                setModalMessage({ code: 'errors.invalidGiveaway', type: 'error' });
-                return;
-            }
-
-            // Contrôle les points restants
-            const giveaway = parseInt(formData.giveaway, 10);
-
-            if (player.points + delta - giveaway < 0) {
-                setModalMessage({ code: 'errors.invalidGiveawayRemaining', type: 'error' });
-                return;
-            }
-        }
-
-        // Soumets le formulaire
-        onSubmit(action);
     };
 
     /**
@@ -210,7 +144,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
-                <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
+                <Form onSubmit={formData.handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUser />
@@ -243,8 +177,9 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                     name="name"
                                     ref={nameInputRef}
                                     placeholder={t('edition.name')}
-                                    value={formData.name}
-                                    onChange={handleChange}
+                                    value={formData.values.name}
+                                    onChange={formData.handleChange}
+                                    error={formData.submitCount > 0 && t(formData.errors.name)}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -258,9 +193,10 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                     title={t('edition.givePoints')}
                                     icon={<GiTwoCoins />}
                                     name={'points'}
-                                    value={formData.points}
+                                    value={formData.values.points}
                                     onChangeDown={() => handleChangePoints('remove')}
                                     onChangeUp={() => handleChangePoints('add')}
+                                    error={formData.submitCount > 0 && t(formData.errors.points)}
                                 />
                             </div>
                         </div>
@@ -276,17 +212,19 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                         name={'playerGiveaway'}
                                         defaultOption={{ key: 0, value: 0, label: t('edition.chooseParticipant') }}
                                         options={getGivewayOptions()}
-                                        value={formData.giveawayPlayerId}
+                                        value={formData.values.giveawayPlayerId}
                                         onChange={handleChangeSelect}
+                                        error={formData.submitCount > 0 && t(formData.errors.giveawayPlayerId)}
                                     />
 
                                     {/* Nombre de points */}
                                     <IncrementInput
                                         icon={<FaPeopleArrows />}
                                         name={'giftGiveaway'}
-                                        value={formData.giveaway}
+                                        value={formData.values.giveaway}
                                         onChangeDown={() => handleChangeGiveaway('remove')}
                                         onChangeUp={() => handleChangeGiveaway('add')}
+                                        error={formData.submitCount > 0 && t(formData.errors.giveaway)}
                                     />
                                 </div>
                             </div>
@@ -312,7 +250,7 @@ const PlayerModal = ({ players, player, formData, setFormData, modalOptions, set
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
                 </Form>

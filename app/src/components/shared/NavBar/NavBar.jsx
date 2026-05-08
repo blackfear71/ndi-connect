@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { Badge, Dropdown, Image } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
 
 import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 
@@ -14,6 +17,18 @@ import { SearchBar } from '../../../components/shared';
 import { useAuth } from '../../../utils/context/AuthContext';
 
 import './NavBar.css';
+
+// Valeurs initiales du formulaire
+const initialConnectionValues = {
+    login: '',
+    password: ''
+};
+
+// Schémas de validation Yup
+const connectionValidationSchema = Yup.object({
+    login: Yup.string().required('errors.invalidLogin'),
+    password: Yup.string().required('errors.invalidPassword')
+});
 
 /**
  * Barre de navigation
@@ -30,14 +45,17 @@ const NavBar = () => {
 
     // Local states
     const dropdownRef = useRef(null);
-    const [formConnection, setFormConnection] = useState({
-        login: '',
-        password: ''
-    });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
     const [modalOptions, setModalOptions] = useState({ isOpen: false });
     const [showDropdown, setShowDropdown] = useState(false);
+
+    // Formik
+    const formConnection = useFormik({
+        initialValues: initialConnectionValues,
+        validationSchema: connectionValidationSchema,
+        onSubmit: () => handleSubmit()
+    });
 
     /**
      * Affecte un évènement lors du clic en dehors de la zone
@@ -73,7 +91,7 @@ const NavBar = () => {
         setModalOptions({ isOpen: !modalOptions.isOpen });
 
         // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptions.isOpen && resetFormConnection();
+        modalOptions.isOpen && formConnection.resetForm();
     };
 
     /**
@@ -84,7 +102,7 @@ const NavBar = () => {
         setIsSubmitting(true);
 
         // On attend la promesse de connexion/déconnexion pour fermer la modale
-        login(formConnection)
+        login(formConnection.values)
             .then(() => {
                 openCloseConnectionModal();
             })
@@ -92,16 +110,6 @@ const NavBar = () => {
             .finally(() => {
                 setIsSubmitting(false);
             });
-    };
-
-    /**
-     * Réinitialisation formulaire
-     */
-    const resetFormConnection = () => {
-        setFormConnection({
-            login: '',
-            password: ''
-        });
     };
 
     return (
@@ -159,12 +167,10 @@ const NavBar = () => {
             {modalOptions.isOpen && (
                 <ConnectionModal
                     formData={formConnection}
-                    setFormData={setFormConnection}
                     modalOptions={modalOptions}
                     message={message || authMessage}
                     setMessage={setMessage}
                     onClose={openCloseConnectionModal}
-                    onSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
                 />
             )}

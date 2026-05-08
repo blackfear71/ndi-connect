@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { HiKey, HiOutlineKey } from 'react-icons/hi2';
 
 import { PasswordInput } from '../../inputs';
@@ -10,7 +10,7 @@ import { Message, SpinnerButton } from '../../shared';
 /**
  * Modale mot de passe
  */
-const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, isSubmitting }) => {
+const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -21,11 +21,8 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
      * Réinitialise le message à l'ouverture de la modale
      */
     useEffect(() => {
+        // Focus à l'ouverture
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-
-            // Focus
             passwordInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
@@ -38,49 +35,10 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
         setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
-    /**
-     * Met à jour le formulaire à la saisie
-     * @param {*} e Evènement
-     */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission
-     * @param {*} e Evènement
-     */
-    const handleSubmit = (e) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle que les mots de passe sont renseignés
-        if (!formData.oldPassword || !formData.password || !formData.confirmPassword) {
-            setModalMessage({ code: 'errors.invalidPassword', type: 'error' });
-            return;
-        }
-
-        // Contrôle que le nouveau mot de passe est différent de l'ancien
-        if (formData.oldPassword === formData.password) {
-            setModalMessage({ code: 'errors.passwordIdentical', type: 'error' });
-            return;
-        }
-
-        // Contrôle que les nouveaux mots de passe correspondent
-        if (formData.password !== formData.confirmPassword) {
-            setModalMessage({ code: 'errors.passwordMatch', type: 'error' });
-            return;
-        }
-
-        // Soumets le formulaire
-        onSubmit();
-    };
-
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
-                <Form onSubmit={(event) => handleSubmit(event)}>
+                <Form onSubmit={formData.handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <HiKey />
@@ -98,8 +56,9 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                     name={'oldPassword'}
                                     ref={passwordInputRef}
                                     placeholder={t('settings.oldPassword')}
-                                    value={formData.oldPassword}
-                                    onChange={handleChange}
+                                    value={formData.values.oldPassword}
+                                    onChange={formData.handleChange}
+                                    error={formData.submitCount > 0 && t(formData.errors.oldPassword)}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -110,8 +69,9 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                     icon={<HiKey />}
                                     name={'password'}
                                     placeholder={t('settings.newPassword')}
-                                    value={formData.password}
-                                    onChange={handleChange}
+                                    value={formData.values.password}
+                                    onChange={formData.handleChange}
+                                    error={formData.submitCount > 0 && t(formData.errors.password)}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -122,8 +82,9 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                     icon={<HiKey />}
                                     name={'confirmPassword'}
                                     placeholder={t('settings.confirmPassword')}
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
+                                    value={formData.values.confirmPassword}
+                                    onChange={formData.handleChange}
+                                    error={formData.submitCount > 0 && t(formData.errors.confirmPassword)}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -150,7 +111,7 @@ const PasswordModal = ({ formData, setFormData, modalOptions, setModalOptions, o
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
                 </Form>

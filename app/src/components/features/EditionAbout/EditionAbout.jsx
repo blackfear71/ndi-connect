@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { CgSandClock } from 'react-icons/cg';
 import { FaFlagCheckered, FaScroll, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { IoInformationCircleOutline } from 'react-icons/io5';
@@ -16,7 +16,7 @@ import { EnumAction, EnumUserRole } from '../../../enums';
 /**
  * A propos
  */
-const EditionAbout = ({ edition, onEdit, onConfirm, isSubmitting }) => {
+const EditionAbout = ({ edition, onOpen, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -102,7 +102,7 @@ const EditionAbout = ({ edition, onEdit, onConfirm, isSubmitting }) => {
             {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
                 <div className="d-flex gap-2 mb-2">
                     {/* Modifier */}
-                    <Button variant="outline-action" onClick={() => onEdit(EnumAction.UPDATE)} disabled={isSubmitting}>
+                    <Button variant="outline-action" onClick={() => onOpen(EnumAction.UPDATE)} disabled={isSubmitting}>
                         <FaWandMagicSparkles size={15} />
                         {t('common.update')}
                     </Button>

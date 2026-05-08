@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaLock, FaUserCircle } from 'react-icons/fa';
 
 import { PasswordInput, TextInput } from '../../../components/inputs';
@@ -14,7 +14,7 @@ import './ConnectionModal.css';
 /**
  * Modale de connexion
  */
-const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
+const ConnectionModal = ({ formData, modalOptions, message, setMessage, onClose, isSubmitting }) => {
     // Contexte
     const { setAuthMessage } = useAuth();
 
@@ -38,42 +38,10 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
         }
     }, [modalOptions?.isOpen]);
 
-    /**
-     * Met à jour le formulaire à la saisie (création)
-     * @param {*} e Evènement
-     */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Gère le comportement du formulaire
-     * @param {*} e Evènement
-     */
-    const handleSubmit = (e) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle que l'identifiant et le mot de passe sont renseignés
-        if (!formData.login) {
-            setMessage({ code: 'errors.invalidLogin', type: 'error' });
-            return;
-        }
-
-        if (!formData.password) {
-            setMessage({ code: 'errors.invalidPassword', type: 'error' });
-            return;
-        }
-
-        // Soumets le formulaire
-        onSubmit();
-    };
-
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={formData.handleSubmit}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUserCircle />
@@ -93,15 +61,16 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 </div>
 
                                 {/* Formulaire */}
-                                <div className="d-flex align-items-center gap-2">
+                                <div className="d-flex align-items-start gap-2">
                                     <div className="connection-modal-field">
                                         <TextInput
                                             title={t('navbar.login')}
                                             name={'login'}
                                             ref={loginInputRef}
                                             placeholder={t('navbar.login')}
-                                            value={formData.login}
-                                            onChange={handleChange}
+                                            value={formData.values.login}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && t(formData.errors.login)}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -112,8 +81,9 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                             title={t('navbar.password')}
                                             name={'password'}
                                             placeholder={t('navbar.password')}
-                                            value={formData.password}
-                                            onChange={handleChange}
+                                            value={formData.values.password}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && t(formData.errors.password)}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -137,7 +107,7 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
                 </Form>

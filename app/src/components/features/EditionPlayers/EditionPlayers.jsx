@@ -1,5 +1,6 @@
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button } from 'react-bootstrap';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { useAuth } from '../../../utils/context/AuthContext';
@@ -11,69 +12,19 @@ import PlayerList from './PlayerList/PlayerList';
 /**
  * Liste des participants
  */
-const EditionPlayers = ({
-    players,
-    setFormPlayer,
-    setModalOptionsPlayer,
-    setFormReward,
-    setModalOptionsReward,
-    onConfirm,
-    isSubmitting
-}) => {
+const EditionPlayers = ({ players, gifts, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
 
-    /**
-     * Affiche la modale de création/modification d'un participant
-     * @param {*} player Données participant
-     * @param {*} action Action à réaliser
-     */
-    const showPlayerModal = (player, action) => {
-        if (player) {
-            setFormPlayer({
-                id: player.id,
-                name: player.name,
-                points: 0,
-                giveaway: 0,
-                giveawayPlayerId: 0
-            });
-        }
-
-        setModalOptionsPlayer((prev) => ({
-            ...prev,
-            action: action,
-            isOpen: !prev.isOpen
-        }));
-    };
-
-    /**
-     * Affiche la modale d'attribution d'un cadeau à un participant
-     * @param {*} player Données participant
-     */
-    const showRewardModal = (player) => {
-        if (player) {
-            setFormReward({
-                idReward: null,
-                idPlayer: player.id,
-                idGift: 0
-            });
-        }
-
-        setModalOptionsReward((prev) => ({
-            ...prev,
-            isOpen: !prev.isOpen
-        }));
-    };
-
     return (
         <>
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                 <div className="d-grid">
-                    <Button variant="outline-action" onClick={() => showPlayerModal(null, EnumAction.CREATE)} disabled={isSubmitting}>
+                    <Button variant="outline-action" onClick={() => onOpenPlayerModal(EnumAction.CREATE, null)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
                         {t('edition.addPlayer')}
                     </Button>
@@ -85,9 +36,10 @@ const EditionPlayers = ({
                 <div className="mt-3">
                     <PlayerList
                         players={players}
+                        gifts={gifts}
                         onConfirm={onConfirm}
-                        showRewardModal={showRewardModal}
-                        showPlayerModal={showPlayerModal}
+                        onOpenPlayerModal={onOpenPlayerModal}
+                        onOpenRewardModal={onOpenRewardModal}
                         isSubmitting={isSubmitting}
                     />
                 </div>

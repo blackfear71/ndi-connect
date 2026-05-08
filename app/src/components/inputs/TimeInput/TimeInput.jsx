@@ -5,7 +5,20 @@ import './TimeInput.css';
 /**
  * Saisie heure de début et de fin
  */
-const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valueStart, valueEnd, onChange, required = false }) => {
+const TimeInput = ({
+    title,
+    icon,
+    nameStart,
+    nameEnd,
+    titleStart,
+    titleEnd,
+    valueStart,
+    valueEnd,
+    onChange,
+    errorStart,
+    errorEnd,
+    required = false
+}) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -33,8 +46,10 @@ const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valu
                         name={nameStart}
                         value={valueStart || ''}
                         onChange={onChange}
-                        required={required}
                     />
+
+                    {/* TODO : tester le rendu visuel des 2 erreurs */}
+                    {errorStart && <Form.Control.Feedback type="invalid">{errorStart}</Form.Control.Feedback>}
                 </Form.Group>
 
                 {/* Fin */}
@@ -49,8 +64,9 @@ const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valu
                         name={nameEnd}
                         value={valueEnd || ''}
                         onChange={onChange}
-                        required={required}
                     />
+
+                    {errorEnd && <Form.Control.Feedback type="invalid">{errorEnd}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

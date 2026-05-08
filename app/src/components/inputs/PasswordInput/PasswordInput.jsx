@@ -8,7 +8,7 @@ import './PasswordInput.css';
 /**
  * Saisie mot de passe
  */
-const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, maxLength, required = false }) => {
+const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, error, maxLength, required = false }) => {
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +37,7 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                 <Form.Group className="w-100" controlId={name}>
                     <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
 
-                    <InputGroup>
+                    <InputGroup hasValidation>
                         <Form.Control
                             ref={ref}
                             type={showPassword ? 'text' : 'password'}
@@ -47,7 +47,7 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                             value={value}
                             onChange={onChange}
                             maxLength={maxLength}
-                            required
+                            isInvalid={!!error}
                         />
 
                         <Button
@@ -57,6 +57,8 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </Button>
+
+                        {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
                     </InputGroup>
                 </Form.Group>
             </div>

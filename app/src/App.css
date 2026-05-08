@@ -37,7 +37,7 @@ h1 {
     color: var(--color-text-white);
     font-size: large;
     text-align: center;
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
     border: 2px dashed var(--color-border-gray-bold);
 }
 
@@ -208,7 +208,7 @@ h1 {
     color: var(--color-text-secondary);
     font-size: large;
     text-align: center;
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
     border: 2px dashed var(--color-border-gray-medium);
 }
 
