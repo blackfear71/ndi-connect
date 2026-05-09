@@ -70,6 +70,7 @@ export default [
                 {
                     groups: [
                         ['^react$', '^react-i18next$', '^react-router-dom$'],
+                        ['^i18next'],
                         ['^formik$', '^yup$'],
                         ['rxjs'],
                         ['^@?\\w'],

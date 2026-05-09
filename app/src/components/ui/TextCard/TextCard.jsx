@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaArrowRightLong, FaArrowUpLong } from 'react-icons/fa6';
 
 import './TextCard.css';
