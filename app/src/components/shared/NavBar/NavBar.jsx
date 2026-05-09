@@ -38,7 +38,7 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, login, logout } = useAuth();
+    const { auth, login, logout } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -46,15 +46,17 @@ const NavBar = () => {
     // Local states
     const dropdownRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState(null);
-    const [modalOptions, setModalOptions] = useState({ isOpen: false });
+    const [modalOptionsConnection, setModalOptionsConnection] = useState({
+        isOpen: false,
+        message: null
+    });
     const [showDropdown, setShowDropdown] = useState(false);
 
     // Formik
     const formConnection = useFormik({
         initialValues: initialConnectionValues,
         validationSchema: connectionValidationSchema,
-        onSubmit: () => handleSubmit()
+        onSubmit: (values) => handleSubmitLogin(values)
     });
 
     /**
@@ -64,6 +66,14 @@ const NavBar = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    /**
+     * Mise à jour du formulaire de connexion aux changements de sa modale
+     */
+    useEffect(() => {
+        // Réinitialisation à l'ouverture/fermeture de la modale
+        formConnection.resetForm();
+    }, [modalOptionsConnection.isOpen]);
 
     /**
      * Ferme le menu utilisateur au clic en dehors
@@ -88,28 +98,42 @@ const NavBar = () => {
      */
     const openCloseConnectionModal = () => {
         // Ouverture ou fermeture
-        setModalOptions({ isOpen: !modalOptions.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptions.isOpen && formConnection.resetForm();
+        setModalOptionsConnection((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen,
+            message: null
+        }));
     };
 
     /**
-     * Connexion ou déconnexion selon le cas
+     * Connexion
      */
-    const handleSubmit = () => {
-        setMessage(null);
+    const handleSubmitLogin = (values) => {
         setIsSubmitting(true);
+        setModalOptionsConnection((prev) => ({ ...prev, message: null }));
 
-        // On attend la promesse de connexion/déconnexion pour fermer la modale
-        login(formConnection.values)
+        // On attend la promesse de connexion pour fermer la modale
+        login(values)
             .then(() => {
                 openCloseConnectionModal();
             })
-            .catch(() => {})
+            .catch((err) => {
+                setModalOptionsConnection((prev) => ({
+                    ...prev,
+                    message: { code: err?.code, type: err?.type }
+                }));
+            })
             .finally(() => {
                 setIsSubmitting(false);
             });
+    };
+
+    /**
+     * Déconnexion
+     */
+    const handleSubmitLogout = () => {
+        // On attend la promesse de déconnexion
+        logout;
     };
 
     return (
@@ -155,7 +179,7 @@ const NavBar = () => {
                             </Dropdown.Item>
 
                             {/* Déconnexion */}
-                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={logout}>
+                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={handleSubmitLogout}>
                                 <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>
                         </Dropdown.Menu>
@@ -164,12 +188,11 @@ const NavBar = () => {
             </div>
 
             {/* Modale de connexion */}
-            {modalOptions.isOpen && (
+            {modalOptionsConnection.isOpen && (
                 <ConnectionModal
                     formData={formConnection}
-                    modalOptions={modalOptions}
-                    message={message || authMessage}
-                    setMessage={setMessage}
+                    modalOptions={modalOptionsConnection}
+                    setModalOptions={setModalOptionsConnection}
                     onClose={openCloseConnectionModal}
                     isSubmitting={isSubmitting}
                 />

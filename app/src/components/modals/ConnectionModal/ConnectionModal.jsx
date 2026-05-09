@@ -7,17 +7,12 @@ import { FaLock, FaUserCircle } from 'react-icons/fa';
 import { PasswordInput, TextInput } from '../../../components/inputs';
 import { Message, SpinnerButton } from '../../../components/shared';
 
-import { useAuth } from '../../../utils/context/AuthContext';
-
 import './ConnectionModal.css';
 
 /**
  * Modale de connexion
  */
-const ConnectionModal = ({ formData, modalOptions, message, setMessage, onClose, isSubmitting }) => {
-    // Contexte
-    const { setAuthMessage } = useAuth();
-
+const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,15 +23,19 @@ const ConnectionModal = ({ formData, modalOptions, message, setMessage, onClose,
      * Met le focus sur le champ "login" à l'ouverture de la modale quand on est pas connecté
      */
     useEffect(() => {
+        // Focus à l'ouverture
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setMessage(null);
-            setAuthMessage(null);
-
-            // Focus
             loginInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
+
+    /**
+     * Définit le message affiché
+     * @param {*} message Message à afficher
+     */
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
+    };
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
@@ -95,9 +94,14 @@ const ConnectionModal = ({ formData, modalOptions, message, setMessage, onClose,
 
                     <Modal.Footer>
                         {/* Message */}
-                        {message && (
+                        {modalOptions.message && (
                             <div className="modal-message">
-                                <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
                             </div>
                         )}
 

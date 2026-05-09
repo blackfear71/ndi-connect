@@ -53,8 +53,8 @@
         "logoutSuccess": "Déconnexion réussie",
         "noResults": "Aucun résultat ne correspond à la recherche",
         "resetPasswordSuccess": "Le mot de passe a été réinitialisé pour : {{password}}, il est conseillé de le changer immédiatement",
+        "resultMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "rewardSuccess": "Cadeau attribué",
-        "searchMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "updateSuccess": "Modification réussie"
     },
     "warnings": {

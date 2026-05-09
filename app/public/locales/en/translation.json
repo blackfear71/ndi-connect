@@ -53,8 +53,8 @@
         "logoutSuccess": "Logout successful",
         "noResults": "No results match your search",
         "resetPasswordSuccess": "The password has been reset to: {{password}}, it is recommended to change it immediately",
+        "resultMessage": "Please enter at least 3 characters to start the search",
         "rewardSuccess": "Gift assigned",
-        "searchMessage": "Please enter at least 3 characters to start the search",
         "updateSuccess": "Update successful"
     },
     "warnings": {
