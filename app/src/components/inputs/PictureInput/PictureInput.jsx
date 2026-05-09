@@ -129,7 +129,6 @@ const PictureInput = ({ title, icon, name, value, onChange, error, isSubmitting,
                         isInvalid={!!pictureError || !!error}
                     />
 
-                    {/* TODO : l'erreur est déclenchée à tort si on modifie une edition avec une image sans l'avoir modifiée */}
                     {(pictureError || error) && <Form.Control.Feedback type="invalid">{t(pictureError || error)}</Form.Control.Feedback>}
                 </Form.Group>
 

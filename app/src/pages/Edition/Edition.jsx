@@ -63,7 +63,7 @@ const editionValidationSchema = Yup.object({
     picture: Yup.mixed()
         .nullable()
         .test('file-type', 'errors.invalidFileType', (value) => {
-            if (!value) {
+            if (!value || typeof value === 'string') {
                 return true;
             }
 
