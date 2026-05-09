@@ -99,7 +99,7 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                                     placeholder={t('edition.location')}
                                     value={formData.values.location}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.location)}
+                                    error={formData.submitCount > 0 && formData.errors.location}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -116,7 +116,7 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                                     name={'startDate'}
                                     value={formData.values.startDate}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.startDate)}
+                                    error={formData.submitCount > 0 && formData.errors.startDate}
                                     required={true}
                                 />
 
@@ -131,8 +131,8 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                                     valueStart={formData.values.startTime}
                                     valueEnd={formData.values.endTime}
                                     onChange={formData.handleChange}
-                                    errorStart={formData.submitCount > 0 && t(formData.errors.startTime)}
-                                    errorEnd={formData.submitCount > 0 && t(formData.errors.endTime)}
+                                    errorStart={formData.submitCount > 0 && formData.errors.startTime}
+                                    errorEnd={formData.submitCount > 0 && formData.errors.endTime}
                                     required={true}
                                 />
                             </div>
@@ -147,9 +147,7 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                                     name={'picture'}
                                     value={formData.values.picture}
                                     onChange={handleChangeFile}
-                                    // TODO : voir s'il existe une propriété globale qui empêche la validation au lancement de formik mais seulement au submit pour ne pas tester submitCount à chaque fois
-                                    // TODO : gérer les t(XXX) dans le composant et pas ici
-                                    error={formData.submitCount > 0 && t(formData.errors.picture)}
+                                    error={formData.submitCount > 0 && formData.errors.picture}
                                     isSubmitting={isSubmitting}
                                 />
                             </div>

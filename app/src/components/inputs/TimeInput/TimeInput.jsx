@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { Form } from 'react-bootstrap';
 
 import './TimeInput.css';
@@ -19,6 +21,9 @@ const TimeInput = ({
     errorEnd,
     required = false
 }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -35,38 +40,51 @@ const TimeInput = ({
                 {icon && <div className="modal-input-icon">{icon}</div>}
 
                 {/* Début */}
-                <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameStart}>
-                    <span className="px-2 time-input-prefix">{titleStart}</span>
+                <Form.Group className="w-100" controlId={nameStart}>
+                    <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                        <span className="px-2 time-input-prefix">{titleStart}</span>
 
-                    <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
+                        <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
 
-                    <Form.Control
-                        className="w-100 px-2 time-input-control"
-                        type="time"
-                        name={nameStart}
-                        value={valueStart || ''}
-                        onChange={onChange}
-                    />
+                        <Form.Control
+                            className="w-100 px-2 time-input-control"
+                            type="time"
+                            name={nameStart}
+                            value={valueStart || ''}
+                            onChange={onChange}
+                            isInvalid={!!errorStart}
+                        />
+                    </div>
 
-                    {/* TODO : tester le rendu visuel des 2 erreurs */}
-                    {errorStart && <Form.Control.Feedback type="invalid">{errorStart}</Form.Control.Feedback>}
+                    {errorStart && (
+                        <Form.Control.Feedback className="d-block" type="invalid">
+                            {t(errorStart)}
+                        </Form.Control.Feedback>
+                    )}
                 </Form.Group>
 
                 {/* Fin */}
-                <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameEnd}>
-                    <span className="px-2 time-input-prefix">{titleEnd}</span>
+                <Form.Group className="w-100" controlId={nameEnd}>
+                    <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                        <span className="px-2 time-input-prefix">{titleEnd}</span>
 
-                    <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
+                        <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
 
-                    <Form.Control
-                        className="w-100 px-2 time-input-control"
-                        type="time"
-                        name={nameEnd}
-                        value={valueEnd || ''}
-                        onChange={onChange}
-                    />
+                        <Form.Control
+                            className="w-100 px-2 time-input-control"
+                            type="time"
+                            name={nameEnd}
+                            value={valueEnd || ''}
+                            onChange={onChange}
+                            isInvalid={!!errorEnd}
+                        />
+                    </div>
 
-                    {errorEnd && <Form.Control.Feedback type="invalid">{errorEnd}</Form.Control.Feedback>}
+                    {errorEnd && (
+                        <Form.Control.Feedback className="d-block" type="invalid">
+                            {t(errorEnd)}
+                        </Form.Control.Feedback>
+                    )}
                 </Form.Group>
             </div>
         </div>

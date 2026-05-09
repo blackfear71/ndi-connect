@@ -49,7 +49,7 @@ const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClo
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            level: parseInt(e.target.value)
+            level: e.target.value === '' ? null : parseInt(e.target.value)
         }));
     };
 
@@ -105,7 +105,7 @@ const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClo
                                         placeholder={t('settings.login')}
                                         value={formData.values.login}
                                         onChange={formData.handleChange}
-                                        error={formData.submitCount > 0 && t(formData.errors.login)}
+                                        error={formData.submitCount > 0 && formData.errors.login}
                                         maxLength={100}
                                         required={true}
                                     />
@@ -122,7 +122,7 @@ const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClo
                                     options={getLevelOptions()}
                                     value={formData.values.level}
                                     onChange={handleChangeSelect}
-                                    error={formData.submitCount > 0 && t(formData.errors.level)}
+                                    error={formData.submitCount > 0 && formData.errors.level}
                                     required={true}
                                 />
 
@@ -143,7 +143,7 @@ const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClo
                                             placeholder={t('settings.password')}
                                             value={formData.values.password}
                                             onChange={formData.handleChange}
-                                            error={formData.submitCount > 0 && t(formData.errors.password)}
+                                            error={formData.submitCount > 0 && formData.errors.password}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -156,7 +156,7 @@ const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClo
                                             placeholder={t('settings.confirmPassword')}
                                             value={formData.values.confirmPassword}
                                             onChange={formData.handleChange}
-                                            error={formData.submitCount > 0 && t(formData.errors.confirmPassword)}
+                                            error={formData.submitCount > 0 && formData.errors.confirmPassword}
                                             maxLength={100}
                                             required={true}
                                         />

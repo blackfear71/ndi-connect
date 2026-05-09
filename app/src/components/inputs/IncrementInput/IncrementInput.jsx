@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { Button, Form } from 'react-bootstrap';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 
@@ -7,6 +9,9 @@ import './IncrementInput.css';
  * Saisie incrément
  */
 const IncrementInput = ({ title, icon, name, value, onChangeDown, onChangeUp, error }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -37,7 +42,7 @@ const IncrementInput = ({ title, icon, name, value, onChangeDown, onChangeUp, er
                         </Button>
                     </div>
 
-                    {error && <div className="invalid-feedback d-block">{error}</div>}
+                    {error && <div className="invalid-feedback d-block">{t(error)}</div>}
                 </Form.Group>
             </div>
         </div>

@@ -24,7 +24,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
      * Gère le comportement du formulaire à la soumission
      * @param {*} e Evènement
      */
-    const handleSubmit = (e) => {
+    const handleSubmitConfirm = (e) => {
         // Empêche le rechargement de la page
         e.preventDefault();
 
@@ -35,7 +35,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
     return (
         <Modal show onHide={onClose} centered backdrop="static">
             <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={handleSubmitConfirm}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaQuestionCircle />

@@ -50,7 +50,7 @@ const initialPlayerValues = {
     giveawayPlayerId: 0
 };
 const initialRewardValues = {
-    idGift: 0,
+    idGift: null,
     idPlayer: null
 };
 
@@ -332,7 +332,7 @@ const Edition = () => {
         // Initialisation à l'ouverture de la modale
         if (modalOptionsReward.isOpen && modalOptionsReward.player) {
             formReward.setValues({
-                idGift: 0,
+                idGift: null,
                 idPlayer: modalOptionsReward.player.id
             });
         }

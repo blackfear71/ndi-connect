@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -9,6 +10,9 @@ import './PasswordInput.css';
  * Saisie mot de passe
  */
 const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, error, maxLength, required = false }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 
@@ -58,7 +62,7 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, e
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </Button>
 
-                        {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
+                        {error && <Form.Control.Feedback type="invalid">{t(error)}</Form.Control.Feedback>}
                     </InputGroup>
                 </Form.Group>
             </div>

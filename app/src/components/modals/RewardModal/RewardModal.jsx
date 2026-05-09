@@ -42,7 +42,7 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            idGift: parseInt(e.target.value)
+            idGift: e.target.value === '' ? null : parseInt(e.target.value)
         }));
     };
 
@@ -134,7 +134,7 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
                                                 options={getGiftOptions()}
                                                 value={formData.values.idGift}
                                                 onChange={handleChangeSelect}
-                                                error={formData.submitCount > 0 && t(formData.errors.idGift)}
+                                                error={formData.submitCount > 0 && formData.errors.idGift}
                                                 required={true}
                                             />
                                         ) : (

@@ -58,7 +58,7 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
                                     placeholder={t('settings.oldPassword')}
                                     value={formData.values.oldPassword}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.oldPassword)}
+                                    error={formData.submitCount > 0 && formData.errors.oldPassword}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -71,7 +71,7 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
                                     placeholder={t('settings.newPassword')}
                                     value={formData.values.password}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.password)}
+                                    error={formData.submitCount > 0 && formData.errors.password}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -84,7 +84,7 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
                                     placeholder={t('settings.confirmPassword')}
                                     value={formData.values.confirmPassword}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.confirmPassword)}
+                                    error={formData.submitCount > 0 && formData.errors.confirmPassword}
                                     maxLength={100}
                                     required={true}
                                 />

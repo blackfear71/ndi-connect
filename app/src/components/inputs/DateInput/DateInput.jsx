@@ -1,9 +1,14 @@
+import { useTranslation } from 'react-i18next';
+
 import { Form } from 'react-bootstrap';
 
 /**
  * Saisie date
  */
 const DateInput = ({ title, icon, name, value, onChange, error, required = false }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -24,7 +29,7 @@ const DateInput = ({ title, icon, name, value, onChange, error, required = false
 
                     <Form.Control type="date" name={name} value={value || ''} onChange={onChange} isInvalid={!!error} />
 
-                    {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
+                    {error && <Form.Control.Feedback type="invalid">{t(error)}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

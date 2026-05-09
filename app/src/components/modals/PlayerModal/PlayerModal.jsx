@@ -127,7 +127,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            giveawayPlayerId: parseInt(e.target.value)
+            giveawayPlayerId: e.target.value === '' ? null : parseInt(e.target.value)
         }));
     };
 
@@ -180,7 +180,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
                                     placeholder={t('edition.name')}
                                     value={formData.values.name}
                                     onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && t(formData.errors.name)}
+                                    error={formData.submitCount > 0 && formData.errors.name}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -197,7 +197,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
                                     value={formData.values.points}
                                     onChangeDown={() => handleChangePoints('remove')}
                                     onChangeUp={() => handleChangePoints('add')}
-                                    error={formData.submitCount > 0 && t(formData.errors.points)}
+                                    error={formData.submitCount > 0 && formData.errors.points}
                                 />
                             </div>
                         </div>
@@ -215,7 +215,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
                                         options={getGivewayOptions()}
                                         value={formData.values.giveawayPlayerId}
                                         onChange={handleChangeSelect}
-                                        error={formData.submitCount > 0 && t(formData.errors.giveawayPlayerId)}
+                                        error={formData.submitCount > 0 && formData.errors.giveawayPlayerId}
                                     />
 
                                     {/* Nombre de points */}
@@ -225,7 +225,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
                                         value={formData.values.giveaway}
                                         onChangeDown={() => handleChangeGiveaway('remove')}
                                         onChangeUp={() => handleChangeGiveaway('add')}
-                                        error={formData.submitCount > 0 && t(formData.errors.giveaway)}
+                                        error={formData.submitCount > 0 && formData.errors.giveaway}
                                     />
                                 </div>
                             </div>

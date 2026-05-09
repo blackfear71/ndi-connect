@@ -69,7 +69,7 @@ const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isS
                                             placeholder={t('navbar.login')}
                                             value={formData.values.login}
                                             onChange={formData.handleChange}
-                                            error={formData.submitCount > 0 && t(formData.errors.login)}
+                                            error={formData.submitCount > 0 && formData.errors.login}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -82,7 +82,7 @@ const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isS
                                             placeholder={t('navbar.password')}
                                             value={formData.values.password}
                                             onChange={formData.handleChange}
-                                            error={formData.submitCount > 0 && t(formData.errors.password)}
+                                            error={formData.submitCount > 0 && formData.errors.password}
                                             maxLength={100}
                                             required={true}
                                         />
