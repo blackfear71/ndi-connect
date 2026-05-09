@@ -15,15 +15,12 @@ import { EnumAction } from '../../../enums';
 /**
  * Modale cadeau
  */
-const GiftModal = ({ formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
+const GiftModal = ({ gift, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const nameInputRef = useRef(null);
-
-    // Constantes
-    const gift = modalOptions?.gift;
 
     /**
      * Réinitialise le message à l'ouverture de la modale

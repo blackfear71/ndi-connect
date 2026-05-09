@@ -16,13 +16,12 @@ import './SettingsModal.css';
 /**
  * Modale utilisateur
  */
-const SettingsModal = ({ formData, modalOptions, setModalOptions, onReset, onClose, isSubmitting }) => {
+const SettingsModal = ({ user, formData, modalOptions, setModalOptions, onReset, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const loginInputRef = useRef(null);
-    const user = modalOptions?.user;
 
     /**
      * Réinitialise le message à l'ouverture de la modale

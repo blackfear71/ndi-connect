@@ -109,12 +109,12 @@ class UsersService {
 
     /**
      * Mise à jour utilisateur
-     * @param {*} idUser Identifiant utilisateur
+     * @param {*} userId Identifiant utilisateur
      * @param {*} body Données utilisateur
      * @returns Liste des utilisateurs
      */
-    updateUser = (idUser, body) => {
-        const url = `${this.apiUrl}/update/${idUser}`;
+    updateUser = (userId, body) => {
+        const url = `${this.apiUrl}/update/${userId}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -126,11 +126,11 @@ class UsersService {
 
     /**
      * Réinitialisation mot de passe
-     * @param {*} idUser Identifiant utilisateur
+     * @param {*} userId Identifiant utilisateur
      * @returns Message retour
      */
-    resetPassword = (idUser) => {
-        const url = `${this.apiUrl}/reset/${idUser}`;
+    resetPassword = (userId) => {
+        const url = `${this.apiUrl}/reset/${userId}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -141,11 +141,11 @@ class UsersService {
 
     /**
      * Suppression utilisateur
-     * @param {*} idUser Identifiant utilisateur
+     * @param {*} userId Identifiant utilisateur
      * @returns Liste des utilisateurs
      */
-    deleteUser = (idUser) => {
-        const url = `${this.apiUrl}/delete/${idUser}`;
+    deleteUser = (userId) => {
+        const url = `${this.apiUrl}/delete/${userId}`;
         return ajax({
             url,
             method: 'DELETE',

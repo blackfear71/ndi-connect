@@ -44,12 +44,12 @@ class GiftsService {
 
     /**
      * Mise à jour cadeau
-     * @param {*} idGift Identifiant cadeau
+     * @param {*} giftId Identifiant cadeau
      * @param {*} body Données cadeau
      * @returns Données retour
      */
-    updateGift = (idGift, body) => {
-        const url = `${this.apiUrl}/update/${idGift}`;
+    updateGift = (giftId, body) => {
+        const url = `${this.apiUrl}/update/${giftId}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -61,11 +61,11 @@ class GiftsService {
 
     /**
      * Suppression d'un cadeau
-     * @param {*} idGift Identifiant cadeau
+     * @param {*} giftId Identifiant cadeau
      * @returns Données retour
      */
-    deleteGift = (idGift) => {
-        const url = `${this.apiUrl}/delete/${idGift}`;
+    deleteGift = (giftId) => {
+        const url = `${this.apiUrl}/delete/${giftId}`;
         return ajax({
             url,
             method: 'DELETE',

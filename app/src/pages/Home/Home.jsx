@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -33,23 +33,6 @@ const initialEditionValues = {
     theme: '',
     challenge: ''
 };
-
-// Schémas de validation Yup
-const editionValidationSchema = Yup.object({
-    startDate: Yup.string().required('errors.invalidStartDate'),
-    startTime: Yup.string().required('errors.invalidStartTime'),
-    endTime: Yup.string().required('errors.invalidEndTime'),
-    location: Yup.string().required('errors.invalidLocation'),
-    picture: Yup.mixed()
-        .nullable()
-        .test('file-type', 'errors.invalidFileType', (value) => {
-            if (!value) {
-                return true;
-            }
-
-            return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
-        })
-});
 
 /**
  * Page d'accueil
@@ -138,6 +121,27 @@ const Home = () => {
     }, [modalOptionsEdition.isOpen]);
 
     /**
+     * Schéma de validation Yup de l'édition
+     */
+    const editionValidationSchema = useMemo(() => {
+        return Yup.object({
+            startDate: Yup.string().required('errors.invalidStartDate'),
+            startTime: Yup.string().required('errors.invalidStartTime'),
+            endTime: Yup.string().required('errors.invalidEndTime'),
+            location: Yup.string().required('errors.invalidLocation'),
+            picture: Yup.mixed()
+                .nullable()
+                .test('file-type', 'errors.invalidFileType', (value) => {
+                    if (!value || typeof value === 'string') {
+                        return true;
+                    }
+
+                    return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+                })
+        });
+    }, []);
+
+    /**
      * Regroupe par année les éditions et trie
      * @param {*} editions Liste des éditions
      * @returns Editions regroupées et triées
@@ -188,13 +192,13 @@ const Home = () => {
 
     /**
      * Ouverture/fermeture de la modale de création d'édition
-     * @param {*} openAction Action à réaliser
+     * @param {*} action Action à réaliser
      */
-    const openCloseEditionModal = (openAction) => {
+    const openCloseEditionModal = (action = null) => {
         // Ouverture ou fermeture
         setModalOptionsEdition((prev) => ({
             ...prev,
-            action: openAction,
+            action: action,
             isOpen: !prev.isOpen,
             message: null
         }));

@@ -17,7 +17,7 @@ import { EnumAction, EnumUserRole } from '../../../enums';
 /**
  * Modale participant
  */
-const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
+const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -28,9 +28,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
     const nameInputRef = useRef(null);
 
     // Constantes
-    // TODO : voir si je n'ai pas d'autre moyen que de passer les player/gits... dans modalOptions (trouver comment initialiser le formData à l'avance)
-    const availablePlayers = modalOptions?.player && players.filter((p) => p.id !== modalOptions?.player?.id);
-    const player = modalOptions?.player;
+    const availablePlayers = player && players.filter((p) => p.id !== player.id);
 
     /**
      * Réinitialise le message à l'ouverture de la modale

@@ -16,7 +16,7 @@ import './RewardModal.css';
 /**
  * Modale récompense
  */
-const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
+const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -24,8 +24,7 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
     const { t } = useTranslation();
 
     // Constantes
-    const obtainableGifts = modalOptions?.obtainableGifts;
-    const player = modalOptions?.player;
+    const obtainableGifts = gifts.filter((g) => g.remainingQuantity > 0 && g.value <= player.points);
 
     /**
      * Définit le message affiché
@@ -42,7 +41,7 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            idGift: e.target.value === '' ? null : parseInt(e.target.value)
+            giftId: e.target.value === '' ? null : parseInt(e.target.value)
         }));
     };
 
@@ -124,7 +123,7 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
                         {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
-                                    {hasGifts ? (
+                                    {gifts.length > 0 ? (
                                         obtainableGifts.length > 0 ? (
                                             <SelectInput
                                                 title={t('edition.giveGift')}
@@ -132,9 +131,9 @@ const RewardModal = ({ hasGifts, formData, modalOptions, setModalOptions, onClos
                                                 name={'gift'}
                                                 defaultOption={{ key: 0, value: '', label: t('edition.chooseGift') }}
                                                 options={getGiftOptions()}
-                                                value={formData.values.idGift}
+                                                value={formData.values.giftId}
                                                 onChange={handleChangeSelect}
-                                                error={formData.submitCount > 0 && formData.errors.idGift}
+                                                error={formData.submitCount > 0 && formData.errors.giftId}
                                                 required={true}
                                             />
                                         ) : (
