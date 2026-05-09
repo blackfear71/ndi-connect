@@ -12,7 +12,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des participants
  */
-const PlayerList = ({ players, gifts, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
+const PlayerList = ({ players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -75,12 +75,7 @@ const PlayerList = ({ players, gifts, onConfirm, onOpenPlayerModal, onOpenReward
 
                     {/* Cadeaux */}
                     <Button
-                        onClick={() =>
-                            onOpenRewardModal(
-                                p,
-                                gifts?.filter((g) => g.remainingQuantity > 0 && g.value <= p.points)
-                            )
-                        }
+                        onClick={() => onOpenRewardModal(p.id)}
                         className="edition-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}
@@ -91,7 +86,7 @@ const PlayerList = ({ players, gifts, onConfirm, onOpenPlayerModal, onOpenReward
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p)}
+                            onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p.id)}
                             className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

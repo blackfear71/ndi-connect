@@ -60,7 +60,7 @@ const UserList = ({ users, onOpen, onConfirm, isSubmitting }) => {
 
                     {/* Modification */}
                     <Button
-                        onClick={() => onOpen(EnumAction.UPDATE, u)}
+                        onClick={() => onOpen(EnumAction.UPDATE, u.id)}
                         className="settings-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}

@@ -75,21 +75,62 @@ const Settings = () => {
         message: null
     });
 
-    // Formik
+    // API states
+    const [users, setUsers] = useState([]);
+    const [connectedUser, setConnectedUser] = useState(null);
+
+    /**
+     * Schéma de validation Yup du mot de passe
+     */
+    const passwordValidationSchema = useMemo(() => {
+        return Yup.object({
+            oldPassword: Yup.string().required('errors.invalidPassword'),
+            password: Yup.string()
+                .required('errors.invalidPassword')
+                .notOneOf([Yup.ref('oldPassword')], 'errors.passwordIdentical'),
+            confirmPassword: Yup.string()
+                .required('errors.invalidPassword')
+                .oneOf([Yup.ref('password')], 'errors.passwordMatch')
+        });
+    }, []);
+
+    /**
+     * Schéma de validation Yup de l'utilisateur
+     */
+    const userValidationSchema = useMemo(() => {
+        return Yup.object({
+            ...(modalOptionsUser.action === EnumAction.CREATE && {
+                login: Yup.string().required('errors.invalidLogin'),
+                password: Yup.string().required('errors.invalidPassword'),
+                confirmPassword: Yup.string()
+                    .required('errors.invalidPassword')
+                    .oneOf([Yup.ref('password')], 'errors.passwordMatch')
+            }),
+            level: Yup.number()
+                .typeError('errors.invalidLevel')
+                .required('errors.invalidLevel')
+                .min(0, 'errors.invalidLevel')
+                .max(2, 'errors.invalidLevel')
+        });
+    }, [modalOptionsUser.action]);
+
+    /**
+     * Formik mot de passe
+     */
     const formPassword = useFormik({
         initialValues: initialPasswordValues,
         validationSchema: passwordValidationSchema,
         onSubmit: (values) => handleSubmitPassword(values)
     });
+
+    /**
+     * Formik utilisateur
+     */
     const formUser = useFormik({
         initialValues: initialUserValues,
         validationSchema: userValidationSchema,
         onSubmit: (values) => handleSubmitUser(values)
     });
-
-    // API states
-    const [users, setUsers] = useState([]);
-    const [connectedUser, setConnectedUser] = useState(null);
 
     /**
      * Lancement initial de la page
@@ -186,41 +227,6 @@ const Settings = () => {
             formUser.resetForm();
         }
     }, [modalOptionsUser.isOpen, modalOptionsUser.userId]);
-
-    /**
-     * Schéma de validation Yup du mot de passe
-     */
-    const passwordValidationSchema = useMemo(() => {
-        return Yup.object({
-            oldPassword: Yup.string().required('errors.invalidPassword'),
-            password: Yup.string()
-                .required('errors.invalidPassword')
-                .notOneOf([Yup.ref('oldPassword')], 'errors.passwordIdentical'),
-            confirmPassword: Yup.string()
-                .required('errors.invalidPassword')
-                .oneOf([Yup.ref('password')], 'errors.passwordMatch')
-        });
-    }, []);
-
-    /**
-     * Schéma de validation Yup de l'utilisateur
-     */
-    const userValidationSchema = useMemo(() => {
-        return Yup.object({
-            ...(modalOptionsUser.action === EnumAction.CREATE && {
-                login: Yup.string().required('errors.invalidLogin'),
-                password: Yup.string().required('errors.invalidPassword'),
-                confirmPassword: Yup.string()
-                    .required('errors.invalidPassword')
-                    .oneOf([Yup.ref('password')], 'errors.passwordMatch')
-            }),
-            level: Yup.number()
-                .typeError('errors.invalidLevel')
-                .required('errors.invalidLevel')
-                .min(0, 'errors.invalidLevel')
-                .max(2, 'errors.invalidLevel')
-        });
-    }, [modalOptionsUser.action]);
 
     /**
      * Enrichit les données utilisateurs avec les informations de rôle
@@ -553,7 +559,7 @@ const Settings = () => {
                     {/* Modale de modification d'utilisateur */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formUser && modalOptionsUser.isOpen && (
                         <SettingsModal
-                            user={users.find((u) => u.id === formUser.values.id)}
+                            user={users.find((u) => u.id === modalOptionsUser.userId)}
                             formData={formUser}
                             modalOptions={modalOptionsUser}
                             setModalOptions={setModalOptionsUser}

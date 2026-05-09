@@ -34,8 +34,8 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmitConfirm}>
+            <Form onSubmit={handleSubmitConfirm}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaQuestionCircle />
@@ -74,8 +74,8 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
                             {onConfirmAction && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

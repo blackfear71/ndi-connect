@@ -12,7 +12,7 @@ import PlayerList from './PlayerList/PlayerList';
 /**
  * Liste des participants
  */
-const EditionPlayers = ({ players, gifts, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
+const EditionPlayers = ({ players, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -36,7 +36,6 @@ const EditionPlayers = ({ players, gifts, onOpenPlayerModal, onOpenRewardModal, 
                 <div className="mt-3">
                     <PlayerList
                         players={players}
-                        gifts={gifts}
                         onConfirm={onConfirm}
                         onOpenPlayerModal={onOpenPlayerModal}
                         onOpenRewardModal={onOpenRewardModal}

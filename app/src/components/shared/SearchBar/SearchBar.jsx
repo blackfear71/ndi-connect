@@ -38,12 +38,6 @@ const SearchBar = () => {
     const [searchMessage, setSearchMessage] = useState(null);
     const [showResults, setShowResults] = useState(false);
 
-    // Formik
-    const formSearch = useFormik({
-        initialValues: initialSearchValues,
-        onSubmit: (values) => handleSubmitSearch(values)
-    });
-
     // API states
     const [results, setResults] = useState([]);
 
@@ -54,6 +48,14 @@ const SearchBar = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    /**
+     * Formik recherche
+     */
+    const formSearch = useFormik({
+        initialValues: initialSearchValues,
+        onSubmit: (values) => handleSubmitSearch(values)
+    });
 
     /**
      * Lance la recherche à la saisie

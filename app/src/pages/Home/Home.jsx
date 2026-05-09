@@ -58,16 +58,39 @@ const Home = () => {
         message: null
     });
 
-    // Formik
+    // API states
+    const [yearsAndEditions, setYearsAndEditions] = useState([]);
+    const [editionsByYear, setEditionsByYear] = useState();
+
+    /**
+     * Schéma de validation Yup de l'édition
+     */
+    const editionValidationSchema = useMemo(() => {
+        return Yup.object({
+            startDate: Yup.string().required('errors.invalidStartDate'),
+            startTime: Yup.string().required('errors.invalidStartTime'),
+            endTime: Yup.string().required('errors.invalidEndTime'),
+            location: Yup.string().required('errors.invalidLocation'),
+            picture: Yup.mixed()
+                .nullable()
+                .test('file-type', 'errors.invalidFileType', (value) => {
+                    if (!value || typeof value === 'string') {
+                        return true;
+                    }
+
+                    return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+                })
+        });
+    }, []);
+
+    /**
+     * Formik édition
+     */
     const formEdition = useFormik({
         initialValues: initialEditionValues,
         validationSchema: editionValidationSchema,
         onSubmit: (values) => handleSubmitEdition(values)
     });
-
-    // API states
-    const [yearsAndEditions, setYearsAndEditions] = useState([]);
-    const [editionsByYear, setEditionsByYear] = useState();
 
     /**
      * Lancement initial de la page
@@ -119,27 +142,6 @@ const Home = () => {
         // Réinitialisation à l'ouverture/fermeture de la modale
         formEdition.resetForm();
     }, [modalOptionsEdition.isOpen]);
-
-    /**
-     * Schéma de validation Yup de l'édition
-     */
-    const editionValidationSchema = useMemo(() => {
-        return Yup.object({
-            startDate: Yup.string().required('errors.invalidStartDate'),
-            startTime: Yup.string().required('errors.invalidStartTime'),
-            endTime: Yup.string().required('errors.invalidEndTime'),
-            location: Yup.string().required('errors.invalidLocation'),
-            picture: Yup.mixed()
-                .nullable()
-                .test('file-type', 'errors.invalidFileType', (value) => {
-                    if (!value || typeof value === 'string') {
-                        return true;
-                    }
-
-                    return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
-                })
-        });
-    }, []);
 
     /**
      * Regroupe par année les éditions et trie

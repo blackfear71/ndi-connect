@@ -39,8 +39,8 @@ const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isS
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={formData.handleSubmit}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUserCircle />
@@ -114,8 +114,8 @@ const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isS
                             <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

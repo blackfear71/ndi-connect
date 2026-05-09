@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -24,12 +24,6 @@ const initialConnectionValues = {
     password: ''
 };
 
-// Schémas de validation Yup
-const connectionValidationSchema = Yup.object({
-    login: Yup.string().required('errors.invalidLogin'),
-    password: Yup.string().required('errors.invalidPassword')
-});
-
 /**
  * Barre de navigation
  */
@@ -52,13 +46,6 @@ const NavBar = () => {
     });
     const [showDropdown, setShowDropdown] = useState(false);
 
-    // Formik
-    const formConnection = useFormik({
-        initialValues: initialConnectionValues,
-        validationSchema: connectionValidationSchema,
-        onSubmit: (values) => handleSubmitLogin(values)
-    });
-
     /**
      * Affecte un évènement lors du clic en dehors de la zone
      */
@@ -74,6 +61,25 @@ const NavBar = () => {
         // Réinitialisation à l'ouverture/fermeture de la modale
         formConnection.resetForm();
     }, [modalOptionsConnection.isOpen]);
+
+    /**
+     * Schéma de validation Yup de connexion
+     */
+    const connectionValidationSchema = useMemo(() => {
+        return Yup.object({
+            login: Yup.string().required('errors.invalidLogin'),
+            password: Yup.string().required('errors.invalidPassword')
+        });
+    }, []);
+
+    /**
+     * Formik connexion
+     */
+    const formConnection = useFormik({
+        initialValues: initialConnectionValues,
+        validationSchema: connectionValidationSchema,
+        onSubmit: (values) => handleSubmitLogin(values)
+    });
 
     /**
      * Ferme le menu utilisateur au clic en dehors
@@ -133,7 +139,7 @@ const NavBar = () => {
      */
     const handleSubmitLogout = () => {
         // On attend la promesse de déconnexion
-        logout;
+        logout();
     };
 
     return (

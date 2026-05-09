@@ -37,8 +37,8 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={formData.handleSubmit}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <HiKey />
@@ -114,8 +114,8 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
                             <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

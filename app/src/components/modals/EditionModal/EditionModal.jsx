@@ -78,8 +78,8 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={formData.handleSubmit}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaWandMagicSparkles />
@@ -201,8 +201,8 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                             <SpinnerButton label={t(getButtonFromAction(modalOptions.action))} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

@@ -142,8 +142,8 @@ const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions,
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={formData.handleSubmit}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUser />
@@ -209,7 +209,7 @@ const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions,
                                         title={t('edition.giveParticipant')}
                                         icon={<FaUserFriends />}
                                         name={'playerGiveaway'}
-                                        defaultOption={{ key: 0, value: 0, label: t('edition.chooseParticipant') }}
+                                        defaultOption={{ key: 0, value: '', label: t('edition.chooseParticipant') }}
                                         options={getGivewayOptions()}
                                         value={formData.values.giveawayPlayerId}
                                         onChange={handleChangeSelect}
@@ -252,8 +252,8 @@ const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions,
                             <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };
