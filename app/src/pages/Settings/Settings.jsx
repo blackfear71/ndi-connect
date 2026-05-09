@@ -25,7 +25,7 @@ import { UsersService } from '../../api';
 
 import './Settings.css';
 
-// Valeurs initiales du formulaire
+// Valeurs initiales des formulaires
 const initialPasswordValues = {
     password: '',
     oldPassword: '',

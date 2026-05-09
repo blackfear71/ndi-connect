@@ -42,7 +42,6 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
      * Met à jour le formulaire à la saisie d'un fichier
      * @param {*} file Fichier
      * @param {*} action Action à réaliser
-     * @param {*} error Erreur forcée
      */
     const handleChangeFile = (file, action) => {
         switch (action) {

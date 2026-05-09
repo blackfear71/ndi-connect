@@ -18,7 +18,7 @@ import { useAuth } from '../../../utils/context/AuthContext';
 
 import './NavBar.css';
 
-// Valeurs initiales du formulaire
+// Valeurs initiales des formulaires
 const initialConnectionValues = {
     login: '',
     password: ''

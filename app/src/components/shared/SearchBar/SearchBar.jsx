@@ -16,7 +16,7 @@ import { EditionsService } from '../../../api';
 
 import './SearchBar.css';
 
-// Valeurs initiales du formulaire
+// Valeurs initiales des formulaires
 const initialSearchValues = {
     search: ''
 };
@@ -143,7 +143,7 @@ const SearchBar = () => {
      * Réaffiche la zone de recherche au clic sur la saisie
      */
     const handleFocus = () => {
-        if (formSearch.values.search.length > 1) {
+        if (formSearch.values.search.length > 0) {
             setShowResults(true);
         }
     };

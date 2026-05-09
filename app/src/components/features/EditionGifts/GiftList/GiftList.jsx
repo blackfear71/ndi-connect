@@ -141,7 +141,7 @@ const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => onOpen(EnumAction.UPDATE, g)}
+                            onClick={() => onOpen(EnumAction.UPDATE, g.id)}
                             className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

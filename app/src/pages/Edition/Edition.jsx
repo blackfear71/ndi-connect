@@ -25,7 +25,7 @@ import { EditionsService, GiftsService, PlayersService, RewardsService } from '.
 
 import './Edition.css';
 
-// Valeurs initiales du formulaire
+// Valeurs initiales des formulaires
 const initialEditionValues = {
     location: '',
     startDate: '',

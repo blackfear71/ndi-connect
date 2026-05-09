@@ -39,53 +39,55 @@ const TimeInput = ({
                 {/* Icône */}
                 {icon && <div className="modal-input-icon">{icon}</div>}
 
-                {/* Début */}
-                <Form.Group className="w-100" controlId={nameStart}>
-                    <div className="d-flex flex-grow-1 align-items-center time-input-group">
-                        <span className="px-2 time-input-prefix">{titleStart}</span>
+                <div className="d-flex align-items-start w-100 gap-2">
+                    {/* Début */}
+                    <Form.Group className="w-100" controlId={nameStart}>
+                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                            <span className="px-2 time-input-prefix">{titleStart}</span>
 
-                        <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
+                            <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
 
-                        <Form.Control
-                            className="w-100 px-2 time-input-control"
-                            type="time"
-                            name={nameStart}
-                            value={valueStart || ''}
-                            onChange={onChange}
-                            isInvalid={!!errorStart}
-                        />
-                    </div>
+                            <Form.Control
+                                className="w-100 px-2 time-input-control"
+                                type="time"
+                                name={nameStart}
+                                value={valueStart || ''}
+                                onChange={onChange}
+                                isInvalid={!!errorStart}
+                            />
+                        </div>
 
-                    {errorStart && (
-                        <Form.Control.Feedback className="d-block" type="invalid">
-                            {t(errorStart)}
-                        </Form.Control.Feedback>
-                    )}
-                </Form.Group>
+                        {errorStart && (
+                            <Form.Control.Feedback className="d-block" type="invalid">
+                                {t(errorStart)}
+                            </Form.Control.Feedback>
+                        )}
+                    </Form.Group>
 
-                {/* Fin */}
-                <Form.Group className="w-100" controlId={nameEnd}>
-                    <div className="d-flex flex-grow-1 align-items-center time-input-group">
-                        <span className="px-2 time-input-prefix">{titleEnd}</span>
+                    {/* Fin */}
+                    <Form.Group className="w-100" controlId={nameEnd}>
+                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                            <span className="px-2 time-input-prefix">{titleEnd}</span>
 
-                        <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
+                            <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
 
-                        <Form.Control
-                            className="w-100 px-2 time-input-control"
-                            type="time"
-                            name={nameEnd}
-                            value={valueEnd || ''}
-                            onChange={onChange}
-                            isInvalid={!!errorEnd}
-                        />
-                    </div>
+                            <Form.Control
+                                className="w-100 px-2 time-input-control"
+                                type="time"
+                                name={nameEnd}
+                                value={valueEnd || ''}
+                                onChange={onChange}
+                                isInvalid={!!errorEnd}
+                            />
+                        </div>
 
-                    {errorEnd && (
-                        <Form.Control.Feedback className="d-block" type="invalid">
-                            {t(errorEnd)}
-                        </Form.Control.Feedback>
-                    )}
-                </Form.Group>
+                        {errorEnd && (
+                            <Form.Control.Feedback className="d-block" type="invalid">
+                                {t(errorEnd)}
+                            </Form.Control.Feedback>
+                        )}
+                    </Form.Group>
+                </div>
             </div>
         </div>
     );

@@ -22,7 +22,7 @@ import { EditionsService } from '../../api';
 
 import './Home.css';
 
-// Valeurs initiales du formulaire
+// Valeurs initiales des formulaires
 const initialEditionValues = {
     location: '',
     startDate: '',
