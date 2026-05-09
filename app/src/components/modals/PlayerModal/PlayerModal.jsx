@@ -28,6 +28,7 @@ const PlayerModal = ({ players, formData, modalOptions, setModalOptions, onClose
     const nameInputRef = useRef(null);
 
     // Constantes
+    // TODO : voir si je n'ai pas d'autre moyen que de passer les player/gits... dans modalOptions (trouver comment initialiser le formData à l'avance)
     const availablePlayers = modalOptions?.player && players.filter((p) => p.id !== modalOptions?.player?.id);
     const player = modalOptions?.player;
 

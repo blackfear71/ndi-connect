@@ -31,7 +31,6 @@
         "invalidQuantityAttribution": "La quantité doit être supérieure ou égale à la quantité déjà attribuée",
         "invalidStartDate": "La date est invalide",
         "invalidStartTime": "L'heure de début est invalide",
-        "invalidUserData": "Les données utilisateur sont invalides",
         "invalidValue": "La valeur est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
@@ -177,7 +176,6 @@
         "password": "Mot de passe",
         "resetPassword": "Réinitialiser le mot de passe",
         "settingsTitle": "Paramètres",
-        "showCreateUserForm": "Créer un utilisateur",
         "unknownLevel": "Rôle inconnu",
         "updateLevel": "Modifier le rôle",
         "updatePassword": "Modifier le mot de passe"

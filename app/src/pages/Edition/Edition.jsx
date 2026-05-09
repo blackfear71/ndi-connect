@@ -716,7 +716,7 @@ const Edition = () => {
      * Méthode centralisée d'action à la confirmation
      */
     const handleConfirmAction = () => {
-        switch (modalOptionsConfirm.action) {
+        switch (modalOptionsConfirm?.action) {
             case 'deleteEdition':
                 return handleDeleteEdition();
             case 'deleteGift':

@@ -31,7 +31,6 @@
         "invalidQuantityAttribution": "The quantity must be greater than or equal to the quantity already assigned",
         "invalidStartDate": "Invalid date",
         "invalidStartTime": "Invalid start time",
-        "invalidUserData": "Invalid user data",
         "invalidValue": "Invalid value",
         "loginFailed": "Login failed",
         "logoutFailed": "Logout failed",
@@ -177,7 +176,6 @@
         "password": "Password",
         "resetPassword": "Reset password",
         "settingsTitle": "Settings",
-        "showCreateUserForm": "Create user",
         "unknownLevel": "Unknown role",
         "updateLevel": "Edit role",
         "updatePassword": "Change password"
