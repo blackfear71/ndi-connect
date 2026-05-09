@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { Form } from 'react-bootstrap';
 
 import './TimeInput.css';
@@ -5,7 +7,23 @@ import './TimeInput.css';
 /**
  * Saisie heure de début et de fin
  */
-const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valueStart, valueEnd, onChange, required = false }) => {
+const TimeInput = ({
+    title,
+    icon,
+    nameStart,
+    nameEnd,
+    titleStart,
+    titleEnd,
+    valueStart,
+    valueEnd,
+    onChange,
+    errorStart,
+    errorEnd,
+    required = false
+}) => {
+    // Traductions
+    const { t } = useTranslation();
+
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -21,37 +39,55 @@ const TimeInput = ({ title, icon, nameStart, nameEnd, titleStart, titleEnd, valu
                 {/* Icône */}
                 {icon && <div className="modal-input-icon">{icon}</div>}
 
-                {/* Début */}
-                <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameStart}>
-                    <span className="px-2 time-input-prefix">{titleStart}</span>
+                <div className="d-flex align-items-start w-100 gap-2">
+                    {/* Début */}
+                    <Form.Group className="w-100" controlId={nameStart}>
+                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                            <span className="px-2 time-input-prefix">{titleStart}</span>
 
-                    <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
+                            <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
 
-                    <Form.Control
-                        className="w-100 px-2 time-input-control"
-                        type="time"
-                        name={nameStart}
-                        value={valueStart || ''}
-                        onChange={onChange}
-                        required={required}
-                    />
-                </Form.Group>
+                            <Form.Control
+                                className="w-100 px-2 time-input-control"
+                                type="time"
+                                name={nameStart}
+                                value={valueStart || ''}
+                                onChange={onChange}
+                                isInvalid={!!errorStart}
+                            />
+                        </div>
 
-                {/* Fin */}
-                <Form.Group className="d-flex flex-grow-1 align-items-center w-100 time-input-group" controlId={nameEnd}>
-                    <span className="px-2 time-input-prefix">{titleEnd}</span>
+                        {errorStart && (
+                            <Form.Control.Feedback className="d-block" type="invalid">
+                                {t(errorStart)}
+                            </Form.Control.Feedback>
+                        )}
+                    </Form.Group>
 
-                    <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
+                    {/* Fin */}
+                    <Form.Group className="w-100" controlId={nameEnd}>
+                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                            <span className="px-2 time-input-prefix">{titleEnd}</span>
 
-                    <Form.Control
-                        className="w-100 px-2 time-input-control"
-                        type="time"
-                        name={nameEnd}
-                        value={valueEnd || ''}
-                        onChange={onChange}
-                        required={required}
-                    />
-                </Form.Group>
+                            <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
+
+                            <Form.Control
+                                className="w-100 px-2 time-input-control"
+                                type="time"
+                                name={nameEnd}
+                                value={valueEnd || ''}
+                                onChange={onChange}
+                                isInvalid={!!errorEnd}
+                            />
+                        </div>
+
+                        {errorEnd && (
+                            <Form.Control.Feedback className="d-block" type="invalid">
+                                {t(errorEnd)}
+                            </Form.Control.Feedback>
+                        )}
+                    </Form.Group>
+                </div>
             </div>
         </div>
     );

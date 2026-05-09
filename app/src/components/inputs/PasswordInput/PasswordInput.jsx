@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -8,7 +9,10 @@ import './PasswordInput.css';
 /**
  * Saisie mot de passe
  */
-const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, maxLength, required = false }) => {
+const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, error, maxLength, required = false }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     // Local states
     const [showPassword, setShowPassword] = useState(false);
 
@@ -37,7 +41,7 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                 <Form.Group className="w-100" controlId={name}>
                     <Form.Label className="visually-hidden">{title ?? name}</Form.Label>
 
-                    <InputGroup>
+                    <InputGroup hasValidation>
                         <Form.Control
                             ref={ref}
                             type={showPassword ? 'text' : 'password'}
@@ -47,7 +51,7 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                             value={value}
                             onChange={onChange}
                             maxLength={maxLength}
-                            required
+                            isInvalid={!!error}
                         />
 
                         <Button
@@ -57,6 +61,8 @@ const PasswordInput = ({ title, icon, name, ref, placeholder, value, onChange, m
                         >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </Button>
+
+                        {error && <Form.Control.Feedback type="invalid">{t(error)}</Form.Control.Feedback>}
                     </InputGroup>
                 </Form.Group>
             </div>

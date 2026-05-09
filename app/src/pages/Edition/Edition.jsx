@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
-
-import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaComputer } from 'react-icons/fa6';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { forkJoin, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
+import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { FaComputer } from 'react-icons/fa6';
 
 import { EditionAbout, EditionGifts, EditionPlayers } from '../../components/features';
 import { ConfirmModal, EditionModal, GiftModal, PlayerModal, RewardModal } from '../../components/modals';
@@ -20,7 +21,38 @@ import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper
 
 import { EnumAction, EnumUserRole } from '../../enums';
 
+import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
+
 import './Edition.css';
+
+// Valeurs initiales des formulaires
+const initialEditionValues = {
+    location: '',
+    startDate: '',
+    startTime: '',
+    endTime: '',
+    picture: null,
+    pictureAction: null,
+    theme: '',
+    challenge: ''
+};
+const initialGiftValues = {
+    id: null,
+    name: '',
+    value: '',
+    quantity: ''
+};
+const initialPlayerValues = {
+    id: null,
+    name: '',
+    points: 0,
+    giveaway: 0,
+    giveawayPlayerId: ''
+};
+const initialRewardValues = {
+    giftId: '',
+    playerId: null
+};
 
 /**
  * Page détail édition
@@ -38,60 +70,35 @@ const Edition = () => {
     const { t } = useTranslation();
 
     // Local states
-    const [formEdition, setFormEdition] = useState({
-        location: '',
-        startDate: '',
-        startTime: '',
-        endTime: '',
-        picture: null,
-        pictureAction: null,
-        theme: '',
-        challenge: ''
-    });
-    const [formGift, setFormGift] = useState({
-        id: null,
-        name: '',
-        value: '',
-        quantity: ''
-    });
-    const [formPlayer, setFormPlayer] = useState({
-        id: null,
-        name: '',
-        points: 0,
-        giveaway: 0,
-        giveawayPlayerId: 0
-    });
-    const [formReward, setFormReward] = useState({
-        idReward: null,
-        idPlayer: null,
-        idGift: 0
-    });
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
         content: '',
-        action: '',
+        action: null,
         data: null,
         isOpen: false,
         message: null
     });
     const [modalOptionsEdition, setModalOptionsEdition] = useState({
-        action: '',
+        action: null,
         isOpen: false,
         message: null
     });
     const [modalOptionsGift, setModalOptionsGift] = useState({
-        action: '',
+        action: null,
+        giftId: null,
         isOpen: false,
         message: null
     });
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({
-        action: '',
+        action: null,
+        playerId: null,
         isOpen: false,
         message: null
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({
+        playerId: null,
         isOpen: false,
         message: null
     });
@@ -102,30 +109,153 @@ const Edition = () => {
     const [players, setPlayers] = useState([]);
 
     /**
+     * Schéma de validation Yup de l'édition
+     */
+    const editionValidationSchema = useMemo(() => {
+        return Yup.object({
+            startDate: Yup.string().required('errors.invalidStartDate'),
+            startTime: Yup.string().required('errors.invalidStartTime'),
+            endTime: Yup.string().required('errors.invalidEndTime'),
+            location: Yup.string().required('errors.invalidLocation'),
+            picture: Yup.mixed()
+                .nullable()
+                .test('file-type', 'errors.invalidFileType', (value) => {
+                    if (!value || typeof value === 'string') {
+                        return true;
+                    }
+
+                    return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+                })
+        });
+    }, []);
+
+    /**
+     * Schéma de validation Yup des cadeaux
+     */
+    const giftValidationSchema = useMemo(() => {
+        const currentGift = gifts.find((g) => g.id === modalOptionsGift.giftId);
+
+        return Yup.object({
+            name: Yup.string().required('errors.invalidName'),
+            value: Yup.number()
+                .typeError('errors.invalidValue')
+                .required('errors.invalidValue')
+                .integer('errors.invalidValue')
+                .positive('errors.invalidValue'),
+            quantity: Yup.number()
+                .typeError('errors.invalidQuantity')
+                .required('errors.invalidQuantity')
+                .min(0, 'errors.invalidQuantity')
+                .test('gift-reward-count', 'errors.invalidQuantityAttribution', (value) => !currentGift || value >= currentGift.rewardCount)
+        });
+    }, [modalOptionsGift.giftId, gifts]);
+
+    /**
+     * Schéma de validation Yup des participants
+     */
+    const playerValidationSchema = useMemo(() => {
+        const currentPlayer = players.find((p) => p.id === modalOptionsPlayer.playerId);
+
+        return Yup.object({
+            name: Yup.string().required('errors.invalidName'),
+            points: Yup.number()
+                .typeError('errors.invalidPoints')
+                .required('errors.invalidPoints')
+                .min(
+                    auth.level < EnumUserRole.SUPERADMIN || modalOptionsPlayer.action === EnumAction.CREATE ? 0 : -currentPlayer?.points,
+                    'errors.invalidPoints'
+                ),
+            ...(modalOptionsPlayer.action === EnumAction.UPDATE && {
+                giveaway: Yup.number()
+                    .nullable()
+                    // Don > 0 si un joueur est sélectionné
+                    .test('giveaway-pair', 'errors.invalidGiveaway', function (value) {
+                        const { giveawayPlayerId } = this.parent;
+                        return !giveawayPlayerId || value > 0;
+                    })
+                    // Points restants
+                    .test('giveaway-remaining', 'errors.invalidGiveawayRemaining', function (value) {
+                        const { points } = this.parent;
+                        const delta = parseInt(points, 10);
+                        const giveaway = parseInt(value, 10) || 0;
+                        return currentPlayer.points + delta - giveaway >= 0;
+                    }),
+                giveawayPlayerId: Yup.mixed()
+                    .nullable()
+                    // Joueur sélectionné si don > 0
+                    .test('giveawayPlayerId-pair', 'errors.invalidGiveawayPlayer', function (value) {
+                        const { giveaway } = this.parent;
+                        return !(giveaway > 0) || !!value;
+                    })
+            })
+        });
+    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, players, auth]);
+
+    /**
+     * Schéma de validation Yup des récompenses
+     */
+    const rewardValidationSchema = useMemo(() => {
+        const currentPlayer = players.find((p) => p.id === modalOptionsReward.playerId);
+
+        return Yup.object({
+            giftId: Yup.mixed()
+                .required('errors.invalidGift')
+                // Nombre de points suffisant
+                .test('gift-points', 'errors.invalidGiftPoints', (value) =>
+                    gifts.some((g) => g.id === value && g.remainingQuantity > 0 && g.value <= currentPlayer.points)
+                )
+        });
+    }, [modalOptionsReward.playerId, gifts, players]);
+
+    /**
+     * Formik édition
+     */
+    const formEdition = useFormik({
+        initialValues: initialEditionValues,
+        validationSchema: editionValidationSchema,
+        onSubmit: (values) => handleSubmitEdition(values)
+    });
+
+    /**
+     * Formik cadeau
+     */
+    const formGift = useFormik({
+        initialValues: initialGiftValues,
+        validationSchema: giftValidationSchema,
+        onSubmit: (values) => handleSubmitGift(values)
+    });
+
+    /**
+     * Formik participant
+     */
+    const formPlayer = useFormik({
+        initialValues: initialPlayerValues,
+        validationSchema: playerValidationSchema,
+        onSubmit: (values) => handleSubmitPlayer(values)
+    });
+
+    /**
+     * Formik récompense
+     */
+    const formReward = useFormik({
+        initialValues: initialRewardValues,
+        validationSchema: rewardValidationSchema,
+        onSubmit: (values) => handleSubmitReward(values)
+    });
+
+    /**
      * Lancement initial de la page (à chaque changement d'id)
      */
     useEffect(() => {
         const editionsService = new EditionsService();
 
-        const subscriptionEdition = editionsService.getEdition(id);
-
-        subscriptionEdition
+        editionsService
+            .getEdition(id)
             .pipe(
                 map((dataEdition) => {
                     setEdition(dataEdition.response.data.edition);
                     setGifts(processGiftsData(dataEdition.response.data.gifts));
                     setPlayers(processPlayersData(dataEdition.response.data.players));
-
-                    setFormEdition({
-                        location: dataEdition.response.data.edition.location,
-                        startDate: getDayFromDate(dataEdition.response.data.edition.startDate),
-                        startTime: getLocalizedTime(dataEdition.response.data.edition.startDate),
-                        endTime: getLocalizedTime(dataEdition.response.data.edition.endDate),
-                        picture: dataEdition.response.data.edition.picture,
-                        pictureAction: null,
-                        theme: dataEdition.response.data.edition.theme,
-                        challenge: dataEdition.response.data.edition.challenge
-                    });
                 }),
                 take(1),
                 catchError((err) => {
@@ -172,8 +302,100 @@ const Edition = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
+     * Mise à jour du formulaire de l'édition aux changements de sa modale
+     */
+    useEffect(() => {
+        // Initialisation à l'ouverture de la modale
+        if (modalOptionsEdition.isOpen && edition) {
+            formEdition.setValues({
+                location: edition.location,
+                startDate: getDayFromDate(edition.startDate),
+                startTime: getLocalizedTime(edition.startDate),
+                endTime: getLocalizedTime(edition.endDate),
+                picture: edition.picture,
+                pictureAction: null,
+                theme: edition.theme,
+                challenge: edition.challenge
+            });
+        }
+
+        // Réinitialisation à la fermeture de la modale
+        if (!modalOptionsEdition.isOpen) {
+            formEdition.resetForm();
+        }
+    }, [modalOptionsEdition.isOpen, edition]);
+
+    /**
+     * Mise à jour du formulaire du cadeau aux changements de sa modale
+     */
+    useEffect(() => {
+        // Initialisation à l'ouverture de la modale
+        if (modalOptionsGift.isOpen && modalOptionsGift.giftId) {
+            const currentGift = gifts.find((g) => g.id === modalOptionsGift.giftId);
+
+            currentGift &&
+                formGift.setValues({
+                    id: currentGift.id,
+                    name: currentGift.name,
+                    value: currentGift.value,
+                    quantity: currentGift.quantity
+                });
+        }
+
+        // Réinitialisation à la fermeture de la modale
+        if (!modalOptionsGift.isOpen) {
+            formGift.resetForm();
+        }
+    }, [modalOptionsGift.isOpen, modalOptionsGift.giftId]);
+
+    /**
+     * Mise à jour du formulaire du participant aux changements de sa modale
+     */
+    useEffect(() => {
+        // Initialisation à l'ouverture de la modale
+        if (modalOptionsPlayer.isOpen && modalOptionsPlayer.playerId) {
+            const currentPlayer = players.find((g) => g.id === modalOptionsPlayer.playerId);
+
+            currentPlayer &&
+                formPlayer.setValues({
+                    id: currentPlayer.id,
+                    name: currentPlayer.name,
+                    points: 0,
+                    giveaway: 0,
+                    giveawayPlayerId: ''
+                });
+        }
+
+        // Réinitialisation à la fermeture de la modale
+        if (!modalOptionsPlayer.isOpen) {
+            formPlayer.resetForm();
+        }
+    }, [modalOptionsPlayer.isOpen, modalOptionsPlayer.playerId]);
+
+    /**
+     * Mise à jour du formulaire de récompense aux changements de sa modale
+     */
+    useEffect(() => {
+        // Initialisation à l'ouverture de la modale
+        if (modalOptionsReward.isOpen && modalOptionsReward.playerId) {
+            const currentPlayer = players.find((g) => g.id === modalOptionsReward.playerId);
+
+            currentPlayer &&
+                formReward.setValues({
+                    giftId: '',
+                    playerId: currentPlayer.id
+                });
+        }
+
+        // Réinitialisation à la fermeture de la modale
+        if (!modalOptionsReward.isOpen) {
+            formReward.resetForm();
+        }
+    }, [modalOptionsReward.isOpen, modalOptionsReward.playerId]);
+
+    /**
      * Enrichit les données participants avec la couleur
-     * @param {*} usersData Données participants
+     * @param {*} playersData Données participants
      * @returns Données participants enrichies
      */
     const processPlayersData = (playersData) => {
@@ -185,7 +407,7 @@ const Edition = () => {
 
     /**
      * Enrichit les données cadeaux avec la couleur
-     * @param {*} usersData Données cadeaux
+     * @param {*} giftsData Données cadeaux
      * @returns Données cadeaux enrichies
      */
     const processGiftsData = (giftsData) => {
@@ -221,40 +443,38 @@ const Edition = () => {
 
     /**
      * Ouverture/fermeture de la modale de modification d'édition
+     * @param {*} action Action à réaliser
      */
-    const openCloseEditionModal = (openAction, data) => {
+    const openCloseEditionModal = (action = null) => {
         // Ouverture ou fermeture
         setModalOptionsEdition((prev) => ({
             ...prev,
-            action: openAction,
+            action: action,
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsEdition.isOpen && resetFormEdition(data ?? edition);
     };
 
     /**
      * Modification de l'édition
+     * @param {*} values Données du formulaire
      */
-    const handleSubmitEdition = () => {
+    const handleSubmitEdition = (values) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsEdition((prev) => ({ ...prev, message: null }));
 
         // Formatage des données
-        const body = formatDataEdition();
+        const body = formatDataEdition(values);
 
         const editionsService = new EditionsService();
 
-        const subscriptionEdition = editionsService.updateEdition(edition.id, body);
-
-        subscriptionEdition
+        editionsService
+            .updateEdition(edition.id, body)
             .pipe(
                 map((dataEdition) => {
                     // Fermeture modale
-                    openCloseEditionModal('', dataEdition.response.data.edition);
+                    openCloseEditionModal();
                     setEdition(dataEdition.response.data.edition);
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
@@ -275,86 +495,73 @@ const Edition = () => {
 
     /**
      * Formate les données édition
+     * @param {*} values Données du formulaire
      * @returns Données formatées
      */
-    const formatDataEdition = () => {
+    const formatDataEdition = (values) => {
         const formData = new FormData();
 
         // Champs textes
-        Object.entries(formEdition).forEach(([key, value]) => {
+        Object.entries(values).forEach(([key, value]) => {
             if (key !== 'picture' && value !== null) {
                 formData.append(key, value);
             }
         });
 
         // Images (s'il y a une image à traiter)
-        formEdition.pictureAction === EnumAction.CREATE && formEdition.picture && formData.append('picture', formEdition.picture);
+        if (values.pictureAction === EnumAction.CREATE && values.picture) {
+            formData.append('picture', values.picture);
+        }
 
         return formData;
     };
 
     /**
-     * Réinitialisation formulaire (modification édition)
-     */
-    const resetFormEdition = (data) => {
-        setFormEdition({
-            location: data.location,
-            startDate: getDayFromDate(data.startDate),
-            startTime: getLocalizedTime(data.startDate),
-            endTime: getLocalizedTime(data.endDate),
-            picture: data.picture,
-            pictureAction: null,
-            theme: data.theme,
-            challenge: data.challenge
-        });
-    };
-
-    /**
      * Ouverture/fermeture de la modale de modification de participant
+     * @param {*} action Action à réaliser
+     * @param {*} playerId Identifiant participant
      */
-    const openClosePlayerModal = (openAction) => {
+    const openClosePlayerModal = (action = null, playerId = null) => {
         // Ouverture ou fermeture
         setModalOptionsPlayer((prev) => ({
             ...prev,
-            action: openAction,
+            action: action,
+            playerId: playerId,
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsPlayer.isOpen && resetFormPlayer();
     };
 
     /**
      * Création ou modification d'un participant
+     * @param {*} values Données du formulaire
      */
-    const handleSubmitPlayer = (action) => {
+    const handleSubmitPlayer = (values) => {
         setMessage(null);
 
         const playersService = new PlayersService();
 
         let subscriptionPlayers = null;
 
-        switch (action) {
+        switch (modalOptionsPlayer?.action) {
             case EnumAction.CREATE:
                 setIsSubmitting(true);
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
                 subscriptionPlayers = playersService.createPlayer(edition.id, {
-                    id_edition: edition.id,
-                    name: formPlayer.name,
-                    points: formPlayer.points
+                    name: values.name,
+                    points: values.points
                 });
                 break;
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                subscriptionPlayers = playersService.updatePlayer(formPlayer.id, {
-                    name: formPlayer.name,
-                    points: formPlayer.points,
-                    giveaway: formPlayer.giveaway,
-                    giveawayPlayerId: formPlayer.giveawayPlayerId
+                subscriptionPlayers = playersService.updatePlayer(values.id, {
+                    name: values.name,
+                    points: values.points,
+                    giveaway: values.giveaway,
+                    giveawayPlayerId: values.giveawayPlayerId
                 });
                 break;
         }
@@ -366,7 +573,7 @@ const Edition = () => {
                 }),
                 switchMap(() => playersService.getEditionPlayers(edition.id)),
                 map((dataPlayers) => {
-                    openClosePlayerModal('');
+                    openClosePlayerModal();
                     setPlayers(processPlayersData(dataPlayers.response.data));
                 }),
                 take(1),
@@ -385,63 +592,51 @@ const Edition = () => {
     };
 
     /**
-     * Réinitialisation formulaire (modification participant)
-     */
-    const resetFormPlayer = () => {
-        setFormPlayer({
-            id: null,
-            name: '',
-            points: 0,
-            giveaway: 0,
-            giveawayPlayerId: 0
-        });
-    };
-
-    /**
      * Ouverture/fermeture de la modale de modification de cadeau
+     * @param {*} action Action à réaliser
+     * @param {*} giftId Identifiant cadeau
      */
-    const openCloseGiftModal = (openAction) => {
+    const openCloseGiftModal = (action = null, giftId = null) => {
         // Ouverture ou fermeture
         setModalOptionsGift((prev) => ({
             ...prev,
-            action: openAction,
+            action: action,
+            giftId: giftId,
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsGift.isOpen && resetFormGift();
     };
 
     /**
      * Création ou modification d'un cadeau
+     * @param {*} values Données du formulaire
      */
-    const handleSubmitGift = (action) => {
+    const handleSubmitGift = (values) => {
         setMessage(null);
 
         const giftsService = new GiftsService();
 
         let subscriptionGifts = null;
 
-        switch (action) {
+        switch (modalOptionsGift?.action) {
             case EnumAction.CREATE:
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
                 subscriptionGifts = giftsService.createGift(edition.id, {
-                    name: formGift.name,
-                    value: formGift.value,
-                    quantity: formGift.quantity
+                    name: values.name,
+                    value: values.value,
+                    quantity: values.quantity
                 });
                 break;
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
-                subscriptionGifts = giftsService.updateGift(formGift.id, {
-                    name: formGift.name,
-                    value: formGift.value,
-                    quantity: formGift.quantity
+                subscriptionGifts = giftsService.updateGift(formGift.values.id, {
+                    name: values.name,
+                    value: values.value,
+                    quantity: values.quantity
                 });
                 break;
         }
@@ -453,7 +648,7 @@ const Edition = () => {
                 }),
                 switchMap(() => giftsService.getEditionGifts(edition.id)),
                 map((dataGifts) => {
-                    openCloseGiftModal('');
+                    openCloseGiftModal();
                     setGifts(processGiftsData(dataGifts.response.data));
                 }),
                 take(1),
@@ -472,36 +667,24 @@ const Edition = () => {
     };
 
     /**
-     * Réinitialisation formulaire (création/modification cadeau)
-     */
-    const resetFormGift = () => {
-        setFormGift({
-            id: null,
-            name: '',
-            value: '',
-            quantity: ''
-        });
-    };
-
-    /**
      * Ouverture/fermeture de la modale d'attribution de cadeau
+     * @param {*} playerId Identifiant participant
      */
-    const openCloseRewardModal = () => {
+    const openCloseRewardModal = (playerId = null) => {
         // Ouverture ou fermeture
         setModalOptionsReward((prev) => ({
             ...prev,
+            playerId: playerId,
             isOpen: !prev.isOpen,
             message: null
         }));
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptionsReward.isOpen && resetFormReward();
     };
 
     /**
      * Attribution d'un cadeau à un participant
+     * @param {*} values Données du formulaire
      */
-    const handleSubmitReward = () => {
+    const handleSubmitReward = (values) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsReward((prev) => ({ ...prev, message: null }));
@@ -510,7 +693,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.createReward(formReward.idGift, formReward.idPlayer);
+        const subscriptionRewards = rewardsService.createReward(values.giftId, values.playerId);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 
@@ -541,18 +724,8 @@ const Edition = () => {
     };
 
     /**
-     * Réinitialisation formulaire (attribution cadeau)
-     */
-    const resetFormReward = () => {
-        setFormReward({
-            idReward: null,
-            idPlayer: null,
-            idGift: 0
-        });
-    };
-
-    /**
      * Ouverture/fermeture de la modale de confirmation
+     * @param {*} confirmOptions Données modale de confirmation
      */
     const openCloseConfirmModal = (confirmOptions) => {
         // Ouverture ou fermeture
@@ -567,7 +740,7 @@ const Edition = () => {
         } else {
             setModalOptionsConfirm({
                 content: '',
-                action: '',
+                action: null,
                 data: null,
                 isOpen: false,
                 message: null
@@ -594,7 +767,7 @@ const Edition = () => {
      * Méthode centralisée d'action à la confirmation
      */
     const handleConfirmAction = () => {
-        switch (modalOptionsConfirm.action) {
+        switch (modalOptionsConfirm?.action) {
             case 'deleteEdition':
                 return handleDeleteEdition();
             case 'deleteGift':
@@ -618,9 +791,8 @@ const Edition = () => {
 
         const editionsService = new EditionsService();
 
-        const subscriptionEdition = editionsService.deleteEdition(edition.id);
-
-        subscriptionEdition
+        editionsService
+            .deleteEdition(edition.id)
             .pipe(
                 map((dataEdition) => {
                     // Fermeture modale de confirmation
@@ -650,17 +822,17 @@ const Edition = () => {
 
     /**
      * Suppression d'un cadeau
+     * @param {*} giftId Identifiant cadeau
      */
-    const handleDeleteGift = (idGift) => {
+    const handleDeleteGift = (giftId) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const giftsService = new GiftsService();
 
-        const subscriptionGifts = giftsService.deleteGift(idGift);
-
-        subscriptionGifts
+        giftsService
+            .deleteGift(giftId)
             .pipe(
                 map((dataGift) => {
                     setMessage({ code: dataGift.response.message, type: dataGift.response.status });
@@ -687,17 +859,17 @@ const Edition = () => {
 
     /**
      * Suppression d'un participant
+     * @param {*} playerId Identifiant participant
      */
-    const handleDeletePlayer = (idPlayer) => {
+    const handleDeletePlayer = (playerId) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
 
         const playersService = new PlayersService();
 
-        const subscriptionPlayers = playersService.deletePlayer(idPlayer);
-
-        subscriptionPlayers
+        playersService
+            .deletePlayer(playerId)
             .pipe(
                 map((dataPlayer) => {
                     setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
@@ -724,8 +896,9 @@ const Edition = () => {
 
     /**
      * Suppression d'un cadeau d'un participant
+     * @param {*} rewardId Identifiant récompense
      */
-    const handleDeleteReward = (idReward) => {
+    const handleDeleteReward = (rewardId) => {
         setMessage(null);
         setIsSubmitting(true);
         setModalOptionsConfirm((prev) => ({ ...prev, message: null }));
@@ -734,7 +907,7 @@ const Edition = () => {
         const giftsService = new GiftsService();
         const playersService = new PlayersService();
 
-        const subscriptionRewards = rewardsService.deleteReward(idReward);
+        const subscriptionRewards = rewardsService.deleteReward(rewardId);
         const subscriptionGifts = giftsService.getEditionGifts(edition.id);
         const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
 
@@ -812,10 +985,8 @@ const Edition = () => {
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
                                             players={players}
-                                            setFormPlayer={setFormPlayer}
-                                            setModalOptionsPlayer={setModalOptionsPlayer}
-                                            setFormReward={setFormReward}
-                                            setModalOptionsReward={setModalOptionsReward}
+                                            onOpenPlayerModal={openClosePlayerModal}
+                                            onOpenRewardModal={openCloseRewardModal}
                                             onConfirm={openCloseConfirmModal}
                                             isSubmitting={isSubmitting}
                                         />
@@ -825,8 +996,7 @@ const Edition = () => {
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
                                             gifts={gifts}
-                                            setFormData={setFormGift}
-                                            setModalOptions={setModalOptionsGift}
+                                            onOpen={openCloseGiftModal}
                                             onConfirm={openCloseConfirmModal}
                                             isSubmitting={isSubmitting}
                                         />
@@ -836,7 +1006,7 @@ const Edition = () => {
                                     <Tab eventKey="about" title={t('edition.about')}>
                                         <EditionAbout
                                             edition={edition}
-                                            onEdit={openCloseEditionModal}
+                                            onOpen={openCloseEditionModal}
                                             onConfirm={handleConfirmDeleteEdition}
                                             isSubmitting={isSubmitting}
                                         />
@@ -844,58 +1014,50 @@ const Edition = () => {
                                 </Tabs>
 
                                 {/* Modale de modification/suppression d'édition */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsEdition.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formEdition && modalOptionsEdition.isOpen && (
                                     <EditionModal
                                         formData={formEdition}
-                                        setFormData={setFormEdition}
                                         modalOptions={modalOptionsEdition}
                                         setModalOptions={setModalOptionsEdition}
                                         onClose={openCloseEditionModal}
-                                        onSubmit={handleSubmitEdition}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}
 
                                 {/* Modale de création/modification de cadeau */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && modalOptionsGift.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && formGift && modalOptionsGift.isOpen && (
                                     <GiftModal
-                                        gift={gifts.find((g) => g.id === formGift.id)}
+                                        gift={gifts.find((g) => g.id === modalOptionsGift.giftId)}
                                         formData={formGift}
-                                        setFormData={setFormGift}
                                         modalOptions={modalOptionsGift}
                                         setModalOptions={setModalOptionsGift}
                                         onClose={openCloseGiftModal}
-                                        onSubmit={handleSubmitGift}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}
 
                                 {/* Modale de modification de participant */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && modalOptionsPlayer.isOpen && (
+                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && formPlayer && modalOptionsPlayer.isOpen && (
                                     <PlayerModal
+                                        player={players.find((p) => p.id === modalOptionsPlayer.playerId)}
                                         players={players}
-                                        player={players.find((p) => p.id === formPlayer.id)}
                                         formData={formPlayer}
-                                        setFormData={setFormPlayer}
                                         modalOptions={modalOptionsPlayer}
                                         setModalOptions={setModalOptionsPlayer}
                                         onClose={openClosePlayerModal}
-                                        onSubmit={handleSubmitPlayer}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}
 
                                 {/* Modale d'attribution de cadeau à un participant */}
-                                {modalOptionsReward.isOpen && (
+                                {formReward && modalOptionsReward.isOpen && (
                                     <RewardModal
-                                        player={players.find((p) => p.id === formReward.idPlayer)}
+                                        player={players.find((p) => p.id === modalOptionsReward.playerId)}
                                         gifts={gifts}
                                         formData={formReward}
-                                        setFormData={setFormReward}
                                         modalOptions={modalOptionsReward}
                                         setModalOptions={setModalOptionsReward}
                                         onClose={openCloseRewardModal}
-                                        onSubmit={handleSubmitReward}
                                         onConfirm={openCloseConfirmModal}
                                         isSubmitting={isSubmitting}
                                     />

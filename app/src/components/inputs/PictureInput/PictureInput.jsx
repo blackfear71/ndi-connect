@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Image } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaTrashCan } from 'react-icons/fa6';
 
 import { EnumAction } from '../../../enums';
@@ -11,12 +11,13 @@ import './PictureInput.css';
 /**
  * Saisie image avec aperçu et suppression
  */
-const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmitting, required = false }) => {
+const PictureInput = ({ title, icon, name, value, onChange, error, isSubmitting, required = false }) => {
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const [fileName, setFileName] = useState('');
+    const [pictureError, setPictureError] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
     // Constantes
@@ -26,6 +27,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
      * Initialise l'image existante si "value" est fourni
      */
     useEffect(() => {
+        setPictureError(null);
         let objectUrl = null;
 
         if (value) {
@@ -56,8 +58,7 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
      * @param {*} e Evènement
      */
     const handleFileChange = (e) => {
-        setMessage(null);
-
+        setPictureError(null);
         const file = e.target.files[0];
 
         if (file) {
@@ -71,11 +72,11 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
 
                 onChange?.(file, EnumAction.CREATE);
             } else {
-                setMessage({ code: 'errors.invalidFileType', type: 'error' });
-
                 e.target.value = '';
                 setPreviewUrl(null);
                 setFileName('');
+
+                setPictureError('errors.invalidFileType');
             }
         }
     };
@@ -125,8 +126,10 @@ const PictureInput = ({ title, icon, name, value, setMessage, onChange, isSubmit
                         name={name}
                         accept=".jpg,.jpeg,.png,.webp"
                         onChange={handleFileChange}
-                        required={required && !value}
+                        isInvalid={!!pictureError || !!error}
                     />
+
+                    {(pictureError || error) && <Form.Control.Feedback type="invalid">{t(pictureError || error)}</Form.Control.Feedback>}
                 </Form.Group>
 
                 {/* Aperçu et suppression */}

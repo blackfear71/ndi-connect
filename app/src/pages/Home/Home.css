@@ -8,7 +8,7 @@
     color: var(--color-text-white);
     font-size: large;
     height: 70px;
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
     border: 2px dashed var(--color-border-gray-bold);
 }
 

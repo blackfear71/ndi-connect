@@ -45,12 +45,12 @@ class PlayersService {
 
     /**
      * Mise à jour participant
-     * @param {*} idPlayer Identifiant participant
+     * @param {*} playerId Identifiant participant
      * @param {*} body Données participant
      * @returns Données retour
      */
-    updatePlayer = (idPlayer, body) => {
-        const url = `${this.apiUrl}/update/${idPlayer}`;
+    updatePlayer = (playerId, body) => {
+        const url = `${this.apiUrl}/update/${playerId}`;
         return ajax({
             url,
             method: 'PATCH',
@@ -62,11 +62,11 @@ class PlayersService {
 
     /**
      * Suppression d'un participant
-     * @param {*} idPlayer Identifiant participant
+     * @param {*} playerId Identifiant participant
      * @returns Données retour
      */
-    deletePlayer = (idPlayer) => {
-        const url = `${this.apiUrl}/delete/${idPlayer}`;
+    deletePlayer = (playerId) => {
+        const url = `${this.apiUrl}/delete/${playerId}`;
         return ajax({
             url,
             method: 'DELETE',

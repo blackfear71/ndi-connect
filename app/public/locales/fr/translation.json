@@ -18,7 +18,8 @@
         "invalidImage": "Le fichier n'est pas une image",
         "invalidGift": "Un cadeau doit être choisi",
         "invalidGiftPoints": "Le nombre de points est insuffisant pour ce cadeau",
-        "invalidGiveaway": "Le nom et le nombre de points à donner doivent être renseignés",
+        "invalidGiveaway": "Le nombre de points à donner doit être renseigné",
+        "invalidGiveawayPlayer": "Le nom doit être renseigné",
         "invalidGiveawayRemaining": "Le nombre de points restant doit être supérieur ou égal à 0",
         "invalidLevel": "Le niveau est invalide",
         "invalidLocation": "Le lieu est invalide",
@@ -30,7 +31,6 @@
         "invalidQuantityAttribution": "La quantité doit être supérieure ou égale à la quantité déjà attribuée",
         "invalidStartDate": "La date est invalide",
         "invalidStartTime": "L'heure de début est invalide",
-        "invalidUserData": "Les données utilisateur sont invalides",
         "invalidValue": "La valeur est invalide",
         "loginFailed": "Erreur de connexion",
         "logoutFailed": "Erreur de déconnexion",
@@ -53,8 +53,8 @@
         "logoutSuccess": "Déconnexion réussie",
         "noResults": "Aucun résultat ne correspond à la recherche",
         "resetPasswordSuccess": "Le mot de passe a été réinitialisé pour : {{password}}, il est conseillé de le changer immédiatement",
+        "resultMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "rewardSuccess": "Cadeau attribué",
-        "searchMessage": "Veuillez saisir au moins 3 caractères pour lancer la recherche",
         "updateSuccess": "Modification réussie"
     },
     "warnings": {
@@ -176,7 +176,6 @@
         "password": "Mot de passe",
         "resetPassword": "Réinitialiser le mot de passe",
         "settingsTitle": "Paramètres",
-        "showCreateUserForm": "Créer un utilisateur",
         "unknownLevel": "Rôle inconnu",
         "updateLevel": "Modifier le rôle",
         "updatePassword": "Modifier le mot de passe"

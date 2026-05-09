@@ -1,7 +1,7 @@
 .progress-card {
     background-color: var(--color-bg-item);
     border: 1px solid var(--color-border-item);
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
 }
 
 .progress-card-header {

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 import { Form } from 'react-bootstrap';
 
 /**
@@ -13,11 +15,15 @@ const TextInput = ({
     value,
     onFocus,
     onChange,
+    error,
     maxLength,
     inputMode,
     pattern,
     required = false
 }) => {
+    // Traductions
+    const { t } = useTranslation();
+
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -47,8 +53,10 @@ const TextInput = ({
                         maxLength={maxLength}
                         inputMode={inputMode}
                         pattern={pattern}
-                        required={required}
+                        isInvalid={!!error}
                     />
+
+                    {error && <Form.Control.Feedback type="invalid">{t(error)}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

@@ -18,12 +18,12 @@ class RewardsService {
 
     /**
      * Attribution d'un cadeau à un participant
-     * @param {*} idGift Identifiant cadeau
-     * @param {*} idPlayer Identifiant participant
+     * @param {*} giftId Identifiant cadeau
+     * @param {*} playerId Identifiant participant
      * @returns Données retour
      */
-    createReward = (idGift, idPlayer) => {
-        const url = `${this.apiUrl}/create/gift/${idGift}/player/${idPlayer}`;
+    createReward = (giftId, playerId) => {
+        const url = `${this.apiUrl}/create/gift/${giftId}/player/${playerId}`;
         return ajax({
             url,
             method: 'POST',
@@ -34,11 +34,11 @@ class RewardsService {
 
     /**
      * Annulation de l'attribution d'un cadeau à un participant
-     * @param {*} idReward Identifiant de la récompense
+     * @param {*} rewardId Identifiant de la récompense
      * @returns Données retour
      */
-    deleteReward = (idReward) => {
-        const url = `${this.apiUrl}/delete/${idReward}`;
+    deleteReward = (rewardId) => {
+        const url = `${this.apiUrl}/delete/${rewardId}`;
         return ajax({
             url,
             method: 'DELETE',

@@ -1,5 +1,6 @@
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button } from 'react-bootstrap';
 import { FaAngleRight, FaGift, FaTrashCan } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
 import { IoGiftSharp } from 'react-icons/io5';
@@ -11,7 +12,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des participants
  */
-const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSubmitting }) => {
+const PlayerList = ({ players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -74,7 +75,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
 
                     {/* Cadeaux */}
                     <Button
-                        onClick={() => showRewardModal(p)}
+                        onClick={() => onOpenRewardModal(p.id)}
                         className="edition-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}
@@ -85,7 +86,7 @@ const PlayerList = ({ players, onConfirm, showRewardModal, showPlayerModal, isSu
                     {/* Modification */}
                     {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                         <Button
-                            onClick={() => showPlayerModal(p, EnumAction.UPDATE)}
+                            onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p.id)}
                             className="edition-item-button"
                             style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                             disabled={isSubmitting}

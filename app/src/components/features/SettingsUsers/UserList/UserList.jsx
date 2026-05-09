@@ -1,5 +1,6 @@
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button } from 'react-bootstrap';
 import { FaAngleRight, FaTrashCan } from 'react-icons/fa6';
 
 import { useAuth } from '../../../../utils/context/AuthContext';
@@ -9,7 +10,7 @@ import { EnumAction, EnumUserRole } from '../../../../enums';
 /**
  * Liste des utilisateurs
  */
-const UserList = ({ users, onConfirm, showUserModal, isSubmitting }) => {
+const UserList = ({ users, onOpen, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -59,7 +60,7 @@ const UserList = ({ users, onConfirm, showUserModal, isSubmitting }) => {
 
                     {/* Modification */}
                     <Button
-                        onClick={() => showUserModal(u, EnumAction.UPDATE)}
+                        onClick={() => onOpen(EnumAction.UPDATE, u.id)}
                         className="settings-item-button"
                         style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         disabled={isSubmitting}

@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 /**
  * Saisie zone de texte
  */
-const TextareaInput = ({ title, icon, name, placeholder, value, onChange, required = false }) => {
+const TextareaInput = ({ title, icon, name, placeholder, value, onChange, error, required = false }) => {
     return (
         <div className="d-flex flex-column gap-1">
             {/* Titre */}
@@ -29,8 +29,10 @@ const TextareaInput = ({ title, icon, name, placeholder, value, onChange, requir
                         placeholder={placeholder}
                         value={value}
                         onChange={onChange}
-                        required={required}
+                        isInvalid={!!error}
                     />
+
+                    {error && <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>}
                 </Form.Group>
             </div>
         </div>

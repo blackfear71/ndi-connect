@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { HiIdentification, HiKey } from 'react-icons/hi';
@@ -16,7 +16,7 @@ import './SettingsModal.css';
 /**
  * Modale utilisateur
  */
-const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOptions, onReset, onClose, onSubmit, isSubmitting }) => {
+const SettingsModal = ({ user, formData, modalOptions, setModalOptions, onReset, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -27,11 +27,8 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
      * Réinitialise le message à l'ouverture de la modale
      */
     useEffect(() => {
+        // Focus à la création
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-
-            // Focus à la création
             modalOptions.action === EnumAction.CREATE && loginInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
@@ -48,51 +45,11 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
      * Met à jour le formulaire à la saisie
      * @param {*} e Evènement
      */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Met à jour le formulaire à la saisie
-     * @param {*} e Evènement
-     */
     const handleChangeSelect = (e) => {
-        setFormData((prev) => ({
+        formData.setValues((prev) => ({
             ...prev,
-            level: parseInt(e.target.value)
+            level: e.target.value === '' ? null : parseInt(e.target.value)
         }));
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission (création/modification utilisateur)
-     * @param {*} e Evènement
-     * @param {*} action Action à réaliser
-     */
-    const handleSubmit = (e, action) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle que les données sont renseignées (création)
-        if (action === EnumAction.CREATE && (!formData.login || !formData.password || !formData.confirmPassword)) {
-            setModalMessage({ code: 'errors.invalidUserData', type: 'error' });
-            return;
-        }
-
-        // Contrôle que le niveau est correct
-        if (formData.level === '' || isNaN(formData.level) || formData.level < 0 || formData.level > 2) {
-            setModalMessage({ code: 'errors.invalidLevel', type: 'error' });
-            return;
-        }
-
-        // Contrôle que les mots de passe correspondent (création)
-        if (action === EnumAction.CREATE && formData.password !== formData.confirmPassword) {
-            setModalMessage({ code: 'errors.passwordMatch', type: 'error' });
-            return;
-        }
-
-        // Soumets le formulaire
-        onSubmit(action);
     };
 
     /**
@@ -108,8 +65,8 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUser />
@@ -145,8 +102,9 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                         name={'login'}
                                         ref={loginInputRef}
                                         placeholder={t('settings.login')}
-                                        value={formData.login}
-                                        onChange={handleChange}
+                                        value={formData.values.login}
+                                        onChange={formData.handleChange}
+                                        error={formData.submitCount > 0 && formData.errors.login}
                                         maxLength={100}
                                         required={true}
                                     />
@@ -161,15 +119,16 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                     name={'level'}
                                     defaultOption={{ key: 0, value: '', label: t('settings.chooseLevel') }}
                                     options={getLevelOptions()}
-                                    value={formData.level}
+                                    value={formData.values.level}
                                     onChange={handleChangeSelect}
+                                    error={formData.submitCount > 0 && formData.errors.level}
                                     required={true}
                                 />
 
                                 {/* Description du niveau sélectionné */}
-                                {formData.level !== '' && (
+                                {formData.values.level !== '' && (
                                     <div className="px-2 py-1 settings-modal-description">
-                                        {t(`settings.levelDescription${formData.level}`)}
+                                        {t(`settings.levelDescription${formData.values.level}`)}
                                     </div>
                                 )}
 
@@ -181,8 +140,9 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                             icon={<HiKey />}
                                             name={'password'}
                                             placeholder={t('settings.password')}
-                                            value={formData.password}
-                                            onChange={handleChange}
+                                            value={formData.values.password}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && formData.errors.password}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -193,8 +153,9 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                             icon={<HiKey />}
                                             name={'confirmPassword'}
                                             placeholder={t('settings.confirmPassword')}
-                                            value={formData.confirmPassword}
-                                            onChange={handleChange}
+                                            value={formData.values.confirmPassword}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && formData.errors.confirmPassword}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -236,11 +197,11 @@ const SettingsModal = ({ user, formData, setFormData, modalOptions, setModalOpti
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 import { Badge, Dropdown, Image } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
-import { Link, useNavigate } from 'react-router-dom';
 
 import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 
@@ -15,6 +18,12 @@ import { useAuth } from '../../../utils/context/AuthContext';
 
 import './NavBar.css';
 
+// Valeurs initiales des formulaires
+const initialConnectionValues = {
+    login: '',
+    password: ''
+};
+
 /**
  * Barre de navigation
  */
@@ -23,20 +32,18 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, login, logout } = useAuth();
+    const { auth, login, logout } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
 
     // Local states
     const dropdownRef = useRef(null);
-    const [formConnection, setFormConnection] = useState({
-        login: '',
-        password: ''
-    });
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [message, setMessage] = useState(null);
-    const [modalOptions, setModalOptions] = useState({ isOpen: false });
+    const [modalOptionsConnection, setModalOptionsConnection] = useState({
+        isOpen: false,
+        message: null
+    });
     const [showDropdown, setShowDropdown] = useState(false);
 
     /**
@@ -46,6 +53,33 @@ const NavBar = () => {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    /**
+     * Mise à jour du formulaire de connexion aux changements de sa modale
+     */
+    useEffect(() => {
+        // Réinitialisation à l'ouverture/fermeture de la modale
+        formConnection.resetForm();
+    }, [modalOptionsConnection.isOpen]);
+
+    /**
+     * Schéma de validation Yup de connexion
+     */
+    const connectionValidationSchema = useMemo(() => {
+        return Yup.object({
+            login: Yup.string().required('errors.invalidLogin'),
+            password: Yup.string().required('errors.invalidPassword')
+        });
+    }, []);
+
+    /**
+     * Formik connexion
+     */
+    const formConnection = useFormik({
+        initialValues: initialConnectionValues,
+        validationSchema: connectionValidationSchema,
+        onSubmit: (values) => handleSubmitLogin(values)
+    });
 
     /**
      * Ferme le menu utilisateur au clic en dehors
@@ -70,38 +104,42 @@ const NavBar = () => {
      */
     const openCloseConnectionModal = () => {
         // Ouverture ou fermeture
-        setModalOptions({ isOpen: !modalOptions.isOpen });
-
-        // Réinitialisation du formulaire à la fermeture de la modale (c'est-à-dire si la modale était précédemment ouverte)
-        modalOptions.isOpen && resetFormConnection();
+        setModalOptionsConnection((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen,
+            message: null
+        }));
     };
 
     /**
-     * Connexion ou déconnexion selon le cas
+     * Connexion
      */
-    const handleSubmit = () => {
-        setMessage(null);
+    const handleSubmitLogin = (values) => {
         setIsSubmitting(true);
+        setModalOptionsConnection((prev) => ({ ...prev, message: null }));
 
-        // On attend la promesse de connexion/déconnexion pour fermer la modale
-        login(formConnection)
+        // On attend la promesse de connexion pour fermer la modale
+        login(values)
             .then(() => {
                 openCloseConnectionModal();
             })
-            .catch(() => {})
+            .catch((err) => {
+                setModalOptionsConnection((prev) => ({
+                    ...prev,
+                    message: { code: err?.code, type: err?.type }
+                }));
+            })
             .finally(() => {
                 setIsSubmitting(false);
             });
     };
 
     /**
-     * Réinitialisation formulaire
+     * Déconnexion
      */
-    const resetFormConnection = () => {
-        setFormConnection({
-            login: '',
-            password: ''
-        });
+    const handleSubmitLogout = () => {
+        // On attend la promesse de déconnexion
+        logout();
     };
 
     return (
@@ -147,7 +185,7 @@ const NavBar = () => {
                             </Dropdown.Item>
 
                             {/* Déconnexion */}
-                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={logout}>
+                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={handleSubmitLogout}>
                                 <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>
                         </Dropdown.Menu>
@@ -156,15 +194,12 @@ const NavBar = () => {
             </div>
 
             {/* Modale de connexion */}
-            {modalOptions.isOpen && (
+            {modalOptionsConnection.isOpen && (
                 <ConnectionModal
                     formData={formConnection}
-                    setFormData={setFormConnection}
-                    modalOptions={modalOptions}
-                    message={message || authMessage}
-                    setMessage={setMessage}
+                    modalOptions={modalOptionsConnection}
+                    setModalOptions={setModalOptionsConnection}
                     onClose={openCloseConnectionModal}
-                    onSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
                 />
             )}

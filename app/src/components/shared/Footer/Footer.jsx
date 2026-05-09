@@ -1,5 +1,6 @@
-import { Button, Image } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button, Image } from 'react-bootstrap';
 
 import flagEn from '../../../assets/icons/flag-en.svg';
 import flagFr from '../../../assets/icons/flag-fr.svg';

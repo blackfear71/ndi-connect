@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-
 import { useParams } from 'react-router-dom';
 
-import { SseService } from '../../api';
-
 import { SseContext } from '../../utils/context/SseContext';
+
+import { SseService } from '../../api';
 
 /**
  * Provider pour les Server-Sent Events (SSE)

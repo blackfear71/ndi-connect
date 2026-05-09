@@ -1,5 +1,6 @@
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button } from 'react-bootstrap';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
 import { useAuth } from '../../../utils/context/AuthContext';
@@ -13,7 +14,7 @@ import GiftList from './GiftList/GiftList';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmitting }) => {
+const EditionGifts = ({ gifts, onOpen, onConfirm, isSubmitting }) => {
     // Contexte
     const { auth } = useAuth();
 
@@ -24,34 +25,12 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmit
     const availableGifts = gifts?.filter((g) => g.remainingQuantity > 0);
     const unavailableGifts = gifts?.filter((g) => g.remainingQuantity <= 0);
 
-    /**
-     * Affiche la modale de création/modification d'un cadeau
-     * @param {*} gift Données cadeau
-     * @param {*} action Action à réaliser
-     */
-    const showGiftModal = (gift, action) => {
-        if (gift) {
-            setFormData({
-                id: gift.id,
-                name: gift.name,
-                value: gift.value,
-                quantity: gift.quantity
-            });
-        }
-
-        setModalOptions((prev) => ({
-            ...prev,
-            action: action,
-            isOpen: !prev.isOpen
-        }));
-    };
-
     return (
         <>
             {/* Ajout */}
             {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
                 <div className="d-grid">
-                    <Button variant="outline-action" onClick={() => showGiftModal(null, EnumAction.CREATE)} disabled={isSubmitting}>
+                    <Button variant="outline-action" onClick={() => onOpen(EnumAction.CREATE)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
                         {t('edition.addGift')}
                     </Button>
@@ -67,8 +46,8 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmit
                             <GiftList
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
+                                onOpen={onOpen}
                                 onConfirm={onConfirm}
-                                showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
                             />
                         </div>
@@ -80,8 +59,8 @@ const EditionGifts = ({ gifts, setFormData, setModalOptions, onConfirm, isSubmit
                             <GiftList
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
+                                onOpen={onOpen}
                                 onConfirm={onConfirm}
-                                showGiftModal={showGiftModal}
                                 isSubmitting={isSubmitting}
                             />
                         </div>

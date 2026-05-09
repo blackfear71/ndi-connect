@@ -20,6 +20,10 @@
     font-size: larger;
     font-weight: 600;
     border: 1.5px solid var(--color-border-input);
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
     height: 36px;
+}
+
+.increment-input-value.is-invalid {
+    border: 1.5px solid var(--bs-danger) !important;
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaGift } from 'react-icons/fa6';
 import { GiCardboardBox } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
@@ -15,7 +15,7 @@ import { EnumAction } from '../../../enums';
 /**
  * Modale cadeau
  */
-const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions, onClose, onSubmit, isSubmitting }) => {
+const GiftModal = ({ gift, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -26,11 +26,8 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
      * Réinitialise le message à l'ouverture de la modale
      */
     useEffect(() => {
+        // Focus à la création
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-
-            // Focus à la création
             modalOptions.action === EnumAction.CREATE && nameInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
@@ -44,15 +41,6 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
     };
 
     /**
-     * Met à jour le formulaire à la saisie
-     * @param {*} e Evènement
-     */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
      * Met à jour le formulaire à la saisie d'un numérique
      * @param {*} e Evènement
      */
@@ -61,55 +49,14 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
         const { name, value } = e.target;
 
         if (/^\d*$/.test(value)) {
-            setFormData((prev) => ({ ...prev, [name]: value }));
+            formData.setValues((prev) => ({ ...prev, [name]: value }));
         }
-    };
-
-    /**
-     * Gère le comportement du formulaire à la soumission
-     * @param {*} e Evènement
-     * @param {*} action Action à réaliser
-     */
-    const handleSubmit = (e, action) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle le nom renseigné
-        if (!formData.name) {
-            setModalMessage({ code: 'errors.invalidName', type: 'error' });
-            return;
-        }
-
-        // Contrôle que la valeur est > 0
-        const value = parseInt(formData.value, 10);
-
-        if (!formData.value || isNaN(value) || value <= 0) {
-            setModalMessage({ code: 'errors.invalidValue', type: 'error' });
-            return;
-        }
-
-        // Contrôle que la quantité est > 0
-        const quantity = parseInt(formData.quantity, 10);
-
-        if (!formData.quantity || isNaN(quantity) || quantity < 0) {
-            setModalMessage({ code: 'errors.invalidQuantity', type: 'error' });
-            return;
-        }
-
-        // Contrôle que la quantité est > quantité déjà attribuée (en cas de modification)
-        if (gift && quantity < gift.rewardCount) {
-            setModalMessage({ code: 'errors.invalidQuantityAttribution', type: 'error' });
-            return;
-        }
-
-        // Soumets le formulaire
-        onSubmit(action);
     };
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={(event) => handleSubmit(event, modalOptions.action)}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
@@ -143,8 +90,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                     name="name"
                                     ref={nameInputRef}
                                     placeholder={t('edition.name')}
-                                    value={formData.name}
-                                    onChange={handleChange}
+                                    value={formData.values.name}
+                                    onChange={formData.handleChange}
+                                    error={formData.submitCount > 0 && formData.errors.name}
                                     maxLength={100}
                                     required={true}
                                 />
@@ -155,8 +103,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                     icon={<GrMoney />}
                                     name="value"
                                     placeholder={t('edition.value')}
-                                    value={formData.value}
+                                    value={formData.values.value}
                                     onChange={handleChangeNumeric}
+                                    error={formData.submitCount > 0 && formData.errors.value}
                                     maxLength={10}
                                     inputMode={'numeric'}
                                     pattern={'[0-9]*'}
@@ -169,8 +118,9 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                     icon={<GiCardboardBox />}
                                     name="quantity"
                                     placeholder={t('edition.quantity')}
-                                    value={formData.quantity}
+                                    value={formData.values.quantity}
                                     onChange={handleChangeNumeric}
+                                    error={formData.submitCount > 0 && formData.errors.quantity}
                                     maxLength={10}
                                     inputMode={'numeric'}
                                     pattern={'[0-9]*'}
@@ -199,11 +149,11 @@ const GiftModal = ({ gift, formData, setFormData, modalOptions, setModalOptions,
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

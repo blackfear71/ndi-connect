@@ -1,32 +1,14 @@
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+
+import { Button } from 'react-bootstrap';
 import { HiKey } from 'react-icons/hi2';
 
 /**
  * Gestion de l'utilisateur connecté
  */
-const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPassword, isSubmitting }) => {
+const SettingsUser = ({ user, onOpen, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
-
-    /**
-     * Affiche la modale de modification de mot de passe
-     */
-    const showPasswordModal = () => {
-        if (user) {
-            setFormPassword({
-                ...formPassword,
-                password: '',
-                oldPassword: '',
-                confirmPassword: ''
-            });
-        }
-
-        setModalOptionsPassword((prev) => ({
-            ...prev,
-            isOpen: !prev.isOpen
-        }));
-    };
 
     return (
         <>
@@ -43,7 +25,7 @@ const SettingsUser = ({ user, formPassword, setFormPassword, setModalOptionsPass
 
                 {/* Mot de passe */}
                 <Button
-                    onClick={() => showPasswordModal()}
+                    onClick={() => onOpen()}
                     className="settings-item-button"
                     style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                     disabled={isSubmitting}

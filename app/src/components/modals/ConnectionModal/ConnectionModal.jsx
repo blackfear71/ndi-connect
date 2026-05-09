@@ -1,23 +1,18 @@
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaLock, FaUserCircle } from 'react-icons/fa';
 
 import { PasswordInput, TextInput } from '../../../components/inputs';
 import { Message, SpinnerButton } from '../../../components/shared';
-
-import { useAuth } from '../../../utils/context/AuthContext';
 
 import './ConnectionModal.css';
 
 /**
  * Modale de connexion
  */
-const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMessage, onClose, onSubmit, isSubmitting }) => {
-    // Contexte
-    const { setAuthMessage } = useAuth();
-
+const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,52 +23,24 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
      * Met le focus sur le champ "login" à l'ouverture de la modale quand on est pas connecté
      */
     useEffect(() => {
+        // Focus à l'ouverture
         if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setMessage(null);
-            setAuthMessage(null);
-
-            // Focus
             loginInputRef.current?.focus();
         }
     }, [modalOptions?.isOpen]);
 
     /**
-     * Met à jour le formulaire à la saisie (création)
-     * @param {*} e Evènement
+     * Définit le message affiché
+     * @param {*} message Message à afficher
      */
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    /**
-     * Gère le comportement du formulaire
-     * @param {*} e Evènement
-     */
-    const handleSubmit = (e) => {
-        // Empêche le rechargement de la page
-        e.preventDefault();
-
-        // Contrôle que l'identifiant et le mot de passe sont renseignés
-        if (!formData.login) {
-            setMessage({ code: 'errors.invalidLogin', type: 'error' });
-            return;
-        }
-
-        if (!formData.password) {
-            setMessage({ code: 'errors.invalidPassword', type: 'error' });
-            return;
-        }
-
-        // Soumets le formulaire
-        onSubmit();
+    const setMessage = (message) => {
+        setModalOptions((prev) => ({ ...prev, message: message }));
     };
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmit}>
+            <Form onSubmit={formData.handleSubmit}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaUserCircle />
@@ -93,15 +60,16 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 </div>
 
                                 {/* Formulaire */}
-                                <div className="d-flex align-items-center gap-2">
+                                <div className="d-flex align-items-start gap-2">
                                     <div className="connection-modal-field">
                                         <TextInput
                                             title={t('navbar.login')}
                                             name={'login'}
                                             ref={loginInputRef}
                                             placeholder={t('navbar.login')}
-                                            value={formData.login}
-                                            onChange={handleChange}
+                                            value={formData.values.login}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && formData.errors.login}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -112,8 +80,9 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                             title={t('navbar.password')}
                                             name={'password'}
                                             placeholder={t('navbar.password')}
-                                            value={formData.password}
-                                            onChange={handleChange}
+                                            value={formData.values.password}
+                                            onChange={formData.handleChange}
+                                            error={formData.submitCount > 0 && formData.errors.password}
                                             maxLength={100}
                                             required={true}
                                         />
@@ -125,9 +94,14 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
 
                     <Modal.Footer>
                         {/* Message */}
-                        {message && (
+                        {modalOptions.message && (
                             <div className="modal-message">
-                                <Message code={message.code} params={message.params} type={message.type} setMessage={setMessage} />
+                                <Message
+                                    code={modalOptions.message.code}
+                                    params={modalOptions.message.params}
+                                    type={modalOptions.message.type}
+                                    setMessage={setMessage}
+                                />
                             </div>
                         )}
 
@@ -137,11 +111,11 @@ const ConnectionModal = ({ formData, setFormData, modalOptions, message, setMess
                                 {t('common.close')}
                             </Button>
 
-                            {onSubmit && <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />}
+                            <SpinnerButton label={t('navbar.connect')} isSubmitting={isSubmitting} />
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

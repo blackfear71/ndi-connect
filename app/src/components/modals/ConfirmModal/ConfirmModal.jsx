@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
 import { FaQuestionCircle } from 'react-icons/fa';
 
 import { Message, SpinnerButton } from '../../../components/shared';
@@ -12,16 +11,6 @@ import { Message, SpinnerButton } from '../../../components/shared';
 const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
-
-    /**
-     * Réinitialise le message à l'ouverture de la modale
-     */
-    useEffect(() => {
-        if (modalOptions?.isOpen) {
-            // Réinitialisation du message
-            setModalMessage(null);
-        }
-    }, [modalOptions?.isOpen]);
 
     /**
      * Définit le message affiché
@@ -35,7 +24,7 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
      * Gère le comportement du formulaire à la soumission
      * @param {*} e Evènement
      */
-    const handleSubmit = (e) => {
+    const handleSubmitConfirm = (e) => {
         // Empêche le rechargement de la page
         e.preventDefault();
 
@@ -45,8 +34,8 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
 
     return (
         <Modal show onHide={onClose} centered backdrop="static">
-            <fieldset disabled={isSubmitting}>
-                <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmitConfirm}>
+                <fieldset disabled={isSubmitting}>
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaQuestionCircle />
@@ -85,8 +74,8 @@ const ConfirmModal = ({ modalOptions, setModalOptions, onClose, onConfirmAction,
                             {onConfirmAction && <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />}
                         </div>
                     </Modal.Footer>
-                </Form>
-            </fieldset>
+                </fieldset>
+            </Form>
         </Modal>
     );
 };

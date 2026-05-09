@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import i18next from 'i18next';
-import Alert from 'react-bootstrap/Alert';
-import { useTranslation } from 'react-i18next';
+
+import { Alert } from 'react-bootstrap';
 
 import { getMessageTranslationKey } from '../../../utils/helpers/messageHelper';
 
@@ -14,7 +15,7 @@ const Message = ({ code, params = {}, type = 'error', setMessage }) => {
     const { t } = useTranslation();
 
     // Local states
-    const [show, setShow] = useState(true);
+    const [showMessage, setShowMessage] = useState(true);
 
     // Constantes
     const autoClose = type === 'success';
@@ -23,22 +24,22 @@ const Message = ({ code, params = {}, type = 'error', setMessage }) => {
      * Fermeture automatique du message
      */
     useEffect(() => {
-        if (autoClose && show) {
+        if (autoClose && showMessage) {
             const timer = setTimeout(() => {
-                setShow(false);
+                setShowMessage(false);
                 setMessage?.(null);
             }, 10000);
 
             // Nettoyage si le composant est démonté avant
             return () => clearTimeout(timer);
         }
-    }, [autoClose, show, setMessage]);
+    }, [autoClose, showMessage, setMessage]);
 
     /**
      * Fermeture manuelle du message
      */
     const handleClose = () => {
-        setShow(false);
+        setShowMessage(false);
         setMessage?.(null);
     };
 
@@ -54,7 +55,7 @@ const Message = ({ code, params = {}, type = 'error', setMessage }) => {
         })[messageType] || 'info';
 
     return (
-        show && (
+        showMessage && (
             <Alert variant={getVariantFromType(type)} onClose={!autoClose && handleClose} dismissible={type !== 'success'}>
                 {/* Message FRONT ou BACK */}
                 {i18next.exists(code) ? t(code, params) : getMessageTranslationKey(code, params, t)}

@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-
-import { Spinner } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { UsersService } from '../../api';
+import { Spinner } from 'react-bootstrap';
 
 import { AuthContext } from '../../utils/context/AuthContext';
+
+import { UsersService } from '../../api';
 
 /**
  * Provider d'authentification global
@@ -91,9 +91,11 @@ const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
+                        const message = { code: err?.response?.message, type: err?.response?.status, target: 'modal' };
+
                         resetAuth();
-                        setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'modal' });
-                        reject(err?.response?.message);
+                        setAuthMessage(message);
+                        reject(message);
                         return of();
                     })
                 )
@@ -136,8 +138,10 @@ const AuthProvider = ({ children }) => {
                     }),
                     take(1),
                     catchError((err) => {
-                        setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'page' });
-                        reject(err?.response?.message);
+                        const message = { code: err?.response?.message, type: err?.response?.status, target: 'page' };
+
+                        setAuthMessage(message);
+                        reject(message);
                         return of();
                     })
                 )

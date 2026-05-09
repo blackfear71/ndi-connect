@@ -50,7 +50,7 @@
     overflow-y: auto;
     background-color: var(--color-bg-white);
     border: 1px solid var(--color-border-gray-light);
-    border-radius: 5px;
+    border-radius: var(--bs-border-radius);
 }
 
 .search-results-dropdown .alert {
