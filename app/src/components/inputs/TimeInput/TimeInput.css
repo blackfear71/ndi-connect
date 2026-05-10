@@ -1,8 +1,23 @@
+.time-input-wrapper {
+    min-width: 0;
+}
+
+.time-input-fields {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.time-input-field {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
 .time-input-group {
     border: 1px solid var(--color-border-input);
     border-radius: var(--bs-border-radius);
     overflow: hidden;
     background-color: var(--color-bg-white);
+    min-width: 0;
 }
 
 .time-input-prefix {
@@ -19,7 +34,7 @@
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    min-width: 0;
+    min-width: 0 !important;
 }
 
 .time-input-group:focus-within {

@@ -97,7 +97,7 @@
         "editionDate": "{{date}} à {{time}}",
         "editionResult": "Edition {{year}}",
         "editionTitle": "Edition {{year}} • {{location}}",
-        "end": "Fin",
+        "end": "Fin (J+1)",
         "gifts": "Cadeaux",
         "giveGift": "Attribuer un cadeau",
         "giveParticipant": "Donner des points à quelqu'un",

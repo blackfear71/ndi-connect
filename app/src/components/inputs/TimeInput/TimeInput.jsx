@@ -35,14 +35,14 @@ const TimeInput = ({
             )}
 
             {/* Saisies */}
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 time-input-wrapper">
                 {/* Icône */}
                 {icon && <div className="modal-input-icon">{icon}</div>}
 
-                <div className="d-flex align-items-start w-100 gap-2">
+                <div className="d-flex align-items-start gap-2 time-input-fields">
                     {/* Début */}
-                    <Form.Group className="w-100" controlId={nameStart}>
-                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                    <Form.Group className="time-input-field" controlId={nameStart}>
+                        <div className="d-flex align-items-center time-input-group">
                             <span className="px-2 time-input-prefix">{titleStart}</span>
 
                             <Form.Label className="visually-hidden">{titleStart ?? nameStart}</Form.Label>
@@ -65,8 +65,8 @@ const TimeInput = ({
                     </Form.Group>
 
                     {/* Fin */}
-                    <Form.Group className="w-100" controlId={nameEnd}>
-                        <div className="d-flex flex-grow-1 align-items-center time-input-group">
+                    <Form.Group className="time-input-field" controlId={nameEnd}>
+                        <div className="d-flex align-items-center time-input-group">
                             <span className="px-2 time-input-prefix">{titleEnd}</span>
 
                             <Form.Label className="visually-hidden">{titleEnd ?? nameEnd}</Form.Label>
