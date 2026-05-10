@@ -548,6 +548,7 @@ const Settings = () => {
                     {/* Modale de modification de mot de passe */}
                     {auth.isLoggedIn && formPassword && modalOptionsPassword.isOpen && (
                         <PasswordModal
+                            user={connectedUser}
                             formData={formPassword}
                             modalOptions={modalOptionsPassword}
                             setModalOptions={setModalOptionsPassword}

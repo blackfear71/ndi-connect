@@ -121,7 +121,7 @@ const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
 
                             <span className="d-flex align-items-center gap-1 edition-item-counter">
                                 {g.remainingQuantity === 0 ? <GiCardboardBoxClosed size={18} /> : <GiCardboardBox size={18} />}
-                                {g.remainingQuantity}
+                                {`${g.remainingQuantity}/${g.quantity}`}
                             </span>
                         </div>
                     </div>

@@ -183,6 +183,14 @@ h1 {
     border-bottom: none;
 }
 
+.modal-body .modal-statistics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background-color: var(--color-border-separator);
+    border-bottom: 2px solid var(--color-border-separator);
+}
+
 .modal-body .modal-group-content {
     display: flex;
     flex-direction: column;

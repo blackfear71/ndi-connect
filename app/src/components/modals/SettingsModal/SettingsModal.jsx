@@ -11,8 +11,6 @@ import { Message, SpinnerButton } from '../../../components/shared';
 
 import { EnumAction } from '../../../enums';
 
-import './SettingsModal.css';
-
 /**
  * Modale utilisateur
  */

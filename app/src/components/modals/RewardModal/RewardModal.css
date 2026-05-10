@@ -17,14 +17,6 @@
     color: var(--color-text-white);
 }
 
-.reward-modal-statistics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-    background-color: var(--color-border-separator);
-    border-bottom: 2px solid var(--color-border-separator);
-}
-
 .reward-modal-gift-row {
     border-bottom: 1px solid var(--color-border-separator);
 }

@@ -10,7 +10,7 @@ import { Message, SpinnerButton } from '../../shared';
 /**
  * Modale mot de passe
  */
-const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
+const PasswordModal = ({ user, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -47,6 +47,17 @@ const PasswordModal = ({ formData, modalOptions, setModalOptions, onClose, isSub
                     </Modal.Header>
 
                     <Modal.Body>
+                        <div className="d-flex align-items-center gap-2 p-2 settings-modal-user">
+                            {/* Icône */}
+                            <div className="d-flex align-items-center justify-content-center settings-modal-icon">{user.role?.icon}</div>
+
+                            {/* Identifiant et rôle */}
+                            <div className="d-flex flex-column flex-grow-1 settings-modal-name">
+                                <span className="settings-modal-ellipsis-text">{user.login}</span>
+                                <div className="d-flex align-items-center gap-2 settings-modal-role">{user.role?.label}</div>
+                            </div>
+                        </div>
+
                         <div className="modal-group">
                             <div className="modal-group-content gap-2">
                                 {/* Ancien mot de passe */}

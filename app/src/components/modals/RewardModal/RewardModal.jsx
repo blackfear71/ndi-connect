@@ -97,7 +97,8 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                         </div>
 
                         {/* Statistiques */}
-                        <div className="reward-modal-statistics">
+                        <div className="modal-statistics">
+                            {/* Points */}
                             <div className="modal-group-content">
                                 {/* Titre */}
                                 <div className="modal-group-content-title">{t('edition.points')}</div>
@@ -108,6 +109,7 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                                 </div>
                             </div>
 
+                            {/* Cadeaux */}
                             <div className="modal-group-content">
                                 {/* Titre */}
                                 <div className="modal-group-content-title">{t('edition.gifts')}</div>
