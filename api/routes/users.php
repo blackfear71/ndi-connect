@@ -82,44 +82,44 @@ $router->patch('/users/password', function () use ($db): void {
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/update/:idUser', function (array $params) use ($db): void {
+$router->patch('/users/update/:userId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idUser = DataHelper::parseIntParam($params['idUser']);
+    $userId = DataHelper::parseIntParam($params['userId']);
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new UsersController($db))->updateUser($token, $idUser, $data);
+    (new UsersController($db))->updateUser($token, $userId, $data);
 });
 
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/users/reset/:idUser', function (array $params) use ($db): void {
+$router->patch('/users/reset/:userId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idUser = DataHelper::parseIntParam($params['idUser']);
+    $userId = DataHelper::parseIntParam($params['userId']);
 
     // Appel contrôleur
-    (new UsersController($db))->resetPassword($token, $idUser);
+    (new UsersController($db))->resetPassword($token, $userId);
 });
 
 /**
  * Suppression logique d'un enregistrement
  */
-$router->delete('/users/delete/:idUser', function (array $params) use ($db): void {
+$router->delete('/users/delete/:userId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idUser = DataHelper::parseIntParam($params['idUser']);
+    $userId = DataHelper::parseIntParam($params['userId']);
 
     // Appel contrôleur
-    (new UsersController($db))->deleteUser($token, $idUser);
+    (new UsersController($db))->deleteUser($token, $userId);
 });

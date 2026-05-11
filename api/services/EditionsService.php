@@ -67,15 +67,15 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int $idEdition): ?EditionResponseDTO
+    public function getEdition(int $editionId): ?EditionResponseDTO
     {
         // Contrôle des données
-        if (!$idEdition) {
+        if (!$editionId) {
             return null;
         }
 
         // Lecture de l'édition
-        $edition = $this->repository->getEdition($idEdition);
+        $edition = $this->repository->getEdition($editionId);
 
         if (!$edition) {
             return null;
@@ -96,10 +96,10 @@ class EditionsService
         );
 
         // Récupération des données cadeaux
-        $gifts = $this->getGiftsService()->getEditionGifts($idEdition);
+        $gifts = $this->getGiftsService()->getEditionGifts($editionId);
 
         // Récupération des données participants
-        $players = $this->getPlayersService()->getEditionPlayers($idEdition);
+        $players = $this->getPlayersService()->getEditionPlayers($editionId);
 
         // Récupération des données édition
         return new EditionResponseDTO(
@@ -132,7 +132,7 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(EditionInputDTO $data, ?array $file, string $login): ?string
+    public function createEdition(EditionInputDTO $data, ?array $file, int $userId): ?string
     {
         // Contrôle des données
         if (!$this->isValidEditionData($data)) {
@@ -155,7 +155,7 @@ class EditionsService
             picture: $picture,
             theme: $data->theme !== null ? trim($data->theme) : null,
             challenge: $data->challenge !== null ? trim($data->challenge) : null,
-            createdBy: $login
+            createdBy: $userId
         );
 
         // Insertion
@@ -165,10 +165,10 @@ class EditionsService
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int $idEdition, EditionInputDTO $data, ?array $file, string $login): ?EditionResponseDTO
+    public function updateEdition(int $editionId, EditionInputDTO $data, ?array $file, int $userId): ?EditionResponseDTO
     {
         // Contrôle des données
-        if (!$idEdition || !$this->isValidEditionData($data)) {
+        if (!$editionId || !$this->isValidEditionData($data)) {
             return null;
         }
 
@@ -178,18 +178,18 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage($idEdition, $data->pictureAction, $file['picture'] ?? null);
+        $picture = $this->uploadImage($editionId, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
-            id: $idEdition,
+            id: $editionId,
             location: trim($data->location),
             startDate: $startDate,
             endDate: $endDate,
             picture: $picture,
             theme: $data->theme !== null ? trim($data->theme) : null,
             challenge: $data->challenge !== null ? trim($data->challenge) : null,
-            updatedBy: $login
+            updatedBy: $userId
         );
 
         // Modification
@@ -198,31 +198,31 @@ class EditionsService
         }
 
         // Lecture de l'édition
-        return $this->getEdition($idEdition);
+        return $this->getEdition($editionId);
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(int $idEdition, string $login): ?bool
+    public function deleteEdition(int $editionId, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idEdition) {
+        if (!$editionId) {
             return null;
         }
 
         // Suppression logique des cadeaux
-        if (!$this->getGiftsService()->deleteGifts($idEdition, $login)) {
+        if (!$this->getGiftsService()->deleteGifts($editionId, $userId)) {
             return null;
         }
 
         // Suppression logique des participants
-        if (!$this->getPlayersService()->deletePlayers($idEdition, $login)) {
+        if (!$this->getPlayersService()->deletePlayers($editionId, $userId)) {
             return null;
         }
 
         // Suppression logique de l'édition
-        return $this->repository->logicalDelete($idEdition, $login);
+        return $this->repository->logicalDelete($editionId, $userId);
     }
 
     /**
@@ -241,10 +241,10 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage(?int $idEdition, ?string $action, ?array $file): ?string
+    private function uploadImage(?int $editionId, ?string $action, ?array $file): ?string
     {
         // Récupération de l'image de l'édition
-        $picture = $idEdition ? $this->repository->getEditionPicture($idEdition) : null;
+        $picture = $editionId ? $this->repository->getEditionPicture($editionId) : null;
 
         // Traitement de l'image
         switch ($action) {

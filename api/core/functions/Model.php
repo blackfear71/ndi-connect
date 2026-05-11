@@ -2,8 +2,8 @@
 class Model
 {
     protected PDO $db;
-    protected string $modelTable;
-
+    protected string $table;
+    
     /**
      * Constructeur par défaut
      */
@@ -15,7 +15,7 @@ class Model
     /**
      * Suppression logique d'un enregistrement
      */
-    public function logicalDelete(int $id, string $login): bool
+    public function logicalDelete(int $id, int $userId): bool
     {
         $sql = "UPDATE {$this->table}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
@@ -26,7 +26,7 @@ class Model
         return $stmt->execute([
             'id'         => $id,
             'deleted_at' => date('Y-m-d H:i:s'),
-            'deleted_by' => $login,
+            'deleted_by' => $userId,
             'is_active'  => 0
         ]);
     }

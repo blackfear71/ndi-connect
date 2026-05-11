@@ -7,28 +7,28 @@ require_once 'controllers/RewardsController.php';
 /**
  * Insertion d'un enregistrement
  */
-$router->post('/rewards/create/gift/:idGift/player/:idPlayer', function (array $params) use ($db): void {
+$router->post('/rewards/create/gift/:giftId/player/:playerId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idGift = DataHelper::parseIntParam($params['idGift']);
-    $idPlayer = DataHelper::parseIntParam($params['idPlayer']);
+    $giftId = DataHelper::parseIntParam($params['giftId']);
+    $playerId = DataHelper::parseIntParam($params['playerId']);
 
     // Appel contrôleur
-    (new RewardsController($db))->createReward($token, $idGift, $idPlayer);
+    (new RewardsController($db))->createReward($token, $giftId, $playerId);
 });
 
 /**
  * Suppression logique d'un enregistrement
  */
-$router->delete('/rewards/delete/:idReward', function (array $params) use ($db): void {
+$router->delete('/rewards/delete/:rewardId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idReward = DataHelper::parseIntParam($params['idReward']);
+    $rewardId = DataHelper::parseIntParam($params['rewardId']);
 
     // Appel contrôleur
-    (new RewardsController($db))->deleteReward($token, $idReward);
+    (new RewardsController($db))->deleteReward($token, $rewardId);
 });

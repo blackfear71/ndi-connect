@@ -16,7 +16,7 @@ class EditionsRepository extends Model
     {
         $sql = "SELECT e.id, e.location, e.start_date, COUNT(p.id) AS 'playerCount'
             FROM {$this->table} AS e
-            LEFT JOIN {$this->playersTable} AS p ON p.id_edition = e.id AND p.is_active = 1
+            LEFT JOIN {$this->playersTable} AS p ON p.edition_id = e.id AND p.is_active = 1
             WHERE e.is_active = 1
             GROUP BY e.id
             ORDER BY e.id ASC";
@@ -34,7 +34,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEdition(int $idEdition): ?Edition
+    public function getEdition(int $editionId): ?Edition
     {
         $sql = "SELECT id, location, start_date, end_date, picture, theme, challenge
             FROM {$this->table}
@@ -42,7 +42,7 @@ class EditionsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $idEdition
+            'id' => $editionId
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -87,7 +87,7 @@ class EditionsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getEditionPicture(int $idEdition): ?string
+    public function getEditionPicture(int $editionId): ?string
     {
         $sql = "SELECT picture
             FROM {$this->table}
@@ -95,7 +95,7 @@ class EditionsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $idEdition
+            'id' => $editionId
         ]);
 
         $result = $stmt->fetchColumn();

@@ -18,22 +18,22 @@ class PlayersService {
 
     /**
      * Récupération de tous les participants d'une édition
-     * @param {*} idEdition Identifiant édition
+     * @param {*} editionId Identifiant édition
      * @returns Liste des participants
      */
-    getEditionPlayers = (idEdition) => {
-        const url = `${this.apiUrl}/edition/${idEdition}`;
+    getEditionPlayers = (editionId) => {
+        const url = `${this.apiUrl}/edition/${editionId}`;
         return ajax.get(url, this.headers);
     };
 
     /**
      * Création d'un nouveau participant
-     * @param {*} idEdition Identifiant édition
+     * @param {*} editionId Identifiant édition
      * @param {*} body Données participant
      * @returns Données retour
      */
-    createPlayer = (idEdition, body) => {
-        const url = `${this.apiUrl}/create/edition/${idEdition}`;
+    createPlayer = (editionId, body) => {
+        const url = `${this.apiUrl}/create/edition/${editionId}`;
         return ajax({
             url,
             method: 'POST',

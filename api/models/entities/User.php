@@ -15,11 +15,11 @@ class User
         public readonly ?\DateTimeImmutable $tokenExpiresAt = null,
         public readonly int                 $level          = 0,
         public readonly \DateTimeImmutable  $createdAt      = new DateTimeImmutable(),
-        public readonly string              $createdBy      = '',
+        public readonly int                 $createdBy      = 0,
         public readonly ?\DateTimeImmutable $updatedAt      = null,
-        public readonly ?string             $updatedBy      = null,
+        public readonly ?int                $updatedBy      = null,
         public readonly ?\DateTimeImmutable $deletedAt      = null,
-        public readonly ?string             $deletedBy      = null,
+        public readonly ?int                $deletedBy      = null,
         public readonly bool                $isActive       = true
     ) {}
 }

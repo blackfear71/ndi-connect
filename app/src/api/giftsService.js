@@ -20,19 +20,19 @@ class GiftsService {
      * Récupération de tous les cadeaux d'une édition
      * @returns Liste des cadeaux
      */
-    getEditionGifts = (idEdition) => {
-        const url = `${this.apiUrl}/edition/${idEdition}`;
+    getEditionGifts = (editionId) => {
+        const url = `${this.apiUrl}/edition/${editionId}`;
         return ajax.get(url, this.headers);
     };
 
     /**
      * Création d'un nouveau cadeau
-     * @param {*} idEdition Identifiant édition
+     * @param {*} editionId Identifiant édition
      * @param {*} body Données cadeau
      * @returns Données retour
      */
-    createGift = (idEdition, body) => {
-        const url = `${this.apiUrl}/create/edition/${idEdition}`;
+    createGift = (editionId, body) => {
+        const url = `${this.apiUrl}/create/edition/${editionId}`;
         return ajax({
             url,
             method: 'POST',

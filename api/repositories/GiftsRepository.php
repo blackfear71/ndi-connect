@@ -12,23 +12,23 @@ class GiftsRepository extends Model
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int $idEdition): array
+    public function getEditionGifts(int $editionId): array
     {
-        $sql = "SELECT g.id, g.id_edition, g.name, g.value, g.quantity, COUNT(r.id) AS reward_count
+        $sql = "SELECT g.id, g.edition_id, g.name, g.value, g.quantity, COUNT(r.id) AS reward_count
             FROM {$this->table} AS g
-            LEFT JOIN {$this->rewardsTable} AS r ON r.id_gift = g.id AND r.is_active = 1
-            WHERE g.id_edition = :id_edition AND g.is_active = 1
+            LEFT JOIN {$this->rewardsTable} AS r ON r.gift_id = g.id AND r.is_active = 1
+            WHERE g.edition_id = :edition_id AND g.is_active = 1
             GROUP BY g.id, g.name, g.value, g.quantity
             ORDER BY g.name ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id_edition' => $idEdition
+            'edition_id' => $editionId
         ]);
 
         return array_map(fn($row) => new Gift(
             id: (int) $row['id'],
-            idEdition: (int) $row['id_edition'],
+            editionId: (int) $row['edition_id'],
             name: $row['name'],
             value: (int) $row['value'],
             quantity: (int) $row['quantity'],
@@ -39,7 +39,7 @@ class GiftsRepository extends Model
     /**
      * Lecture d'un enregistrement par Id
      */
-    public function getGift(int $idGift): ?Gift
+    public function getGift(int $giftId): ?Gift
     {
         $sql = "SELECT id, value, quantity
             FROM {$this->table}
@@ -47,7 +47,7 @@ class GiftsRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $idGift
+            'id' => $giftId
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -68,13 +68,13 @@ class GiftsRepository extends Model
      */
     public function createGift(Gift $gift): bool
     {
-        $sql = "INSERT INTO {$this->table} (id_edition, name, value, quantity, created_at, created_by, is_active)
-            VALUES (:id_edition, :name, :value, :quantity, :created_at, :created_by, :is_active)";
+        $sql = "INSERT INTO {$this->table} (edition_id, name, value, quantity, created_at, created_by, is_active)
+            VALUES (:edition_id, :name, :value, :quantity, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id_edition' => $gift->idEdition,
+            'edition_id' => $gift->editionId,
             'name'       => $gift->name,
             'value'      => $gift->value,
             'quantity'   => $gift->quantity,
@@ -108,18 +108,18 @@ class GiftsRepository extends Model
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int $idEdition, string $login): bool
+    public function deleteGifts(int $editionId, int $userId): bool
     {
         $sql = "UPDATE {$this->table}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
-            WHERE id_edition = :id_edition";
+            WHERE edition_id = :edition_id";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id_edition' => $idEdition,
+            'edition_id' => $editionId,
             'deleted_at' => date('Y-m-d H:i:s'),
-            'deleted_by' => $login,
+            'deleted_by' => $userId,
             'is_active'  => 0
         ]);
     }

@@ -66,31 +66,33 @@ const GiftModal = ({ gift, formData, modalOptions, setModalOptions, onClose, isS
 
                     <Modal.Body>
                         {/* Statistiques */}
-                        <div className="modal-statistics">
-                            {/* Cadeaux restants */}
-                            <div className="modal-group-content">
-                                {/* Titre */}
-                                <div className="modal-group-content-title">{t('edition.remainingGifts')}</div>
+                        {modalOptions.action === EnumAction.UPDATE && (
+                            <div className="modal-statistics">
+                                {/* Cadeaux restants */}
+                                <div className="modal-group-content">
+                                    {/* Titre */}
+                                    <div className="modal-group-content-title">{t('edition.remainingGifts')}</div>
 
-                                {/* Valeur */}
-                                <div className={`modal-group-content-value ${gift?.remainingQuantity > 0 ? 'gold' : 'gray'}`}>
-                                    {gift?.remainingQuantity ?? 0}
+                                    {/* Valeur */}
+                                    <div className={`modal-group-content-value ${gift?.remainingQuantity > 0 ? 'gold' : 'gray'}`}>
+                                        {gift?.remainingQuantity ?? 0}
+                                    </div>
+                                </div>
+
+                                {/* Cadeaux attribués */}
+                                <div className="modal-group-content">
+                                    {/* Titre */}
+                                    <div className="modal-group-content-title">{t('edition.assignedGifts')}</div>
+
+                                    {/* Valeur */}
+                                    <div
+                                        className={`modal-group-content-value ${gift && gift.quantity - gift.remainingQuantity > 0 ? 'green' : 'gray'}`}
+                                    >
+                                        {gift ? gift.quantity - gift.remainingQuantity : 0}
+                                    </div>
                                 </div>
                             </div>
-
-                            {/* Cadeaux attribués */}
-                            <div className="modal-group-content">
-                                {/* Titre */}
-                                <div className="modal-group-content-title">{t('edition.assignedGifts')}</div>
-
-                                {/* Valeur */}
-                                <div
-                                    className={`modal-group-content-value ${gift && gift.quantity - gift.remainingQuantity > 0 ? 'green' : 'gray'}`}
-                                >
-                                    {gift ? gift.quantity - gift.remainingQuantity : 0}
-                                </div>
-                            </div>
-                        </div>
+                        )}
 
                         {/* Formulaire */}
                         <div className="modal-group">

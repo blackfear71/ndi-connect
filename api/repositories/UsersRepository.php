@@ -85,7 +85,7 @@ class UsersRepository extends Model
     /**
      * Récupération données utilisateur actif (via id)
      */
-    public function getActiveUserDataById(int $idUser): ?User
+    public function getActiveUserDataById(int $userId): ?User
     {
         $sql = "SELECT id, login, password, level
             FROM {$this->table}
@@ -93,7 +93,7 @@ class UsersRepository extends Model
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            'id' => $idUser
+            'id' => $userId
         ]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -165,7 +165,7 @@ class UsersRepository extends Model
     /**
      * Mise à jour token de connexion
      */
-    public function updateToken(User $user, ?string $token): bool
+    public function updateToken(int $userId, ?string $token): bool
     {
         $sql = "UPDATE {$this->table}
             SET token = :token, token_expires_at = :token_expires_at, updated_at = :updated_at, updated_by = :updated_by
@@ -174,18 +174,18 @@ class UsersRepository extends Model
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id'               => $user->id,
+            'id'               => $userId,
             'token'            => $token,
             'token_expires_at' => $token ? (new DateTime('+1 day'))->format('Y-m-d H:i:s') : NULL,
             'updated_at'       => date('Y-m-d H:i:s'),
-            'updated_by'       => $user->login
+            'updated_by'       => $userId
         ]);
     }
 
     /**
      * Mise à jour mot de passe
      */
-    public function updatePassword(int $idUser, string $hash, string $login): bool
+    public function updatePassword(int $userResetId, string $hash, int $userId): bool
     {
         $sql = "UPDATE {$this->table}
             SET password = :password, updated_at = :updated_at, updated_by = :updated_by
@@ -194,17 +194,17 @@ class UsersRepository extends Model
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
-            'id'         => $idUser,
+            'id'         => $userResetId,
             'password'   => $hash,
             'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => $login
+            'updated_by' => $userId
         ]);
     }
 
     /**
      * Mise à jour utilisateur
      */
-    public function updateUser(User $user, string $login): bool
+    public function updateUser(User $user): bool
     {
         $sql = "UPDATE {$this->table}
             SET level = :level, updated_at = :updated_at, updated_by = :updated_by
@@ -216,7 +216,7 @@ class UsersRepository extends Model
             'id'         => $user->id,
             'level'      => $user->level,
             'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => $login
+            'updated_by' => $user->updatedBy
         ]);
     }
 }

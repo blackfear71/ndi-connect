@@ -172,7 +172,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($dataDTO, $user->login);
+            $created = $this->service->createUser($dataDTO, $user->id);
 
             if ($created === true) {
                 // Succès
@@ -193,21 +193,21 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(string $token, int $idUser): void
+    public function resetPassword(string $token, int $userId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $newPassword = $this->service->resetPassword($idUser, $user->login);
+            $newPassword = $this->service->resetPassword($userId, $user->id);
 
             if ($newPassword) {
                 // Succès
                 ResponseHelper::info($newPassword, MessageHelper::MSG_RESET_PASSWORD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_RESET_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $idUser]);
+                ResponseHelper::error(MessageHelper::ERR_RESET_PASSWORD_FAILED, [__FUNCTION__, self::controllerName, $userId]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -229,7 +229,7 @@ class UsersController
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user->id, $dataDTO, $user->login);
+                $updated = $this->service->updatePassword($user->id, $dataDTO);
 
                 if ($updated) {
                     // Succès
@@ -251,7 +251,7 @@ class UsersController
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(string $token, int $idUser, array $data): void
+    public function updateUser(string $token, int $userId, array $data): void
     {
         try {
             // Conversion DTO
@@ -261,7 +261,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($idUser, $dataDTO, $user->login);
+            $updated = $this->service->updateUser($userId, $dataDTO, $user->id);
 
             if ($updated === true) {
                 // Succès
@@ -271,7 +271,7 @@ class UsersController
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idUser, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $userId, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -282,14 +282,14 @@ class UsersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteUser(string $token, int $idUser): void
+    public function deleteUser(string $token, int $userId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteUser($idUser, $user->login);
+            $deleted = $this->service->deleteUser($userId, $user->id);
 
             if ($deleted === true) {
                 // Succès
@@ -299,7 +299,7 @@ class UsersController
                 ResponseHelper::warning(MessageHelper::WRN_LAST_ADMIN);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idUser]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $userId]);
             }
         } catch (Exception $e) {
             // Exception levée

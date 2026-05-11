@@ -52,18 +52,18 @@ class EditionsController
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int $idEdition): void
+    public function getEdition(int $editionId): void
     {
         try {
             // Lecture d'un enregistrement
-            $edition = $this->service->getEdition($idEdition);
+            $edition = $this->service->getEdition($editionId);
 
             if ($edition) {
                 // Succès
                 ResponseHelper::success($edition);
             } else {
                 // Échec de la lecture
-                ResponseHelper::error(MessageHelper::ERR_EDITION_NOT_FOUND, [__FUNCTION__, self::controllerName, $idEdition]);
+                ResponseHelper::error(MessageHelper::ERR_EDITION_NOT_FOUND, [__FUNCTION__, self::controllerName, $editionId]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -106,7 +106,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createEdition($dataDTO, $file, $user->login);
+            $created = $this->service->createEdition($dataDTO, $file, $user->id);
 
             if ($created) {
                 // Succès
@@ -124,7 +124,7 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(string $token, int $idEdition, array $data, array $file): void
+    public function updateEdition(string $token, int $editionId, array $data, array $file): void
     {
         try {
             // Conversion DTO
@@ -134,14 +134,14 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $edition = $this->service->updateEdition($idEdition, $dataDTO, $file, $user->login);
+            $edition = $this->service->updateEdition($editionId, $dataDTO, $file, $user->id);
 
             if ($edition) {
                 // Succès
                 ResponseHelper::success($edition, MessageHelper::MSG_UPDATE_SUCCESS);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idEdition, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $editionId, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -152,21 +152,21 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(string $token, int $idEdition): void
+    public function deleteEdition(string $token, int $editionId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteEdition($idEdition, $user->login);
+            $deleted = $this->service->deleteEdition($editionId, $user->id);
 
             if ($deleted) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idEdition]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $editionId]);
             }
         } catch (Exception $e) {
             // Exception levée

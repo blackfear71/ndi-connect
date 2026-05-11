@@ -7,58 +7,58 @@ require_once 'controllers/PlayersController.php';
 /**
  * Lecture des enregistrements d'une édition
  */
-$router->get('/players/edition/:idEdition', function (array $params) use ($db): void {
+$router->get('/players/edition/:editionId', function (array $params) use ($db): void {
     // Paramètres
-    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+    $editionId = DataHelper::parseIntParam($params['editionId']);
 
     // Appel contrôleur
-    (new PlayersController($db))->getEditionPlayers($idEdition);
+    (new PlayersController($db))->getEditionPlayers($editionId);
 });
 
 /**
  * Insertion d'un enregistrement
  */
-$router->post('/players/create/edition/:idEdition', function (array $params) use ($db): void {
+$router->post('/players/create/edition/:editionId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+    $editionId = DataHelper::parseIntParam($params['editionId']);
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new PlayersController($db))->createPlayer($token, $idEdition, $data);
+    (new PlayersController($db))->createPlayer($token, $editionId, $data);
 });
 
 /**
  * Modification d'un enregistrement
  */
-$router->patch('/players/update/:idPlayer', function (array $params) use ($db): void {
+$router->patch('/players/update/:playerId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idPlayer = DataHelper::parseIntParam($params['idPlayer']);
+    $playerId = DataHelper::parseIntParam($params['playerId']);
 
     // Données d'entrée
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Appel contrôleur
-    (new PlayersController($db))->updatePlayer($token, $idPlayer, $data);
+    (new PlayersController($db))->updatePlayer($token, $playerId, $data);
 });
 
 /**
  * Suppression logique d'un enregistrement
  */
-$router->delete('/players/delete/:idPlayer', function (array $params) use ($db): void {
+$router->delete('/players/delete/:playerId', function (array $params) use ($db): void {
     // Token
     $token = $_COOKIE['token'] ?? null;
 
     // Paramètres
-    $idPlayer = DataHelper::parseIntParam($params['idPlayer']);
+    $playerId = DataHelper::parseIntParam($params['playerId']);
 
     // Appel contrôleur
-    (new PlayersController($db))->deletePlayer($token, $idPlayer);
+    (new PlayersController($db))->deletePlayer($token, $playerId);
 });

@@ -29,11 +29,11 @@ class GiftsController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int $idEdition): void
+    public function getEditionGifts(int $editionId): void
     {
         try {
             // Lecture de tous les enregistrements
-            $gifts = $this->service->getEditionGifts($idEdition);
+            $gifts = $this->service->getEditionGifts($editionId);
 
             if ($gifts !== null) {
                 // Succès
@@ -51,7 +51,7 @@ class GiftsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createGift(string $token, int $idEdition, array $data): void
+    public function createGift(string $token, int $editionId, array $data): void
     {
         try {
             // Conversion DTO
@@ -61,7 +61,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createGift($idEdition, $dataDTO, $user->login);
+            $created = $this->service->createGift($editionId, $dataDTO, $user->id);
 
             if ($created) {
                 // Succès
@@ -79,7 +79,7 @@ class GiftsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateGift(string $token, int $idGift, array $data): void
+    public function updateGift(string $token, int $giftId, array $data): void
     {
         try {
             // Conversion DTO
@@ -89,14 +89,14 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($idGift, $dataDTO, $user->login);
+            $updated = $this->service->updateGift($giftId, $dataDTO, $user->id);
 
             if ($updated) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idGift, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $giftId, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -107,21 +107,21 @@ class GiftsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteGift(string $token, int $idGift): void
+    public function deleteGift(string $token, int $giftId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteGift($idGift, $user->login);
+            $deleted = $this->service->deleteGift($giftId, $user->id);
 
             if ($deleted) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idGift]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $giftId]);
             }
         } catch (Exception $e) {
             // Exception levée

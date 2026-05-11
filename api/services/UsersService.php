@@ -79,7 +79,7 @@ class UsersService
         // Stockage nouveau token
         $token = bin2hex(random_bytes(32));
 
-        if (!$this->repository->updateToken($user, $token)) {
+        if (!$this->repository->updateToken($user->id, $token)) {
             return null;
         }
 
@@ -95,15 +95,15 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(int $idUser): ?bool
+    public function disconnect(int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idUser) {
+        if (!$userId) {
             return null;
         }
 
         // Récupération de l'utilisateur
-        $user = $this->repository->getActiveUserDataById($idUser);
+        $user = $this->repository->getActiveUserDataById($userId);
 
         // Contrôle utilisateur récupéré
         if (!$user) {
@@ -111,13 +111,13 @@ class UsersService
         }
 
         // Suppression token de connexion
-        return $this->repository->updateToken($user, NULL);
+        return $this->repository->updateToken($user->id, NULL);
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser(UserInputDTO $data, string $login): ?bool
+    public function createUser(UserInputDTO $data, int $userId): ?bool
     {
         // Contrôle des données
         if (!$this->isValidCreateUserData($data)) {
@@ -134,7 +134,7 @@ class UsersService
             login: trim($data->login),
             password: password_hash(trim($data->password), PASSWORD_DEFAULT),
             level: $data->level,
-            createdBy: $login
+            createdBy: $userId
         );
 
         // Insertion
@@ -144,10 +144,10 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(int $idUser, string $login): ?string
+    public function resetPassword(int $userResetId, int $userId): ?string
     {
         // Contrôle des données
-        if (!$idUser) {
+        if (!$userResetId) {
             return null;
         }
 
@@ -156,7 +156,7 @@ class UsersService
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         // Modification
-        if (!$this->repository->updatePassword($idUser, $hash, $login)) {
+        if (!$this->repository->updatePassword($userResetId, $hash, $userId)) {
             return null;
         }
 
@@ -166,15 +166,15 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(int $idUser, UserInputDTO $data, string $login): ?bool
+    public function updatePassword(int $userId, UserInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$idUser || !$this->isValidPasswordData($data)) {
+        if (!$userId || !$this->isValidPasswordData($data)) {
             return null;
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataById($idUser);
+        $user = $this->repository->getActiveUserDataById($userId);
 
         // Contrôle ancien mot de passe incorrect
         if (!$user || !password_verify($data->oldPassword, $user->password)) {
@@ -185,21 +185,21 @@ class UsersService
         $hash = password_hash($data->password, PASSWORD_DEFAULT);
 
         // Modification
-        return $this->repository->updatePassword($user->id, $hash, $login);
+        return $this->repository->updatePassword($user->id, $hash, $userId);
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateUser(int $idUser, UserInputDTO $data, string $login): ?bool
+    public function updateUser(int $userId, UserInputDTO $data, int $userUpdateId): ?bool
     {
         // Contrôle des données
-        if (!$idUser || !$this->isValidUpdateUserData($data)) {
+        if (!$userId || !$this->isValidUpdateUserData($data)) {
             return null;
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $currentUser = $this->repository->getActiveUserDataById($idUser);
+        $currentUser = $this->repository->getActiveUserDataById($userId);
 
         // Contrôle utilisateur récupéré
         if (!$currentUser) {
@@ -215,25 +215,25 @@ class UsersService
         $user = new User(
             id: $currentUser->id,
             level: $data->level,
-            updatedBy: $login
+            updatedBy: $userUpdateId
         );
 
         // Modification
-        return $this->repository->updateUser($user, $login);
+        return $this->repository->updateUser($user);
     }
 
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int $idUser, string $login): ?bool
+    public function deleteUser(int $userDeleteId, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idUser) {
+        if (!$userDeleteId) {
             return null;
         }
 
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataById($idUser);
+        $user = $this->repository->getActiveUserDataById($userDeleteId);
 
         // Contrôle utilisateur récupéré
         if (!$user) {
@@ -246,7 +246,7 @@ class UsersService
         }
 
         // Suppression logique de l'utilisateur
-        return $this->repository->logicalDelete($idUser, $login);
+        return $this->repository->logicalDelete($userDeleteId, $userId);
     }
 
     /**

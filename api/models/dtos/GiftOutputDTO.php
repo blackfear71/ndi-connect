@@ -9,7 +9,7 @@ class GiftOutputDTO implements \JsonSerializable
      */
     public function __construct(
         public readonly int    $id                = 0,
-        public readonly int    $idEdition         = 0,
+        public readonly int    $editionId         = 0,
         public readonly string $name              = '',
         public readonly int    $value             = 0,
         public readonly int    $quantity          = 0,
@@ -24,7 +24,7 @@ class GiftOutputDTO implements \JsonSerializable
     {
         return [
             'id'                => $this->id,
-            'idEdition'         => $this->idEdition,
+            'editionId'         => $this->editionId,
             'name'              => $this->name,
             'value'             => $this->value,
             'quantity'          => $this->quantity,

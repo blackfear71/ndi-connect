@@ -7,10 +7,10 @@ require_once 'controllers/SseController.php';
 /**
  * Flux SSE de récupération des participants et cadeaux d'une édition
  */
-$router->get('/sse/edition/:idEdition', function (array $params) use ($db): void {
+$router->get('/sse/edition/:editionId', function (array $params) use ($db): void {
     // Paramètres
-    $idEdition = DataHelper::parseIntParam($params['idEdition']);
+    $editionId = DataHelper::parseIntParam($params['editionId']);
 
     // Appel contrôleur
-    (new SseController($db))->getSseEdition($idEdition);
+    (new SseController($db))->getSseEdition($editionId);
 });

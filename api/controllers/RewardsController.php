@@ -27,21 +27,21 @@ class RewardsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createReward(string $token, int $idGift, int $idPlayer): void
+    public function createReward(string $token, int $giftId, int $playerId): void
     {
         try {
             // Contrôle autorisation et niveau
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($idGift, $idPlayer, $user->login);
+            $created = $this->service->createReward($giftId, $playerId, $user->id);
 
             if ($created) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
             } else {
                 // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode(['idGift' => $idGift, 'idPlayer' => $idPlayer])]);
+                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode(['giftId' => $giftId, 'playerId' => $playerId])]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -52,21 +52,21 @@ class RewardsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward(string $token, int $idReward): void
+    public function deleteReward(string $token, int $rewardId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteReward($idReward, $user->login);
+            $deleted = $this->service->deleteReward($rewardId, $user->id);
 
             if ($deleted) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idReward]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $rewardId]);
             }
         } catch (Exception $e) {
             // Exception levée

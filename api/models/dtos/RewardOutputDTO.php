@@ -9,7 +9,7 @@ class RewardOutputDTO implements \JsonSerializable
      */
     public function __construct(
         public readonly int    $id       = 0,
-        public readonly int    $idGift   = 0,
+        public readonly int    $giftId   = 0,
         public readonly string $giftName = ''
     ) {}
 
@@ -20,7 +20,7 @@ class RewardOutputDTO implements \JsonSerializable
     {
         return [
             'id'       => $this->id,
-            'idGift'   => $this->idGift,
+            'giftId'   => $this->giftId,
             'giftName' => $this->giftName
         ];
     }

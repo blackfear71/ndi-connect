@@ -29,11 +29,11 @@ class PlayersController
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int $idEdition): void
+    public function getEditionPlayers(int $editionId): void
     {
         try {
             // Lecture de tous les enregistrements
-            $players = $this->service->getEditionPlayers($idEdition);
+            $players = $this->service->getEditionPlayers($editionId);
 
             if ($players !== null) {
                 // Succès
@@ -51,7 +51,7 @@ class PlayersController
     /**
      * Insertion d'un enregistrement
      */
-    public function createPlayer(string $token, int $idEdition, array $data): void
+    public function createPlayer(string $token, int $editionId, array $data): void
     {
         try {
             // Conversion DTO
@@ -61,7 +61,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createPlayer($idEdition, $user, $dataDTO);
+            $created = $this->service->createPlayer($editionId, $user, $dataDTO);
 
             if ($created) {
                 // Succès
@@ -79,7 +79,7 @@ class PlayersController
     /**
      * Modification d'un enregistrement
      */
-    public function updatePlayer(string $token, int $idPlayer, array $data): void
+    public function updatePlayer(string $token, int $playerId, array $data): void
     {
         try {
             // Conversion DTO
@@ -89,14 +89,14 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($idPlayer, $user, $dataDTO);
+            $updated = $this->service->updatePlayer($playerId, $user, $dataDTO);
 
             if ($updated) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
             } else {
                 // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $idPlayer, json_encode($data)]);
+                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $playerId, json_encode($data)]);
             }
         } catch (Exception $e) {
             // Exception levée
@@ -107,21 +107,21 @@ class PlayersController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deletePlayer(string $token, int $idPlayer): void
+    public function deletePlayer(string $token, int $playerId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deletePlayer($idPlayer, $user->login);
+            $deleted = $this->service->deletePlayer($playerId, $user->id);
 
             if ($deleted) {
                 // Succès
                 ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
             } else {
                 // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $idPlayer]);
+                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $playerId]);
             }
         } catch (Exception $e) {
             // Exception levée

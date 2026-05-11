@@ -37,15 +37,15 @@ class PlayersService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int $idEdition): ?array
+    public function getEditionPlayers(int $editionId): ?array
     {
         // Contrôle des données
-        if (!$idEdition) {
+        if (!$editionId) {
             return null;
         }
 
         // Liste des participants
-        $dataPlayers = $this->repository->getEditionPlayers($idEdition);
+        $dataPlayers = $this->repository->getEditionPlayers($editionId);
 
         // Récupération des données participants
         return array_map(function ($player) {
@@ -54,7 +54,7 @@ class PlayersService
             // Formatage des données récompenses
             $rewards = array_map(fn($reward) => new RewardOutputDTO(
                 id: $reward->id,
-                idGift: $reward->idGift,
+                giftId: $reward->giftId,
                 giftName: $reward->giftName
             ), $dataRewards);
 
@@ -71,15 +71,15 @@ class PlayersService
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer(int $idPlayer): ?PlayerOutputDTO
+    public function getPlayer(int $playerId): ?PlayerOutputDTO
     {
         // Contrôle des données
-        if (!$idPlayer) {
+        if (!$playerId) {
             return null;
         }
 
         // Lecture du participant
-        $player = $this->repository->getPlayer($idPlayer);
+        $player = $this->repository->getPlayer($playerId);
 
         if (!$player) {
             return null;
@@ -96,19 +96,19 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer(int $idEdition, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function createPlayer(int $editionId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$idEdition || !$this->isValidPlayerData($user->level, $data, true)) {
+        if (!$editionId || !$this->isValidPlayerData($user->level, $data, true)) {
             return null;
         }
 
         // Construction de l'objet
         $player = new Player(
-            idEdition: $idEdition,
+            editionId: $editionId,
             name: trim($data->name),
             points: $data->points,
-            createdBy: $user->login,
+            createdBy: $user->id,
         );
 
         // Insertion
@@ -118,19 +118,19 @@ class PlayersService
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int $idPlayer, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$idPlayer || !$this->isValidPlayerData($user->level, $data, false)) {
+        if (!$playerId || !$this->isValidPlayerData($user->level, $data, false)) {
             return null;
         }
 
         // Construction de l'objet
         $player = new Player(
-            id: $idPlayer,
+            id: $playerId,
             name: trim($data->name),
             points: $data->points - $data->giveaway,
-            updatedBy: $user->login,
+            updatedBy: $user->id,
         );
 
         // Modification
@@ -143,7 +143,7 @@ class PlayersService
             $giveawayPlayer = new Player(
                 id: $data->giveawayPlayerId,
                 points: $data->giveaway,
-                updatedBy: $user->login,
+                updatedBy: $user->id,
             );
 
             return $this->repository->updatePlayerPoints($giveawayPlayer);
@@ -155,18 +155,18 @@ class PlayersService
     /**
      * Modification des points d'un participant par ajout
      */
-    public function updatePlayerPoints(int $idPlayer, int $delta, string $login): ?bool
+    public function updatePlayerPoints(int $playerId, int $delta, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idPlayer) {
+        if (!$playerId) {
             return null;
         }
 
         // Construction de l'objet
         $player = new Player(
-            id: $idPlayer,
+            id: $playerId,
             points: $delta,
-            updatedBy: $login,
+            updatedBy: $userId,
         );
 
         // Modification des points d'un participant
@@ -176,29 +176,29 @@ class PlayersService
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int $idEdition, string $login): ?bool
+    public function deletePlayers(int $editionId, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idEdition) {
+        if (!$editionId) {
             return null;
         }
 
         // Suppression logique de participants d'une édition
-        return $this->repository->deletePlayers($idEdition, $login);
+        return $this->repository->deletePlayers($editionId, $userId);
     }
 
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int $idPlayer, string $login): ?bool
+    public function deletePlayer(int $playerId, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$idPlayer) {
+        if (!$playerId) {
             return null;
         }
 
         // Suppression logique du participant
-        return $this->repository->logicalDelete($idPlayer, $login);
+        return $this->repository->logicalDelete($playerId, $userId);
     }
 
     /**
