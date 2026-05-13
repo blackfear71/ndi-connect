@@ -5,17 +5,12 @@ import { FaAngleRight, FaGift, FaTrashCan } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
 import { IoGiftSharp } from 'react-icons/io5';
 
-import { useAuth } from '../../../../utils/context/AuthContext';
-
-import { EnumAction, EnumUserRole } from '../../../../enums';
+import { EnumAction } from '../../../../enums';
 
 /**
  * Liste des participants
  */
-const PlayerList = ({ players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const PlayerList = ({ rights, players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -62,7 +57,7 @@ const PlayerList = ({ players, onConfirm, onOpenPlayerModal, onOpenRewardModal, 
                     </div>
 
                     {/* Supression */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
+                    {rights.isSuperAdmin && (
                         <Button
                             onClick={() => handleDelete(p)}
                             className="edition-item-button"
@@ -84,7 +79,7 @@ const PlayerList = ({ players, onConfirm, onOpenPlayerModal, onOpenRewardModal, 
                     </Button>
 
                     {/* Modification */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
+                    {rights.isAdminOrSuperAdminOnEdition && (
                         <Button
                             onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p.id)}
                             className="edition-item-button"

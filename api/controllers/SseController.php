@@ -9,7 +9,7 @@ class SseController
     private const controllerName = 'SseController';
 
     private PDO $db;
-    private SseService $service;
+    private SseService $sseService;
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
 
@@ -19,7 +19,7 @@ class SseController
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->service = new SseService();
+        $this->sseService = new SseService();
     }
 
     /**
@@ -53,16 +53,16 @@ class SseController
     {
         // Contrôle id renseigné
         if ($editionId === null) {
-            echo $this->service->getSseEvent('error', 'ID d\'édition manquant');
+            echo $this->sseService->getSseEvent('error', 'ID d\'édition manquant');
             flush();
             return;
         }
 
         // Initialisation
-        $this->service->initializeSse();
+        $this->sseService->initializeSse();
 
         // Envoi initial
-        echo $this->service->getSseEvent('is_initialized', 'ok');
+        echo $this->sseService->getSseEvent('is_initialized', 'ok');
         flush();
 
         $lastGiftsHash = null;
@@ -81,13 +81,13 @@ class SseController
 
                 // Fermeture propre avant le timeout Nginx du serveur (60s)
                 if ((time() - $startTime) >= $maxDuration) {
-                    echo $this->service->getSseEvent('is_closing', 'ok');
+                    echo $this->sseService->getSseEvent('is_closing', 'ok');
                     flush();
                     break;
                 }
 
                 // Evènement de maintien de la connexion
-                echo $this->service->getSseEvent('is_alive', 'ok');
+                echo $this->sseService->getSseEvent('is_alive', 'ok');
                 flush();
 
                 // Evènement de récupération des cadeaux
@@ -100,7 +100,7 @@ class SseController
                         if ($newGiftsHash !== $lastGiftsHash) {
                             $lastGiftsHash = $newGiftsHash;
 
-                            echo $this->service->getSseEvent('get_gifts', $gifts);
+                            echo $this->sseService->getSseEvent('get_gifts', $gifts);
                             flush();
                         }
                     }
@@ -119,7 +119,7 @@ class SseController
                         if ($newPlayersHash !== $lastPlayersHash) {
                             $lastPlayersHash = $newPlayersHash;
 
-                            echo $this->service->getSseEvent('get_players', $players);
+                            echo $this->sseService->getSseEvent('get_players', $players);
                             flush();
                         }
                     }
@@ -136,7 +136,7 @@ class SseController
             ResponseHelper::sse(MessageHelper::ERR_UNKNOWN_ERROR, [__FUNCTION__, self::controllerName, $e->getMessage()]);
 
             // Message d'erreur
-            echo $this->service->getSseEvent('fatal_error', 'Exception levée SSE');
+            echo $this->sseService->getSseEvent('fatal_error', 'Exception levée SSE');
             flush();
         }
     }

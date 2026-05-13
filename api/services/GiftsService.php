@@ -3,6 +3,7 @@
 require_once 'models/dtos/GiftInputDTO.php';
 require_once 'models/dtos/GiftOutputDTO.php';
 
+require_once 'services/EditionsService.php';
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/GiftsRepository.php';
@@ -10,8 +11,11 @@ require_once 'repositories/GiftsRepository.php';
 class GiftsService
 {
     private PDO $db;
+
+    private ?EditionsService $editionsService = null;
     private ?RewardsService $rewardsService = null;
-    private GiftsRepository $repository;
+
+    private GiftsRepository $giftsRepository;
 
     /**
      * Constructeur par défaut
@@ -19,7 +23,19 @@ class GiftsService
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->repository = new GiftsRepository($db);
+        $this->giftsRepository = new GiftsRepository($db);
+    }
+
+    /**
+     * Instancie le EditionsService si besoin
+     */
+    private function getEditionsService(): EditionsService
+    {
+        if ($this->editionsService === null) {
+            $this->editionsService = new EditionsService($this->db);
+        }
+
+        return $this->editionsService;
     }
 
     /**
@@ -44,7 +60,7 @@ class GiftsService
             return null;
         }
 
-        $gifts = $this->repository->getEditionGifts($editionId);
+        $gifts = $this->giftsRepository->getEditionGifts($editionId);
 
         return array_map(function ($gift) {
             // Calcul du nombre de cadeaux restants
@@ -74,7 +90,7 @@ class GiftsService
         }
 
         // Lecture du cadeau
-        $gift = $this->repository->getGift($giftId);
+        $gift = $this->giftsRepository->getGift($giftId);
 
         if (!$gift) {
             return null;
@@ -91,10 +107,10 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift(int $editionId, GiftInputDTO $data, int $userId): ?bool
+    public function createGift(int $editionId, GiftInputDTO $data, UserOutputDTO $user): ?bool
     {
         // Contrôle des données
-        if (!$editionId || !$this->isValidGiftData($data)) {
+        if (!$editionId || !$this->isValidGiftData($data, $user->level, $editionId, 'editions')) {
             return null;
         }
 
@@ -104,17 +120,17 @@ class GiftsService
             name: trim($data->name),
             value: $data->value,
             quantity: $data->quantity,
-            createdBy: $userId,
+            createdBy: $user->id,
         );
 
         // Insertion
-        return $this->repository->createGift($gift);
+        return $this->giftsRepository->createGift($gift);
     }
 
     /**
      * Modification d'un cadeau
      */
-    public function updateGift(int $giftId, GiftInputDTO $data, int $userId): ?bool
+    public function updateGift(int $giftId, GiftInputDTO $data, UserOutputDTO $user): ?bool
     {
         // Contrôle des données
         if (!$giftId) {
@@ -125,7 +141,7 @@ class GiftsService
         $rewardCount = $this->getRewardsService()->getRewardCount($giftId);
 
         // Contrôle des données
-        if ($rewardCount === null || !$this->isValidGiftData($data, $rewardCount)) {
+        if ($rewardCount === null || !$this->isValidGiftData($data, $user->level, $giftId, 'gifts', $rewardCount)) {
             return null;
         }
 
@@ -135,11 +151,11 @@ class GiftsService
             name: trim($data->name),
             value: $data->value,
             quantity: $data->quantity,
-            updatedBy: $userId
+            updatedBy: $user->id
         );
 
         // Modification
-        return $this->repository->updateGift($gift);
+        return $this->giftsRepository->updateGift($gift);
     }
 
     /**
@@ -153,7 +169,7 @@ class GiftsService
         }
 
         // Suppression logique du cadeau
-        return $this->repository->logicalDelete($giftId, $userId);
+        return $this->giftsRepository->deleteGift($giftId, $userId);
     }
 
     /**
@@ -166,18 +182,22 @@ class GiftsService
             return null;
         }
 
-        return $this->repository->deleteGifts($editionId, $userId);
+        return $this->giftsRepository->deleteGifts($editionId, $userId);
     }
 
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidGiftData(GiftInputDTO $data, ?int $rewardCount = null): bool
+    private function isValidGiftData(GiftInputDTO $data, int $level, int $id, string $typeId, ?int $rewardCount = null): bool
     {
         $name = trim($data->name);
 
+        // Date de fin édition
+        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
+
         return $name !== ''
             && $data->value > 0
+            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate))
             && ($rewardCount !== null ? $data->quantity >= $rewardCount : $data->quantity >= 0);
     }
 }

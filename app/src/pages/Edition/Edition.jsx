@@ -108,6 +108,16 @@ const Edition = () => {
     const [gifts, setGifts] = useState([]);
     const [players, setPlayers] = useState([]);
 
+    // Constantes
+    const rights = {
+        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
+        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
+        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN,
+        isAdminOrSuperAdminOnEdition:
+            auth.isLoggedIn &&
+            ((auth.level === EnumUserRole.ADMIN && new Date() <= new Date(edition?.endDate)) || auth.level >= EnumUserRole.SUPERADMIN)
+    };
+
     /**
      * Schéma de validation Yup de l'édition
      */
@@ -162,7 +172,7 @@ const Edition = () => {
                 .typeError('errors.invalidPoints')
                 .required('errors.invalidPoints')
                 .min(
-                    auth.level < EnumUserRole.SUPERADMIN || modalOptionsPlayer.action === EnumAction.CREATE ? 0 : -currentPlayer?.points,
+                    !rights.isSuperAdmin || modalOptionsPlayer.action === EnumAction.CREATE ? 0 : -currentPlayer?.points,
                     'errors.invalidPoints'
                 ),
             ...(modalOptionsPlayer.action === EnumAction.UPDATE && {
@@ -633,7 +643,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
-                subscriptionGifts = giftsService.updateGift(formGift.values.id, {
+                subscriptionGifts = giftsService.updateGift(values.id, {
                     name: values.name,
                     value: values.value,
                     quantity: values.quantity
@@ -984,6 +994,7 @@ const Edition = () => {
                                     {/* Participants */}
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
+                                            rights={rights}
                                             players={players}
                                             onOpenPlayerModal={openClosePlayerModal}
                                             onOpenRewardModal={openCloseRewardModal}
@@ -995,6 +1006,7 @@ const Edition = () => {
                                     {/* Cadeaux */}
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
+                                            rights={rights}
                                             gifts={gifts}
                                             onOpen={openCloseGiftModal}
                                             onConfirm={openCloseConfirmModal}
@@ -1005,6 +1017,7 @@ const Edition = () => {
                                     {/* A propos */}
                                     <Tab eventKey="about" title={t('edition.about')}>
                                         <EditionAbout
+                                            rights={rights}
                                             edition={edition}
                                             onOpen={openCloseEditionModal}
                                             onConfirm={handleConfirmDeleteEdition}
@@ -1014,7 +1027,7 @@ const Edition = () => {
                                 </Tabs>
 
                                 {/* Modale de modification/suppression d'édition */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formEdition && modalOptionsEdition.isOpen && (
+                                {rights.isSuperAdmin && formEdition && modalOptionsEdition.isOpen && (
                                     <EditionModal
                                         formData={formEdition}
                                         modalOptions={modalOptionsEdition}
@@ -1025,7 +1038,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de cadeau */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && formGift && modalOptionsGift.isOpen && (
+                                {rights.isAdminOrSuperAdminOnEdition && formGift && modalOptionsGift.isOpen && (
                                     <GiftModal
                                         gift={gifts.find((g) => g.id === modalOptionsGift.giftId)}
                                         formData={formGift}
@@ -1036,9 +1049,10 @@ const Edition = () => {
                                     />
                                 )}
 
-                                {/* Modale de modification de participant */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && formPlayer && modalOptionsPlayer.isOpen && (
+                                {/* Modale de création/modification de participant */}
+                                {rights.isAdminOrSuperAdminOnEdition && formPlayer && modalOptionsPlayer.isOpen && (
                                     <PlayerModal
+                                        rights={rights}
                                         player={players.find((p) => p.id === modalOptionsPlayer.playerId)}
                                         players={players}
                                         formData={formPlayer}
@@ -1052,6 +1066,7 @@ const Edition = () => {
                                 {/* Modale d'attribution de cadeau à un participant */}
                                 {formReward && modalOptionsReward.isOpen && (
                                     <RewardModal
+                                        rights={rights}
                                         player={players.find((p) => p.id === modalOptionsReward.playerId)}
                                         gifts={gifts}
                                         formData={formReward}
@@ -1064,7 +1079,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de confirmation */}
-                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                                {rights.isSuperAdmin && modalOptionsConfirm.isOpen && (
                                     <ConfirmModal
                                         modalOptions={modalOptionsConfirm}
                                         setModalOptions={setModalOptionsConfirm}

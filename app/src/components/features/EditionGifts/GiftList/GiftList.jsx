@@ -6,17 +6,12 @@ import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
 
-import { useAuth } from '../../../../utils/context/AuthContext';
-
-import { EnumAction, EnumUserRole } from '../../../../enums';
+import { EnumAction } from '../../../../enums';
 
 /**
  * Liste des cadeaux
  */
-const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const GiftList = ({ rights, gifts, title, onOpen, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -127,7 +122,7 @@ const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
                     </div>
 
                     {/* Supression */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
+                    {rights.isSuperAdmin && (
                         <Button
                             onClick={() => handleDelete(g)}
                             className="edition-item-button"
@@ -139,7 +134,7 @@ const GiftList = ({ gifts, title, onOpen, onConfirm, isSubmitting }) => {
                     )}
 
                     {/* Modification */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
+                    {rights.isAdminOrSuperAdminOnEdition && (
                         <Button
                             onClick={() => onOpen(EnumAction.UPDATE, g.id)}
                             className="edition-item-button"

@@ -8,18 +8,14 @@ import { IoInformationCircleOutline } from 'react-icons/io5';
 
 import { ProgressCard, TableCard, TextCard } from '../../../components/ui';
 
-import { useAuth } from '../../../utils/context/AuthContext';
 import { getLocalizedDate, getLocalizedDuration, getLocalizedTime } from '../../../utils/helpers/dateHelper';
 
-import { EnumAction, EnumUserRole } from '../../../enums';
+import { EnumAction } from '../../../enums';
 
 /**
  * A propos
  */
-const EditionAbout = ({ edition, onOpen, onConfirm, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const EditionAbout = ({ rights, edition, onOpen, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -99,7 +95,7 @@ const EditionAbout = ({ edition, onOpen, onConfirm, isSubmitting }) => {
     return (
         <>
             {/* Actions */}
-            {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
+            {rights.isSuperAdmin && (
                 <div className="d-flex gap-2 mb-2">
                     {/* Modifier */}
                     <Button variant="outline-action" onClick={() => onOpen(EnumAction.UPDATE)} disabled={isSubmitting}>

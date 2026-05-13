@@ -15,7 +15,7 @@ class EditionsController
 
     private PDO $db;
     private Auth $auth;
-    private EditionsService $service;
+    private EditionsService $editionsService;
 
     /**
      * Constructeur par défaut
@@ -24,7 +24,7 @@ class EditionsController
     {
         $this->db = $db;
         $this->auth = new Auth($db);
-        $this->service = new EditionsService($db);
+        $this->editionsService = new EditionsService($db);
     }
 
     /**
@@ -34,7 +34,7 @@ class EditionsController
     {
         try {
             // Lecture de tous les enregistrements
-            $editions = $this->service->getAllEditions();
+            $editions = $this->editionsService->getAllEditions();
 
             if ($editions !== null) {
                 // Succès
@@ -56,7 +56,7 @@ class EditionsController
     {
         try {
             // Lecture d'un enregistrement
-            $edition = $this->service->getEdition($editionId);
+            $edition = $this->editionsService->getEdition($editionId);
 
             if ($edition) {
                 // Succès
@@ -78,7 +78,7 @@ class EditionsController
     {
         try {
             // Lecture de tous les enregistrements recherchés
-            $editions = $this->service->getSearchEditions($search);
+            $editions = $this->editionsService->getSearchEditions($search);
 
             if ($editions !== null) {
                 // Succès
@@ -106,7 +106,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createEdition($dataDTO, $file, $user->id);
+            $created = $this->editionsService->createEdition($dataDTO, $file, $user->id);
 
             if ($created) {
                 // Succès
@@ -134,7 +134,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $edition = $this->service->updateEdition($editionId, $dataDTO, $file, $user->id);
+            $edition = $this->editionsService->updateEdition($editionId, $dataDTO, $file, $user->id);
 
             if ($edition) {
                 // Succès
@@ -159,7 +159,7 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteEdition($editionId, $user->id);
+            $deleted = $this->editionsService->deleteEdition($editionId, $user->id);
 
             if ($deleted) {
                 // Succès

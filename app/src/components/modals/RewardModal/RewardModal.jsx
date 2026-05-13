@@ -7,19 +7,12 @@ import { PiListStarBold } from 'react-icons/pi';
 import { SelectInput } from '../../../components/inputs';
 import { Message, SpinnerButton } from '../../../components/shared';
 
-import { useAuth } from '../../../utils/context/AuthContext';
-
-import { EnumUserRole } from '../../../enums';
-
 import './RewardModal.css';
 
 /**
  * Modale récompense
  */
-const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -79,7 +72,7 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
-                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN ? t('edition.manageGifts') : t('edition.informations')}
+                            {rights.isAdminOrSuperAdminOnEdition ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
@@ -122,7 +115,7 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                         </div>
 
                         {/* Attribution cadeaux */}
-                        {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
+                        {rights.isAdminOrSuperAdminOnEdition && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     {gifts.length > 0 ? (
@@ -163,7 +156,7 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                                                 className="d-flex align-items-center justify-content-between pt-2 pb-2 gap-2 reward-modal-gift-row"
                                             >
                                                 <div className="reward-modal-gift-name">{r.giftName}</div>
-                                                {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
+                                                {rights.isSuperAdmin && (
                                                     <Button
                                                         onClick={() => handleDelete(r)}
                                                         className="d-flex align-items-center justify-content-center modal-button-delete"
@@ -201,7 +194,7 @@ const RewardModal = ({ player, gifts, formData, modalOptions, setModalOptions, o
                                 {t('common.close')}
                             </Button>
 
-                            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && obtainableGifts.length > 0 && (
+                            {rights.isAdminOrSuperAdminOnEdition && obtainableGifts.length > 0 && (
                                 <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                             )}
                         </div>

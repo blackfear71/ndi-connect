@@ -14,7 +14,7 @@ class GiftsController
 
     private PDO $db;
     private Auth $auth;
-    private GiftsService $service;
+    private GiftsService $giftsService;
 
     /**
      * Constructeur par défaut
@@ -23,7 +23,7 @@ class GiftsController
     {
         $this->db = $db;
         $this->auth = new Auth($db);
-        $this->service = new GiftsService($db);
+        $this->giftsService = new GiftsService($db);
     }
 
     /**
@@ -33,7 +33,7 @@ class GiftsController
     {
         try {
             // Lecture de tous les enregistrements
-            $gifts = $this->service->getEditionGifts($editionId);
+            $gifts = $this->giftsService->getEditionGifts($editionId);
 
             if ($gifts !== null) {
                 // Succès
@@ -61,7 +61,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createGift($editionId, $dataDTO, $user->id);
+            $created = $this->giftsService->createGift($editionId, $dataDTO, $user);
 
             if ($created) {
                 // Succès
@@ -89,7 +89,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updateGift($giftId, $dataDTO, $user->id);
+            $updated = $this->giftsService->updateGift($giftId, $dataDTO, $user);
 
             if ($updated) {
                 // Succès
@@ -114,7 +114,7 @@ class GiftsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteGift($giftId, $user->id);
+            $deleted = $this->giftsService->deleteGift($giftId, $user->id);
 
             if ($deleted) {
                 // Succès

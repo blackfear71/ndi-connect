@@ -11,9 +11,11 @@ require_once 'repositories/EditionsRepository.php';
 class EditionsService
 {
     private PDO $db;
+
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
-    private EditionsRepository $repository;
+
+    private EditionsRepository $editionsRepository;
 
     /**
      * Constructeur par défaut
@@ -21,7 +23,7 @@ class EditionsService
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->repository = new EditionsRepository($db);
+        $this->editionsRepository = new EditionsRepository($db);
     }
 
     /**
@@ -53,7 +55,7 @@ class EditionsService
      */
     public function getAllEditions(): array
     {
-        $editions = $this->repository->getAllEditions();
+        $editions = $this->editionsRepository->getAllEditions();
 
         return array_map(fn($edition) => new EditionOutputDTO(
             id: $edition->id,
@@ -75,7 +77,7 @@ class EditionsService
         }
 
         // Lecture de l'édition
-        $edition = $this->repository->getEdition($editionId);
+        $edition = $this->editionsRepository->getEdition($editionId);
 
         if (!$edition) {
             return null;
@@ -110,6 +112,29 @@ class EditionsService
     }
 
     /**
+     * Lecture de la date de fin d'un enregistrement par type
+     */
+    public function getEditionEndDateByType(int $id, string $typeId): ?\DateTimeImmutable
+    {
+        // Contrôle des données
+        if (!$id || !$typeId) {
+            return null;
+        }
+
+        // Lecture de la date de fin de l'édition selon le type
+        switch ($typeId) {
+            case 'editions':
+                return $this->editionsRepository->getEditionEndDateByEditionId($id);
+            case 'gifts':
+                return $this->editionsRepository->getEditionEndDateByGiftId($id);
+            case 'players':
+                return $this->editionsRepository->getEditionEndDateByPlayerId($id);
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Lecture des éditions recherchées
      */
     public function getSearchEditions(string $search): array
@@ -118,7 +143,7 @@ class EditionsService
             return [];
         }
 
-        $editions = $this->repository->getSearchEditions(trim($search));
+        $editions = $this->editionsRepository->getSearchEditions(trim($search));
 
         return array_map(fn($edition) => new EditionOutputDTO(
             id: $edition->id,
@@ -159,7 +184,7 @@ class EditionsService
         );
 
         // Insertion
-        return $this->repository->createEdition($edition);
+        return $this->editionsRepository->createEdition($edition);
     }
 
     /**
@@ -193,7 +218,7 @@ class EditionsService
         );
 
         // Modification
-        if (!$this->repository->updateEdition($edition)) {
+        if (!$this->editionsRepository->updateEdition($edition)) {
             return null;
         }
 
@@ -222,7 +247,7 @@ class EditionsService
         }
 
         // Suppression logique de l'édition
-        return $this->repository->logicalDelete($editionId, $userId);
+        return $this->editionsRepository->deleteEdition($editionId, $userId);
     }
 
     /**
@@ -244,7 +269,7 @@ class EditionsService
     private function uploadImage(?int $editionId, ?string $action, ?array $file): ?string
     {
         // Récupération de l'image de l'édition
-        $picture = $editionId ? $this->repository->getEditionPicture($editionId) : null;
+        $picture = $editionId ? $this->editionsRepository->getEditionPicture($editionId) : null;
 
         // Traitement de l'image
         switch ($action) {

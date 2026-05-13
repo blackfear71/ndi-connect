@@ -79,6 +79,13 @@ const Settings = () => {
     const [users, setUsers] = useState([]);
     const [connectedUser, setConnectedUser] = useState(null);
 
+    // Constantes
+    const rights = {
+        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
+        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
+        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
+    };
+
     /**
      * Schéma de validation Yup du mot de passe
      */
@@ -153,7 +160,7 @@ const Settings = () => {
         }
 
         // Récupération des données utilisateurs
-        if (auth.level >= EnumUserRole.SUPERADMIN) {
+        if (rights.isSuperAdmin) {
             const usersService = new UsersService();
 
             usersService
@@ -211,15 +218,19 @@ const Settings = () => {
     useEffect(() => {
         // Initialisation à l'ouverture de la modale
         if (modalOptionsUser.isOpen && modalOptionsUser.userId) {
-            const currentUser = users.find((u) => u.id === modalOptionsUser.userId);
+            if (modalOptionsUser.action === EnumAction.UPDATE) {
+                const currentUser = users.find((u) => u.id === modalOptionsUser.userId);
 
-            formUser.setValues({
-                id: modalOptionsUser.action === EnumAction.UPDATE ? currentUser.id : null,
-                login: modalOptionsUser.action === EnumAction.UPDATE ? currentUser.login : '',
-                password: '',
-                confirmPassword: '',
-                level: modalOptionsUser.action === EnumAction.UPDATE ? currentUser.level : ''
-            });
+                formUser.setValues({
+                    id: currentUser.id,
+                    login: currentUser.login,
+                    password: '',
+                    confirmPassword: '',
+                    level: currentUser.level
+                });
+            } else {
+                formUser.resetForm();
+            }
         }
 
         // Réinitialisation à la fermeture de la modale
@@ -511,7 +522,7 @@ const Settings = () => {
                                 {t('settings.settingsTitle')}
                             </h1>
 
-                            {auth.level >= EnumUserRole.SUPERADMIN && connectedUser && users ? (
+                            {rights.isSuperAdmin && connectedUser && users ? (
                                 <Tabs
                                     variant="underline"
                                     defaultActiveKey="user"
@@ -558,7 +569,7 @@ const Settings = () => {
                     )}
 
                     {/* Modale de modification d'utilisateur */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formUser && modalOptionsUser.isOpen && (
+                    {rights.isSuperAdmin && formUser && modalOptionsUser.isOpen && (
                         <SettingsModal
                             user={users.find((u) => u.id === modalOptionsUser.userId)}
                             formData={formUser}
@@ -571,7 +582,7 @@ const Settings = () => {
                     )}
 
                     {/* Modale de confirmation */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && modalOptionsConfirm.isOpen && (
+                    {rights.isSuperAdmin && modalOptionsConfirm.isOpen && (
                         <ConfirmModal
                             modalOptions={modalOptionsConfirm}
                             setModalOptions={setModalOptionsConfirm}

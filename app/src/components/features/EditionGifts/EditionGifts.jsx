@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
-import { useAuth } from '../../../utils/context/AuthContext';
-
-import { EnumAction, EnumUserRole } from '../../../enums';
+import { EnumAction } from '../../../enums';
 
 import './EditionGifts.css';
 
@@ -14,10 +12,7 @@ import GiftList from './GiftList/GiftList';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ gifts, onOpen, onConfirm, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const EditionGifts = ({ rights, gifts, onOpen, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,7 +23,7 @@ const EditionGifts = ({ gifts, onOpen, onConfirm, isSubmitting }) => {
     return (
         <>
             {/* Ajout */}
-            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
+            {rights.isAdminOrSuperAdminOnEdition && (
                 <div className="d-grid">
                     <Button variant="outline-action" onClick={() => onOpen(EnumAction.CREATE)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
@@ -44,6 +39,7 @@ const EditionGifts = ({ gifts, onOpen, onConfirm, isSubmitting }) => {
                     {availableGifts && availableGifts.length > 0 && (
                         <div className="mt-3">
                             <GiftList
+                                rights={rights}
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
                                 onOpen={onOpen}
@@ -57,6 +53,7 @@ const EditionGifts = ({ gifts, onOpen, onConfirm, isSubmitting }) => {
                     {unavailableGifts && unavailableGifts.length > 0 && (
                         <div className="mt-3">
                             <GiftList
+                                rights={rights}
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
                                 onOpen={onOpen}

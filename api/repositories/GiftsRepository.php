@@ -1,13 +1,21 @@
 <?php
 // Imports
-require_once 'core/functions/Model.php';
-
 require_once 'models/entities/Gift.php';
 
-class GiftsRepository extends Model
+class GiftsRepository
 {
-    protected string $table = 'gifts';
+    protected PDO $db;
+
+    protected string $giftsTable = 'gifts';
     protected string $rewardsTable = 'rewards';
+
+    /**
+     * Constructeur par défaut
+     */
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
 
     /**
      * Lecture des enregistrements d'une édition
@@ -15,7 +23,7 @@ class GiftsRepository extends Model
     public function getEditionGifts(int $editionId): array
     {
         $sql = "SELECT g.id, g.edition_id, g.name, g.value, g.quantity, COUNT(r.id) AS reward_count
-            FROM {$this->table} AS g
+            FROM {$this->giftsTable} AS g
             LEFT JOIN {$this->rewardsTable} AS r ON r.gift_id = g.id AND r.is_active = 1
             WHERE g.edition_id = :edition_id AND g.is_active = 1
             GROUP BY g.id, g.name, g.value, g.quantity
@@ -42,7 +50,7 @@ class GiftsRepository extends Model
     public function getGift(int $giftId): ?Gift
     {
         $sql = "SELECT id, value, quantity
-            FROM {$this->table}
+            FROM {$this->giftsTable}
             WHERE id = :id AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -68,7 +76,7 @@ class GiftsRepository extends Model
      */
     public function createGift(Gift $gift): bool
     {
-        $sql = "INSERT INTO {$this->table} (edition_id, name, value, quantity, created_at, created_by, is_active)
+        $sql = "INSERT INTO {$this->giftsTable} (edition_id, name, value, quantity, created_at, created_by, is_active)
             VALUES (:edition_id, :name, :value, :quantity, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
@@ -89,7 +97,7 @@ class GiftsRepository extends Model
      */
     public function updateGift(Gift $gift): bool
     {
-        $sql = "UPDATE {$this->table} 
+        $sql = "UPDATE {$this->giftsTable} 
             SET name = :name, value = :value, quantity = :quantity, updated_at = :updated_at, updated_by = :updated_by 
             WHERE id = :id";
 
@@ -106,11 +114,30 @@ class GiftsRepository extends Model
     }
 
     /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteGift(int $giftId, int $userId): bool
+    {
+        $sql = "UPDATE {$this->giftsTable}
+            SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id'         => $giftId,
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_by' => $userId,
+            'is_active'  => 0
+        ]);
+    }
+
+    /**
      * Suppression logique des cadeaux d'une édition
      */
     public function deleteGifts(int $editionId, int $userId): bool
     {
-        $sql = "UPDATE {$this->table}
+        $sql = "UPDATE {$this->giftsTable}
             SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
             WHERE edition_id = :edition_id";
 

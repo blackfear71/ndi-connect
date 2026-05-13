@@ -62,6 +62,13 @@ const Home = () => {
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
     const [editionsByYear, setEditionsByYear] = useState();
 
+    // Constantes
+    const rights = {
+        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
+        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
+        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
+    };
+
     /**
      * Schéma de validation Yup de l'édition
      */
@@ -299,7 +306,7 @@ const Home = () => {
                     {/* Grille */}
                     <div className="gap-2 mt-3 home-grid">
                         {/* Ajout */}
-                        {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && (
+                        {rights.isSuperAdmin && (
                             <Button
                                 variant="outline-action"
                                 className="d-flex align-items-center home-grid-btn-action"
@@ -367,7 +374,7 @@ const Home = () => {
                             )
                         ) : (
                             <div
-                                className={`d-flex align-items-center justify-content-center px-2 py-3 home-empty ${auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN ? '' : ' home-empty-full'}`}
+                                className={`d-flex align-items-center justify-content-center px-2 py-3 home-empty ${rights.isSuperAdmin ? '' : ' home-empty-full'}`}
                             >
                                 {t('home.noEdition')}
                             </div>
@@ -375,7 +382,7 @@ const Home = () => {
                     </div>
 
                     {/* Modale de création d'édition */}
-                    {auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN && formEdition && modalOptionsEdition.isOpen && (
+                    {rights.isSuperAdmin && formEdition && modalOptionsEdition.isOpen && (
                         <EditionModal
                             formData={formEdition}
                             modalOptions={modalOptionsEdition}

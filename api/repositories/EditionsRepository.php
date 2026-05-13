@@ -1,13 +1,22 @@
 <?php
 // Imports
-require_once 'core/functions/Model.php';
-
 require_once 'models/entities/Edition.php';
 
-class EditionsRepository extends Model
+class EditionsRepository
 {
-    protected string $table = 'editions';
+    protected PDO $db;
+
+    protected string $editionsTable = 'editions';
+    protected string $giftsTable = 'gifts';
     protected string $playersTable = 'players';
+
+    /**
+     * Constructeur par défaut
+     */
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
 
     /**
      * Lecture de tous les enregistrements
@@ -15,7 +24,7 @@ class EditionsRepository extends Model
     public function getAllEditions(): array
     {
         $sql = "SELECT e.id, e.location, e.start_date, COUNT(p.id) AS 'playerCount'
-            FROM {$this->table} AS e
+            FROM {$this->editionsTable} AS e
             LEFT JOIN {$this->playersTable} AS p ON p.edition_id = e.id AND p.is_active = 1
             WHERE e.is_active = 1
             GROUP BY e.id
@@ -37,7 +46,7 @@ class EditionsRepository extends Model
     public function getEdition(int $editionId): ?Edition
     {
         $sql = "SELECT id, location, start_date, end_date, picture, theme, challenge
-            FROM {$this->table}
+            FROM {$this->editionsTable}
             WHERE id = :id AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -63,12 +72,83 @@ class EditionsRepository extends Model
     }
 
     /**
+     * Lecture de la date de fin d'un enregistrement par Id (éditions)
+     */
+    public function getEditionEndDateByEditionId(int $editionId): ?\DateTimeImmutable
+    {
+        $sql = "SELECT end_date
+            FROM {$this->editionsTable}
+            WHERE id = :id AND is_active = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $editionId
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($row['end_date']);
+    }
+
+    /**
+     * Lecture de la date de fin d'un enregistrement avec jointure par Id (cadeaux)
+     */
+    public function getEditionEndDateByGiftId(int $giftId): ?\DateTimeImmutable
+    {
+        $sql = "SELECT e.end_date
+            FROM {$this->editionsTable} AS e
+            INNER JOIN {$this->giftsTable} AS g ON g.edition_id = e.id AND g.is_active = 1
+            WHERE g.id = :id AND e.is_active = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $giftId
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($row['end_date']);
+    }
+
+    /**
+     * Lecture de la date de fin d'un enregistrement avec jointure par Id (participants)
+     */
+    public function getEditionEndDateByPlayerId(int $playerId): ?\DateTimeImmutable
+    {
+        $sql = "SELECT e.end_date
+            FROM {$this->editionsTable} AS e
+            INNER JOIN {$this->playersTable} AS p ON p.edition_id = e.id AND p.is_active = 1
+            WHERE p.id = :id AND e.is_active = 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'id' => $playerId
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+
+        return new \DateTimeImmutable($row['end_date']);
+    }
+
+    /**
      * Lecture des éditions recherchées
      */
     public function getSearchEditions(string $search): array
     {
         $sql = "SELECT id, location, start_date
-            FROM {$this->table}
+            FROM {$this->editionsTable}
             WHERE (CAST(start_date AS CHAR) LIKE :search OR location LIKE :search) AND is_active = 1
             ORDER BY id ASC";
 
@@ -90,7 +170,7 @@ class EditionsRepository extends Model
     public function getEditionPicture(int $editionId): ?string
     {
         $sql = "SELECT picture
-            FROM {$this->table}
+            FROM {$this->editionsTable}
             WHERE id = :id AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -108,7 +188,7 @@ class EditionsRepository extends Model
      */
     public function createEdition(Edition $edition): string
     {
-        $sql = "INSERT INTO {$this->table} (location, start_date, end_date, picture, theme, challenge, created_at, created_by, is_active)
+        $sql = "INSERT INTO {$this->editionsTable} (location, start_date, end_date, picture, theme, challenge, created_at, created_by, is_active)
             VALUES (:location, :start_date, :end_date, :picture, :theme, :challenge, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
@@ -132,7 +212,7 @@ class EditionsRepository extends Model
      */
     public function updateEdition(Edition $edition): bool
     {
-        $sql = "UPDATE {$this->table}
+        $sql = "UPDATE {$this->editionsTable}
             SET location = :location, start_date = :start_date, end_date = :end_date, picture = :picture, theme = :theme, challenge = :challenge, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
@@ -148,6 +228,25 @@ class EditionsRepository extends Model
             'challenge'  => $edition->challenge,
             'updated_at' => date('Y-m-d H:i:s'),
             'updated_by' => $edition->updatedBy
+        ]);
+    }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteEdition(int $editionId, int $userId): bool
+    {
+        $sql = "UPDATE {$this->editionsTable}
+            SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id'         => $editionId,
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_by' => $userId,
+            'is_active'  => 0
         ]);
     }
 }

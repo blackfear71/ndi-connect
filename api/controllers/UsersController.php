@@ -14,7 +14,7 @@ class UsersController
 
     private PDO $db;
     private Auth $auth;
-    private UsersService $service;
+    private UsersService $usersService;
 
     /**
      * Constructeur par défaut
@@ -23,7 +23,7 @@ class UsersController
     {
         $this->db = $db;
         $this->auth = new Auth($db);
-        $this->service = new UsersService($db);
+        $this->usersService = new UsersService($db);
     }
 
     /**
@@ -33,7 +33,7 @@ class UsersController
     {
         try {
             // Contrôle authentification
-            $user = $this->service->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
             if ($user) {
                 // Succès
@@ -63,7 +63,7 @@ class UsersController
             $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Lecture de tous les enregistrements
-            $users = $this->service->getAllUsers();
+            $users = $this->usersService->getAllUsers();
 
             if ($users !== null) {
                 // Succès
@@ -88,7 +88,7 @@ class UsersController
             $dataDTO = UserInputDTO::fromArray($data);
 
             // Connexion utilisateur
-            $user = $this->service->connect($dataDTO);
+            $user = $this->usersService->connect($dataDTO);
 
             if ($user) {
                 // Token de connexion
@@ -123,11 +123,11 @@ class UsersController
     {
         try {
             // Contrôle authentification
-            $user = $this->service->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
             if ($user) {
                 // Déconnexion utilisateur
-                $disconnected = $this->service->disconnect($user->id);
+                $disconnected = $this->usersService->disconnect($user->id);
 
                 if ($disconnected) {
                     // Suppression token de connexion
@@ -172,7 +172,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createUser($dataDTO, $user->id);
+            $created = $this->usersService->createUser($dataDTO, $user->id);
 
             if ($created === true) {
                 // Succès
@@ -200,7 +200,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $newPassword = $this->service->resetPassword($userId, $user->id);
+            $newPassword = $this->usersService->resetPassword($userId, $user->id);
 
             if ($newPassword) {
                 // Succès
@@ -225,11 +225,11 @@ class UsersController
             $dataDTO = UserInputDTO::fromArray($data);
 
             // Contrôle authentification
-            $user = $this->service->checkAuth($token);
+            $user = $this->usersService->checkAuth($token);
 
             if ($user) {
                 // Modification d'un enregistrement
-                $updated = $this->service->updatePassword($user->id, $dataDTO);
+                $updated = $this->usersService->updatePassword($user->id, $dataDTO);
 
                 if ($updated) {
                     // Succès
@@ -261,7 +261,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $updated = $this->service->updateUser($userId, $dataDTO, $user->id);
+            $updated = $this->usersService->updateUser($userId, $dataDTO, $user->id);
 
             if ($updated === true) {
                 // Succès
@@ -289,7 +289,7 @@ class UsersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteUser($userId, $user->id);
+            $deleted = $this->usersService->deleteUser($userId, $user->id);
 
             if ($deleted === true) {
                 // Succès

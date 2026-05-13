@@ -14,7 +14,7 @@ class PlayersController
 
     private PDO $db;
     private Auth $auth;
-    private PlayersService $service;
+    private PlayersService $playersService;
 
     /**
      * Constructeur par défaut
@@ -23,7 +23,7 @@ class PlayersController
     {
         $this->db = $db;
         $this->auth = new Auth($db);
-        $this->service = new PlayersService($db);
+        $this->playersService = new PlayersService($db);
     }
 
     /**
@@ -33,7 +33,7 @@ class PlayersController
     {
         try {
             // Lecture de tous les enregistrements
-            $players = $this->service->getEditionPlayers($editionId);
+            $players = $this->playersService->getEditionPlayers($editionId);
 
             if ($players !== null) {
                 // Succès
@@ -61,7 +61,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createPlayer($editionId, $user, $dataDTO);
+            $created = $this->playersService->createPlayer($editionId, $user, $dataDTO);
 
             if ($created) {
                 // Succès
@@ -89,7 +89,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->service->updatePlayer($playerId, $user, $dataDTO);
+            $updated = $this->playersService->updatePlayer($playerId, $user, $dataDTO);
 
             if ($updated) {
                 // Succès
@@ -114,7 +114,7 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deletePlayer($playerId, $user->id);
+            $deleted = $this->playersService->deletePlayer($playerId, $user->id);
 
             if ($deleted) {
                 // Succès

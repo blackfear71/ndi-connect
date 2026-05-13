@@ -7,7 +7,8 @@ require_once 'repositories/UsersRepository.php';
 class UsersService
 {
     private PDO $db;
-    private UsersRepository $repository;
+
+    private UsersRepository $usersRepository;
 
     /**
      * Constructeur par défaut
@@ -15,7 +16,7 @@ class UsersService
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->repository = new UsersRepository($db);
+        $this->usersRepository = new UsersRepository($db);
     }
 
     /**
@@ -28,7 +29,7 @@ class UsersService
             return null;
         }
 
-        $user = $this->repository->checkAuth($token);
+        $user = $this->usersRepository->checkAuth($token);
 
         if (!$user) {
             return null;
@@ -48,7 +49,7 @@ class UsersService
     public function getAllUsers(): array
     {
         // Lecture des utilisateurs
-        $users = $this->repository->getAllUsers();
+        $users = $this->usersRepository->getAllUsers();
 
         // Récupération des données utilisateurs
         return array_map(fn($user) => new UserOutputDTO(
@@ -69,7 +70,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataByLogin($data->login);
+        $user = $this->usersRepository->getActiveUserDataByLogin($data->login);
 
         // Contrôle mot de passe incorrect
         if (!$user || !password_verify($data->password, $user->password)) {
@@ -79,7 +80,7 @@ class UsersService
         // Stockage nouveau token
         $token = bin2hex(random_bytes(32));
 
-        if (!$this->repository->updateToken($user->id, $token)) {
+        if (!$this->usersRepository->updateToken($user->id, $token)) {
             return null;
         }
 
@@ -103,7 +104,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur
-        $user = $this->repository->getActiveUserDataById($userId);
+        $user = $this->usersRepository->getActiveUserDataById($userId);
 
         // Contrôle utilisateur récupéré
         if (!$user) {
@@ -111,7 +112,7 @@ class UsersService
         }
 
         // Suppression token de connexion
-        return $this->repository->updateToken($user->id, NULL);
+        return $this->usersRepository->updateToken($user->id, NULL);
     }
 
     /**
@@ -125,7 +126,7 @@ class UsersService
         }
 
         // Contrôle login existant
-        if (!$this->repository->checkLoginAvailable($data->login)) {
+        if (!$this->usersRepository->checkLoginAvailable($data->login)) {
             return false;
         }
 
@@ -138,7 +139,7 @@ class UsersService
         );
 
         // Insertion
-        return $this->repository->createUser($user);
+        return $this->usersRepository->createUser($user);
     }
 
     /**
@@ -156,7 +157,7 @@ class UsersService
         $hash = password_hash($newPassword, PASSWORD_DEFAULT);
 
         // Modification
-        if (!$this->repository->updatePassword($userResetId, $hash, $userId)) {
+        if (!$this->usersRepository->updatePassword($userResetId, $hash, $userId)) {
             return null;
         }
 
@@ -174,7 +175,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->repository->getActiveUserDataById($userId);
+        $user = $this->usersRepository->getActiveUserDataById($userId);
 
         // Contrôle ancien mot de passe incorrect
         if (!$user || !password_verify($data->oldPassword, $user->password)) {
@@ -185,7 +186,7 @@ class UsersService
         $hash = password_hash($data->password, PASSWORD_DEFAULT);
 
         // Modification
-        return $this->repository->updatePassword($user->id, $hash, $userId);
+        return $this->usersRepository->updatePassword($user->id, $hash, $userId);
     }
 
     /**
@@ -199,7 +200,7 @@ class UsersService
         }
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $currentUser = $this->repository->getActiveUserDataById($userId);
+        $currentUser = $this->usersRepository->getActiveUserDataById($userId);
 
         // Contrôle utilisateur récupéré
         if (!$currentUser) {
@@ -207,7 +208,7 @@ class UsersService
         }
 
         // Contrôle dernier admin actif si changement de rôle
-        if ($currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+        if ($currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->usersRepository->isLastAdmin()) {
             return false;
         }
 
@@ -219,7 +220,7 @@ class UsersService
         );
 
         // Modification
-        return $this->repository->updateUser($user);
+        return $this->usersRepository->updateUser($user);
     }
 
     /**
@@ -228,12 +229,12 @@ class UsersService
     public function deleteUser(int $userDeleteId, int $userId): ?bool
     {
         // Contrôle des données
-        if (!$userDeleteId) {
+        if (!$userDeleteId || $userDeleteId == $userId) {
             return null;
         }
 
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
-        $user = $this->repository->getActiveUserDataById($userDeleteId);
+        $user = $this->usersRepository->getActiveUserDataById($userDeleteId);
 
         // Contrôle utilisateur récupéré
         if (!$user) {
@@ -241,12 +242,12 @@ class UsersService
         }
 
         // Contrôle dernier admin actif si suppression
-        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->repository->isLastAdmin()) {
+        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->usersRepository->isLastAdmin()) {
             return false;
         }
 
         // Suppression logique de l'utilisateur
-        return $this->repository->logicalDelete($userDeleteId, $userId);
+        return $this->usersRepository->deleteUser($userDeleteId, $userId);
     }
 
     /**

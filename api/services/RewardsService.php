@@ -1,5 +1,6 @@
 <?php
 // Imports
+require_once 'services/EditionsService.php';
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 
@@ -8,9 +9,12 @@ require_once 'repositories/RewardsRepository.php';
 class RewardsService
 {
     private PDO $db;
+
+    private ?EditionsService $editionsService = null;
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
-    private RewardsRepository $repository;
+
+    private RewardsRepository $rewardsRepository;
 
     /**
      * Constructeur par défaut
@@ -18,7 +22,19 @@ class RewardsService
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->repository = new RewardsRepository($db);
+        $this->rewardsRepository = new RewardsRepository($db);
+    }
+
+    /**
+     * Instancie le EditionsService si besoin
+     */
+    private function getEditionsService(): EditionsService
+    {
+        if ($this->editionsService === null) {
+            $this->editionsService = new EditionsService($this->db);
+        }
+
+        return $this->editionsService;
     }
 
     /**
@@ -55,7 +71,7 @@ class RewardsService
             return null;
         }
 
-        return $this->repository->getRewardCount($giftId);
+        return $this->rewardsRepository->getRewardCount($giftId);
     }
 
     /**
@@ -63,13 +79,13 @@ class RewardsService
      */
     public function getPlayerRewards(int $playerId): array
     {
-        return $this->repository->getPlayerRewards($playerId);
+        return $this->rewardsRepository->getPlayerRewards($playerId);
     }
 
     /**
      * Attribution d'un cadeau
      */
-    public function createReward(int $giftId, int $playerId, int $userId): ?bool
+    public function createReward(int $giftId, int $playerId, UserOutputDTO $user): ?bool
     {
         // Contrôle des données
         if (!$giftId || !$playerId) {
@@ -94,7 +110,7 @@ class RewardsService
         $rewardCount = $this->getRewardCount($giftId);
 
         // Contrôle attribution autorisée
-        if ($rewardCount === null || !$this->isValidRewardData($gift, $rewardCount, $player)) {
+        if ($rewardCount === null || !$this->isValidRewardData($gift, $rewardCount, $player, $user->level, $gift->id, 'gifts')) {
             return null;
         }
 
@@ -103,16 +119,16 @@ class RewardsService
             playerId: $player->id,
             giftId: $gift->id,
             points: $gift->value,
-            createdBy: $userId,
+            createdBy: $user->id,
         );
 
         // Insertion
-        if (!$this->repository->createReward($reward)) {
+        if (!$this->rewardsRepository->createReward($reward)) {
             return null;
         }
 
         // Suppression des points du participant
-        return $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $userId);
+        return $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $user->id);
     }
 
     /**
@@ -126,14 +142,14 @@ class RewardsService
         }
 
         // Récupération de l'attribution du cadeau du participant
-        $reward = $this->repository->getReward($rewardId);
+        $reward = $this->rewardsRepository->getReward($rewardId);
 
         if (!$reward) {
             return null;
         }
 
         // Suppression logique de l'attribution
-        if (!$this->repository->logicalDelete($rewardId, $userId)) {
+        if (!$this->rewardsRepository->deleteReward($rewardId, $userId)) {
             return null;
         }
 
@@ -144,7 +160,7 @@ class RewardsService
     /**
      * Contrôle de cohérence des données
      */
-    private function isValidRewardData(GiftOutputDTO $gift, int $rewardCount, PlayerOutputDTO $player): bool
+    private function isValidRewardData(GiftOutputDTO $gift, int $rewardCount, PlayerOutputDTO $player, int $level, int $id, string $typeId): bool
     {
         // Contrôle quantité restante
         $remainingQuantity = $gift->quantity - $rewardCount;
@@ -152,7 +168,11 @@ class RewardsService
         // Contrôle points participant
         $enoughPoints = $player->points >= $gift->value;
 
+        // Date de fin édition
+        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
+
         return $remainingQuantity > 0
-            && $enoughPoints;
+            && $enoughPoints
+            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate));
     }
 }

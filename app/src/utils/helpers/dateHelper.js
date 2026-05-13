@@ -12,9 +12,9 @@ export const getDayFromDate = (date) => {
 
     const jsDate = new Date(typeof date === 'string' ? date.replace(' ', 'T') : date);
 
-    const year = jsDate.getUTCFullYear();
-    const month = String(jsDate.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(jsDate.getUTCDate()).padStart(2, '0');
+    const year = jsDate.getFullYear();
+    const month = String(jsDate.getMonth() + 1).padStart(2, '0');
+    const day = String(jsDate.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
 };

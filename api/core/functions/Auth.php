@@ -6,14 +6,16 @@ require_once 'services/UsersService.php';
 
 class Auth
 {
-    private UsersService $service;
+    private PDO $db;
+    private UsersService $usersService;
 
     /**
      * Constructeur
      */
     public function __construct(PDO $db)
     {
-        $this->service = new UsersService($db);
+        $this->db = $db;
+        $this->usersService = new UsersService($db);
     }
 
     /**
@@ -22,7 +24,7 @@ class Auth
     public function checkAuthAndLevel(string $token, int $minimumLevel): UserOutputDTO
     {
         // Contrôle authentification
-        $user = $this->service->checkAuth($token);
+        $user = $this->usersService->checkAuth($token);
 
         if (!$user) {
             throw new Exception(MessageHelper::ERR_INVALID_AUTH);

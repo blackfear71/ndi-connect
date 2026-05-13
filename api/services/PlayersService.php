@@ -3,6 +3,7 @@
 require_once 'models/dtos/PlayerOutputDTO.php';
 require_once 'models/dtos/RewardOutputDTO.php';
 
+require_once 'services/EditionsService.php';
 require_once 'services/RewardsService.php';
 
 require_once 'repositories/PlayersRepository.php';
@@ -10,8 +11,11 @@ require_once 'repositories/PlayersRepository.php';
 class PlayersService
 {
     private PDO $db;
+
+    private ?EditionsService $editionsService = null;
     private ?RewardsService $rewardsService = null;
-    private PlayersRepository $repository;
+
+    private PlayersRepository $playersRepository;
 
     /**
      * Constructeur par défaut
@@ -19,7 +23,19 @@ class PlayersService
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->repository = new PlayersRepository($db);
+        $this->playersRepository = new PlayersRepository($db);
+    }
+
+    /**
+     * Instancie le EditionsService si besoin
+     */
+    private function getEditionsService(): EditionsService
+    {
+        if ($this->editionsService === null) {
+            $this->editionsService = new EditionsService($this->db);
+        }
+
+        return $this->editionsService;
     }
 
     /**
@@ -45,7 +61,7 @@ class PlayersService
         }
 
         // Liste des participants
-        $dataPlayers = $this->repository->getEditionPlayers($editionId);
+        $dataPlayers = $this->playersRepository->getEditionPlayers($editionId);
 
         // Récupération des données participants
         return array_map(function ($player) {
@@ -79,7 +95,7 @@ class PlayersService
         }
 
         // Lecture du participant
-        $player = $this->repository->getPlayer($playerId);
+        $player = $this->playersRepository->getPlayer($playerId);
 
         if (!$player) {
             return null;
@@ -99,7 +115,7 @@ class PlayersService
     public function createPlayer(int $editionId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$editionId || !$this->isValidPlayerData($user->level, $data, true)) {
+        if (!$editionId || !$this->isValidPlayerData($data, $user->level, $editionId, 'editions', true)) {
             return null;
         }
 
@@ -112,7 +128,7 @@ class PlayersService
         );
 
         // Insertion
-        return $this->repository->createPlayer($player);
+        return $this->playersRepository->createPlayer($player);
     }
 
     /**
@@ -121,7 +137,7 @@ class PlayersService
     public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
     {
         // Contrôle des données
-        if (!$playerId || !$this->isValidPlayerData($user->level, $data, false)) {
+        if (!$playerId || !$this->isValidPlayerData($data, $user->level, $playerId, 'players', false)) {
             return null;
         }
 
@@ -134,7 +150,7 @@ class PlayersService
         );
 
         // Modification
-        if (!$this->repository->updatePlayer($player)) {
+        if (!$this->playersRepository->updatePlayer($player)) {
             return null;
         }
 
@@ -146,7 +162,7 @@ class PlayersService
                 updatedBy: $user->id,
             );
 
-            return $this->repository->updatePlayerPoints($giveawayPlayer);
+            return $this->playersRepository->updatePlayerPoints($giveawayPlayer);
         }
 
         return true;
@@ -170,7 +186,7 @@ class PlayersService
         );
 
         // Modification des points d'un participant
-        return $this->repository->updatePlayerPoints($player);
+        return $this->playersRepository->updatePlayerPoints($player);
     }
 
     /**
@@ -184,7 +200,7 @@ class PlayersService
         }
 
         // Suppression logique de participants d'une édition
-        return $this->repository->deletePlayers($editionId, $userId);
+        return $this->playersRepository->deletePlayers($editionId, $userId);
     }
 
     /**
@@ -198,23 +214,30 @@ class PlayersService
         }
 
         // Suppression logique du participant
-        return $this->repository->logicalDelete($playerId, $userId);
+        return $this->playersRepository->deletePlayer($playerId, $userId);
     }
 
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidPlayerData(int $level, PlayerInputDTO $data, bool $isCreation): bool
+    private function isValidPlayerData(PlayerInputDTO $data, int $level, int $id, string $typeId, bool $isCreation): bool
     {
         $name = trim($data->name);
         $giveaway = $data->giveaway ?? null;
         $giveawayPlayerId = $data->giveawayPlayerId ?? null;
 
+        // Points
         $isPointsValid = $level == EnumUserRole::SUPERADMIN->value || $data->points >= 0;
+
+        // Don de points
         $isGiveawayValid = $isCreation || (is_numeric($giveaway) && is_numeric($giveawayPlayerId) && (($giveaway > 0 && $giveawayPlayerId !== 0) || ($giveaway == 0 && $giveawayPlayerId == 0)));
+
+        // Date de fin édition
+        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
 
         return $name !== ''
             && $isPointsValid
-            && $isGiveawayValid;
+            && $isGiveawayValid
+            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate));
     }
 }

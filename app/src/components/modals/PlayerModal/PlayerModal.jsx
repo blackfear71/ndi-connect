@@ -10,17 +10,12 @@ import { PiUserListFill } from 'react-icons/pi';
 import { IncrementInput, SelectInput, TextInput } from '../../../components/inputs';
 import { Message, SpinnerButton } from '../../../components/shared';
 
-import { useAuth } from '../../../utils/context/AuthContext';
-
-import { EnumAction, EnumUserRole } from '../../../enums';
+import { EnumAction } from '../../../enums';
 
 /**
  * Modale participant
  */
-const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const PlayerModal = ({ rights, player, players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -58,7 +53,7 @@ const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions,
             case 'add':
                 formData.setValues((prev) => {
                     const currentDelta = parseInt(prev.points) || 0;
-                    const nextDelta = currentDelta < 0 && auth.level < EnumUserRole.SUPERADMIN ? 0 : currentDelta + 1;
+                    const nextDelta = currentDelta < 0 && !rights.isSuperAdmin ? 0 : currentDelta + 1;
 
                     return {
                         ...prev,
@@ -71,7 +66,7 @@ const PlayerModal = ({ player, players, formData, modalOptions, setModalOptions,
                     const currentDelta = parseInt(prev.points) || 0;
                     let nextDelta;
 
-                    if (auth.level >= EnumUserRole.SUPERADMIN) {
+                    if (rights.isSuperAdmin) {
                         // SUPERADMIN : peut aller en négatif, limité par les points du joueur
                         nextDelta = player ? Math.max(-player.points, currentDelta - 1) : Math.max(0, currentDelta - 1);
                     } else {

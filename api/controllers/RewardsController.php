@@ -12,7 +12,7 @@ class RewardsController
 
     private PDO $db;
     private Auth $auth;
-    private RewardsService $service;
+    private RewardsService $rewardsService;
 
     /**
      * Constructeur par défaut
@@ -21,7 +21,7 @@ class RewardsController
     {
         $this->db = $db;
         $this->auth = new Auth($db);
-        $this->service = new RewardsService($db);
+        $this->rewardsService = new RewardsService($db);
     }
 
     /**
@@ -34,7 +34,7 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->service->createReward($giftId, $playerId, $user->id);
+            $created = $this->rewardsService->createReward($giftId, $playerId, $user);
 
             if ($created) {
                 // Succès
@@ -59,7 +59,7 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->service->deleteReward($rewardId, $user->id);
+            $deleted = $this->rewardsService->deleteReward($rewardId, $user->id);
 
             if ($deleted) {
                 // Succès

@@ -3,26 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
 import { IoAddCircleOutline } from 'react-icons/io5';
 
-import { useAuth } from '../../../utils/context/AuthContext';
-
-import { EnumAction, EnumUserRole } from '../../../enums';
+import { EnumAction } from '../../../enums';
 
 import PlayerList from './PlayerList/PlayerList';
 
 /**
  * Liste des participants
  */
-const EditionPlayers = ({ players, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
-    // Contexte
-    const { auth } = useAuth();
-
+const EditionPlayers = ({ rights, players, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     return (
         <>
             {/* Ajout */}
-            {auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN && (
+            {rights.isAdminOrSuperAdminOnEdition && (
                 <div className="d-grid">
                     <Button variant="outline-action" onClick={() => onOpenPlayerModal(EnumAction.CREATE, null)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
@@ -35,6 +30,7 @@ const EditionPlayers = ({ players, onOpenPlayerModal, onOpenRewardModal, onConfi
             {players && players.length > 0 ? (
                 <div className="mt-3">
                     <PlayerList
+                        rights={rights}
                         players={players}
                         onConfirm={onConfirm}
                         onOpenPlayerModal={onOpenPlayerModal}

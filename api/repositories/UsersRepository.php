@@ -1,12 +1,20 @@
 <?php
 // Imports
-require_once 'core/functions/Model.php';
-
 require_once 'models/entities/User.php';
 
-class UsersRepository extends Model
+class UsersRepository
 {
-    protected string $table = 'users';
+    protected PDO $db;
+
+    protected string $usersTable = 'users';
+
+    /**
+     * Constructeur par défaut
+     */
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
 
     /**
      * Contrôle authentification
@@ -14,7 +22,7 @@ class UsersRepository extends Model
     public function checkAuth(?string $token): ?User
     {
         $sql = "SELECT id, login, level
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE token = :token AND token IS NOT NULL AND token_expires_at > NOW() AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -41,7 +49,7 @@ class UsersRepository extends Model
     public function getAllUsers(): array
     {
         $sql = "SELECT id, login, level
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE is_active = 1
             ORDER BY login ASC";
 
@@ -60,7 +68,7 @@ class UsersRepository extends Model
     public function getActiveUserDataByLogin(string $login): ?User
     {
         $sql = "SELECT id, login, password, level
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE login = :login AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -88,7 +96,7 @@ class UsersRepository extends Model
     public function getActiveUserDataById(int $userId): ?User
     {
         $sql = "SELECT id, login, password, level
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE id = :id AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -116,7 +124,7 @@ class UsersRepository extends Model
     public function checkLoginAvailable(string $login): bool
     {
         $sql = "SELECT COUNT(*)
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE login = :login";
 
         $stmt = $this->db->prepare($sql);
@@ -133,7 +141,7 @@ class UsersRepository extends Model
     public function isLastAdmin(): bool
     {
         $sql = "SELECT COUNT(*)
-            FROM {$this->table}
+            FROM {$this->usersTable}
             WHERE level = :level AND is_active = 1";
 
         $stmt = $this->db->prepare($sql);
@@ -147,7 +155,7 @@ class UsersRepository extends Model
      */
     public function createUser(User $user): bool
     {
-        $sql = "INSERT INTO {$this->table} (login, password, level, created_at, created_by, is_active)
+        $sql = "INSERT INTO {$this->usersTable} (login, password, level, created_at, created_by, is_active)
             VALUES (:login, :password, :level, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
@@ -167,7 +175,7 @@ class UsersRepository extends Model
      */
     public function updateToken(int $userId, ?string $token): bool
     {
-        $sql = "UPDATE {$this->table}
+        $sql = "UPDATE {$this->usersTable}
             SET token = :token, token_expires_at = :token_expires_at, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
@@ -187,7 +195,7 @@ class UsersRepository extends Model
      */
     public function updatePassword(int $userResetId, string $hash, int $userId): bool
     {
-        $sql = "UPDATE {$this->table}
+        $sql = "UPDATE {$this->usersTable}
             SET password = :password, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
@@ -206,7 +214,7 @@ class UsersRepository extends Model
      */
     public function updateUser(User $user): bool
     {
-        $sql = "UPDATE {$this->table}
+        $sql = "UPDATE {$this->usersTable}
             SET level = :level, updated_at = :updated_at, updated_by = :updated_by
             WHERE id = :id";
 
@@ -217,6 +225,25 @@ class UsersRepository extends Model
             'level'      => $user->level,
             'updated_at' => date('Y-m-d H:i:s'),
             'updated_by' => $user->updatedBy
+        ]);
+    }
+
+    /**
+     * Suppression logique d'un enregistrement
+     */
+    public function deleteUser(int $userDeleteId, int $userId): bool
+    {
+        $sql = "UPDATE {$this->usersTable}
+            SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
+            WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([
+            'id'         => $userDeleteId,
+            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_by' => $userId,
+            'is_active'  => 0
         ]);
     }
 }
