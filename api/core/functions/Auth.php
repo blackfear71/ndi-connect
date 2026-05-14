@@ -27,12 +27,12 @@ class Auth
         $user = $this->usersService->checkAuth($token);
 
         if (!$user) {
-            throw new Exception(MessageHelper::ERR_INVALID_AUTH);
+            throw new \Exception(MessageHelper::ERR_INVALID_AUTH);
         }
 
         // Contrôle du niveau utilisateur
         if ($user->level < $minimumLevel) {
-            throw new Exception(MessageHelper::ERR_UNAUTHORIZED_ACTION);
+            throw new \Exception(MessageHelper::ERR_UNAUTHORIZED_ACTION);
         }
 
         return $user;

@@ -22,6 +22,7 @@ class UsersService
     /**
      * Contrôle authentification
      */
+    // TODO : voir pour remplacer les appels à checkAuth par checkAuthAndLevel avec un minimum de USER
     public function checkAuth(?string $token): ?UserOutputDTO
     {
         // Contrôle des données

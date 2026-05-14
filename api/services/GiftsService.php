@@ -53,13 +53,14 @@ class GiftsService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionGifts(int $editionId): ?array
+    public function getEditionGifts(int $editionId): array
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
+        // Lecture des cadeaux
         $gifts = $this->giftsRepository->getEditionGifts($editionId);
 
         return array_map(function ($gift) {
@@ -82,18 +83,18 @@ class GiftsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getGift(int $giftId): ?GiftOutputDTO
+    public function getGift(int $giftId): GiftOutputDTO
     {
         // Contrôle des données
         if (!$giftId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Lecture du cadeau
         $gift = $this->giftsRepository->getGift($giftId);
 
         if (!$gift) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_GIFT_NOT_FOUND);
         }
 
         // Récupération des données cadeau
@@ -107,12 +108,10 @@ class GiftsService
     /**
      * Création d'un cadeau
      */
-    public function createGift(int $editionId, GiftInputDTO $data, UserOutputDTO $user): ?bool
+    public function createGift(int $editionId, GiftInputDTO $data, UserOutputDTO $user): void
     {
         // Contrôle des données
-        if (!$editionId || !$this->isValidGiftData($data, $user->level, $editionId, 'editions')) {
-            return null;
-        }
+        $this->isValidCreateGiftData($editionId, $data, $user->level);
 
         // Construction de l'objet
         $gift = new Gift(
@@ -124,26 +123,18 @@ class GiftsService
         );
 
         // Insertion
-        return $this->giftsRepository->createGift($gift);
+        if (!$this->giftsRepository->createGift($gift)) {
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+        }
     }
 
     /**
      * Modification d'un cadeau
      */
-    public function updateGift(int $giftId, GiftInputDTO $data, UserOutputDTO $user): ?bool
+    public function updateGift(int $giftId, GiftInputDTO $data, UserOutputDTO $user): void
     {
         // Contrôle des données
-        if (!$giftId) {
-            return null;
-        }
-
-        // Récupération du nombre d'attributions du cadeau
-        $rewardCount = $this->getRewardsService()->getRewardCount($giftId);
-
-        // Contrôle des données
-        if ($rewardCount === null || !$this->isValidGiftData($data, $user->level, $giftId, 'gifts', $rewardCount)) {
-            return null;
-        }
+        $this->isValidUpdateGiftData($giftId, $data, $user->level);
 
         // Construction de l'objet
         $gift = new Gift(
@@ -155,7 +146,9 @@ class GiftsService
         );
 
         // Modification
-        return $this->giftsRepository->updateGift($gift);
+        if (!$this->giftsRepository->updateGift($gift)) {
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+        }
     }
 
     /**
@@ -165,7 +158,7 @@ class GiftsService
     {
         // Contrôle des données
         if (!$giftId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Suppression logique du cadeau
@@ -179,25 +172,81 @@ class GiftsService
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         return $this->giftsRepository->deleteGifts($editionId, $userId);
     }
 
     /**
-     * Contrôle des données saisies (création / modification)
+     * Contrôle des données saisies (création)
      */
-    private function isValidGiftData(GiftInputDTO $data, int $level, int $id, string $typeId, ?int $rewardCount = null): bool
+    private function isValidCreateGiftData(int $editionId, GiftInputDTO $data, int $level): void
     {
-        $name = trim($data->name);
+        // Identifiant édition renseigné
+        if (!$editionId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
 
-        // Date de fin édition
-        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
+        // Nom renseigné
+        if (trim($data->name) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_NAME);
+        }
 
-        return $name !== ''
-            && $data->value > 0
-            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate))
-            && ($rewardCount !== null ? $data->quantity >= $rewardCount : $data->quantity >= 0);
+        // Valeur positive
+        if ($data->value <= 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_VALUE);
+        }
+
+        // Quantité positive
+        if ($data->quantity <= 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_QUANTITY);
+        }
+
+        // Edition terminée (sauf SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value) {
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($editionId, 'editions');
+
+            if ($endDate === null || new \DateTimeImmutable() > $endDate) {
+                throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
+            }
+        }
+    }
+
+    /**
+     * Contrôle des données saisies (modification)
+     */
+    private function isValidUpdateGiftData(int $giftId, GiftInputDTO $data, int $level): void
+    {
+        // Identifiant cadeau renseigné
+        if (!$giftId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Nom renseigné
+        if (trim($data->name) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_NAME);
+        }
+
+        // Valeur positive
+        if ($data->value <= 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_VALUE);
+        }
+
+        // Nombre d'attributions du cadeau
+        $rewardCount = $this->getRewardsService()->getRewardCount($giftId);
+
+        if ($rewardCount === null || $data->quantity < $rewardCount) {
+            throw new \RuntimeException(MessageHelper::ERR_REWARD_COUNT);
+        }
+
+        // Edition terminée (sauf SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value) {
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($giftId, 'gifts');
+
+            if ($endDate === null || new \DateTimeImmutable() > $endDate) {
+                throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
+            }
+        }
     }
 }

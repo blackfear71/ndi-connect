@@ -2,7 +2,7 @@
 class FileHelper
 {
     private const helperName = 'FileHelper';
-    
+
     private static $env = null;
 
     /**
@@ -89,7 +89,7 @@ class FileHelper
     {
         // Contrôle fichier reçu
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception('ERR_INVALID_FILE');
+            throw new \Exception(MessageHelper::ERR_INVALID_FILE);
         }
 
         // Contrôle taille du fichier
@@ -99,7 +99,7 @@ class FileHelper
         $fileSize = $file['size'] ?? 0;
 
         if ($fileSize > $serverMaxSize) {
-            throw new Exception('ERR_FILE_TOO_LARGE');
+            throw new \Exception(MessageHelper::ERR_FILE_TOO_LARGE);
         }
 
         // Récupération du dossier des fichiers depuis le fichier .env
@@ -109,7 +109,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            throw new Exception('ERR_ENV_FILES_DIR_MISSING');
+            throw new \Exception(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
         }
 
         $uploadDir = self::$env['FILES_DIR'] . '/' . $destination;
@@ -124,7 +124,7 @@ class FileHelper
         $imageInfo = getimagesize($fileTmp);
 
         if ($imageInfo === false) {
-            throw new Exception('ERR_INVALID_IMAGE');
+            throw new \Exception(MessageHelper::ERR_INVALID_IMAGE);
         }
 
         // Récupération du type MIME
@@ -140,7 +140,7 @@ class FileHelper
                 $image = imagecreatefromjpeg($fileTmp);
 
                 if (!$image) {
-                    throw new Exception('ERR_CREATION_IMAGE_FAILED');
+                    throw new \Exception(MessageHelper::ERR_CREATION_IMAGE_FAILED);
                 }
                 break;
 
@@ -149,7 +149,7 @@ class FileHelper
                 $image = imagecreatefrompng($fileTmp);
 
                 if (!$image) {
-                    throw new Exception('ERR_CREATION_IMAGE_FAILED');
+                    throw new \Exception(MessageHelper::ERR_CREATION_IMAGE_FAILED);
                 }
 
                 imagepalettetotruecolor($image);
@@ -160,18 +160,18 @@ class FileHelper
             case 'image/webp':
                 // Si déjà en WebP, copie directe
                 if (!move_uploaded_file($fileTmp, $destinationPath)) {
-                    throw new Exception('ERR_UPLOAD_FAILED');
+                    throw new \Exception(MessageHelper::ERR_UPLOAD_FAILED);
                 }
 
                 return $newFileName;
 
             default:
-                throw new Exception('ERR_INVALID_FORMAT');
+                throw new \Exception(MessageHelper::ERR_INVALID_FORMAT);
         }
 
         // Compression WebP s'il ne l'était pas déjà
         if (!imagewebp($image, $destinationPath, 100)) {
-            throw new Exception('ERR_WEBP_CONVERSION_FAILED');
+            throw new \Exception(MessageHelper::ERR_WEBP_CONVERSION_FAILED);
         }
 
         // Réponse finale
@@ -212,7 +212,7 @@ class FileHelper
     {
         // Contrôle fichier renseigné
         if (empty($fileName)) {
-            throw new Exception('ERR_INVALID_FILE');
+            throw new \Exception(MessageHelper::ERR_INVALID_FILE);
         }
 
         // Chargement de l'environnement si nécessaire
@@ -222,7 +222,7 @@ class FileHelper
 
         // Contrôle chemin serveur renseigné
         if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            throw new Exception('ERR_ENV_FILES_DIR_MISSING');
+            throw new \Exception(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
         }
 
         $uploadDir = rtrim(self::$env['FILES_DIR'], '/') . '/' . trim($destination, '/');
@@ -240,7 +240,7 @@ class FileHelper
 
         // Tentative de suppression
         if (!unlink($filePath)) {
-            throw new Exception('ERR_DELETION_FILE_FAILED');
+            throw new \Exception(MessageHelper::ERR_DELETION_FILE_FAILED);
         }
 
         return true;
