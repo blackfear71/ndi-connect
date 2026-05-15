@@ -3,6 +3,9 @@ class MessageHelper
 {
     // TODO : Gérer un maximum d'erreurs via throw
     // TODO : voir s'il est possible de tout réunir (code, http code et message) en un pour éviter les oublis
+    // TODO : transférer les nouveaux codes dans le messageHelper front
+    // TODO : nettoyer les "Exception levée"
+    // TODO : tout tester dont les logs
 
     /*****************/
     /* Codes erreurs */
@@ -25,6 +28,8 @@ class MessageHelper
     const ERR_INVALID_PARAMETER      = 'ERR_INVALID_PARAMETER';
     const ERR_MISSING_PARAMS         = 'ERR_MISSING_PARAMS';
     const ERR_ORIGIN_NOT_ALLOWED     = 'ERR_ORIGIN_NOT_ALLOWED';
+    const ERR_POSITIVE_QUANTITY      = 'ERR_POSITIVE_QUANTITY';
+    const ERR_POSITIVE_VALUE         = 'ERR_POSITIVE_VALUE';
     const ERR_ROUTE_NOT_FOUND        = 'ERR_ROUTE_NOT_FOUND';
     const ERR_UNKNOWN_ENDPOINT       = 'ERR_UNKNOWN_ENDPOINT';
     const ERR_UPDATE_FAILED          = 'ERR_UPDATE_FAILED';
@@ -42,16 +47,20 @@ class MessageHelper
     const ERR_EDITIONS_SEARCH    = 'ERR_EDITIONS_SEARCH';
 
     // Participants
+    const ERR_PLAYER_GIVEAWAY   = 'ERR_PLAYER_GIVEAWAY';
+    const ERR_PLAYER_NOT_FOUND  = 'ERR_PLAYER_NOT_FOUND';
+    const ERR_PLAYER_POINTS     = 'ERR_PLAYER_POINTS';
     const ERR_PLAYERS_NOT_FOUND = 'ERR_PLAYERS_NOT_FOUND';
 
     // Cadeaux
     const ERR_GIFT_NOT_FOUND    = 'ERR_GIFT_NOT_FOUND';
+    const ERR_GIFT_REWARD_COUNT = 'ERR_GIFT_REWARD_COUNT';
     const ERR_GIFTS_NOT_FOUND   = 'ERR_GIFTS_NOT_FOUND';
-    const ERR_POSITIVE_QUANTITY = 'ERR_POSITIVE_QUANTITY';
-    const ERR_POSITIVE_VALUE    = 'ERR_POSITIVE_VALUE';
-    const ERR_REWARD_COUNT      = 'ERR_REWARD_COUNT';
 
     // Récompenses
+    const ERR_REWARD_NOT_FOUND = 'ERR_REWARD_NOT_FOUND';
+    const ERR_REWARD_POINTS    = 'ERR_REWARD_POINTS';
+
     const MSG_REWARD_SUCCESS = 'MSG_REWARD_SUCCESS';
 
     // Utilisateurs
@@ -97,6 +106,8 @@ class MessageHelper
         self::ERR_INVALID_PARAMETER      => 400,
         self::ERR_MISSING_PARAMS         => 400,
         self::ERR_ORIGIN_NOT_ALLOWED     => 403,
+        self::ERR_POSITIVE_QUANTITY      => 400,
+        self::ERR_POSITIVE_VALUE         => 400,
         self::ERR_ROUTE_NOT_FOUND        => 404,
         self::ERR_UNKNOWN_ENDPOINT       => 404,
         self::ERR_UNKNOWN_ERROR          => 500,
@@ -111,14 +122,19 @@ class MessageHelper
         self::ERR_EDITIONS_SEARCH    => 400,
 
         // Participants
+        self::ERR_PLAYER_GIVEAWAY   => 400,
+        self::ERR_PLAYER_NOT_FOUND  => 400,
+        self::ERR_PLAYER_POINTS     => 400,
         self::ERR_PLAYERS_NOT_FOUND => 400,
 
         // Cadeaux
         self::ERR_GIFT_NOT_FOUND    => 400,
+        self::ERR_GIFT_REWARD_COUNT => 400,
         self::ERR_GIFTS_NOT_FOUND   => 400,
-        self::ERR_POSITIVE_QUANTITY => 400,
-        self::ERR_POSITIVE_VALUE    => 400,
-        self::ERR_REWARD_COUNT      => 400,
+
+        // Récompenses
+        self::ERR_REWARD_NOT_FOUND => 400,
+        self::ERR_REWARD_POINTS    => 400,
 
         // Utilisateurs
         self::ERR_INVALID_AUTH           => 401,
@@ -141,11 +157,12 @@ class MessageHelper
     /* Messages logs */
     /*****************/
     private static array $messages = [
+        // TODO : repasser sur les messages pour voir si les %s sont toujours utiles
         // Commun
         self::ERR_CREATION_FAILED        => 'Erreur lors de la création en base de données',
         self::ERR_CREATION_IMAGE_FAILED  => 'Erreur lors de la création de l\'image dans %s de %s',
         self::ERR_DB_CONNECTION          => 'Connexion impossible à la base de données',
-        self::ERR_DELETION_FAILED        => 'Erreur lors de la suppression dans %s de %s pour l\'id : %s',
+        self::ERR_DELETION_FAILED        => 'Erreur lors de la suppression en base de données',
         self::ERR_DELETION_FILE_FAILED   => 'Erreur lors de la suppression du fichier dans %s de %s',
         self::ERR_ENV_FILES_DIR_MISSING  => 'Dossier serveur introuvable dans le fichier d\'environnement dans %s de %s',
         self::ERR_FILE_NOT_FOUND         => 'Fichier introuvable : %s',
@@ -159,10 +176,12 @@ class MessageHelper
         self::ERR_INVALID_PARAMETER      => 'Paramètre d\'entrée invalide : %s',
         self::ERR_MISSING_PARAMS         => 'Paramètres manquants dans %s de %s',
         self::ERR_ORIGIN_NOT_ALLOWED     => 'Origine non autorisée : %s',
+        self::ERR_POSITIVE_QUANTITY      => 'La quantité doit être supérieure à 0',
+        self::ERR_POSITIVE_VALUE         => 'La valeur doit être supérieure à 0',
         self::ERR_ROUTE_NOT_FOUND        => 'Route non trouvée : %s',
         self::ERR_UNKNOWN_ENDPOINT       => 'Endpoint inconnu : %s',
         self::ERR_UNKNOWN_ERROR          => 'Erreur inconnue',
-        self::ERR_UPDATE_FAILED          => 'Erreur lors de la modification dans %s de %s pour l\'id : %s - %s',
+        self::ERR_UPDATE_FAILED          => 'Erreur lors de la modification en base de données',
         self::ERR_UPLOAD_FAILED          => 'Envoi échoué dans le dossier de destination dans %s de %s',
         self::ERR_WEBP_CONVERSION_FAILED => 'Conversion WebP échouée dans %s de %s',
 
@@ -173,14 +192,19 @@ class MessageHelper
         self::ERR_EDITIONS_SEARCH    => 'Erreur lors de la récupération des éditions dans %s de %s pour la recherche : %s',
 
         // Participants
+        self::ERR_PLAYER_GIVEAWAY   => 'Le don de points n\'est pas correctement renseigné',
+        self::ERR_PLAYER_NOT_FOUND  => 'Erreur lors de la récupération du participant',
+        self::ERR_PLAYER_POINTS     => 'Le nombre de points doit être supérieur ou égal à 0',
         self::ERR_PLAYERS_NOT_FOUND => 'Erreur lors de la récupération des participants dans %s de %s',
 
         // Cadeaux
         self::ERR_GIFT_NOT_FOUND    => 'Erreur lors de la récupération du cadeau',
+        self::ERR_GIFT_REWARD_COUNT => 'La quantité doit être supérieure ou égale au nombre de cadeaux déjà attribués',
         self::ERR_GIFTS_NOT_FOUND   => 'Erreur lors de la récupération des cadeaux',
-        self::ERR_POSITIVE_QUANTITY => 'La quantité doit être supérieure à 0',
-        self::ERR_POSITIVE_VALUE    => 'La valeur doit être supérieure à 0',
-        self::ERR_REWARD_COUNT      => 'La quantité doit être supérieure ou égale au nombre de cadeaux déjà attribués',
+
+        // Récompenses
+        self::ERR_REWARD_NOT_FOUND => 'Erreur lors de la récupération de la récompense',
+        self::ERR_REWARD_POINTS    => 'Le nombre de points est insuffisant pour le cadeau',
 
         // Utilisateurs
         self::ERR_INVALID_AUTH           => 'Authentification invalide dans %s de %s',
@@ -217,7 +241,7 @@ class MessageHelper
         $template = self::$messages[$code] ?? self::$messages[self::ERR_UNKNOWN_ERROR];
         $context = count($datas) ? ' : [' . implode(', ', $datas) . ']' : '';
 
-        return sprintf('[%s > %s] %s%s', $class, $function, $template, $context);
+        return sprintf('[%s] [%s > %s] %s%s', $code, $class, $function, $template, $context);
     }
 
     /**

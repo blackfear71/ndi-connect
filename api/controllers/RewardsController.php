@@ -34,18 +34,13 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->rewardsService->createReward($giftId, $playerId, $user);
+            $this->rewardsService->createReward($giftId, $playerId, $user);
 
-            if ($created) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
-            } else {
-                // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode(['giftId' => $giftId, 'playerId' => $playerId])]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId, $playerId]);
         }
     }
 
@@ -59,18 +54,13 @@ class RewardsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->rewardsService->deleteReward($rewardId, $user->id);
+            $this->rewardsService->deleteReward($rewardId, $user->id);
 
-            if ($deleted) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
-            } else {
-                // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $rewardId]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$rewardId]);
         }
     }
 }

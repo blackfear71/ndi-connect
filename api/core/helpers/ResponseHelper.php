@@ -1,6 +1,14 @@
 <?php
 class ResponseHelper
 {
+    // TODO : 
+    // - gifts    => OK
+    // - players  => OK
+    // - rewards  => OK
+    // - editions => ??
+    // - users    => ??
+    // - sse      => ??
+
     /**
      * Gestion du retour en cas d'erreur
      */

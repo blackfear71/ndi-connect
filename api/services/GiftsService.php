@@ -94,7 +94,7 @@ class GiftsService
         $gift = $this->giftsRepository->getGift($giftId);
 
         if (!$gift) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_GIFT_NOT_FOUND);
+            throw new \RuntimeException(MessageHelper::ERR_GIFT_NOT_FOUND);
         }
 
         // Récupération des données cadeau
@@ -154,7 +154,7 @@ class GiftsService
     /**
      * Suppression logique d'un cadeau
      */
-    public function deleteGift(int $giftId, int $userId): ?bool
+    public function deleteGift(int $giftId, int $userId): void
     {
         // Contrôle des données
         if (!$giftId) {
@@ -162,20 +162,24 @@ class GiftsService
         }
 
         // Suppression logique du cadeau
-        return $this->giftsRepository->deleteGift($giftId, $userId);
+        if (!$this->giftsRepository->deleteGift($giftId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
      * Suppression logique des cadeaux d'une édition
      */
-    public function deleteGifts(int $editionId, int $userId): ?bool
+    public function deleteGifts(int $editionId, int $userId): void
     {
         // Contrôle des données
         if (!$editionId) {
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
-        return $this->giftsRepository->deleteGifts($editionId, $userId);
+        if (!$this->giftsRepository->deleteGifts($editionId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
@@ -236,8 +240,8 @@ class GiftsService
         // Nombre d'attributions du cadeau
         $rewardCount = $this->getRewardsService()->getRewardCount($giftId);
 
-        if ($rewardCount === null || $data->quantity < $rewardCount) {
-            throw new \RuntimeException(MessageHelper::ERR_REWARD_COUNT);
+        if ($data->quantity < $rewardCount) {
+            throw new \RuntimeException(MessageHelper::ERR_GIFT_REWARD_COUNT);
         }
 
         // Edition terminée (sauf SUPERADMIN)

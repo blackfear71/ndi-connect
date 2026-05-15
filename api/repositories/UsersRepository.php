@@ -123,7 +123,7 @@ class UsersRepository
      */
     public function checkLoginAvailable(string $login): bool
     {
-        $sql = "SELECT COUNT(*)
+        $sql = "SELECT COUNT(id)
             FROM {$this->usersTable}
             WHERE login = :login";
 
@@ -140,7 +140,7 @@ class UsersRepository
      */
     public function isLastAdmin(): bool
     {
-        $sql = "SELECT COUNT(*)
+        $sql = "SELECT COUNT(id)
             FROM {$this->usersTable}
             WHERE level = :level AND is_active = 1";
 

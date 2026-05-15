@@ -35,16 +35,11 @@ class PlayersController
             // Lecture de tous les enregistrements
             $players = $this->playersService->getEditionPlayers($editionId);
 
-            if ($players !== null) {
-                // Succès
-                ResponseHelper::success($players);
-            } else {
-                // Échec de la lecture
-                ResponseHelper::error(MessageHelper::ERR_PLAYERS_NOT_FOUND, [__FUNCTION__, self::controllerName]);
-            }
+            // Succès
+            ResponseHelper::success($players);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 
@@ -61,18 +56,13 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->playersService->createPlayer($editionId, $user, $dataDTO);
+            $this->playersService->createPlayer($editionId, $user, $dataDTO);
 
-            if ($created) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
-            } else {
-                // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data]);
         }
     }
 
@@ -89,18 +79,13 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
-            $updated = $this->playersService->updatePlayer($playerId, $user, $dataDTO);
+            $this->playersService->updatePlayer($playerId, $user, $dataDTO);
 
-            if ($updated) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
-            } else {
-                // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $playerId, json_encode($data)]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId, $data]);
         }
     }
 
@@ -114,18 +99,13 @@ class PlayersController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->playersService->deletePlayer($playerId, $user->id);
+            $this->playersService->deletePlayer($playerId, $user->id);
 
-            if ($deleted) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
-            } else {
-                // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $playerId]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId]);
         }
     }
 }
