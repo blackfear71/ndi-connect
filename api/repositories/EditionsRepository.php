@@ -186,13 +186,14 @@ class EditionsRepository
     /**
      * Insertion d'une édition
      */
-    public function createEdition(Edition $edition): string
+    public function createEdition(Edition $edition): bool
     {
         $sql = "INSERT INTO {$this->editionsTable} (location, start_date, end_date, picture, theme, challenge, created_at, created_by, is_active)
             VALUES (:location, :start_date, :end_date, :picture, :theme, :challenge, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([
+
+        return $stmt->execute([
             'location'   => $edition->location,
             'start_date' => $edition->startDate->format('Y-m-d H:i:s'),
             'end_date'   => $edition->endDate->format('Y-m-d H:i:s'),
@@ -203,8 +204,6 @@ class EditionsRepository
             'created_by' => $edition->createdBy,
             'is_active'  => 1
         ]);
-
-        return $this->db->lastInsertId();
     }
 
     /**

@@ -5,12 +5,13 @@
 function serveFile(): void
 {
     $destination = isset($_GET['destination']) ? basename(urldecode($_GET['destination'])) : null;
-    $file = isset($_GET['file']) ? basename(urldecode($_GET['file'])) : null;
+    $fileName = isset($_GET['file']) ? basename(urldecode($_GET['file'])) : null;
 
     try {
-        FileHelper::serveFile($destination, $file);
+        // Récupération du fichier
+        FileHelper::serveFile($destination, $fileName);
     } catch (Exception $e) {
-        ResponseHelper::error($e->getMessage());
+        ResponseHelper::error2($e->getMessage(), 'serve-file', __FUNCTION__, [$destination, $fileName]);
     }
 }
 

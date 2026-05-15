@@ -36,16 +36,11 @@ class EditionsController
             // Lecture de tous les enregistrements
             $editions = $this->editionsService->getAllEditions();
 
-            if ($editions !== null) {
-                // Succès
-                ResponseHelper::success($editions);
-            } else {
-                // Échec de la lecture
-                ResponseHelper::error(MessageHelper::ERR_EDITIONS_NOT_FOUND, [__FUNCTION__, self::controllerName]);
-            }
+            // Succès
+            ResponseHelper::success($editions);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, []);
         }
     }
 
@@ -58,16 +53,11 @@ class EditionsController
             // Lecture d'un enregistrement
             $edition = $this->editionsService->getEdition($editionId);
 
-            if ($edition) {
-                // Succès
-                ResponseHelper::success($edition);
-            } else {
-                // Échec de la lecture
-                ResponseHelper::error(MessageHelper::ERR_EDITION_NOT_FOUND, [__FUNCTION__, self::controllerName, $editionId]);
-            }
+            // Succès
+            ResponseHelper::success($edition);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 
@@ -80,16 +70,11 @@ class EditionsController
             // Lecture de tous les enregistrements recherchés
             $editions = $this->editionsService->getSearchEditions($search);
 
-            if ($editions !== null) {
-                // Succès
-                ResponseHelper::success($editions);
-            } else {
-                // Échec de la lecture
-                ResponseHelper::error(MessageHelper::ERR_EDITIONS_SEARCH, [__FUNCTION__, self::controllerName, $search]);
-            }
+            // Succès
+            ResponseHelper::success($editions);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$search]);
         }
     }
 
@@ -106,18 +91,13 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
-            $created = $this->editionsService->createEdition($dataDTO, $file, $user->id);
+            $this->editionsService->createEdition($dataDTO, $file, $user->id);
 
-            if ($created) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
-            } else {
-                // Échec de la création
-                ResponseHelper::error(MessageHelper::ERR_CREATION_FAILED, [__FUNCTION__, self::controllerName, json_encode($data)]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$data, json_encode($file)]);
         }
     }
 
@@ -134,18 +114,13 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
-            $edition = $this->editionsService->updateEdition($editionId, $dataDTO, $file, $user->id);
+            $this->editionsService->updateEdition($editionId, $dataDTO, $file, $user->id);
 
-            if ($edition) {
-                // Succès
-                ResponseHelper::success($edition, MessageHelper::MSG_UPDATE_SUCCESS);
-            } else {
-                // Échec de la modification
-                ResponseHelper::error(MessageHelper::ERR_UPDATE_FAILED, [__FUNCTION__, self::controllerName, $editionId, json_encode($data)]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data, json_encode($file)]);
         }
     }
 
@@ -159,18 +134,13 @@ class EditionsController
             $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
-            $deleted = $this->editionsService->deleteEdition($editionId, $user->id);
+            $this->editionsService->deleteEdition($editionId, $user->id);
 
-            if ($deleted) {
-                // Succès
-                ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
-            } else {
-                // Échec de la suppression
-                ResponseHelper::error(MessageHelper::ERR_DELETION_FAILED, [__FUNCTION__, self::controllerName, $editionId]);
-            }
+            // Succès
+            ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
-            // Exception levée
-            ResponseHelper::error($e->getMessage(), [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            // Exception
+            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 }

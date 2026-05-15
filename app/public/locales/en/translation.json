@@ -14,7 +14,7 @@
         "invalidEndTime": "Invalid end time",
         "invalidFile": "Invalid file received",
         "invalidFileType": "The selected file type is not allowed",
-        "invalidFormat": "Invalid file format",
+        "invalidFileFormat": "Invalid file format",
         "invalidImage": "The file is not an image",
         "invalidGift": "A gift must be selected",
         "invalidGiftPoints": "Insufficient points for this gift",

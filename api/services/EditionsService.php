@@ -55,6 +55,7 @@ class EditionsService
      */
     public function getAllEditions(): array
     {
+        // Lecture des éditions
         $editions = $this->editionsRepository->getAllEditions();
 
         return array_map(fn($edition) => new EditionOutputDTO(
@@ -69,32 +70,32 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int $editionId): ?EditionResponseDTO
+    public function getEdition(int $editionId): EditionResponseDTO
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Lecture de l'édition
-        $edition = $this->editionsRepository->getEdition($editionId);
+        $dataEdition = $this->editionsRepository->getEdition($editionId);
 
-        if (!$edition) {
-            return null;
+        if (!$dataEdition) {
+            throw new \RuntimeException(MessageHelper::ERR_EDITION_NOT_FOUND);
         }
 
         // Vérification image existante et génération URL
-        $picture = FileHelper::checkFile('images', $edition->picture);
+        $picture = $dataEdition->picture ? FileHelper::checkFile('images', $dataEdition->picture) : null;
 
         // Formatage des données édition
         $edition = new EditionOutputDTO(
-            id: $edition->id,
-            location: $edition->location,
-            startDate: $edition->startDate,
-            endDate: $edition->endDate,
+            id: $dataEdition->id,
+            location: $dataEdition->location,
+            startDate: $dataEdition->startDate,
+            endDate: $dataEdition->endDate,
             picture: $picture,
-            theme: $edition->theme,
-            challenge: $edition->challenge
+            theme: $dataEdition->theme,
+            challenge: $dataEdition->challenge
         );
 
         // Récupération des données cadeaux
@@ -112,17 +113,17 @@ class EditionsService
     }
 
     /**
-     * Lecture de la date de fin d'un enregistrement par type
+     * Lecture de la date de fin d'une édition par type
      */
-    public function getEditionEndDateByType(int $id, string $typeId): ?\DateTimeImmutable
+    public function getEditionEndDateByType(int $id, string $table): ?\DateTimeImmutable
     {
         // Contrôle des données
-        if (!$id || !$typeId) {
+        if (!$id || !$table) {
             return null;
         }
 
         // Lecture de la date de fin de l'édition selon le type
-        switch ($typeId) {
+        switch ($table) {
             case 'editions':
                 return $this->editionsRepository->getEditionEndDateByEditionId($id);
             case 'gifts':
@@ -139,10 +140,12 @@ class EditionsService
      */
     public function getSearchEditions(string $search): array
     {
+        // Retour vide si pas de recherche saisie
         if (empty($search)) {
             return [];
         }
 
+        // Recherche des éditions
         $editions = $this->editionsRepository->getSearchEditions(trim($search));
 
         return array_map(fn($edition) => new EditionOutputDTO(
@@ -157,12 +160,10 @@ class EditionsService
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(EditionInputDTO $data, ?array $file, int $userId): ?string
+    public function createEdition(EditionInputDTO $data, ?array $file, int $userId): void
     {
         // Contrôle des données
-        if (!$this->isValidEditionData($data)) {
-            return null;
-        }
+        $this->isValidEditionData($data);
 
         // Traitement des dates
         $startDate = new \DateTimeImmutable($data->startDate . ' ' . $data->startTime);
@@ -184,18 +185,22 @@ class EditionsService
         );
 
         // Insertion
-        return $this->editionsRepository->createEdition($edition);
+        if (!$this->editionsRepository->createEdition($edition)) {
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+        }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(int $editionId, EditionInputDTO $data, ?array $file, int $userId): ?EditionResponseDTO
+    public function updateEdition(int $editionId, EditionInputDTO $data, ?array $file, int $userId): void
     {
         // Contrôle des données
-        if (!$editionId || !$this->isValidEditionData($data)) {
-            return null;
+        if (!$editionId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
+
+        $this->isValidEditionData($data);
 
         // Traitement des dates
         $startDate = new \DateTimeImmutable($data->startDate . ' ' . $data->startTime);
@@ -219,48 +224,51 @@ class EditionsService
 
         // Modification
         if (!$this->editionsRepository->updateEdition($edition)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
         }
-
-        // Lecture de l'édition
-        return $this->getEdition($editionId);
     }
 
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(int $editionId, int $userId): ?bool
+    public function deleteEdition(int $editionId, int $userId): void
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Suppression logique des cadeaux
-        if (!$this->getGiftsService()->deleteGifts($editionId, $userId)) {
-            return null;
-        }
+        $this->getGiftsService()->deleteGifts($editionId, $userId);
 
         // Suppression logique des participants
-        if (!$this->getPlayersService()->deletePlayers($editionId, $userId)) {
-            return null;
-        }
+        $this->getPlayersService()->deletePlayers($editionId, $userId);
 
         // Suppression logique de l'édition
-        return $this->editionsRepository->deleteEdition($editionId, $userId);
+        if (!$this->editionsRepository->deleteEdition($editionId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
      * Contrôle des données saisies (création / modification)
      */
-    private function isValidEditionData(EditionInputDTO $data): bool
+    private function isValidEditionData(EditionInputDTO $data): void
     {
-        $location = trim($data->location);
+        // Lieu renseigné
+        if (trim($data->location) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_LOCATION);
+        }
 
-        return $location
-            && DataHelper::isValidDateFormat($data->startDate, 'Y-m-d')
-            && DataHelper::isValidDateFormat($data->startTime, 'H:i')
-            && DataHelper::isValidDateFormat($data->endTime, 'H:i');
+        // Date au bon format
+        if (!DataHelper::isValidDateFormat($data->startDate, 'Y-m-d')) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_DATE);
+        }
+
+        // Heures au bon format
+        if (!DataHelper::isValidDateFormat($data->startTime, 'H:i') || !DataHelper::isValidDateFormat($data->endTime, 'H:i')) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_TIME);
+        }
     }
 
     /**
@@ -285,11 +293,11 @@ class EditionsService
                 return $fileName;
             case EnumAction::DELETE->value:
                 // Suppression de l'ancienne image (hors création)
-                if (!$picture) {
-                    return null;
+                if ($picture) {
+                    FileHelper::deleteFile('images', $picture);
                 }
 
-                FileHelper::deleteFile('images', $picture);
+                return null;
             default:
                 // Si pas d'action alors on laisse en l'état
                 return $picture;

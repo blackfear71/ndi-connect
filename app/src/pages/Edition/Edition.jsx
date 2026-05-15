@@ -483,10 +483,12 @@ const Edition = () => {
             .updateEdition(edition.id, body)
             .pipe(
                 map((dataEdition) => {
-                    // Fermeture modale
-                    openCloseEditionModal();
-                    setEdition(dataEdition.response.data.edition);
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
+                }),
+                switchMap(() => editionsService.getEdition(edition.id)),
+                map((newDataEdition) => {
+                    openCloseEditionModal();
+                    setEdition(newDataEdition.response.data.edition);
                 }),
                 take(1),
                 catchError((err) => {

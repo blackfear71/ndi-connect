@@ -2,12 +2,13 @@
 class ResponseHelper
 {
     // TODO : 
-    // - gifts    => OK
-    // - players  => OK
-    // - rewards  => OK
-    // - editions => ??
-    // - users    => ??
-    // - sse      => ??
+    // - gifts      => OK
+    // - players    => OK
+    // - rewards    => OK
+    // - serve-file => OK
+    // - editions   => OK
+    // - users      => ??
+    // - sse        => ??
 
     /**
      * Gestion du retour en cas d'erreur

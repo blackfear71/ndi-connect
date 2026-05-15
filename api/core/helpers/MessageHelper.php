@@ -5,6 +5,8 @@ class MessageHelper
     // TODO : voir s'il est possible de tout réunir (code, http code et message) en un pour éviter les oublis
     // TODO : transférer les nouveaux codes dans le messageHelper front
     // TODO : nettoyer les "Exception levée"
+    // TODO : il y a pleins d'erreurs qui ne sont plus utilisées, ex : ERR_GIFTS_NOT_FOUND
+    // TODO : il ne doit plus y avoir de \Exception
     // TODO : tout tester dont les logs
 
     /*****************/
@@ -12,6 +14,7 @@ class MessageHelper
     /*****************/
     // Commun
     const ERR_CREATION_FAILED        = 'ERR_CREATION_FAILED';
+    const ERR_CREATION_FOLDER_FAILED = 'ERR_CREATION_FOLDER_FAILED';
     const ERR_CREATION_IMAGE_FAILED  = 'ERR_CREATION_IMAGE_FAILED';
     const ERR_DB_CONNECTION          = 'ERR_DB_CONNECTION';
     const ERR_DELETION_FAILED        = 'ERR_DELETION_FAILED';
@@ -19,13 +22,15 @@ class MessageHelper
     const ERR_ENV_FILES_DIR_MISSING  = 'ERR_ENV_FILES_DIR_MISSING';
     const ERR_FILE_NOT_FOUND         = 'ERR_FILE_NOT_FOUND';
     const ERR_FILE_TOO_LARGE         = 'ERR_FILE_TOO_LARGE';
-    const ERR_FORBIDDEN_FILE         = 'ERR_FORBIDDEN_FILE';
+    const ERR_INVALID_DATE           = 'ERR_INVALID_DATE';
     const ERR_INVALID_FILE           = 'ERR_INVALID_FILE';
-    const ERR_INVALID_FORMAT         = 'ERR_INVALID_FORMAT';
+    const ERR_INVALID_FILE_FORMAT    = 'ERR_INVALID_FILE_FORMAT';
     const ERR_INVALID_ID             = 'ERR_INVALID_ID';
     const ERR_INVALID_IMAGE          = 'ERR_INVALID_IMAGE';
+    const ERR_INVALID_LOCATION       = 'ERR_INVALID_LOCATION';
     const ERR_INVALID_NAME           = 'ERR_INVALID_NAME';
     const ERR_INVALID_PARAMETER      = 'ERR_INVALID_PARAMETER';
+    const ERR_INVALID_TIME           = 'ERR_INVALID_TIME';
     const ERR_MISSING_PARAMS         = 'ERR_MISSING_PARAMS';
     const ERR_ORIGIN_NOT_ALLOWED     = 'ERR_ORIGIN_NOT_ALLOWED';
     const ERR_POSITIVE_QUANTITY      = 'ERR_POSITIVE_QUANTITY';
@@ -90,6 +95,7 @@ class MessageHelper
     private static array $httpCodes = [
         // Commun
         self::ERR_CREATION_FAILED        => 400,
+        self::ERR_CREATION_FOLDER_FAILED => 500,
         self::ERR_CREATION_IMAGE_FAILED  => 400,
         self::ERR_DB_CONNECTION          => 500,
         self::ERR_DELETION_FAILED        => 400,
@@ -97,13 +103,15 @@ class MessageHelper
         self::ERR_ENV_FILES_DIR_MISSING  => 500,
         self::ERR_FILE_NOT_FOUND         => 404,
         self::ERR_FILE_TOO_LARGE         => 400,
-        self::ERR_FORBIDDEN_FILE         => 403,
+        self::ERR_INVALID_DATE           => 400,
         self::ERR_INVALID_FILE           => 400,
-        self::ERR_INVALID_FORMAT         => 400,
+        self::ERR_INVALID_FILE_FORMAT    => 400,
         self::ERR_INVALID_ID             => 400,
         self::ERR_INVALID_IMAGE          => 400,
+        self::ERR_INVALID_LOCATION       => 400,
         self::ERR_INVALID_NAME           => 400,
         self::ERR_INVALID_PARAMETER      => 400,
+        self::ERR_INVALID_TIME           => 400,
         self::ERR_MISSING_PARAMS         => 400,
         self::ERR_ORIGIN_NOT_ALLOWED     => 403,
         self::ERR_POSITIVE_QUANTITY      => 400,
@@ -160,21 +168,24 @@ class MessageHelper
         // TODO : repasser sur les messages pour voir si les %s sont toujours utiles
         // Commun
         self::ERR_CREATION_FAILED        => 'Erreur lors de la création en base de données',
-        self::ERR_CREATION_IMAGE_FAILED  => 'Erreur lors de la création de l\'image dans %s de %s',
+        self::ERR_CREATION_FOLDER_FAILED => 'Erreur lors de la création du dossier des images',
+        self::ERR_CREATION_IMAGE_FAILED  => 'Erreur lors de la création de l\'image',
         self::ERR_DB_CONNECTION          => 'Connexion impossible à la base de données',
         self::ERR_DELETION_FAILED        => 'Erreur lors de la suppression en base de données',
-        self::ERR_DELETION_FILE_FAILED   => 'Erreur lors de la suppression du fichier dans %s de %s',
-        self::ERR_ENV_FILES_DIR_MISSING  => 'Dossier serveur introuvable dans le fichier d\'environnement dans %s de %s',
-        self::ERR_FILE_NOT_FOUND         => 'Fichier introuvable : %s',
-        self::ERR_FILE_TOO_LARGE         => 'Fichier trop volumineux dans %s de %s',
-        self::ERR_FORBIDDEN_FILE         => 'Chemin de fichier non autorisé dans %s de %s',
-        self::ERR_INVALID_FILE           => 'Fichier non renseigné dans %s de %s',
-        self::ERR_INVALID_FORMAT         => 'Type MIME invalide dans %s de %s',
+        self::ERR_DELETION_FILE_FAILED   => 'Erreur lors de la suppression du fichier',
+        self::ERR_ENV_FILES_DIR_MISSING  => 'Dossier serveur introuvable dans le fichier d\'environnement',
+        self::ERR_FILE_NOT_FOUND         => 'Fichier introuvable',
+        self::ERR_FILE_TOO_LARGE         => 'Fichier trop volumineux',
+        self::ERR_INVALID_FILE           => 'Fichier non renseigné',
+        self::ERR_INVALID_DATE           => 'Le format de la date est invalide',
+        self::ERR_INVALID_FILE_FORMAT    => 'Type MIME invalide',
         self::ERR_INVALID_ID             => 'L\'identifiant est obligatoire',
-        self::ERR_INVALID_IMAGE          => 'Fichier invalide dans %s de %s',
+        self::ERR_INVALID_IMAGE          => 'Fichier invalide',
+        self::ERR_INVALID_LOCATION       => 'Le lieu est obligatoire',
         self::ERR_INVALID_NAME           => 'Le nom est obligatoire',
-        self::ERR_INVALID_PARAMETER      => 'Paramètre d\'entrée invalide : %s',
-        self::ERR_MISSING_PARAMS         => 'Paramètres manquants dans %s de %s',
+        self::ERR_INVALID_PARAMETER      => 'Paramètre d\'entrée invalide',
+        self::ERR_INVALID_TIME           => 'Le format de l\'heure est invalide',
+        self::ERR_MISSING_PARAMS         => 'Paramètres manquants',
         self::ERR_ORIGIN_NOT_ALLOWED     => 'Origine non autorisée : %s',
         self::ERR_POSITIVE_QUANTITY      => 'La quantité doit être supérieure à 0',
         self::ERR_POSITIVE_VALUE         => 'La valeur doit être supérieure à 0',
@@ -186,7 +197,7 @@ class MessageHelper
         self::ERR_WEBP_CONVERSION_FAILED => 'Conversion WebP échouée dans %s de %s',
 
         // Editions
-        self::ERR_EDITION_NOT_FOUND  => 'Edition non trouvée dans %s de %s pour l\'id : %s',
+        self::ERR_EDITION_NOT_FOUND  => 'Edition lors de la récupération de l\'édition',
         self::ERR_EDITION_FINISHED   => 'Edition terminée ou introuvable',
         self::ERR_EDITIONS_NOT_FOUND => 'Erreur lors de la récupération des éditions dans %s de %s',
         self::ERR_EDITIONS_SEARCH    => 'Erreur lors de la récupération des éditions dans %s de %s pour la recherche : %s',

@@ -10,11 +10,11 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function checkFile(string $destination, ?string $fileName): ?string
+    public static function checkFile(string $destination, string $fileName): string
     {
         // Contrôle des données
-        if (!$fileName || !$destination) {
-            return null;
+        if (!$destination || !$fileName) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_MISSING_PARAMS);
         }
 
         // Récupération du dossier des fichiers depuis le fichier .env
@@ -22,62 +22,26 @@ class FileHelper
             self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
-        // Contrôle que le fichier existe
+        // Contrôle chemin serveur renseigné
+        if (empty(self::$env['FILES_DIR'])) {
+            throw new \RuntimeException(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
+        }
+
+        // Construction du chemin vers le fichier et contrôle que le fichier existe
         $destination = trim($destination, '/\\');
         $fileName = basename($fileName);
-        $dir = rtrim(self::$env['FILES_DIR'], '/\\');
 
+        $dir = rtrim(self::$env['FILES_DIR'], '/\\');
         $filePath = "$dir/$destination/$fileName";
 
-        return is_file($filePath) ? $fileName : null;
-    }
+        $realDir = realpath($dir);
+        $realPath = realpath($filePath);
 
-    /**
-     * Renvoie le fichier demandé
-     */
-    public static function serveFile(?string $destination, ?string $file): void
-    {
-        if (!$destination || !$file) {
-            ResponseHelper::error(MessageHelper::ERR_MISSING_PARAMS, [__FUNCTION__, self::helperName]);
-            exit;
+        if (!is_dir($dir) || $realDir === false || !is_file($filePath) || $realPath === false || !str_starts_with($realPath, $realDir)) {
+            throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
         }
 
-        // Recherche du dossier des fichiers via getenv()
-        $filesDir = getenv('FILES_DIR');
-
-        // Fallback sur le .env uniquement si nécessaire
-        if (!$filesDir) {
-            $env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
-            $filesDir = $env['FILES_DIR'] ?? null;
-        }
-
-        if (!$filesDir || !is_dir($filesDir)) {
-            ResponseHelper::error(MessageHelper::ERR_FORBIDDEN_FILE, [__FUNCTION__, self::helperName]);
-            exit;
-        }
-
-        // Construction du chemin complet
-        $filePath = rtrim($filesDir, '/\\') . '/' . trim($destination, '/\\') . '/' . $file;
-
-        // Vérification existence du fichier
-        if (!is_file($filePath)) {
-            ResponseHelper::error(MessageHelper::ERR_FILE_NOT_FOUND, [$file]);
-            exit;
-        }
-
-        // Détection du type MIME
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mimeType = $finfo->file($filePath);
-
-        // Envoi du fichier
-        header('Content-Type: ' . $mimeType);
-        header('Content-Length: ' . filesize($filePath));
-
-        if (readfile($filePath) === false) {
-            ResponseHelper::error(MessageHelper::ERR_FILE_NOT_FOUND, [$file]);
-        }
-
-        exit;
+        return $fileName;
     }
 
     /**
@@ -87,9 +51,14 @@ class FileHelper
      */
     public static function uploadImage(string $destination, array $file): string
     {
-        // Contrôle fichier reçu
-        if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-            throw new \Exception(MessageHelper::ERR_INVALID_FILE);
+        // Contrôle des données
+        if (!$destination || !isset($file)) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_MISSING_PARAMS);
+        }
+
+        // Contrôle erreur fichier reçu
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_FILE);
         }
 
         // Contrôle taille du fichier
@@ -99,7 +68,7 @@ class FileHelper
         $fileSize = $file['size'] ?? 0;
 
         if ($fileSize > $serverMaxSize) {
-            throw new \Exception(MessageHelper::ERR_FILE_TOO_LARGE);
+            throw new \RuntimeException(MessageHelper::ERR_FILE_TOO_LARGE);
         }
 
         // Récupération du dossier des fichiers depuis le fichier .env
@@ -108,39 +77,40 @@ class FileHelper
         }
 
         // Contrôle chemin serveur renseigné
-        if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            throw new \Exception(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
+        if (empty(self::$env['FILES_DIR'])) {
+            throw new \RuntimeException(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
         }
-
-        $uploadDir = self::$env['FILES_DIR'] . '/' . $destination;
 
         // Contrôle que le dossier des fichiers existe sinon il est créé
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0775, true);
+        $uploadDir = self::$env['FILES_DIR'] . '/' . $destination;
+
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0775, true)) {
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FOLDER_FAILED);
         }
 
-        // Contrôle que c'est bien une image
+        // Contrôle que le fichier est bien une image
         $fileTmp = $file['tmp_name'];
         $imageInfo = getimagesize($fileTmp);
 
         if ($imageInfo === false) {
-            throw new \Exception(MessageHelper::ERR_INVALID_IMAGE);
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_IMAGE);
         }
 
         // Récupération du type MIME
         $mimeType = $imageInfo['mime'];
-        $newFileName = uniqid('picture-', true) . '.webp';
 
-        // Conversion éventuelle en WebP
+        // Construction du chemin vers le fichier
+        $newFileName = uniqid('picture-', true) . '.webp';
         $destinationPath = $uploadDir . '/' . $newFileName;
 
+        // Conversion éventuelle en WebP
         switch ($mimeType) {
             case 'image/jpeg':
                 // JPEG
                 $image = imagecreatefromjpeg($fileTmp);
 
                 if (!$image) {
-                    throw new \Exception(MessageHelper::ERR_CREATION_IMAGE_FAILED);
+                    throw new \RuntimeException(MessageHelper::ERR_CREATION_IMAGE_FAILED);
                 }
                 break;
 
@@ -149,7 +119,7 @@ class FileHelper
                 $image = imagecreatefrompng($fileTmp);
 
                 if (!$image) {
-                    throw new \Exception(MessageHelper::ERR_CREATION_IMAGE_FAILED);
+                    throw new \RuntimeException(MessageHelper::ERR_CREATION_IMAGE_FAILED);
                 }
 
                 imagepalettetotruecolor($image);
@@ -160,27 +130,25 @@ class FileHelper
             case 'image/webp':
                 // Si déjà en WebP, copie directe
                 if (!move_uploaded_file($fileTmp, $destinationPath)) {
-                    throw new \Exception(MessageHelper::ERR_UPLOAD_FAILED);
+                    throw new \RuntimeException(MessageHelper::ERR_UPLOAD_FAILED);
                 }
 
                 return $newFileName;
 
             default:
-                throw new \Exception(MessageHelper::ERR_INVALID_FORMAT);
+                throw new \RuntimeException(MessageHelper::ERR_INVALID_FILE_FORMAT);
         }
 
         // Compression WebP s'il ne l'était pas déjà
         if (!imagewebp($image, $destinationPath, 100)) {
-            throw new \Exception(MessageHelper::ERR_WEBP_CONVERSION_FAILED);
+            throw new \RuntimeException(MessageHelper::ERR_WEBP_CONVERSION_FAILED);
         }
 
-        // Réponse finale
         return $newFileName;
     }
 
     /**
-     * Convertit une taille en bytes
-     * Ex : 2M -> 2048
+     * Convertit une taille en bytes (ex : 2M -> 2048)
      */
     private static function convertToBytes(string $value): int
     {
@@ -208,41 +176,91 @@ class FileHelper
      * @param $destination Dossier de destination
      * @param $fileName Nom du fichier
      */
-    public static function deleteFile(string $destination, string $fileName): bool
+    public static function deleteFile(string $destination, string $fileName): void
     {
-        // Contrôle fichier renseigné
-        if (empty($fileName)) {
-            throw new \Exception(MessageHelper::ERR_INVALID_FILE);
+        // Contrôle des données
+        if (!$destination || !$fileName) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_MISSING_PARAMS);
         }
 
-        // Chargement de l'environnement si nécessaire
+        // Récupération du dossier des fichiers depuis le fichier .env
         if (self::$env === null) {
             self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
         }
 
         // Contrôle chemin serveur renseigné
-        if (!isset(self::$env['FILES_DIR']) || empty(self::$env['FILES_DIR'])) {
-            throw new \Exception(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
+        if (empty(self::$env['FILES_DIR'])) {
+            throw new \RuntimeException(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
         }
 
-        $uploadDir = rtrim(self::$env['FILES_DIR'], '/') . '/' . trim($destination, '/');
-        $filePath = $uploadDir . '/' . $fileName;
+        // Construction du chemin vers le fichier et contrôle que le fichier existe
+        $destination = trim($destination, '/\\');
+        $fileName = basename($fileName);
 
-        // Contrôle que le dossier existe
-        if (!is_dir($uploadDir)) {
-            return false;
-        }
+        $dir = rtrim(self::$env['FILES_DIR'], '/\\');
+        $filePath = "$dir/$destination/$fileName";
 
-        // Contrôle que le fichier existe
-        if (!file_exists($filePath)) {
-            return false;
+        $realDir = realpath($dir);
+        $realPath = realpath($filePath);
+
+        if (!is_dir($dir) || $realDir === false || !is_file($filePath) || $realPath === false || !str_starts_with($realPath, $realDir)) {
+            throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
         }
 
         // Tentative de suppression
         if (!unlink($filePath)) {
             throw new \Exception(MessageHelper::ERR_DELETION_FILE_FAILED);
         }
+    }
 
-        return true;
+    /**
+     * Renvoie le fichier demandé
+     */
+    public static function serveFile(?string $destination, ?string $fileName): void
+    {
+        // Contrôle des données
+        if (!$destination || !$fileName) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_MISSING_PARAMS);
+        }
+
+        // Récupération du dossier des fichiers depuis le fichier .env
+        if (self::$env === null) {
+            self::$env = EnvironmentHelper::loadEnv(__DIR__ . '/../../.env');
+        }
+
+        // Contrôle chemin serveur renseigné
+        if (empty(self::$env['FILES_DIR'])) {
+            throw new \RuntimeException(MessageHelper::ERR_ENV_FILES_DIR_MISSING);
+        }
+
+        // Construction du chemin vers le fichier et contrôle que le fichier existe
+        $destination = trim($destination, '/\\');
+        $fileName = basename($fileName);
+
+        $dir = rtrim(self::$env['FILES_DIR'], '/\\');
+        $filePath = "$dir/$destination/$fileName";
+
+        $realDir = realpath($dir);
+        $realPath = realpath($filePath);
+
+        if (!is_dir($dir) || $realDir === false || !is_file($filePath) || $realPath === false || !str_starts_with($realPath, $realDir)) {
+            throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
+        }
+
+        // Récupération du type MIME
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($filePath);
+
+        if ($mimeType === false) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_FILE_FORMAT);
+        }
+
+        // Envoi du fichier
+        header('Content-Type: ' . $mimeType);
+        header('Content-Length: ' . filesize($filePath));
+
+        if (readfile($filePath) === false) {
+            throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
+        }
     }
 }
