@@ -1,7 +1,5 @@
 <?php
 // Imports
-require_once 'core/functions/Auth.php';
-
 require_once 'enums/EnumUserRole.php';
 
 require_once 'models/dtos/GiftInputDTO.php';
@@ -13,8 +11,8 @@ class GiftsController
     private const controllerName = 'GiftsController';
 
     private PDO $db;
-    private Auth $auth;
     private GiftsService $giftsService;
+    private ?UsersService $usersService = null;
 
     /**
      * Constructeur par défaut
@@ -22,8 +20,19 @@ class GiftsController
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->auth = new Auth($db);
         $this->giftsService = new GiftsService($db);
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService(): UsersService
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+
+        return $this->usersService;
     }
 
     /**
@@ -46,14 +55,14 @@ class GiftsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createGift(string $token, int $editionId, array $data): void
+    public function createGift(?string $token, int $editionId, array $data): void
     {
         try {
             // Conversion DTO
             $dataDTO = GiftInputDTO::fromArray($data);
 
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
             $this->giftsService->createGift($editionId, $dataDTO, $user);
@@ -71,14 +80,14 @@ class GiftsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateGift(string $token, int $giftId, array $data): void
+    public function updateGift(?string $token, int $giftId, array $data): void
     {
         try {
             // Conversion DTO
             $dataDTO = GiftInputDTO::fromArray($data);
 
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Modification d'un enregistrement
             $this->giftsService->updateGift($giftId, $dataDTO, $user);
@@ -94,11 +103,11 @@ class GiftsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteGift(string $token, int $giftId): void
+    public function deleteGift(?string $token, int $giftId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $this->giftsService->deleteGift($giftId, $user->id);

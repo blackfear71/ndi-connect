@@ -20,20 +20,25 @@ class UsersService
     }
 
     /**
-     * Contrôle authentification
+     * Contrôle authentification et niveau utilisateur
      */
-    // TODO : voir pour remplacer les appels à checkAuth par checkAuthAndLevel avec un minimum de USER
-    public function checkAuth(?string $token): ?UserOutputDTO
+    public function checkAuthAndLevel(?string $token, int $minimumLevel): UserOutputDTO
     {
         // Contrôle des données
         if (!$token) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_TOKEN);
         }
 
-        $user = $this->usersRepository->checkAuth($token);
+        // Lecture de l'utilisateur
+        $user = $this->usersRepository->getUserFromToken($token);
 
         if (!$user) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_AUTH);
+        }
+
+        // Contrôle du niveau utilisateur
+        if ($user->level < $minimumLevel) {
+            throw new \RuntimeException(MessageHelper::ERR_UNAUTHORIZED_ACTION);
         }
 
         // Récupération des données utilisateur
@@ -63,26 +68,28 @@ class UsersService
     /**
      * Connexion utilisateur
      */
-    public function connect(UserInputDTO $data): ?UserOutputDTO
+    public function connect(UserInputDTO $data): UserOutputDTO
     {
         // Contrôle des données
-        if (!$this->isValidConnectionData($data)) {
-            return null;
-        }
+        $this->isValidConnectionData($data);
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
         $user = $this->usersRepository->getActiveUserDataByLogin($data->login);
 
-        // Contrôle mot de passe incorrect
-        if (!$user || !password_verify($data->password, $user->password)) {
-            return null;
+        if (!$user) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
-        // Stockage nouveau token
+        // Contrôle mot de passe incorrect
+        if (!password_verify($data->password, $user->password)) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_PASSWORD_INVALID);
+        }
+
+        // Stockage du nouveau token de connexion
         $token = bin2hex(random_bytes(32));
 
         if (!$this->usersRepository->updateToken($user->id, $token)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_LOGIN_FAILED);
         }
 
         // Récupération des données utilisateur
@@ -97,25 +104,28 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(int $userId): ?bool
+    public function disconnect(int $userId): void
     {
         // Contrôle des données
         if (!$userId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Récupération de l'utilisateur
         $user = $this->usersRepository->getActiveUserDataById($userId);
 
-        // Contrôle utilisateur récupéré
         if (!$user) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
         // Suppression token de connexion
-        return $this->usersRepository->updateToken($user->id, NULL);
+        if (!$this->usersRepository->updateToken($user->id, null)) {
+            throw new \RuntimeException(MessageHelper::ERR_LOGOUT_FAILED);
+        }
     }
 
+    // TODO : reprendre ici
+    
     /**
      * Insertion d'un enregistrement
      */
@@ -254,13 +264,17 @@ class UsersService
     /**
      * Contrôle des données saisies (connexion)
      */
-    private function isValidConnectionData(UserInputDTO $data): bool
+    private function isValidConnectionData(UserInputDTO $data): void
     {
-        $login = trim($data->login);
-        $password = trim($data->password);
+        // Login renseigné
+        if (trim($data->login) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
 
-        return $login
-            && $password;
+        // Mot de passe renseigné
+        if (trim($data->password) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_PASSWORD);
+        }
     }
 
     /**

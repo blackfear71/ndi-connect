@@ -1,7 +1,5 @@
 <?php
 // Imports
-require_once 'core/functions/Auth.php';
-
 require_once 'enums/EnumUserRole.php';
 
 require_once 'services/RewardsService.php';
@@ -11,8 +9,8 @@ class RewardsController
     private const controllerName = 'RewardsController';
 
     private PDO $db;
-    private Auth $auth;
     private RewardsService $rewardsService;
+    private ?UsersService $usersService = null;
 
     /**
      * Constructeur par défaut
@@ -20,18 +18,29 @@ class RewardsController
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->auth = new Auth($db);
         $this->rewardsService = new RewardsService($db);
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService(): UsersService
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+
+        return $this->usersService;
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createReward(string $token, int $giftId, int $playerId): void
+    public function createReward(?string $token, int $giftId, int $playerId): void
     {
         try {
-            // Contrôle autorisation et niveau
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
+            // Contrôle authentification et niveau utilisateur
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::ADMIN->value);
 
             // Insertion d'un enregistrement
             $this->rewardsService->createReward($giftId, $playerId, $user);
@@ -47,11 +56,11 @@ class RewardsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteReward(string $token, int $rewardId): void
+    public function deleteReward(?string $token, int $rewardId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $this->rewardsService->deleteReward($rewardId, $user->id);

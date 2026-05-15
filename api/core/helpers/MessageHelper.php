@@ -6,7 +6,6 @@ class MessageHelper
     // TODO : transférer les nouveaux codes dans le messageHelper front
     // TODO : nettoyer les "Exception levée"
     // TODO : il y a pleins d'erreurs qui ne sont plus utilisées, ex : ERR_GIFTS_NOT_FOUND
-    // TODO : il ne doit plus y avoir de \Exception
     // TODO : tout tester dont les logs
 
     /*****************/
@@ -30,7 +29,9 @@ class MessageHelper
     const ERR_INVALID_LOCATION       = 'ERR_INVALID_LOCATION';
     const ERR_INVALID_NAME           = 'ERR_INVALID_NAME';
     const ERR_INVALID_PARAMETER      = 'ERR_INVALID_PARAMETER';
+    const ERR_INVALID_PASSWORD       = 'ERR_INVALID_PASSWORD';
     const ERR_INVALID_TIME           = 'ERR_INVALID_TIME';
+    const ERR_INVALID_TOKEN          = 'ERR_INVALID_TOKEN';
     const ERR_MISSING_PARAMS         = 'ERR_MISSING_PARAMS';
     const ERR_ORIGIN_NOT_ALLOWED     = 'ERR_ORIGIN_NOT_ALLOWED';
     const ERR_POSITIVE_QUANTITY      = 'ERR_POSITIVE_QUANTITY';
@@ -75,6 +76,8 @@ class MessageHelper
     const ERR_RESET_PASSWORD_FAILED  = 'ERR_RESET_PASSWORD_FAILED';
     const ERR_UNAUTHORIZED_ACTION    = 'ERR_UNAUTHORIZED_ACTION';
     const ERR_UPDATE_PASSWORD_FAILED = 'ERR_UPDATE_PASSWORD_FAILED';
+    const ERR_USER_NOT_FOUND         = 'ERR_USER_NOT_FOUND';
+    const ERR_USER_PASSWORD_INVALID  = 'ERR_USER_PASSWORD_INVALID';
     const ERR_USERS_NOT_FOUND        = 'ERR_USERS_NOT_FOUND';
 
     const MSG_LOGIN_SUCCESS          = 'MSG_LOGIN_SUCCESS';
@@ -111,7 +114,9 @@ class MessageHelper
         self::ERR_INVALID_LOCATION       => 400,
         self::ERR_INVALID_NAME           => 400,
         self::ERR_INVALID_PARAMETER      => 400,
+        self::ERR_INVALID_PASSWORD       => 400,
         self::ERR_INVALID_TIME           => 400,
+        self::ERR_INVALID_TOKEN          => 401,
         self::ERR_MISSING_PARAMS         => 400,
         self::ERR_ORIGIN_NOT_ALLOWED     => 403,
         self::ERR_POSITIVE_QUANTITY      => 400,
@@ -151,6 +156,8 @@ class MessageHelper
         self::ERR_RESET_PASSWORD_FAILED  => 400,
         self::ERR_UNAUTHORIZED_ACTION    => 403,
         self::ERR_UPDATE_PASSWORD_FAILED => 400,
+        self::ERR_USER_NOT_FOUND         => 400,
+        self::ERR_USER_PASSWORD_INVALID  => 401,
         self::ERR_USERS_NOT_FOUND        => 400,
 
         self::WRN_LAST_ADMIN  => 403,
@@ -184,29 +191,31 @@ class MessageHelper
         self::ERR_INVALID_LOCATION       => 'Le lieu est obligatoire',
         self::ERR_INVALID_NAME           => 'Le nom est obligatoire',
         self::ERR_INVALID_PARAMETER      => 'Paramètre d\'entrée invalide',
+        self::ERR_INVALID_PASSWORD       => 'Le mot de passe est obligatoire',
         self::ERR_INVALID_TIME           => 'Le format de l\'heure est invalide',
+        self::ERR_INVALID_TOKEN          => 'Le token de connexion est invalide',
         self::ERR_MISSING_PARAMS         => 'Paramètres manquants',
-        self::ERR_ORIGIN_NOT_ALLOWED     => 'Origine non autorisée : %s',
+        self::ERR_ORIGIN_NOT_ALLOWED     => 'Origine non autorisée',
         self::ERR_POSITIVE_QUANTITY      => 'La quantité doit être supérieure à 0',
         self::ERR_POSITIVE_VALUE         => 'La valeur doit être supérieure à 0',
-        self::ERR_ROUTE_NOT_FOUND        => 'Route non trouvée : %s',
-        self::ERR_UNKNOWN_ENDPOINT       => 'Endpoint inconnu : %s',
+        self::ERR_ROUTE_NOT_FOUND        => 'Route non trouvée',
+        self::ERR_UNKNOWN_ENDPOINT       => 'Endpoint inconnu',
         self::ERR_UNKNOWN_ERROR          => 'Erreur inconnue',
         self::ERR_UPDATE_FAILED          => 'Erreur lors de la modification en base de données',
-        self::ERR_UPLOAD_FAILED          => 'Envoi échoué dans le dossier de destination dans %s de %s',
-        self::ERR_WEBP_CONVERSION_FAILED => 'Conversion WebP échouée dans %s de %s',
+        self::ERR_UPLOAD_FAILED          => 'Envoi échoué dans le dossier de destination',
+        self::ERR_WEBP_CONVERSION_FAILED => 'Conversion WebP échouée',
 
         // Editions
         self::ERR_EDITION_NOT_FOUND  => 'Edition lors de la récupération de l\'édition',
         self::ERR_EDITION_FINISHED   => 'Edition terminée ou introuvable',
-        self::ERR_EDITIONS_NOT_FOUND => 'Erreur lors de la récupération des éditions dans %s de %s',
-        self::ERR_EDITIONS_SEARCH    => 'Erreur lors de la récupération des éditions dans %s de %s pour la recherche : %s',
+        self::ERR_EDITIONS_NOT_FOUND => 'Erreur lors de la récupération des éditions',
+        self::ERR_EDITIONS_SEARCH    => 'Erreur lors de la recherche des éditions',
 
         // Participants
         self::ERR_PLAYER_GIVEAWAY   => 'Le don de points n\'est pas correctement renseigné',
         self::ERR_PLAYER_NOT_FOUND  => 'Erreur lors de la récupération du participant',
         self::ERR_PLAYER_POINTS     => 'Le nombre de points doit être supérieur ou égal à 0',
-        self::ERR_PLAYERS_NOT_FOUND => 'Erreur lors de la récupération des participants dans %s de %s',
+        self::ERR_PLAYERS_NOT_FOUND => 'Erreur lors de la récupération des participants',
 
         // Cadeaux
         self::ERR_GIFT_NOT_FOUND    => 'Erreur lors de la récupération du cadeau',
@@ -218,20 +227,22 @@ class MessageHelper
         self::ERR_REWARD_POINTS    => 'Le nombre de points est insuffisant pour le cadeau',
 
         // Utilisateurs
-        self::ERR_INVALID_AUTH           => 'Authentification invalide dans %s de %s',
-        self::ERR_LOGIN_FAILED           => 'Échec d\'authentification dans %s de %s pour le login : %s',
-        self::ERR_LOGOUT_FAILED          => 'Erreur lors de la déconnexion dans %s de %s pour l\'id : %s',
-        self::ERR_RESET_PASSWORD_FAILED  => 'Erreur lors de la réinitialisation du mot de passe dans %s de %s pour l\'id : %s',
-        self::ERR_UNAUTHORIZED_ACTION    => 'Action non autorisée dans %s de %s',
-        self::ERR_UPDATE_PASSWORD_FAILED => 'Erreur lors de la modification du mot de passe dans %s de %s pour l\'id : %s',
-        self::ERR_USERS_NOT_FOUND        => 'Erreur lors de la récupération des utilisateurs dans %s de %s',
+        self::ERR_INVALID_AUTH           => 'Authentification invalide',
+        self::ERR_LOGIN_FAILED           => 'Échec d\'authentification',
+        self::ERR_LOGOUT_FAILED          => 'Erreur lors de la déconnexion',
+        self::ERR_RESET_PASSWORD_FAILED  => 'Erreur lors de la réinitialisation du mot de passe',
+        self::ERR_UNAUTHORIZED_ACTION    => 'Action non autorisée',
+        self::ERR_UPDATE_PASSWORD_FAILED => 'Erreur lors de la modification du mot de passe',
+        self::ERR_USER_NOT_FOUND         => 'Erreur lors de la récupération de l\'utilisateur',
+        self::ERR_USER_PASSWORD_INVALID  => 'Le mot de passe saisi est incorrect',
+        self::ERR_USERS_NOT_FOUND        => 'Erreur lors de la récupération des utilisateurs',
 
         self::WRN_LAST_ADMIN  => 'Il doit rester au moins un Super Administrateur actif',
-        self::WRN_USER_EXISTS => 'L\'identifiant existe déjà : %s',
+        self::WRN_USER_EXISTS => 'L\'identifiant existe déjà',
 
         // SSE
-        self::ERR_SSE_GIFTS   => 'Erreur SSE lors de la récupération des cadeaux dans %s de %s : %s',
-        self::ERR_SSE_PLAYERS => 'Erreur SSE lors de la récupération des participants dans %s de %s : %s'
+        self::ERR_SSE_GIFTS   => 'Erreur SSE lors de la récupération des cadeaux',
+        self::ERR_SSE_PLAYERS => 'Erreur SSE lors de la récupération des participants'
     ];
 
     // TODO : à supprimer

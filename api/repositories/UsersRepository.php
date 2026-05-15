@@ -19,7 +19,7 @@ class UsersRepository
     /**
      * Contrôle authentification
      */
-    public function checkAuth(?string $token): ?User
+    public function getUserFromToken(string $token): ?User
     {
         $sql = "SELECT id, login, level
             FROM {$this->usersTable}

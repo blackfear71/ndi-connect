@@ -1,7 +1,5 @@
 <?php
 // Imports
-require_once 'core/functions/Auth.php';
-
 require_once 'enums/EnumAction.php';
 require_once 'enums/EnumUserRole.php';
 
@@ -14,8 +12,8 @@ class EditionsController
     private const controllerName = 'EditionsController';
 
     private PDO $db;
-    private Auth $auth;
     private EditionsService $editionsService;
+    private ?UsersService $usersService = null;
 
     /**
      * Constructeur par défaut
@@ -23,8 +21,19 @@ class EditionsController
     public function __construct(PDO $db)
     {
         $this->db = $db;
-        $this->auth = new Auth($db);
         $this->editionsService = new EditionsService($db);
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService(): UsersService
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+
+        return $this->usersService;
     }
 
     /**
@@ -81,14 +90,14 @@ class EditionsController
     /**
      * Insertion d'un enregistrement
      */
-    public function createEdition(string $token, array $data, array $file): void
+    public function createEdition(?string $token, array $data, array $file): void
     {
         try {
             // Conversion DTO
             $dataDTO = EditionInputDTO::fromArray($data);
 
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Insertion d'un enregistrement
             $this->editionsService->createEdition($dataDTO, $file, $user->id);
@@ -104,14 +113,14 @@ class EditionsController
     /**
      * Modification d'un enregistrement
      */
-    public function updateEdition(string $token, int $editionId, array $data, array $file): void
+    public function updateEdition(?string $token, int $editionId, array $data, array $file): void
     {
         try {
             // Conversion DTO
             $dataDTO = EditionInputDTO::fromArray($data);
 
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Modification d'un enregistrement
             $this->editionsService->updateEdition($editionId, $dataDTO, $file, $user->id);
@@ -127,11 +136,11 @@ class EditionsController
     /**
      * Suppression logique d'un enregistrement
      */
-    public function deleteEdition(string $token, int $editionId): void
+    public function deleteEdition(?string $token, int $editionId): void
     {
         try {
             // Contrôle authentification et niveau utilisateur
-            $user = $this->auth->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
+            $user = $this->getUsersService()->checkAuthAndLevel($token, EnumUserRole::SUPERADMIN->value);
 
             // Suppression logique d'un enregistrement
             $this->editionsService->deleteEdition($editionId, $user->id);

@@ -12,6 +12,7 @@ class SseController
     private SseService $sseService;
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
+    private ?UsersService $usersService = null;
 
     /**
      * Constructeur par défaut
@@ -44,6 +45,18 @@ class SseController
         }
 
         return $this->playersService;
+    }
+
+    /**
+     * Instancie le UsersService si besoin
+     */
+    private function getUsersService(): UsersService
+    {
+        if ($this->usersService === null) {
+            $this->usersService = new UsersService($this->db);
+        }
+
+        return $this->usersService;
     }
 
     /**
@@ -132,7 +145,7 @@ class SseController
                 sleep(5);
             }
         } catch (Exception $e) {
-            // Exception levée
+            // Exception
             ResponseHelper::sse(MessageHelper::ERR_UNKNOWN_ERROR, [__FUNCTION__, self::controllerName, $e->getMessage()]);
 
             // Message d'erreur

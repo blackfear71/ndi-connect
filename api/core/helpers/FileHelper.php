@@ -209,7 +209,7 @@ class FileHelper
 
         // Tentative de suppression
         if (!unlink($filePath)) {
-            throw new \Exception(MessageHelper::ERR_DELETION_FILE_FAILED);
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FILE_FAILED);
         }
     }
 
