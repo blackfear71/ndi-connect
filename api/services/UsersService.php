@@ -285,6 +285,21 @@ class UsersService
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
+        // Login existant
+        if (!$this->usersRepository->checkLoginAvailable($data->login)) {
+            throw new WarningException(MessageHelper::WRN_USER_EXISTS);
+        }
+
+        // Niveau renseigné
+        if (!$data->level === null) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+
+        // Niveau existant
+        if (!in_array($data->level, array_column(EnumUserRole::cases(), 'value'))) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+
         // Mot de passe renseigné
         if ($password === '' || $confirmPassword === '') {
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_PASSWORD);
@@ -293,16 +308,6 @@ class UsersService
         // Mot de passe correct
         if ($password !== $confirmPassword) {
             throw new \RuntimeException(MessageHelper::ERR_INVALID_PASSWORD_MATCH);
-        }
-
-        // Niveau existant
-        if (!in_array($data->level, array_column(EnumUserRole::cases(), 'value'))) {
-            throw new \RuntimeException(MessageHelper::ERR_INVALID_LEVEL);
-        }
-
-        // Login existant
-        if (!$this->usersRepository->checkLoginAvailable($data->login)) {
-            throw new WarningException(MessageHelper::WRN_USER_EXISTS);
         }
     }
 
@@ -314,6 +319,11 @@ class UsersService
         // Identifiant renseigné
         if (!$userId) {
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Niveau renseigné
+        if ($data->level === null) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_LEVEL);
         }
 
         // Niveau existant

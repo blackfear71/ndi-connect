@@ -3,6 +3,7 @@
 require_once 'models/dtos/GiftInputDTO.php';
 
 require_once 'services/GiftsService.php';
+require_once 'services/UsersService.php';
 
 class GiftsController
 {

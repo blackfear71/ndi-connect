@@ -1,6 +1,7 @@
 <?php
 // Imports
 require_once 'services/RewardsService.php';
+require_once 'services/UsersService.php';
 
 class RewardsController
 {

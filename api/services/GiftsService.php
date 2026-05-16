@@ -203,7 +203,7 @@ class GiftsService
         }
 
         // Quantité positive
-        if ($data->quantity <= 0) {
+        if ($data->quantity < 0) {
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_QUANTITY);
         }
 

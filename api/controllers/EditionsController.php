@@ -3,6 +3,7 @@
 require_once 'models/dtos/EditionInputDTO.php';
 
 require_once 'services/EditionsService.php';
+require_once 'services/UsersService.php';
 
 class EditionsController
 {
@@ -103,7 +104,7 @@ class EditionsController
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$data, json_encode($file)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [json_encode($data), json_encode($file)]);
         }
     }
 
@@ -126,7 +127,7 @@ class EditionsController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data, json_encode($file)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, json_encode($data), json_encode($file)]);
         }
     }
 

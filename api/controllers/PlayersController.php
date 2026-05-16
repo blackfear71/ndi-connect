@@ -3,6 +3,7 @@
 require_once 'models/dtos/PlayerInputDTO.php';
 
 require_once 'services/PlayersService.php';
+require_once 'services/UsersService.php';
 
 class PlayersController
 {
@@ -69,7 +70,7 @@ class PlayersController
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, json_encode($data)]);
         }
     }
 
@@ -92,7 +93,7 @@ class PlayersController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId, $data]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId, json_encode($data)]);
         }
     }
 
