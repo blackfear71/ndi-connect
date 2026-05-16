@@ -20,19 +20,25 @@ class UsersService
     }
 
     /**
-     * Contrôle authentification
+     * Contrôle authentification et niveau utilisateur
      */
-    public function checkAuth(?string $token): ?UserOutputDTO
+    public function checkAuthAndLevel(?string $token, int $minimumLevel): UserOutputDTO
     {
         // Contrôle des données
         if (!$token) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_TOKEN);
         }
 
-        $user = $this->usersRepository->checkAuth($token);
+        // Lecture de l'utilisateur
+        $user = $this->usersRepository->getUserFromToken($token);
 
         if (!$user) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_AUTH);
+        }
+
+        // Contrôle du niveau utilisateur
+        if ($user->level < $minimumLevel) {
+            throw new \RuntimeException(MessageHelper::ERR_UNAUTHORIZED_ACTION);
         }
 
         // Récupération des données utilisateur
@@ -62,26 +68,28 @@ class UsersService
     /**
      * Connexion utilisateur
      */
-    public function connect(UserInputDTO $data): ?UserOutputDTO
+    public function connect(UserInputDTO $data): UserOutputDTO
     {
         // Contrôle des données
-        if (!$this->isValidConnectionData($data)) {
-            return null;
-        }
+        $this->isValidConnectionData($data);
 
         // Récupération de l'utilisateur pour vérifier le mot de passe
         $user = $this->usersRepository->getActiveUserDataByLogin($data->login);
 
-        // Contrôle mot de passe incorrect
-        if (!$user || !password_verify($data->password, $user->password)) {
-            return null;
+        if (!$user) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
-        // Stockage nouveau token
+        // Contrôle mot de passe incorrect
+        if (!password_verify($data->password, $user->password)) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_PASSWORD_INVALID);
+        }
+
+        // Stockage du nouveau token de connexion
         $token = bin2hex(random_bytes(32));
 
         if (!$this->usersRepository->updateToken($user->id, $token)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_LOGIN_FAILED);
         }
 
         // Récupération des données utilisateur
@@ -96,39 +104,33 @@ class UsersService
     /**
      * Déconnexion utilisateur
      */
-    public function disconnect(int $userId): ?bool
+    public function disconnect(int $userId): void
     {
         // Contrôle des données
         if (!$userId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Récupération de l'utilisateur
         $user = $this->usersRepository->getActiveUserDataById($userId);
 
-        // Contrôle utilisateur récupéré
         if (!$user) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
         // Suppression token de connexion
-        return $this->usersRepository->updateToken($user->id, NULL);
+        if (!$this->usersRepository->updateToken($user->id, null)) {
+            throw new \RuntimeException(MessageHelper::ERR_LOGOUT_FAILED);
+        }
     }
 
     /**
      * Insertion d'un enregistrement
      */
-    public function createUser(UserInputDTO $data, int $userId): ?bool
+    public function createUser(UserInputDTO $data, int $userId): void
     {
         // Contrôle des données
-        if (!$this->isValidCreateUserData($data)) {
-            return null;
-        }
-
-        // Contrôle login existant
-        if (!$this->usersRepository->checkLoginAvailable($data->login)) {
-            return false;
-        }
+        $this->isValidCreateUserData($data);
 
         // Construction de l'objet
         $user = new User(
@@ -139,17 +141,48 @@ class UsersService
         );
 
         // Insertion
-        return $this->usersRepository->createUser($user);
+        if (!$this->usersRepository->createUser($user)) {
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+        }
     }
 
     /**
      * Modification d'un enregistrement
      */
-    public function resetPassword(int $userResetId, int $userId): ?string
+    public function updatePassword(int $userId, UserInputDTO $data): void
     {
         // Contrôle des données
-        if (!$userResetId) {
-            return null;
+        $this->isValidPasswordData($userId, $data);
+
+        // Récupération de l'utilisateur pour vérifier le mot de passe
+        $user = $this->usersRepository->getActiveUserDataById($userId);
+
+        if (!$user) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
+        }
+
+        // Contrôle ancien mot de passe incorrect
+        if (!password_verify($data->oldPassword, $user->password)) {
+            throw new \RuntimeException(MessageHelper::ERR_USER_PASSWORD_INVALID);
+        }
+
+        // Formatage des données mot de passe
+        $hash = password_hash($data->password, PASSWORD_DEFAULT);
+
+        // Modification
+        if (!$this->usersRepository->updatePassword($user->id, $hash, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_PASSWORD_FAILED);
+        }
+    }
+
+    /**
+     * Modification d'un enregistrement
+     */
+    public function resetPassword(int $userResetId, int $userId): string
+    {
+        // Contrôle des données
+        if (!$userResetId || !$userId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Formatage des données mot de passe
@@ -158,7 +191,7 @@ class UsersService
 
         // Modification
         if (!$this->usersRepository->updatePassword($userResetId, $hash, $userId)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_RESET_PASSWORD_FAILED);
         }
 
         return $newPassword;
@@ -167,136 +200,177 @@ class UsersService
     /**
      * Modification d'un enregistrement
      */
-    public function updatePassword(int $userId, UserInputDTO $data): ?bool
+    public function updateUser(int $userUpdateId, UserInputDTO $data, int $userId): void
     {
         // Contrôle des données
-        if (!$userId || !$this->isValidPasswordData($data)) {
-            return null;
-        }
-
-        // Récupération de l'utilisateur pour vérifier le mot de passe
-        $user = $this->usersRepository->getActiveUserDataById($userId);
-
-        // Contrôle ancien mot de passe incorrect
-        if (!$user || !password_verify($data->oldPassword, $user->password)) {
-            return null;
-        }
-
-        // Formatage des données mot de passe
-        $hash = password_hash($data->password, PASSWORD_DEFAULT);
-
-        // Modification
-        return $this->usersRepository->updatePassword($user->id, $hash, $userId);
-    }
-
-    /**
-     * Modification d'un enregistrement
-     */
-    public function updateUser(int $userId, UserInputDTO $data, int $userUpdateId): ?bool
-    {
-        // Contrôle des données
-        if (!$userId || !$this->isValidUpdateUserData($data)) {
-            return null;
-        }
+        $this->isValidUpdateUserData($userUpdateId, $data);
 
         // Récupération de l'utilisateur à modifier pour vérifier si c'est le dernier admin actif
-        $currentUser = $this->usersRepository->getActiveUserDataById($userId);
+        $currentUser = $this->usersRepository->getActiveUserDataById($userUpdateId);
 
-        // Contrôle utilisateur récupéré
         if (!$currentUser) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
         // Contrôle dernier admin actif si changement de rôle
         if ($currentUser->level == EnumUserRole::SUPERADMIN->value && $data->level !== EnumUserRole::SUPERADMIN->value && $this->usersRepository->isLastAdmin()) {
-            return false;
+            throw new \WarningException(MessageHelper::WRN_LAST_ADMIN);
         }
 
         // Construction de l'objet
         $user = new User(
             id: $currentUser->id,
             level: $data->level,
-            updatedBy: $userUpdateId
+            updatedBy: $userId
         );
 
         // Modification
-        return $this->usersRepository->updateUser($user);
+        if (!$this->usersRepository->updateUser($user)) {
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+        }
     }
 
     /**
      * Suppression logique d'un utilisateur
      */
-    public function deleteUser(int $userDeleteId, int $userId): ?bool
+    public function deleteUser(int $userDeleteId, int $userId): void
     {
         // Contrôle des données
-        if (!$userDeleteId || $userDeleteId == $userId) {
-            return null;
-        }
+        $this->isValidDeleteUserData($userDeleteId, $userId);
 
         // Récupération de l'utilisateur à supprimer pour vérifier si c'est le dernier admin actif
         $user = $this->usersRepository->getActiveUserDataById($userDeleteId);
 
-        // Contrôle utilisateur récupéré
         if (!$user) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_USER_NOT_FOUND);
         }
 
         // Contrôle dernier admin actif si suppression
-        if ($user && $user->level == EnumUserRole::SUPERADMIN->value && $this->usersRepository->isLastAdmin()) {
-            return false;
+        if ($user->level == EnumUserRole::SUPERADMIN->value && $this->usersRepository->isLastAdmin()) {
+            throw new \WarningException(MessageHelper::WRN_LAST_ADMIN);
         }
 
         // Suppression logique de l'utilisateur
-        return $this->usersRepository->deleteUser($userDeleteId, $userId);
+        if (!$this->usersRepository->deleteUser($userDeleteId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
      * Contrôle des données saisies (connexion)
      */
-    private function isValidConnectionData(UserInputDTO $data): bool
+    private function isValidConnectionData(UserInputDTO $data): void
     {
-        $login = trim($data->login);
-        $password = trim($data->password);
+        // Login renseigné
+        if (trim($data->login) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
 
-        return $login
-            && $password;
+        // Mot de passe renseigné
+        if (trim($data->password) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_PASSWORD);
+        }
     }
 
     /**
-     * Contrôle des données saisies (création utilisateur)
+     * Contrôle des données saisies (création)
      */
-    private function isValidCreateUserData(UserInputDTO $data): bool
+    private function isValidCreateUserData(UserInputDTO $data): void
     {
-        $login = trim($data->login);
         $password = trim($data->password);
         $confirmPassword = trim($data->confirmPassword);
-        $level = $data->level;
 
-        return $login
-            && $password && $confirmPassword && $password === $confirmPassword
-            && in_array($level, array_column(EnumUserRole::cases(), 'value'));
+        // Login renseigné
+        if (trim($data->login) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Login existant
+        if (!$this->usersRepository->checkLoginAvailable($data->login)) {
+            throw new WarningException(MessageHelper::WRN_USER_EXISTS);
+        }
+
+        // Niveau renseigné
+        if (!$data->level === null) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+
+        // Niveau existant
+        if (!in_array($data->level, array_column(EnumUserRole::cases(), 'value'))) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+
+        // Mot de passe renseigné
+        if ($password === '' || $confirmPassword === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_PASSWORD);
+        }
+
+        // Mot de passe correct
+        if ($password !== $confirmPassword) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_PASSWORD_MATCH);
+        }
+    }
+
+    /**
+     * Contrôle des données saisies (modification)
+     */
+    private function isValidUpdateUserData(int $userId, UserInputDTO $data): void
+    {
+        // Identifiant renseigné
+        if (!$userId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Niveau renseigné
+        if ($data->level === null) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+
+        // Niveau existant
+        if (!in_array($data->level, array_column(EnumUserRole::cases(), 'value'))) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_LEVEL);
+        }
+    }
+
+    /**
+     * Contrôle des données saisies (suppression)
+     */
+    private function isValidDeleteUserData(int $userDeleteId, int $userId): void
+    {
+        // Identifiant renseigné
+        if (!$userDeleteId || !$userId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Identifiant différent
+        if ($userDeleteId === $userId) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_ID_MATCH);
+        }
     }
 
     /**
      * Contrôle des données saisies (modification mot de passe)
      */
-    private function isValidPasswordData(UserInputDTO $data): bool
+    private function isValidPasswordData(int $userId, UserInputDTO $data): void
     {
         $oldPassword = trim($data->oldPassword);
         $newPassword = trim($data->password);
         $confirmPassword = trim($data->confirmPassword);
 
-        return $oldPassword && $newPassword && $confirmPassword
-            && $oldPassword !== $newPassword
-            && $newPassword === $confirmPassword;
-    }
+        // Identifiant renseigné
+        if (!$userId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
 
-    /**
-     * Contrôle des données saisies (modification utilisateur)
-     */
-    private function isValidUpdateUserData(UserInputDTO $data): bool
-    {
-        return in_array($data->level, array_column(EnumUserRole::cases(), 'value'));
+        // Mot de passe renseigné
+        if ($oldPassword === '' || $newPassword === '' || $confirmPassword === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_PASSWORD);
+        }
+
+        // Mot de passe correct
+        if ($oldPassword === $newPassword || $newPassword !== $confirmPassword) {
+            throw new \RuntimeException(MessageHelper::ERR_INVALID_PASSWORD_MATCH);
+        }
     }
 
     /**

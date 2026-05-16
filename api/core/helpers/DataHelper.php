@@ -9,7 +9,7 @@ class DataHelper
         $int = filter_var($value, FILTER_VALIDATE_INT);
 
         if ($int === false) {
-            ResponseHelper::error(MessageHelper::ERR_INVALID_PARAMETER, [$value]);
+            ResponseHelper::error(MessageHelper::ERR_INVALID_PARAMETER, 'Router', __FUNCTION__, [$value]);
             exit;
         }
 

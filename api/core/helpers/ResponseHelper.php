@@ -4,11 +4,11 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'erreur
      */
-    public static function error(string $code, array $args = []): void
+    public static function error(string $code, string $class = '', string $function = '', array $data = []): void
     {
         // Message et code HTTP
-        $logMessage = MessageHelper::message($code, ...$args);
-        $httpCode = MessageHelper::httpCode($code);
+        $logMessage = MessageHelper::message($code, $class, $function, $data);
+        $httpCode = MessageHelper::httpCode($code, 500);
 
         // Log
         LoggerHelper::log($logMessage, 'ERROR');
@@ -27,8 +27,11 @@ class ResponseHelper
      */
     public static function info(mixed $data = null, string $code = ''): void
     {
+        // Code HTTP
+        $httpCode = MessageHelper::httpCode($code, 200);
+
         // Réponse
-        http_response_code(200);
+        http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'info',
             data: $data,
@@ -39,10 +42,10 @@ class ResponseHelper
     /**
      * Gestion du retour SSE
      */
-    public static function sse(string $code, array $args = []): void
+    public static function sse(string $code, string $class = '', string $function = '', array $data = []): void
     {
         // Message
-        $logMessage = MessageHelper::message($code, ...$args);
+        $logMessage = MessageHelper::message($code, $class, $function, $data);
 
         // Log
         LoggerHelper::log($logMessage, 'SSE');
@@ -53,8 +56,11 @@ class ResponseHelper
      */
     public static function success(mixed $data = null, string $code = ''): void
     {
+        // Code HTTP
+        $httpCode = MessageHelper::httpCode($code, 200);
+
         // Réponse
-        http_response_code(200);
+        http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'success',
             data: $data,
@@ -65,14 +71,14 @@ class ResponseHelper
     /**
      * Gestion du retour en cas d'alerte
      */
-    public static function warning(string $code = '', array $args = []): void
+    public static function warning(string $code, string $class = '', string $function = '', array $data = []): void
     {
         // Message et code HTTP
-        $logMessage = MessageHelper::message($code, ...$args);
-        $httpCode = MessageHelper::httpCode($code);
+        $logMessage = MessageHelper::message($code, $class, $function, $data);
+        $httpCode = MessageHelper::httpCode($code, 500);
 
         // Log
-        LoggerHelper::log($logMessage, 'ERROR');
+        LoggerHelper::log($logMessage, 'WARNING');
 
         // Réponse
         http_response_code($httpCode);

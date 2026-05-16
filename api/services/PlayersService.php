@@ -53,26 +53,19 @@ class PlayersService
     /**
      * Lecture des enregistrements d'une édition
      */
-    public function getEditionPlayers(int $editionId): ?array
+    public function getEditionPlayers(int $editionId): array
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Liste des participants
-        $dataPlayers = $this->playersRepository->getEditionPlayers($editionId);
+        $players = $this->playersRepository->getEditionPlayers($editionId);
 
         // Récupération des données participants
         return array_map(function ($player) {
-            $dataRewards = $this->getRewardsService()->getPlayerRewards($player->id);
-
-            // Formatage des données récompenses
-            $rewards = array_map(fn($reward) => new RewardOutputDTO(
-                id: $reward->id,
-                giftId: $reward->giftId,
-                giftName: $reward->giftName
-            ), $dataRewards);
+            $rewards = $this->getRewardsService()->getPlayerRewards($player->id);
 
             // Formatage des données participant
             return new PlayerOutputDTO(
@@ -81,24 +74,24 @@ class PlayersService
                 points: $player->points,
                 rewards: $rewards
             );
-        }, $dataPlayers);
+        }, $players);
     }
 
     /**
      * Lecture d'un enregistrement
      */
-    public function getPlayer(int $playerId): ?PlayerOutputDTO
+    public function getPlayer(int $playerId): PlayerOutputDTO
     {
         // Contrôle des données
         if (!$playerId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Lecture du participant
         $player = $this->playersRepository->getPlayer($playerId);
 
         if (!$player) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_PLAYER_NOT_FOUND);
         }
 
         // Récupération des données participant
@@ -112,12 +105,10 @@ class PlayersService
     /**
      * Création d'un participant
      */
-    public function createPlayer(int $editionId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function createPlayer(int $editionId, UserOutputDTO $user, PlayerInputDTO $data): void
     {
         // Contrôle des données
-        if (!$editionId || !$this->isValidPlayerData($data, $user->level, $editionId, 'editions', true)) {
-            return null;
-        }
+        $this->isValidCreatePlayerData($editionId, $data, $user->level);
 
         // Construction de l'objet
         $player = new Player(
@@ -128,18 +119,18 @@ class PlayersService
         );
 
         // Insertion
-        return $this->playersRepository->createPlayer($player);
+        if (!$this->playersRepository->createPlayer($player)) {
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+        }
     }
 
     /**
      * Modification d'un participant
      */
-    public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): ?bool
+    public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): void
     {
         // Contrôle des données
-        if (!$playerId || !$this->isValidPlayerData($data, $user->level, $playerId, 'players', false)) {
-            return null;
-        }
+        $this->isValidUpdatePlayerData($playerId, $data, $user->level);
 
         // Construction de l'objet
         $player = new Player(
@@ -151,7 +142,7 @@ class PlayersService
 
         // Modification
         if (!$this->playersRepository->updatePlayer($player)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
         }
 
         // Don de points
@@ -162,20 +153,20 @@ class PlayersService
                 updatedBy: $user->id,
             );
 
-            return $this->playersRepository->updatePlayerPoints($giveawayPlayer);
+            if (!$this->playersRepository->updatePlayerPoints($giveawayPlayer)) {
+                throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+            }
         }
-
-        return true;
     }
 
     /**
      * Modification des points d'un participant par ajout
      */
-    public function updatePlayerPoints(int $playerId, int $delta, int $userId): ?bool
+    public function updatePlayerPoints(int $playerId, int $delta, int $userId): void
     {
         // Contrôle des données
         if (!$playerId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Construction de l'objet
@@ -186,58 +177,108 @@ class PlayersService
         );
 
         // Modification des points d'un participant
-        return $this->playersRepository->updatePlayerPoints($player);
+        if (!$this->playersRepository->updatePlayerPoints($player)) {
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+        }
     }
 
     /**
      * Suppression logique des participants d'une édition
      */
-    public function deletePlayers(int $editionId, int $userId): ?bool
+    public function deletePlayers(int $editionId, int $userId): void
     {
         // Contrôle des données
         if (!$editionId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Suppression logique de participants d'une édition
-        return $this->playersRepository->deletePlayers($editionId, $userId);
+        if (!$this->playersRepository->deletePlayers($editionId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
      * Suppression logique d'un participant
      */
-    public function deletePlayer(int $playerId, int $userId): ?bool
+    public function deletePlayer(int $playerId, int $userId): void
     {
         // Contrôle des données
         if (!$playerId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Suppression logique du participant
-        return $this->playersRepository->deletePlayer($playerId, $userId);
+        if (!$this->playersRepository->deletePlayer($playerId, $userId)) {
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+        }
     }
 
     /**
-     * Contrôle des données saisies (création / modification)
+     * Contrôle des données saisies (création)
      */
-    private function isValidPlayerData(PlayerInputDTO $data, int $level, int $id, string $typeId, bool $isCreation): bool
+    private function isValidCreatePlayerData(int $editionId, PlayerInputDTO $data, int $level): void
     {
-        $name = trim($data->name);
+        // Identifiant édition renseigné
+        if (!$editionId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Nom renseigné
+        if (trim($data->name) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_NAME);
+        }
+
+        // Points positifs
+        if ($data->points < 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_POINTS);
+        }
+
+        // Edition terminée (sauf SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value) {
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($editionId, 'editions');
+
+            if ($endDate === null || new \DateTimeImmutable() > $endDate) {
+                throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
+            }
+        }
+    }
+
+    /**
+     * Contrôle des données saisies (modification)
+     */
+    private function isValidUpdatePlayerData(int $playerId, PlayerInputDTO $data, int $level): void
+    {
+        // Identifiant participant renseigné
+        if (!$playerId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Nom renseigné
+        if (trim($data->name) === '') {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_NAME);
+        }
+
+        // Points positifs (ou SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value && $data->points < 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_POINTS);
+        }
+
+        // Don de points correctement renseigné
         $giveaway = $data->giveaway ?? null;
         $giveawayPlayerId = $data->giveawayPlayerId ?? null;
 
-        // Points
-        $isPointsValid = $level == EnumUserRole::SUPERADMIN->value || $data->points >= 0;
+        if (!is_numeric($giveaway) || !is_numeric($giveawayPlayerId) || !(($giveaway > 0 && $giveawayPlayerId !== 0) || ($giveaway == 0 && $giveawayPlayerId == 0))) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_PLAYER_GIVEAWAY);
+        }
 
-        // Don de points
-        $isGiveawayValid = $isCreation || (is_numeric($giveaway) && is_numeric($giveawayPlayerId) && (($giveaway > 0 && $giveawayPlayerId !== 0) || ($giveaway == 0 && $giveawayPlayerId == 0)));
+        // Edition terminée (sauf SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value) {
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($playerId, 'players');
 
-        // Date de fin édition
-        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
-
-        return $name !== ''
-            && $isPointsValid
-            && $isGiveawayValid
-            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate));
+            if ($endDate === null || new \DateTimeImmutable() > $endDate) {
+                throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
+            }
+        }
     }
 }

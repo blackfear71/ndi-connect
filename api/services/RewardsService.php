@@ -64,11 +64,11 @@ class RewardsService
     /**
      * Récupération du nombre d'attributions d'un cadeau
      */
-    public function getRewardCount(int $giftId): ?int
+    public function getRewardCount(int $giftId): int
     {
         // Contrôle des données
         if (!$giftId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         return $this->rewardsRepository->getRewardCount($giftId);
@@ -79,40 +79,38 @@ class RewardsService
      */
     public function getPlayerRewards(int $playerId): array
     {
-        return $this->rewardsRepository->getPlayerRewards($playerId);
+        // Contrôle des données
+        if (!$playerId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Lecture des récompenses
+        $rewards = $this->rewardsRepository->getPlayerRewards($playerId);
+
+        // Récupération des données récompenses
+        return array_map(fn($reward) => new RewardOutputDTO(
+            id: $reward->id,
+            giftId: $reward->giftId,
+            giftName: $reward->giftName
+        ), $rewards);
     }
 
     /**
      * Attribution d'un cadeau
      */
-    public function createReward(int $giftId, int $playerId, UserOutputDTO $user): ?bool
+    public function createReward(int $giftId, int $playerId, UserOutputDTO $user): void
     {
-        // Contrôle des données
-        if (!$giftId || !$playerId) {
-            return null;
-        }
-
         // Récupération du cadeau
         $gift = $this->getGiftsService()->getGift($giftId);
-
-        if (!$gift) {
-            return null;
-        }
 
         // Récupération du participant
         $player = $this->getPlayersService()->getPlayer($playerId);
 
-        if (!$player) {
-            return null;
-        }
-
         // Récupération du nombre d'attributions du cadeau
         $rewardCount = $this->getRewardCount($giftId);
 
-        // Contrôle attribution autorisée
-        if ($rewardCount === null || !$this->isValidRewardData($gift, $rewardCount, $player, $user->level, $gift->id, 'gifts')) {
-            return null;
-        }
+        // Contrôle des données
+        $this->isValidCreateRewardData($gift, $player, $rewardCount, $user->level);
 
         // Construction de l'objet
         $reward = new Reward(
@@ -124,55 +122,61 @@ class RewardsService
 
         // Insertion
         if (!$this->rewardsRepository->createReward($reward)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
         }
 
         // Suppression des points du participant
-        return $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $user->id);
+        $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $user->id);
     }
 
     /**
      * Suppression logique de l'attribution d'un cadeau
      */
-    public function deleteReward(int $rewardId, int $userId): ?bool
+    public function deleteReward(int $rewardId, int $userId): void
     {
         // Contrôle des données
         if (!$rewardId) {
-            return null;
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
         // Récupération de l'attribution du cadeau du participant
         $reward = $this->rewardsRepository->getReward($rewardId);
 
         if (!$reward) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_REWARD_NOT_FOUND);
         }
 
         // Suppression logique de l'attribution
         if (!$this->rewardsRepository->deleteReward($rewardId, $userId)) {
-            return null;
+            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
         }
 
         // Récupération des points pour le participant
-        return $this->getPlayersService()->updatePlayerPoints($reward->playerId, $reward->points, $userId);
+        $this->getPlayersService()->updatePlayerPoints($reward->playerId, $reward->points, $userId);
     }
 
     /**
      * Contrôle de cohérence des données
      */
-    private function isValidRewardData(GiftOutputDTO $gift, int $rewardCount, PlayerOutputDTO $player, int $level, int $id, string $typeId): bool
+    private function isValidCreateRewardData(GiftOutputDTO $gift, PlayerOutputDTO $player, int $rewardCount, int $level): void
     {
-        // Contrôle quantité restante
-        $remainingQuantity = $gift->quantity - $rewardCount;
+        // Quantité restante positive
+        if ($gift->quantity - $rewardCount <= 0) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_QUANTITY);
+        }
 
-        // Contrôle points participant
-        $enoughPoints = $player->points >= $gift->value;
+        // Points participant suffisants
+        if ($player->points < $gift->value) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_GIFT_POINTS);
+        }
 
-        // Date de fin édition
-        $endDate = $level !== EnumUserRole::SUPERADMIN->value ? $this->getEditionsService()->getEditionEndDateByType($id, $typeId) : null;
+        // Edition terminée (sauf SUPERADMIN)
+        if ($level !== EnumUserRole::SUPERADMIN->value) {
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($gift->id, 'gifts');
 
-        return $remainingQuantity > 0
-            && $enoughPoints
-            && ($level === EnumUserRole::SUPERADMIN->value || ($level === EnumUserRole::ADMIN->value && $endDate !== null && new \DateTimeImmutable() <= $endDate));
+            if ($endDate === null || new \DateTimeImmutable() > $endDate) {
+                throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
+            }
+        }
     }
 }

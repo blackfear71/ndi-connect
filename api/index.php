@@ -1,5 +1,13 @@
 <?php
 // Imports
+require_once __DIR__ . '/enums/EnumAction.php';
+require_once __DIR__ . '/enums/EnumSseEvent.php';
+require_once __DIR__ . '/enums/EnumUserRole.php';
+
+require_once __DIR__ . '/models/dtos/ApiResponseDTO.php';
+
+require_once __DIR__ . '/core/exceptions/WarningException.php';
+
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
 
@@ -10,14 +18,12 @@ require_once __DIR__ . '/core/helpers/LoggerHelper.php';
 require_once __DIR__ . '/core/helpers/MessageHelper.php';
 require_once __DIR__ . '/core/helpers/ResponseHelper.php';
 
-require_once __DIR__ . '/models/dtos/ApiResponseDTO.php';
-
 // Connexion BDD
 try {
     $database = new Database();
     $db = $database->getConnection();
 } catch (Exception $e) {
-    ResponseHelper::error(MessageHelper::ERR_DB_CONNECTION);
+    ResponseHelper::error(MessageHelper::ERR_DB_CONNECTION, 'Index');
     exit;
 }
 
@@ -49,7 +55,7 @@ if (str_starts_with($uri, '/sse')) {
     header("Access-Control-Allow-Credentials: true");
 } elseif (!empty($origin)) {
     // Blocage des origines non autorisées
-    ResponseHelper::error(MessageHelper::ERR_ORIGIN_NOT_ALLOWED, [$origin]);
+    ResponseHelper::error(MessageHelper::ERR_ORIGIN_NOT_ALLOWED, 'Index', '', [$origin]);
     exit;
 }
 
@@ -77,7 +83,7 @@ if (str_starts_with($uri, '/editions')) {
 } elseif (str_starts_with($uri, '/users')) {
     require_once __DIR__ . '/routes/users.php';
 } else {
-    ResponseHelper::error(MessageHelper::ERR_UNKNOWN_ENDPOINT, [$uri]);
+    ResponseHelper::error(MessageHelper::ERR_UNKNOWN_ENDPOINT, 'Index', '', [$uri]);
     exit;
 }
 
