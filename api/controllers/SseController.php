@@ -12,7 +12,6 @@ class SseController
     private SseService $sseService;
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
-    private ?UsersService $usersService = null;
 
     /**
      * Constructeur par défaut
@@ -48,25 +47,14 @@ class SseController
     }
 
     /**
-     * Instancie le UsersService si besoin
-     */
-    private function getUsersService(): UsersService
-    {
-        if ($this->usersService === null) {
-            $this->usersService = new UsersService($this->db);
-        }
-
-        return $this->usersService;
-    }
-
-    /**
      * Flux SSE de récupération des participants et cadeaux d'une édition
      */
     public function getSseEdition(int $editionId): void
     {
         // Contrôle id renseigné
-        if ($editionId === null) {
-            echo $this->sseService->getSseEvent('error', 'ID d\'édition manquant');
+        if (!$editionId) {
+            ResponseHelper::sse2(MessageHelper::ERR_INVALID_ID, self::controllerName, __FUNCTION__, [$editionId]);
+            echo $this->sseService->getSseEvent(EnumSseEvent::ERROR->value, 'Identifiant édition manquant');
             flush();
             return;
         }
@@ -75,7 +63,7 @@ class SseController
         $this->sseService->initializeSse();
 
         // Envoi initial
-        echo $this->sseService->getSseEvent('is_initialized', 'ok');
+        echo $this->sseService->getSseEvent(EnumSseEvent::IS_INITIALIZED->value, 'ok');
         flush();
 
         $lastGiftsHash = null;
@@ -94,51 +82,29 @@ class SseController
 
                 // Fermeture propre avant le timeout Nginx du serveur (60s)
                 if ((time() - $startTime) >= $maxDuration) {
-                    echo $this->sseService->getSseEvent('is_closing', 'ok');
+                    echo $this->sseService->getSseEvent(EnumSseEvent::IS_CLOSING->value, 'ok');
                     flush();
                     break;
                 }
 
                 // Evènement de maintien de la connexion
-                echo $this->sseService->getSseEvent('is_alive', 'ok');
+                echo $this->sseService->getSseEvent(EnumSseEvent::IS_ALIVE->value, 'ok');
                 flush();
 
                 // Evènement de récupération des cadeaux
                 try {
-                    $gifts = $this->getGiftsService()->getEditionGifts($editionId);
-
-                    if ($gifts !== null) {
-                        $newGiftsHash = md5(json_encode($gifts));
-
-                        if ($newGiftsHash !== $lastGiftsHash) {
-                            $lastGiftsHash = $newGiftsHash;
-
-                            echo $this->sseService->getSseEvent('get_gifts', $gifts);
-                            flush();
-                        }
-                    }
+                    $this->pollGifts($editionId, $lastGiftsHash);
                 } catch (Exception $e) {
                     // Échec de la lecture
-                    ResponseHelper::sse(MessageHelper::ERR_SSE_GIFTS, [__FUNCTION__, self::controllerName, $e->getMessage()]);
+                    ResponseHelper::sse2(MessageHelper::ERR_SSE_GIFTS, self::controllerName, __FUNCTION__, [$editionId]);
                 }
 
                 // Evènement de récupération des participants
                 try {
-                    $players = $this->getPlayersService()->getEditionPlayers($editionId);
-
-                    if ($players !== null) {
-                        $newPlayersHash = md5(json_encode($players));
-
-                        if ($newPlayersHash !== $lastPlayersHash) {
-                            $lastPlayersHash = $newPlayersHash;
-
-                            echo $this->sseService->getSseEvent('get_players', $players);
-                            flush();
-                        }
-                    }
+                    $this->pollPlayers($editionId, $lastPlayersHash);
                 } catch (Exception $e) {
                     // Échec de la lecture
-                    ResponseHelper::sse(MessageHelper::ERR_SSE_PLAYERS, [__FUNCTION__, self::controllerName, $e->getMessage()]);
+                    ResponseHelper::sse2(MessageHelper::ERR_SSE_PLAYERS, self::controllerName, __FUNCTION__, [$editionId]);
                 }
 
                 // Pause avant la prochaine boucle
@@ -146,11 +112,49 @@ class SseController
             }
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::sse(MessageHelper::ERR_UNKNOWN_ERROR, [__FUNCTION__, self::controllerName, $e->getMessage()]);
+            ResponseHelper::sse2(MessageHelper::ERR_UNKNOWN_ERROR, self::controllerName, __FUNCTION__, [$editionId]);
 
             // Message d'erreur
-            echo $this->sseService->getSseEvent('fatal_error', 'Exception levée SSE');
+            echo $this->sseService->getSseEvent(EnumSseEvent::ERROR->value, 'Exception levée SSE');
             flush();
+        }
+    }
+
+    /**
+     * Gestion des données cadeaux
+     */
+    private function pollGifts(int $editionId, ?string &$lastHash): void
+    {
+        $gifts = $this->getGiftsService()->getEditionGifts($editionId);
+
+        if ($gifts !== null) {
+            $newHash = md5(json_encode($gifts));
+
+            if ($newHash !== $lastHash) {
+                $lastHash = $newHash;
+
+                echo $this->sseService->getSseEvent(EnumSseEvent::GET_GIFTS->value, $gifts);
+                flush();
+            }
+        }
+    }
+
+    /**
+     * Gestion des données participants
+     */
+    private function pollPlayers(int $editionId, ?string &$lastHash): void
+    {
+        $players = $this->getPlayersService()->getEditionPlayers($editionId);
+
+        if ($players !== null) {
+            $newHash = md5(json_encode($players));
+
+            if ($newHash !== $lastHash) {
+                $lastHash = $newHash;
+
+                echo $this->sseService->getSseEvent(EnumSseEvent::GET_PLAYERS->value, $players);
+                flush();
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ class MessageHelper
     // TODO : transférer les nouveaux codes dans le messageHelper front
     // TODO : nettoyer les "Exception levée"
     // TODO : il y a pleins d'erreurs qui ne sont plus utilisées, ex : ERR_GIFTS_NOT_FOUND
+    // TODO : vérifier que chaque erreur est dans le bon groupe
     // TODO : tout tester dont les logs
 
     /*****************/
@@ -26,10 +27,12 @@ class MessageHelper
     const ERR_INVALID_FILE_FORMAT    = 'ERR_INVALID_FILE_FORMAT';
     const ERR_INVALID_ID             = 'ERR_INVALID_ID';
     const ERR_INVALID_IMAGE          = 'ERR_INVALID_IMAGE';
+    const ERR_INVALID_LEVEL          = 'ERR_INVALID_LEVEL';
     const ERR_INVALID_LOCATION       = 'ERR_INVALID_LOCATION';
     const ERR_INVALID_NAME           = 'ERR_INVALID_NAME';
     const ERR_INVALID_PARAMETER      = 'ERR_INVALID_PARAMETER';
     const ERR_INVALID_PASSWORD       = 'ERR_INVALID_PASSWORD';
+    const ERR_INVALID_PASSWORD_MATCH = 'ERR_INVALID_PASSWORD_MATCH';
     const ERR_INVALID_TIME           = 'ERR_INVALID_TIME';
     const ERR_INVALID_TOKEN          = 'ERR_INVALID_TOKEN';
     const ERR_MISSING_PARAMS         = 'ERR_MISSING_PARAMS';
@@ -70,6 +73,7 @@ class MessageHelper
     const MSG_REWARD_SUCCESS = 'MSG_REWARD_SUCCESS';
 
     // Utilisateurs
+    const ERR_INVALID_ID_MATCH       = 'ERR_INVALID_ID_MATCH';
     const ERR_INVALID_AUTH           = 'ERR_INVALID_AUTH';
     const ERR_LOGIN_FAILED           = 'ERR_LOGIN_FAILED';
     const ERR_LOGOUT_FAILED          = 'ERR_LOGOUT_FAILED';
@@ -111,10 +115,12 @@ class MessageHelper
         self::ERR_INVALID_FILE_FORMAT    => 400,
         self::ERR_INVALID_ID             => 400,
         self::ERR_INVALID_IMAGE          => 400,
+        self::ERR_INVALID_LEVEL          => 400,
         self::ERR_INVALID_LOCATION       => 400,
         self::ERR_INVALID_NAME           => 400,
         self::ERR_INVALID_PARAMETER      => 400,
         self::ERR_INVALID_PASSWORD       => 400,
+        self::ERR_INVALID_PASSWORD_MATCH => 400,
         self::ERR_INVALID_TIME           => 400,
         self::ERR_INVALID_TOKEN          => 401,
         self::ERR_MISSING_PARAMS         => 400,
@@ -150,6 +156,7 @@ class MessageHelper
         self::ERR_REWARD_POINTS    => 400,
 
         // Utilisateurs
+        self::ERR_INVALID_ID_MATCH       => 400,
         self::ERR_INVALID_AUTH           => 401,
         self::ERR_LOGIN_FAILED           => 401,
         self::ERR_LOGOUT_FAILED          => 401,
@@ -189,9 +196,11 @@ class MessageHelper
         self::ERR_INVALID_ID             => 'L\'identifiant est obligatoire',
         self::ERR_INVALID_IMAGE          => 'Fichier invalide',
         self::ERR_INVALID_LOCATION       => 'Le lieu est obligatoire',
+        self::ERR_INVALID_LEVEL          => 'Le niveau est invalide',
         self::ERR_INVALID_NAME           => 'Le nom est obligatoire',
         self::ERR_INVALID_PARAMETER      => 'Paramètre d\'entrée invalide',
         self::ERR_INVALID_PASSWORD       => 'Le mot de passe est obligatoire',
+        self::ERR_INVALID_PASSWORD_MATCH => 'Les mots de passe ne correspondent pas',
         self::ERR_INVALID_TIME           => 'Le format de l\'heure est invalide',
         self::ERR_INVALID_TOKEN          => 'Le token de connexion est invalide',
         self::ERR_MISSING_PARAMS         => 'Paramètres manquants',
@@ -228,6 +237,7 @@ class MessageHelper
 
         // Utilisateurs
         self::ERR_INVALID_AUTH           => 'Authentification invalide',
+        self::ERR_INVALID_ID_MATCH       => 'Un utilisateur ne peut pas se supprimer',
         self::ERR_LOGIN_FAILED           => 'Échec d\'authentification',
         self::ERR_LOGOUT_FAILED          => 'Erreur lors de la déconnexion',
         self::ERR_RESET_PASSWORD_FAILED  => 'Erreur lors de la réinitialisation du mot de passe',

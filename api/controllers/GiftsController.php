@@ -1,7 +1,5 @@
 <?php
 // Imports
-require_once 'enums/EnumUserRole.php';
-
 require_once 'models/dtos/GiftInputDTO.php';
 
 require_once 'services/GiftsService.php';

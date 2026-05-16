@@ -1,5 +1,11 @@
 <?php
 // Imports
+require_once 'enums/EnumAction.php';
+require_once 'enums/EnumSseEvent.php';
+require_once 'enums/EnumUserRole.php';
+
+require_once __DIR__ . '/core/exceptions/WarningException.php';
+
 require_once __DIR__ . '/core/functions/Database.php';
 require_once __DIR__ . '/core/functions/Router.php';
 

@@ -87,6 +87,9 @@ const SseProvider = ({ children }) => {
             source.close();
         };
 
+        // Evènement d'erreur
+        source.addEventListener('error', () => {});
+
         // Evènement d'initialisation de la connexion SSE
         source.addEventListener('is_initialized', () => {});
 
