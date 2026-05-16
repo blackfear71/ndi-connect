@@ -1,8 +1,10 @@
 <?php
 // Imports
-require_once 'enums/EnumAction.php';
-require_once 'enums/EnumSseEvent.php';
-require_once 'enums/EnumUserRole.php';
+require_once __DIR__ . '/enums/EnumAction.php';
+require_once __DIR__ . '/enums/EnumSseEvent.php';
+require_once __DIR__ . '/enums/EnumUserRole.php';
+
+require_once __DIR__ . '/models/dtos/ApiResponseDTO.php';
 
 require_once __DIR__ . '/core/exceptions/WarningException.php';
 
@@ -15,8 +17,6 @@ require_once __DIR__ . '/core/helpers/FileHelper.php';
 require_once __DIR__ . '/core/helpers/LoggerHelper.php';
 require_once __DIR__ . '/core/helpers/MessageHelper.php';
 require_once __DIR__ . '/core/helpers/ResponseHelper.php';
-
-require_once __DIR__ . '/models/dtos/ApiResponseDTO.php';
 
 // Connexion BDD
 try {

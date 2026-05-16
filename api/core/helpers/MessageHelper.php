@@ -114,13 +114,13 @@ class MessageHelper
         self::ERR_UPLOAD_FAILED          => ['http' => 400, 'message' => 'Envoi échoué dans le dossier de destination'],
         self::ERR_WEBP_CONVERSION_FAILED => ['http' => 400, 'message' => 'Conversion WebP échouée'],
 
-        self::MSG_CREATION_SUCCESS       => ['http' => 200, 'message' => 'Création effectuée avec succès'],
-        self::MSG_DELETION_SUCCESS       => ['http' => 200, 'message' => 'Suppression effectuée avec succès'],
+        self::MSG_CREATION_SUCCESS       => ['http' => 201, 'message' => 'Création effectuée avec succès'],
+        self::MSG_DELETION_SUCCESS       => ['http' => 204, 'message' => 'Suppression effectuée avec succès'],
         self::MSG_UPDATE_SUCCESS         => ['http' => 200, 'message' => 'Modification effectuée avec succès'],
 
         // Editions
         self::ERR_EDITION_NOT_FOUND  => ['http' => 404, 'message' => 'Erreur lors de la récupération de l\'édition'],
-        self::ERR_EDITION_FINISHED   => ['http' => 403, 'message' => 'Edition terminée ou introuvable'],
+        self::ERR_EDITION_FINISHED   => ['http' => 422, 'message' => 'Edition terminée ou introuvable'],
         self::ERR_INVALID_DATE       => ['http' => 400, 'message' => 'Le format de la date est invalide'],
         self::ERR_INVALID_END_TIME   => ['http' => 400, 'message' => 'Le format de l\'heure de fin est invalide'],
         self::ERR_INVALID_LOCATION   => ['http' => 400, 'message' => 'Le lieu est obligatoire'],
@@ -129,16 +129,16 @@ class MessageHelper
         // Participants
         self::ERR_INVALID_POINTS   => ['http' => 400, 'message' => 'Le nombre de points doit être supérieur ou égal à 0'],
         self::ERR_PLAYER_GIVEAWAY  => ['http' => 400, 'message' => 'Le don de points n\'est pas correctement renseigné'],
-        self::ERR_PLAYER_NOT_FOUND => ['http' => 400, 'message' => 'Erreur lors de la récupération du participant'],
+        self::ERR_PLAYER_NOT_FOUND => ['http' => 404, 'message' => 'Erreur lors de la récupération du participant'],
 
         // Cadeaux
-        self::ERR_GIFT_NOT_FOUND       => ['http' => 400, 'message' => 'Erreur lors de la récupération du cadeau'],
+        self::ERR_GIFT_NOT_FOUND       => ['http' => 404, 'message' => 'Erreur lors de la récupération du cadeau'],
         self::ERR_INVALID_VALUE        => ['http' => 400, 'message' => 'La valeur doit être supérieure à 0'],
         self::ERR_QUANTITY_ATTRIBUTION => ['http' => 400, 'message' => 'La quantité doit être supérieure ou égale au nombre de cadeaux déjà attribués'],
 
         // Récompenses
         self::ERR_INVALID_GIFT_POINTS => ['http' => 400, 'message' => 'Le nombre de points est insuffisant pour le cadeau'],
-        self::ERR_REWARD_NOT_FOUND    => ['http' => 400, 'message' => 'Erreur lors de la récupération de la récompense'],
+        self::ERR_REWARD_NOT_FOUND    => ['http' => 404, 'message' => 'Erreur lors de la récupération de la récompense'],
 
         self::MSG_REWARD_SUCCESS      => ['http' => 200, 'message' => 'Récompense attribuée avec succès'],
 
@@ -154,8 +154,9 @@ class MessageHelper
         self::ERR_RESET_PASSWORD_FAILED  => ['http' => 400, 'message' => 'Erreur lors de la réinitialisation du mot de passe'],
         self::ERR_UNAUTHORIZED_ACTION    => ['http' => 403, 'message' => 'Action non autorisée'],
         self::ERR_UPDATE_PASSWORD_FAILED => ['http' => 400, 'message' => 'Erreur lors de la modification du mot de passe'],
-        self::ERR_USER_NOT_FOUND         => ['http' => 400, 'message' => 'Erreur lors de la récupération de l\'utilisateur'],
+        self::ERR_USER_NOT_FOUND         => ['http' => 404, 'message' => 'Erreur lors de la récupération de l\'utilisateur'],
         self::ERR_USER_PASSWORD_INVALID  => ['http' => 401, 'message' => 'Le mot de passe saisi est incorrect'],
+
         self::WRN_LAST_ADMIN             => ['http' => 403, 'message' => 'Il doit rester au moins un Super Administrateur actif'],
         self::WRN_USER_EXISTS            => ['http' => 409, 'message' => 'L\'identifiant existe déjà'],
 
