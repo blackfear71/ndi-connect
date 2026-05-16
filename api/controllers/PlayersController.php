@@ -46,7 +46,7 @@ class PlayersController
             ResponseHelper::success($players);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 
@@ -69,7 +69,7 @@ class PlayersController
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data]);
         }
     }
 
@@ -92,7 +92,7 @@ class PlayersController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId, $data]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId, $data]);
         }
     }
 
@@ -112,7 +112,7 @@ class PlayersController
             ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$playerId]);
         }
     }
 }

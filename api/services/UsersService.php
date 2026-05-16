@@ -124,8 +124,6 @@ class UsersService
         }
     }
 
-    // TODO : reprendre ici
-
     /**
      * Insertion d'un enregistrement
      */

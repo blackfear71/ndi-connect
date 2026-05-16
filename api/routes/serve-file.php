@@ -11,7 +11,8 @@ function serveFile(): void
         // Récupération du fichier
         FileHelper::serveFile($destination, $fileName);
     } catch (Exception $e) {
-        ResponseHelper::error2($e->getMessage(), 'serve-file', __FUNCTION__, [$destination, $fileName]);
+        // Exception
+        ResponseHelper::error($e->getMessage(), 'serve-file', __FUNCTION__, [$destination, $fileName]);
     }
 }
 

@@ -53,7 +53,7 @@ class SseController
     {
         // Contrôle id renseigné
         if (!$editionId) {
-            ResponseHelper::sse2(MessageHelper::ERR_INVALID_ID, self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::sse(MessageHelper::ERR_INVALID_ID, self::controllerName, __FUNCTION__, [$editionId]);
             echo $this->sseService->getSseEvent(EnumSseEvent::ERROR->value, 'Identifiant édition manquant');
             flush();
             return;
@@ -95,16 +95,14 @@ class SseController
                 try {
                     $this->pollGifts($editionId, $lastGiftsHash);
                 } catch (Exception $e) {
-                    // Échec de la lecture
-                    ResponseHelper::sse2(MessageHelper::ERR_SSE_GIFTS, self::controllerName, __FUNCTION__, [$editionId]);
+                    ResponseHelper::sse(MessageHelper::ERR_SSE_GIFTS, self::controllerName, __FUNCTION__, [$editionId]);
                 }
 
                 // Evènement de récupération des participants
                 try {
                     $this->pollPlayers($editionId, $lastPlayersHash);
                 } catch (Exception $e) {
-                    // Échec de la lecture
-                    ResponseHelper::sse2(MessageHelper::ERR_SSE_PLAYERS, self::controllerName, __FUNCTION__, [$editionId]);
+                    ResponseHelper::sse(MessageHelper::ERR_SSE_PLAYERS, self::controllerName, __FUNCTION__, [$editionId]);
                 }
 
                 // Pause avant la prochaine boucle
@@ -112,7 +110,7 @@ class SseController
             }
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::sse2(MessageHelper::ERR_UNKNOWN_ERROR, self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::sse(MessageHelper::ERR_UNKNOWN_ERROR, self::controllerName, __FUNCTION__, [$editionId]);
 
             // Message d'erreur
             echo $this->sseService->getSseEvent(EnumSseEvent::ERROR->value, 'Exception levée SSE');
@@ -125,8 +123,10 @@ class SseController
      */
     private function pollGifts(int $editionId, ?string &$lastHash): void
     {
+        // Lecture des cadeaux
         $gifts = $this->getGiftsService()->getEditionGifts($editionId);
 
+        // Envoi du message
         if ($gifts !== null) {
             $newHash = md5(json_encode($gifts));
 
@@ -144,8 +144,10 @@ class SseController
      */
     private function pollPlayers(int $editionId, ?string &$lastHash): void
     {
+        // Lecture des participants
         $players = $this->getPlayersService()->getEditionPlayers($editionId);
 
+        // Envoi du message
         if ($players !== null) {
             $newHash = md5(json_encode($players));
 

@@ -20,8 +20,6 @@ class UsersController
         $this->usersService = new UsersService($db);
     }
 
-    // TODO : dans ce fichier il y a pleins d'adaptations à faire car on gère des retours
-
     /**
      * Contrôle authentification
      */
@@ -40,7 +38,7 @@ class UsersController
                 ResponseHelper::success();
             } else {
                 // Échec de l'authentification
-                ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$initLoad]);
+                ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$initLoad]);
             }
         }
     }
@@ -61,7 +59,7 @@ class UsersController
             ResponseHelper::success($users);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, []);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, []);
         }
     }
 
@@ -94,7 +92,7 @@ class UsersController
             ResponseHelper::success($user, MessageHelper::MSG_LOGIN_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login']]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login']]);
         }
     }
 
@@ -127,7 +125,7 @@ class UsersController
             ResponseHelper::success(null, MessageHelper::MSG_LOGOUT_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, []);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, []);
         }
     }
 
@@ -151,10 +149,10 @@ class UsersController
         } catch (WarningException $e) {
             // TODO : à bien tester
             // Alerte
-            ResponseHelper::warning2($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login'], $data['level']]);
+            ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login'], $data['level']]);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login'], $data['level']]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login'], $data['level']]);
         }
     }
 
@@ -177,7 +175,7 @@ class UsersController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, []);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, []);
         }
     }
 
@@ -197,7 +195,7 @@ class UsersController
             ResponseHelper::info($newPassword, MessageHelper::MSG_RESET_PASSWORD_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
         }
     }
 
@@ -221,10 +219,10 @@ class UsersController
         } catch (WarningException $e) {
             // TODO : à bien tester
             // Alerte
-            ResponseHelper::warning2($e->getMessage(), self::controllerName, __FUNCTION__, [$userId, json_encode($data)]);
+            ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$userId, json_encode($data)]);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$userId, json_encode($data)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$userId, json_encode($data)]);
         }
     }
 
@@ -245,10 +243,10 @@ class UsersController
         } catch (WarningException $e) {
             // TODO : à bien tester
             // Alerte
-            ResponseHelper::warning2($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
+            ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
         }
     }
 }

@@ -81,7 +81,7 @@ class Router
         }
 
         // Si aucune route ne correspond
-        ResponseHelper::error(MessageHelper::ERR_ROUTE_NOT_FOUND, [$uri]);
+        ResponseHelper::error(MessageHelper::ERR_ROUTE_NOT_FOUND, 'Router', '', [$method, $uri]);
 
         return null;
     }

@@ -46,7 +46,7 @@ class GiftsController
             ResponseHelper::success($gifts);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 
@@ -69,9 +69,7 @@ class GiftsController
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            // TODO : renommer error2 en error
-            // TODO : il va falloir adapter tous les ResponseHelper::
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, json_encode($data)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, json_encode($data)]);
         }
     }
 
@@ -94,7 +92,7 @@ class GiftsController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId, json_encode($data)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId, json_encode($data)]);
         }
     }
 
@@ -114,7 +112,7 @@ class GiftsController
             ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId]);
         }
     }
 }

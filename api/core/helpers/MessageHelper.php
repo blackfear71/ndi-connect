@@ -1,12 +1,10 @@
 <?php
 class MessageHelper
 {
-    // TODO : Gérer un maximum d'erreurs via throw
-    // TODO : voir s'il est possible de tout réunir (code, http code et message) en un pour éviter les oublis
-    // TODO : transférer les nouveaux codes dans le messageHelper front
-    // TODO : nettoyer les "Exception levée"
+    // TODO : ici, voir s'il est possible de tout réunir (code, http code et message) en un pour éviter les oublis
     // TODO : il y a pleins d'erreurs qui ne sont plus utilisées, ex : ERR_GIFTS_NOT_FOUND
     // TODO : vérifier que chaque erreur est dans le bon groupe
+    // TODO : transférer les nouveaux codes dans le messageHelper front
     // TODO : tout tester dont les logs
 
     /*****************/
@@ -179,22 +177,21 @@ class MessageHelper
     /* Messages logs */
     /*****************/
     private static array $messages = [
-        // TODO : repasser sur les messages pour voir si les %s sont toujours utiles
         // Commun
         self::ERR_CREATION_FAILED        => 'Erreur lors de la création en base de données',
         self::ERR_CREATION_FOLDER_FAILED => 'Erreur lors de la création du dossier des images',
         self::ERR_CREATION_IMAGE_FAILED  => 'Erreur lors de la création de l\'image',
         self::ERR_DB_CONNECTION          => 'Connexion impossible à la base de données',
         self::ERR_DELETION_FAILED        => 'Erreur lors de la suppression en base de données',
-        self::ERR_DELETION_FILE_FAILED   => 'Erreur lors de la suppression du fichier',
+        self::ERR_DELETION_FILE_FAILED   => 'Erreur lors de la suppression du fichier sur le serveur',
         self::ERR_ENV_FILES_DIR_MISSING  => 'Dossier serveur introuvable dans le fichier d\'environnement',
-        self::ERR_FILE_NOT_FOUND         => 'Fichier introuvable',
-        self::ERR_FILE_TOO_LARGE         => 'Fichier trop volumineux',
-        self::ERR_INVALID_FILE           => 'Fichier non renseigné',
+        self::ERR_FILE_NOT_FOUND         => 'Le fichier est introuvable',
+        self::ERR_FILE_TOO_LARGE         => 'Le fichier est trop volumineux',
+        self::ERR_INVALID_FILE           => 'Le fichier est invalide',
         self::ERR_INVALID_DATE           => 'Le format de la date est invalide',
-        self::ERR_INVALID_FILE_FORMAT    => 'Type MIME invalide',
+        self::ERR_INVALID_FILE_FORMAT    => 'Le type MIME est invalide',
         self::ERR_INVALID_ID             => 'L\'identifiant est obligatoire',
-        self::ERR_INVALID_IMAGE          => 'Fichier invalide',
+        self::ERR_INVALID_IMAGE          => 'L\'image est invalide',
         self::ERR_INVALID_LOCATION       => 'Le lieu est obligatoire',
         self::ERR_INVALID_LEVEL          => 'Le niveau est invalide',
         self::ERR_INVALID_NAME           => 'Le nom est obligatoire',
@@ -255,25 +252,20 @@ class MessageHelper
         self::ERR_SSE_PLAYERS => 'Erreur SSE lors de la récupération des participants'
     ];
 
-    // TODO : à supprimer
     /**
      * Récupère le message avec ses arguments
      */
-    public static function message_old(string $code, mixed ...$args): string
-    {
-        $template = self::$messages[$code ?? self::ERR_UNKNOWN_ERROR];
-        return empty($args) ? $template : sprintf($template, ...$args);
-    }
-
-    /**
-     * Récupère le message avec ses arguments
-     */
-    public static function message_new(string $code, string $class, string $function, array $datas): string
+    public static function message(string $code, string $class, string $function, array $data): string
     {
         $template = self::$messages[$code] ?? self::$messages[self::ERR_UNKNOWN_ERROR];
-        $context = count($datas) ? ' : [' . implode(', ', $datas) . ']' : '';
+        $context = count($data) ? ' : [' . implode(', ', $data) . ']' : '';
+        $location = match (true) {
+            $class && $function => " [{$class} > {$function}]",
+            $class              => " [{$class}]",
+            default             => '',
+        };
 
-        return sprintf('[%s] [%s > %s] %s%s', $code, $class, $function, $template, $context);
+        return sprintf('[%s]%s %s%s', $code, $location, $template, $context);
     }
 
     /**

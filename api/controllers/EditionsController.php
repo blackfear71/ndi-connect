@@ -46,7 +46,7 @@ class EditionsController
             ResponseHelper::success($editions);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, []);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, []);
         }
     }
 
@@ -63,7 +63,7 @@ class EditionsController
             ResponseHelper::success($edition);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 
@@ -80,7 +80,7 @@ class EditionsController
             ResponseHelper::success($editions);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$search]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$search]);
         }
     }
 
@@ -103,7 +103,7 @@ class EditionsController
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$data, json_encode($file)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$data, json_encode($file)]);
         }
     }
 
@@ -126,7 +126,7 @@ class EditionsController
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data, json_encode($file)]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId, $data, json_encode($file)]);
         }
     }
 
@@ -146,7 +146,7 @@ class EditionsController
             ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$editionId]);
         }
     }
 }

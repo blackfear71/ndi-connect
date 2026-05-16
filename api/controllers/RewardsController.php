@@ -47,7 +47,7 @@ class RewardsController
             ResponseHelper::success(null, MessageHelper::MSG_REWARD_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId, $playerId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$giftId, $playerId]);
         }
     }
 
@@ -67,7 +67,7 @@ class RewardsController
             ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (Exception $e) {
             // Exception
-            ResponseHelper::error2($e->getMessage(), self::controllerName, __FUNCTION__, [$rewardId]);
+            ResponseHelper::error($e->getMessage(), self::controllerName, __FUNCTION__, [$rewardId]);
         }
     }
 }
