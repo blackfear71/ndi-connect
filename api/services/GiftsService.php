@@ -199,12 +199,12 @@ class GiftsService
 
         // Valeur positive
         if ($data->value <= 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_VALUE);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_VALUE);
         }
 
         // Quantité positive
         if ($data->quantity <= 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_QUANTITY);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_QUANTITY);
         }
 
         // Edition terminée (sauf SUPERADMIN)
@@ -234,14 +234,14 @@ class GiftsService
 
         // Valeur positive
         if ($data->value <= 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_VALUE);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_VALUE);
         }
 
         // Nombre d'attributions du cadeau
         $rewardCount = $this->getRewardsService()->getRewardCount($giftId);
 
         if ($data->quantity < $rewardCount) {
-            throw new \RuntimeException(MessageHelper::ERR_GIFT_REWARD_COUNT);
+            throw new \RuntimeException(MessageHelper::ERR_QUANTITY_ATTRIBUTION);
         }
 
         // Edition terminée (sauf SUPERADMIN)

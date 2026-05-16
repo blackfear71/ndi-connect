@@ -162,12 +162,12 @@ class RewardsService
     {
         // Quantité restante positive
         if ($gift->quantity - $rewardCount <= 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_POSITIVE_QUANTITY);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_QUANTITY);
         }
 
         // Points participant suffisants
         if ($player->points < $gift->value) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_REWARD_POINTS);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_GIFT_POINTS);
         }
 
         // Edition terminée (sauf SUPERADMIN)

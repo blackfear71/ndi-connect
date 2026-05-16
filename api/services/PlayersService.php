@@ -231,7 +231,7 @@ class PlayersService
 
         // Points positifs
         if ($data->points < 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_PLAYER_POINTS);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_POINTS);
         }
 
         // Edition terminée (sauf SUPERADMIN)
@@ -261,7 +261,7 @@ class PlayersService
 
         // Points positifs (ou SUPERADMIN)
         if ($level !== EnumUserRole::SUPERADMIN->value && $data->points < 0) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_PLAYER_POINTS);
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_POINTS);
         }
 
         // Don de points correctement renseigné

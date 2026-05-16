@@ -147,7 +147,6 @@ class UsersController
             // Succès
             ResponseHelper::success(null, MessageHelper::MSG_CREATION_SUCCESS);
         } catch (WarningException $e) {
-            // TODO : à bien tester
             // Alerte
             ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$data['login'], $data['level']]);
         } catch (Exception $e) {
@@ -217,7 +216,6 @@ class UsersController
             // Succès
             ResponseHelper::success(null, MessageHelper::MSG_UPDATE_SUCCESS);
         } catch (WarningException $e) {
-            // TODO : à bien tester
             // Alerte
             ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$userId, json_encode($data)]);
         } catch (Exception $e) {
@@ -241,7 +239,6 @@ class UsersController
             // Succès
             ResponseHelper::success(null, MessageHelper::MSG_DELETION_SUCCESS);
         } catch (WarningException $e) {
-            // TODO : à bien tester
             // Alerte
             ResponseHelper::warning($e->getMessage(), self::controllerName, __FUNCTION__, [$userId]);
         } catch (Exception $e) {

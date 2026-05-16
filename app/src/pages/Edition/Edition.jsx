@@ -156,7 +156,7 @@ const Edition = () => {
                 .typeError('errors.invalidQuantity')
                 .required('errors.invalidQuantity')
                 .min(0, 'errors.invalidQuantity')
-                .test('gift-reward-count', 'errors.invalidQuantityAttribution', (value) => !currentGift || value >= currentGift.rewardCount)
+                .test('gift-reward-count', 'errors.quantityAttribution', (value) => !currentGift || value >= currentGift.rewardCount)
         });
     }, [modalOptionsGift.giftId, gifts]);
 

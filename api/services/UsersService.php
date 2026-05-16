@@ -171,7 +171,7 @@ class UsersService
 
         // Modification
         if (!$this->usersRepository->updatePassword($user->id, $hash, $userId)) {
-            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+            throw new \RuntimeException(MessageHelper::ERR_UPDATE_PASSWORD_FAILED);
         }
     }
 
@@ -191,7 +191,7 @@ class UsersService
 
         // Modification
         if (!$this->usersRepository->updatePassword($userResetId, $hash, $userId)) {
-            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+            throw new \RuntimeException(MessageHelper::ERR_RESET_PASSWORD_FAILED);
         }
 
         return $newPassword;

@@ -265,9 +265,14 @@ class EditionsService
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_DATE);
         }
 
-        // Heures au bon format
-        if (!DataHelper::isValidDateFormat($data->startTime, 'H:i') || !DataHelper::isValidDateFormat($data->endTime, 'H:i')) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_TIME);
+        // Heure de début au bon format
+        if (!DataHelper::isValidDateFormat($data->startTime, 'H:i')) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_START_TIME);
+        }
+
+        // Heure de fin au bon format
+        if (!DataHelper::isValidDateFormat($data->endTime, 'H:i')) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_END_TIME);
         }
     }
 
