@@ -14,6 +14,7 @@ class ResponseHelper
         LoggerHelper::log($logMessage, 'ERROR');
 
         // Réponse
+        header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'error',
@@ -31,6 +32,7 @@ class ResponseHelper
         $httpCode = MessageHelper::httpCode($code, 200);
 
         // Réponse
+        header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'info',
@@ -60,6 +62,7 @@ class ResponseHelper
         $httpCode = MessageHelper::httpCode($code, 200);
 
         // Réponse
+        header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'success',
@@ -81,6 +84,7 @@ class ResponseHelper
         LoggerHelper::log($logMessage, 'WARNING');
 
         // Réponse
+        header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
             status: 'warning',

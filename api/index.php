@@ -40,6 +40,17 @@ $allowedOrigins = [
     'https://ndi-connect.ddns.net', // HTTPS
 ];
 
+// Headers de sécurité inconditionnels (sauf SSE)
+if (!str_starts_with($uri, '/sse')) {
+    header("X-Frame-Options: DENY");
+    header("X-Content-Type-Options: nosniff");
+    header("Referrer-Policy: strict-origin-when-cross-origin");
+    header("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()");
+    header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'");
+    header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+}
+
+// Headers CORS conditionnels selon l'origine
 if (str_starts_with($uri, '/sse')) {
     // CORS pour SSE (pas de contrôle sur l'origine pour le SSE)
     header("Access-Control-Allow-Origin: $origin");
