@@ -1,3 +1,7 @@
+# ===========================================================
+# SÉCURITÉ - Bloquer accès HTTP direct aux fichiers sensibles
+# ===========================================================
+
 # Protection directe Apache (sans dépendance à mod_rewrite)
 <FilesMatch "^\.env(\..+)?$">
     Require all denied
@@ -11,9 +15,13 @@
     Require all denied
 </FilesMatch>
 
+# ==================================
+# ROUTING - Redirige vers index.html
+# ==================================
 # Redirige vers index.html si pas de fichier réel ciblé
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    
     RewriteBase /
     RewriteRule ^index\.html$ - [L]
     RewriteCond %{REQUEST_FILENAME} !-f
