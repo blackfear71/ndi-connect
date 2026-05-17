@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { QRCodeSVG } from 'qrcode.react';
 import { Button } from 'react-bootstrap';
 import { CgSandClock } from 'react-icons/cg';
 import { FaFlagCheckered, FaScroll, FaTrashCan, FaWandMagicSparkles } from 'react-icons/fa6';
 import { IoInformationCircleOutline } from 'react-icons/io5';
+
+import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 
 import { ProgressCard, TableCard, TextCard } from '../../../components/ui';
 
@@ -139,6 +142,23 @@ const EditionAbout = ({ rights, edition, onOpen, onConfirm, isSubmitting }) => {
                     {edition.challenge && (
                         <TextCard icon={<FaFlagCheckered size={18} />} title={t('edition.challenge')} text={edition.challenge} />
                     )}
+
+                    {/* QR Code */}
+                    <div className="d-flex justify-content-center mt-3">
+                        <QRCodeSVG
+                            className="p-2 bg-white rounded"
+                            value={`${import.meta.env.VITE_APP_URL}/edition/${edition.id}`}
+                            size={150}
+                            level="Q"
+                            fgColor="#07224c"
+                            imageSettings={{
+                                src: ndiConnectLogo,
+                                width: 40,
+                                height: 40,
+                                excavate: true
+                            }}
+                        />
+                    </div>
                 </>
             )}
         </>

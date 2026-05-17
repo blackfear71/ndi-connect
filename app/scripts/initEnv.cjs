@@ -7,13 +7,15 @@ const envFiles = [
     {
         path: path.resolve('.env.development'),
         label: 'Front (dev)',
-        content: `VITE_API_URL=http://localhost/ndi-connect/api
+        content: `VITE_APP_URL=http://localhost:3000
+VITE_API_URL=http://localhost/ndi-connect/api
 `
     },
     {
         path: path.resolve('.env.production'),
         label: 'Front (prod)',
-        content: `VITE_API_URL=/api
+        content: `VITE_APP_URL=https://ndi-connect.ddns.net
+VITE_API_URL=/api
 `
     },
     {
