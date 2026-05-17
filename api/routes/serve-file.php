@@ -1,10 +1,10 @@
 <?php
+
 /**
  * Renvoie le fichier demandé
  */
-function serveFile(): void
-{
-    $destination = isset($_GET['destination']) ? basename(urldecode($_GET['destination'])) : null;
+$router->get('/serve-file/:destination', function ($params): void {
+    $destination = basename(urldecode($params['destination']));
     $fileName = isset($_GET['file']) ? basename(urldecode($_GET['file'])) : null;
 
     try {
@@ -12,8 +12,6 @@ function serveFile(): void
         FileHelper::serveFile($destination, $fileName);
     } catch (Exception $e) {
         // Exception
-        ResponseHelper::error($e->getMessage(), 'serve-file', __FUNCTION__, [$destination, $fileName]);
+        ResponseHelper::error($e->getMessage(), 'serve-file', 'serveFile', [$destination, $fileName]);
     }
-}
-
-serveFile();
+});

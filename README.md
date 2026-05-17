@@ -15,7 +15,7 @@ NDI-Connect est une application web permettant la gestion d'éditions, des joueu
 
 ```bash
 ndi-connect/
-├── api/                  # Back-end PHP (API)
+├── api/                   # Back-end PHP (API)
 │   ├── controllers/
 │   ├── core/
 │   │   ├── functions/
@@ -31,7 +31,7 @@ ndi-connect/
 │   ├── .env.production
 │   ├── .htaccess
 │   ├── index.php
-├── app/                  # Front-end React
+├── app/                   # Front-end React JS
 │   ├── build/
 │   ├── node_modules/
 │   ├── public/
@@ -67,11 +67,11 @@ ndi-connect/
 │   ├── package-lock.json
 │   ├── package.json
 │   ├── vite.config.js
-├── dist/                 # Dossier de déploiement
-├── files/                # Dossier des fichiers (images, logs...)
+├── dist/                  # Dossier de déploiement
+├── files/                 # Dossier des fichiers (images, logs...)
 ├── .gitattributes
 ├── .gitignore
-├── deploy.ps1            # Script de déploiement
+├── deploy.ps1             # Script de déploiement
 ├── README.md
 ```
 
