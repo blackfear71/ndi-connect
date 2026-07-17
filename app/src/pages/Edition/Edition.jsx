@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { forkJoin, of, switchMap } from 'rxjs';
+import { combineLatest, forkJoin, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
@@ -258,14 +258,19 @@ const Edition = () => {
      */
     useEffect(() => {
         const editionsService = new EditionsService();
+        const giftsService = new GiftsService();
+        const playersService = new PlayersService();
 
-        editionsService
-            .getEdition(id)
+        const subscriptionEdition = editionsService.getEdition(id);
+        const subscriptionGifts = giftsService.getEditionGifts(id);
+        const subscriptionPlayers = playersService.getEditionPlayers(id);
+
+        combineLatest([subscriptionEdition, subscriptionGifts, subscriptionPlayers])
             .pipe(
-                map((dataEdition) => {
-                    setEdition(dataEdition.response.data.edition);
-                    setGifts(processGiftsData(dataEdition.response.data.gifts));
-                    setPlayers(processPlayersData(dataEdition.response.data.players));
+                map(([dataEdition, dataGifts, dataPlayers]) => {
+                    setEdition(dataEdition.response.data);
+                    setGifts(processGiftsData(dataGifts.response.data));
+                    setPlayers(processPlayersData(dataPlayers.response.data));
                 }),
                 take(1),
                 catchError((err) => {
@@ -488,7 +493,7 @@ const Edition = () => {
                 switchMap(() => editionsService.getEdition(edition.id)),
                 map((newDataEdition) => {
                     openCloseEditionModal();
-                    setEdition(newDataEdition.response.data.edition);
+                    setEdition(newDataEdition.response.data);
                 }),
                 take(1),
                 catchError((err) => {

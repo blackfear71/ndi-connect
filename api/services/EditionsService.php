@@ -1,7 +1,6 @@
 <?php
 // Imports
 require_once 'models/dtos/EditionOutputDTO.php';
-require_once 'models/dtos/EditionResponseDTO.php';
 
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
@@ -70,7 +69,7 @@ class EditionsService
     /**
      * Lecture d'un enregistrement
      */
-    public function getEdition(int $editionId): EditionResponseDTO
+    public function getEdition(int $editionId): EditionOutputDTO
     {
         // Contrôle des données
         if (!$editionId) {
@@ -87,8 +86,8 @@ class EditionsService
         // Vérification image existante et génération URL
         $picture = $dataEdition->picture ? FileHelper::checkFile('images', $dataEdition->picture) : null;
 
-        // Formatage des données édition
-        $edition = new EditionOutputDTO(
+        // Récupération des données édition
+        return new EditionOutputDTO(
             id: $dataEdition->id,
             location: $dataEdition->location,
             startDate: $dataEdition->startDate,
@@ -96,19 +95,6 @@ class EditionsService
             picture: $picture,
             theme: $dataEdition->theme,
             challenge: $dataEdition->challenge
-        );
-
-        // Récupération des données cadeaux
-        $gifts = $this->getGiftsService()->getEditionGifts($editionId);
-
-        // Récupération des données participants
-        $players = $this->getPlayersService()->getEditionPlayers($editionId);
-
-        // Récupération des données édition
-        return new EditionResponseDTO(
-            edition: $edition,
-            gifts: $gifts,
-            players: $players
         );
     }
 
