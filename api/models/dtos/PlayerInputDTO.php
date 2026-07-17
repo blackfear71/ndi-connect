@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Saisie d'un participant (DTO)
  */

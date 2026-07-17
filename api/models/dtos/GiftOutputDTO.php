@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Représente un cadeau (DTO)
  */

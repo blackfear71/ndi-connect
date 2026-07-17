@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Représente une récompense en base
  */

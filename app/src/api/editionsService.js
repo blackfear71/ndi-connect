@@ -65,7 +65,7 @@ class EditionsService {
      * Mise à jour édition
      * @param {*} editionId Identifiant édition
      * @param {*} body Données édition
-     * @returns Données édition à jour
+     * @returns Message retour
      */
     updateEdition = (editionId, body) => {
         const url = `${this.apiUrl}/update/${editionId}`;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Représente une édition en base
  */

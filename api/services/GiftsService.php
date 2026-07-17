@@ -119,7 +119,7 @@ class GiftsService
             name: trim($data->name),
             value: $data->value,
             quantity: $data->quantity,
-            createdBy: $user->id,
+            createdBy: $user->id
         );
 
         // Insertion

@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Représente une édition avec ses donnéees complètes (DTO)
+ * Représente une édition avec ses données complètes (DTO)
  */
 class EditionResponseDTO implements \JsonSerializable
 {
