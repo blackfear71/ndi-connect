@@ -966,7 +966,7 @@ const Edition = () => {
                     {edition?.picture && (
                         <div className="edition-picture-wrapper">
                             <Image
-                                src={`${import.meta.env.VITE_API_URL}/serve-file/images?file=${edition.picture}`}
+                                src={`${import.meta.env.VITE_API_URL}/serve-file/images?file=${encodeURIComponent(edition.picture)}`}
                                 alt={edition.picture}
                                 className="edition-picture"
                             />
