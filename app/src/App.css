@@ -114,31 +114,32 @@ h1 {
     color: var(--color-text-white) !important;
 }
 
-.btn-modal-action {
+.btn-input-action {
     background-color: var(--color-bg-tertiary) !important;
     border: 2px solid var(--color-border-primary) !important;
     color: var(--color-text-white) !important;
     padding: 5px 12px !important;
 }
 
-.btn-modal-action:hover,
-.btn-modal-action:active {
+.btn-input-action:hover,
+.btn-input-action:active {
     background-color: var(--color-bg-secondary) !important;
 }
 
-.btn-modal-action.btn-red {
+.btn-input-action.btn-red {
     background-color: var(--color-bg-cancel) !important;
     border-color: var(--color-border-cancel-hover) !important;
     color: var(--color-text-white) !important;
 }
 
-.btn-modal-action.btn-red:hover,
-.btn-modal-action.btn-red:active {
+.btn-input-action.btn-red:hover,
+.btn-input-action.btn-red:active {
     background-color: var(--color-bg-cancel-hover) !important;
     border-color: var(--color-border-cancel-hover) !important;
     color: var(--color-bg-white) !important;
 }
 
+.btn-input-outline-action,
 .btn-modal-outline-action {
     background-color: var(--color-bg-transparent) !important;
     border: 2px solid var(--color-border-gray-medium) !important;
@@ -146,6 +147,8 @@ h1 {
     padding: 5px 12px !important;
 }
 
+.btn-input-outline-action:hover,
+.btn-input-outline-action:active,
 .btn-modal-outline-action:hover,
 .btn-modal-outline-action:active {
     background-color: var(--color-bg-gray-bold) !important;
@@ -199,6 +202,7 @@ h1 {
     background-color: var(--color-bg-white);
 }
 
+.modal-body .modal-group-content .input-title,
 .modal-body .modal-group-content .modal-group-content-title {
     font-size: small;
     font-weight: 600;
@@ -220,18 +224,19 @@ h1 {
     border: 2px dashed var(--color-border-gray-medium);
 }
 
-.modal-body .modal-group-content .modal-input-icon {
+.modal-body .modal-group-content .input-icon {
     width: 30px;
     height: 30px;
     flex-shrink: 0;
     color: var(--color-bg-gray-bold);
 }
 
-.modal-body .modal-group-content .modal-input-icon svg {
+.modal-body .modal-group-content .input-icon svg {
     width: 28px;
     height: 28px;
 }
 
+.modal-body .modal-group-content .input-button-delete,
 .modal-body .modal-group-content .modal-button-delete {
     background-color: var(--color-bg-cancel);
     border: 2px solid var(--color-border-cancel-hover);
@@ -244,12 +249,15 @@ h1 {
     margin-left: auto;
 }
 
+.modal-body .modal-group-content .input-button-delete svg,
 .modal-body .modal-group-content .modal-button-delete svg {
     width: 14px;
     height: 14px;
     flex-shrink: 0;
 }
 
+.modal-body .modal-group-content .input-button-delete:hover,
+.modal-body .modal-group-content .input-button-delete:active,
 .modal-body .modal-group-content .modal-button-delete:hover,
 .modal-body .modal-group-content .modal-button-delete:active {
     background-color: var(--color-bg-cancel-hover);
