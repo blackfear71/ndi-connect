@@ -9,8 +9,11 @@ require_once 'controllers/GiftsController.php';
  * Lecture des enregistrements d'une édition
  */
 $router->get('/gifts/edition/:editionId', function (array $params) use ($db): void {
+    // Paramètres
+    $editionId = DataHelper::parseIntParam($params['editionId']);
+
     // Appel contrôleur
-    (new GiftsController($db))->getEditionGifts($params['editionId']);
+    (new GiftsController($db))->getEditionGifts($editionId);
 });
 
 /**
