@@ -5,8 +5,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { HiKey, HiOutlineKey } from 'react-icons/hi2';
 
 import { PasswordInput } from '../../../components/inputs';
-
-import { Message, SpinnerButton } from '../../shared';
+import { Message, SpinnerButton } from '../../../components/shared';
 
 /**
  * Modale mot de passe
