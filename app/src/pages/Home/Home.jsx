@@ -143,10 +143,9 @@ const Home = () => {
     }, [authMessage, setAuthMessage, location.state, location.pathname, navigate]);
 
     /**
-     * Mise à jour du formulaire de l'édition aux changements de sa modale
+     * Réinitialisation à l'ouverture/fermeture de la modale édition
      */
     useEffect(() => {
-        // Réinitialisation à l'ouverture/fermeture de la modale
         formEdition.resetForm();
     }, [modalOptionsEdition.isOpen]);
 

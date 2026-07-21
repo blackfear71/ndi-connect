@@ -55,10 +55,9 @@ const NavBar = () => {
     }, []);
 
     /**
-     * Mise à jour du formulaire de connexion aux changements de sa modale
+     * Réinitialisation à l'ouverture/fermeture de la modale connexion
      */
     useEffect(() => {
-        // Réinitialisation à l'ouverture/fermeture de la modale
         formConnection.resetForm();
     }, [modalOptionsConnection.isOpen]);
 
