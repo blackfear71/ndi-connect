@@ -520,7 +520,7 @@ const Edition = () => {
 
         // Champs textes
         Object.entries(values).forEach(([key, value]) => {
-            if (key !== 'picture' && value !== null) {
+            if (key !== 'picture' && value) {
                 formData.append(key, value);
             }
         });
@@ -991,13 +991,7 @@ const Edition = () => {
                                 </h1>
 
                                 {/* Onglets */}
-                                <Tabs
-                                    variant="underline"
-                                    defaultActiveKey="players"
-                                    id="justify-tab-example"
-                                    className="mb-3 page-tabs"
-                                    justify
-                                >
+                                <Tabs variant="underline" defaultActiveKey="players" id="edition-tabs" className="mb-3 page-tabs" justify>
                                     {/* Participants */}
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers

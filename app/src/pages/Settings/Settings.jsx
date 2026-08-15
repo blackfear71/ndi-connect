@@ -522,13 +522,7 @@ const Settings = () => {
                             </h1>
 
                             {rights.isSuperAdmin && connectedUser && users ? (
-                                <Tabs
-                                    variant="underline"
-                                    defaultActiveKey="user"
-                                    id="justify-tab-example"
-                                    className="mb-3 page-tabs"
-                                    justify
-                                >
+                                <Tabs variant="underline" defaultActiveKey="user" id="settings-tabs" className="mb-3 page-tabs" justify>
                                     {/* Utilisateur connecté */}
                                     <Tab eventKey="user" title={t('settings.level0')}>
                                         <SettingsUser user={connectedUser} onOpen={openClosePasswordModal} isSubmitting={isSubmitting} />

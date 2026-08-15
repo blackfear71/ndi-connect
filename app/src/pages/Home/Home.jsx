@@ -263,7 +263,7 @@ const Home = () => {
 
         // Champs textes
         Object.entries(values).forEach(([key, value]) => {
-            if (key !== 'picture' && value !== null) {
+            if (key !== 'picture' && value) {
                 formData.append(key, value);
             }
         });
