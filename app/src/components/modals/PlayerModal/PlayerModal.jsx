@@ -52,7 +52,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
         switch (action) {
             case 'add':
                 formData.setValues((prev) => {
-                    const currentDelta = parseInt(prev.points) || 0;
+                    const currentDelta = Number.parseInt(prev.points) || 0;
                     const nextDelta = currentDelta < 0 && !rights.isSuperAdmin ? 0 : currentDelta + 1;
 
                     return {
@@ -63,7 +63,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                 break;
             case 'remove':
                 formData.setValues((prev) => {
-                    const currentDelta = parseInt(prev.points) || 0;
+                    const currentDelta = Number.parseInt(prev.points) || 0;
                     let nextDelta;
 
                     if (rights.isSuperAdmin) {
@@ -92,7 +92,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
         switch (action) {
             case 'add':
                 formData.setValues((prev) => {
-                    const currentGiveaway = parseInt(prev.giveaway) || 0;
+                    const currentGiveaway = Number.parseInt(prev.giveaway) || 0;
 
                     return {
                         ...prev,
@@ -102,7 +102,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                 break;
             case 'remove':
                 formData.setValues((prev) => {
-                    const currentGiveaway = parseInt(prev.giveaway) || 0;
+                    const currentGiveaway = Number.parseInt(prev.giveaway) || 0;
 
                     return {
                         ...prev,
@@ -120,7 +120,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            giveawayPlayerId: e.target.value === '' ? null : parseInt(e.target.value)
+            giveawayPlayerId: e.target.value === '' ? null : Number.parseInt(e.target.value)
         }));
     };
 

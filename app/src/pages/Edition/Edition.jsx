@@ -186,8 +186,8 @@ const Edition = () => {
                     // Points restants
                     .test('giveaway-remaining', 'errors.invalidGiveawayRemaining', function (value) {
                         const { points } = this.parent;
-                        const delta = parseInt(points, 10);
-                        const giveaway = parseInt(value, 10) || 0;
+                        const delta = Number.parseInt(points, 10);
+                        const giveaway = Number.parseInt(value, 10) || 0;
                         return currentPlayer.points + delta - giveaway >= 0;
                     }),
                 giveawayPlayerId: Yup.mixed()
@@ -195,7 +195,7 @@ const Edition = () => {
                     // Joueur sélectionné si don > 0
                     .test('giveawayPlayerId-pair', 'errors.invalidGiveawayPlayer', function (value) {
                         const { giveaway } = this.parent;
-                        return !(giveaway > 0) || !!value;
+                        return giveaway <= 0 || !!value;
                     })
             })
         });
@@ -310,7 +310,7 @@ const Edition = () => {
      */
     useEffect(() => {
         // Message venant du AuthContext (connexion / déconnexion)
-        if (authMessage && authMessage.target === 'page') {
+        if (authMessage?.target === 'page') {
             setMessage(authMessage);
             setAuthMessage(null);
         }
@@ -485,12 +485,12 @@ const Edition = () => {
         const editionsService = new EditionsService();
 
         editionsService
-            .updateEdition(edition.id, body)
+            .updateEdition(edition?.id, body)
             .pipe(
                 map((dataEdition) => {
                     setMessage({ code: dataEdition.response.message, type: dataEdition.response.status });
                 }),
-                switchMap(() => editionsService.getEdition(edition.id)),
+                switchMap(() => editionsService.getEdition(edition?.id)),
                 map((newDataEdition) => {
                     openCloseEditionModal();
                     setEdition(newDataEdition.response.data);
@@ -565,7 +565,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                subscriptionPlayers = playersService.createPlayer(edition.id, {
+                subscriptionPlayers = playersService.createPlayer(edition?.id, {
                     name: values.name,
                     points: values.points
                 });
@@ -588,7 +588,7 @@ const Edition = () => {
                 map((dataPlayer) => {
                     setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
                 }),
-                switchMap(() => playersService.getEditionPlayers(edition.id)),
+                switchMap(() => playersService.getEditionPlayers(edition?.id)),
                 map((dataPlayers) => {
                     openClosePlayerModal();
                     setPlayers(processPlayersData(dataPlayers.response.data));
@@ -640,7 +640,7 @@ const Edition = () => {
                 setIsSubmitting(true);
                 setModalOptionsGift((prev) => ({ ...prev, message: null }));
 
-                subscriptionGifts = giftsService.createGift(edition.id, {
+                subscriptionGifts = giftsService.createGift(edition?.id, {
                     name: values.name,
                     value: values.value,
                     quantity: values.quantity
@@ -663,7 +663,7 @@ const Edition = () => {
                 map((dataGift) => {
                     setMessage({ code: dataGift.response.message, type: dataGift.response.status });
                 }),
-                switchMap(() => giftsService.getEditionGifts(edition.id)),
+                switchMap(() => giftsService.getEditionGifts(edition?.id)),
                 map((dataGifts) => {
                     openCloseGiftModal();
                     setGifts(processGiftsData(dataGifts.response.data));
@@ -711,8 +711,8 @@ const Edition = () => {
         const playersService = new PlayersService();
 
         const subscriptionRewards = rewardsService.createReward(values.giftId, values.playerId);
-        const subscriptionGifts = giftsService.getEditionGifts(edition.id);
-        const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
+        const subscriptionGifts = giftsService.getEditionGifts(edition?.id);
+        const subscriptionPlayers = playersService.getEditionPlayers(edition?.id);
 
         subscriptionRewards
             .pipe(
@@ -772,8 +772,8 @@ const Edition = () => {
         // Ouverture de la modale de confirmation
         openCloseConfirmModal({
             content: t('edition.deleteEdition', {
-                year: new Date(edition.startDate).getFullYear(),
-                location: edition.location
+                year: new Date(edition?.startDate).getFullYear(),
+                location: edition?.location
             }),
             action: 'deleteEdition',
             data: null
@@ -809,7 +809,7 @@ const Edition = () => {
         const editionsService = new EditionsService();
 
         editionsService
-            .deleteEdition(edition.id)
+            .deleteEdition(edition?.id)
             .pipe(
                 map((dataEdition) => {
                     // Fermeture modale de confirmation
@@ -854,7 +854,7 @@ const Edition = () => {
                 map((dataGift) => {
                     setMessage({ code: dataGift.response.message, type: dataGift.response.status });
                 }),
-                switchMap(() => giftsService.getEditionGifts(edition.id)),
+                switchMap(() => giftsService.getEditionGifts(edition?.id)),
                 map((dataGifts) => {
                     openCloseConfirmModal();
                     setGifts(processGiftsData(dataGifts.response.data));
@@ -891,7 +891,7 @@ const Edition = () => {
                 map((dataPlayer) => {
                     setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
                 }),
-                switchMap(() => playersService.getEditionPlayers(edition.id)),
+                switchMap(() => playersService.getEditionPlayers(edition?.id)),
                 map((dataPlayers) => {
                     openCloseConfirmModal();
                     setPlayers(processPlayersData(dataPlayers.response.data));
@@ -925,8 +925,8 @@ const Edition = () => {
         const playersService = new PlayersService();
 
         const subscriptionRewards = rewardsService.deleteReward(rewardId);
-        const subscriptionGifts = giftsService.getEditionGifts(edition.id);
-        const subscriptionPlayers = playersService.getEditionPlayers(edition.id);
+        const subscriptionGifts = giftsService.getEditionGifts(edition?.id);
+        const subscriptionPlayers = playersService.getEditionPlayers(edition?.id);
 
         subscriptionRewards
             .pipe(

@@ -34,7 +34,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
     const handleChangeSelect = (e) => {
         formData.setValues((prev) => ({
             ...prev,
-            giftId: e.target.value === '' ? null : parseInt(e.target.value)
+            giftId: e.target.value === '' ? null : Number.parseInt(e.target.value)
         }));
     };
 

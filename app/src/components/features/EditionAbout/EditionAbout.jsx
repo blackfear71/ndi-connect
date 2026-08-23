@@ -43,7 +43,7 @@ const EditionAbout = ({ rights, edition, onOpen, onConfirm, isSubmitting }) => {
      * Met à jour l'avancement
      */
     const updateProgress = () => {
-        if (!edition || !edition.startDate || !edition.endDate) {
+        if (!edition?.startDate || !edition?.endDate) {
             return;
         }
 

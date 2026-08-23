@@ -128,7 +128,7 @@ const Home = () => {
      */
     useEffect(() => {
         // Message venant du AuthContext (connexion / déconnexion)
-        if (authMessage && authMessage.target === 'page') {
+        if (authMessage?.target === 'page') {
             setMessage(authMessage);
             setAuthMessage(null);
         }
