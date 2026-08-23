@@ -982,7 +982,7 @@ const Edition = () => {
                         {edition && (
                             <>
                                 {/* Titre */}
-                                <h1 className="d-flex align-items-center gap-2">
+                                <h1 className="d-flex align-items-center gap-2 edition-title">
                                     <FaComputer size={30} />
                                     {t('edition.editionTitle', {
                                         year: new Date(edition.startDate).getFullYear(),

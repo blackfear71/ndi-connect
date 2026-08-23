@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { catchError, map, take } from 'rxjs/operators';
 
 import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FaComputer } from 'react-icons/fa6';
 
 import { TextInput } from '../../../components/inputs';
 import { Message } from '../../../components/shared';
@@ -216,11 +217,17 @@ const SearchBar = () => {
                             {results.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="d-flex align-items-center justify-content-between p-2 search-result-item"
+                                    className="d-flex align-items-center justify-content-between gap-2 p-2 search-result-item"
                                     onClick={() => handleResultClick(item.id)}
                                 >
-                                    <div className="search-result-item-left">{item.location}</div>
-                                    <div className="ms-3 search-result-item-right">{t('edition.editionResult', { year: item.year })}</div>
+                                    <div className="d-flex align-items-center gap-2 search-result-item-left">
+                                        <FaComputer size={20} />
+                                        <span className="search-result-item-text">{item.location}</span>
+                                    </div>
+
+                                    <div className="search-result-item-right">
+                                        <span className="search-result-item-text">{t('edition.editionResult', { year: item.year })}</span>
+                                    </div>
                                 </div>
                             ))}
                         </div>

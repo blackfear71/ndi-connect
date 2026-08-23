@@ -66,6 +66,10 @@ h1 {
     padding: 8px !important;
 }
 
+.btn-action svg {
+    flex-shrink: 0;
+}
+
 .btn-action:hover,
 .btn-action:active {
     background-color: var(--color-bg-validate-hover) !important;
@@ -83,6 +87,10 @@ h1 {
     color: var(--color-text-white) !important;
     font-size: large !important;
     padding: 7px !important;
+}
+
+.btn-outline-action svg {
+    flex-shrink: 0;
 }
 
 .btn-outline-action:hover,

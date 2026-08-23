@@ -16,6 +16,10 @@
     mask-image: linear-gradient(to bottom, var(--color-bg-black) 30%, transparent 100%);
 }
 
+.edition-title svg {
+    flex-shrink: 0;
+}
+
 .edition-subtitle-badge {
     font-size: large;
     font-style: italic;

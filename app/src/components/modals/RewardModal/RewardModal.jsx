@@ -153,7 +153,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                                         {player.rewards.map((r) => (
                                             <div
                                                 key={r.id}
-                                                className="d-flex align-items-center justify-content-between pt-2 pb-2 gap-2 reward-modal-gift-row"
+                                                className="d-flex align-items-center justify-content-between py-2 gap-2 reward-modal-gift-row"
                                             >
                                                 <div className="reward-modal-gift-name">{r.giftName}</div>
                                                 {rights.isSuperAdmin && (

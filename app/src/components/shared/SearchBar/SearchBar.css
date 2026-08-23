@@ -23,7 +23,6 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    z-index: 2;
     width: 40px;
     height: 100%;
     padding: 10px;
@@ -72,13 +71,25 @@
 }
 
 .search-result-item-left {
-    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 auto;
     overflow: hidden;
-    white-space: nowrap;
+}
+
+.search-result-item-left svg {
+    flex-shrink: 0;
 }
 
 .search-result-item-right {
+    min-width: 0;
+    flex: 0 0 auto;
     font-size: small;
     color: var(--color-text-secondary);
+}
+
+.search-result-item-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }

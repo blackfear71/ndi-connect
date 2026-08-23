@@ -21,8 +21,10 @@
 
 .table-card-line-label {
     color: var(--color-text-card);
+    width: 65px;
 }
 
 .table-card-line-value {
     color: var(--color-text-white);
+    width: calc(100% - 65px);
 }
