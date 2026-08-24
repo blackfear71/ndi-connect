@@ -4,5 +4,6 @@ export { default as EditionModal } from './EditionModal/EditionModal';
 export { default as GiftModal } from './GiftModal/GiftModal';
 export { default as PasswordModal } from './PasswordModal/PasswordModal';
 export { default as PlayerModal } from './PlayerModal/PlayerModal';
+export { default as QrCodeModal } from './QrCodeModal/QrCodeModal';
 export { default as RewardModal } from './RewardModal/RewardModal';
 export { default as SettingsModal } from './SettingsModal/SettingsModal';

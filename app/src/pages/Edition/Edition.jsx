@@ -8,11 +8,12 @@ import * as Yup from 'yup';
 import { combineLatest, forkJoin, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
-import { Image, Spinner, Tab, Tabs } from 'react-bootstrap';
+import { Button, Image, Spinner, Tab, Tabs } from 'react-bootstrap';
 import { FaComputer } from 'react-icons/fa6';
+import { LuQrCode } from 'react-icons/lu';
 
 import { EditionAbout, EditionGifts, EditionPlayers } from '../../components/features';
-import { ConfirmModal, EditionModal, GiftModal, PlayerModal, RewardModal } from '../../components/modals';
+import { ConfirmModal, EditionModal, GiftModal, PlayerModal, QrCodeModal, RewardModal } from '../../components/modals';
 import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
@@ -96,6 +97,9 @@ const Edition = () => {
         playerId: null,
         isOpen: false,
         message: null
+    });
+    const [modalOptionsQrCode, setModalOptionsQrCode] = useState({
+        isOpen: false
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({
         playerId: null,
@@ -429,6 +433,17 @@ const Edition = () => {
         return giftsData.map((gift) => ({
             ...gift,
             color: getIconColor(gift.name)
+        }));
+    };
+
+    /**
+     * Ouverture/fermeture de la modale du QR Code
+     */
+    const openCloseQrCodeModal = () => {
+        // Ouverture ou fermeture
+        setModalOptionsQrCode((prev) => ({
+            ...prev,
+            isOpen: !prev.isOpen
         }));
     };
 
@@ -981,13 +996,21 @@ const Edition = () => {
                         {/* Edition */}
                         {edition && (
                             <>
-                                {/* Titre */}
-                                <h1 className="d-flex align-items-center gap-2 edition-title">
-                                    <FaComputer size={30} />
-                                    {t('edition.editionTitle', {
-                                        year: new Date(edition.startDate).getFullYear(),
-                                        location: edition.location
-                                    })}
+                                {/* Titre & QR Code*/}
+                                <h1 className="d-flex align-items-center justify-content-between gap-2 edition-title">
+                                    {/* Titre */}
+                                    <span className="d-flex align-items-center gap-2">
+                                        <FaComputer size={30} />
+                                        {t('edition.editionTitle', {
+                                            year: new Date(edition.startDate).getFullYear(),
+                                            location: edition.location
+                                        })}
+                                    </span>
+
+                                    {/* QR Code */}
+                                    <Button className="edition-title-button" onClick={openCloseQrCodeModal} disabled={isSubmitting}>
+                                        <LuQrCode size={30} />
+                                    </Button>
                                 </h1>
 
                                 {/* Onglets */}
@@ -1077,6 +1100,11 @@ const Edition = () => {
                                         onConfirm={openCloseConfirmModal}
                                         isSubmitting={isSubmitting}
                                     />
+                                )}
+
+                                {/* Modale QR Code */}
+                                {edition && modalOptionsQrCode.isOpen && (
+                                    <QrCodeModal editionId={edition.id} onClose={openCloseQrCodeModal} isSubmitting={isSubmitting} />
                                 )}
 
                                 {/* Modale de confirmation */}

@@ -20,6 +20,18 @@
     flex-shrink: 0;
 }
 
+.edition-title-button,
+.edition-title-button:hover,
+.edition-title-button:active {
+    background-color: var(--color-bg-transparent) !important;
+    border: none;
+    padding: 6px;
+}
+
+.edition-qr-code {
+    background-color: var(--color-bg-tertiary);
+}
+
 .edition-subtitle-badge {
     font-size: large;
     font-style: italic;

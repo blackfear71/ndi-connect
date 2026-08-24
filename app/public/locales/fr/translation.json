@@ -122,6 +122,7 @@
         "points": "Points",
         "progress": "Progression",
         "progressStatus": "En cours • reste ~ {{remaining}}",
+        "qrCode": "QR Code",
         "quantity": "Quantité",
         "remaining": "restant",
         "remainingGifts": "Cadeaux restants",
