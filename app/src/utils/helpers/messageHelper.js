@@ -59,7 +59,7 @@ export const getMessageTranslationKey = (code, params, t) => {
         ERR_UPDATE_FAILED: 'errors.updateFailed',
         ERR_UPDATE_PASSWORD_FAILED: 'errors.updatePasswordFailed',
         ERR_UPLOAD_FAILED: 'errors.uploadFailed',
-        ERR_USER_NOT_FOUND: 'errors.userNotFound',
+        ERR_USER_NOT_FOUND: 'errors.invalidAuth',
         ERR_USER_PASSWORD_INVALID: 'errors.invalidAuth',
         ERR_WEBP_CONVERSION_FAILED: 'errors.webpConversionFailed',
 
