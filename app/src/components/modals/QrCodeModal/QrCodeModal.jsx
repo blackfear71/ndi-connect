@@ -24,12 +24,12 @@ const QrCodeModal = ({ editionId, onClose, isSubmitting }) => {
 
             <Modal.Body className="d-flex justify-content-center">
                 {/* QR Code */}
-                <div className="modal-group p-2">
-                    <div className="modal-group-content">
+                <div className="p-2 modal-group">
+                    <div className="d-flex align-items-center gap-2 modal-group-content">
                         <QRCodeSVG
-                            className="p-2 rounded edition-qr-code"
+                            className="p-3 edition-qr-code"
                             value={`${import.meta.env.VITE_APP_URL}/edition/${editionId}`}
-                            size={150}
+                            size={200}
                             level="Q"
                             fgColor="#07224c"
                             imageSettings={{
@@ -39,6 +39,7 @@ const QrCodeModal = ({ editionId, onClose, isSubmitting }) => {
                                 excavate: true
                             }}
                         />
+                        <div className="edition-qr-code-text">{t('edition.scanMe')}</div>
                     </div>
                 </div>
             </Modal.Body>
