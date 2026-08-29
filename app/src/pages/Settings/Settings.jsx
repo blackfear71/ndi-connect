@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -44,11 +44,10 @@ const initialUserValues = {
  */
 const Settings = () => {
     // Router
-    const { pathname } = useLocation();
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage, refreshAuth } = useAuth();
+    const { auth, authMessage, refreshAuth, setAuthMessage, skipAutoRedirectRef } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -151,12 +150,13 @@ const Settings = () => {
      * Récupération des données après contrôle de l'authentification
      */
     useEffect(() => {
-        // Retour à l'accueil si non connecté (on ne fait la navigation que si on n'est pas déjà revenu à l'accueil, après déconnexion par exemple)
+        // Redirection vers l'accueil si non connecté (en évitant la navigation concurrente à la déconnexion)
         if (!auth?.isLoggedIn) {
-            if (pathname === '/settings') {
+            if (skipAutoRedirectRef.current) {
+                skipAutoRedirectRef.current = false;
+            } else {
                 navigate('/');
             }
-            return;
         }
 
         // Récupération des données utilisateurs
@@ -198,7 +198,7 @@ const Settings = () => {
      */
     useEffect(() => {
         // Message venant du AuthContext (connexion / déconnexion)
-        if (authMessage?.target === 'page') {
+        if (authMessage) {
             setMessage(authMessage);
             setAuthMessage(null);
         }

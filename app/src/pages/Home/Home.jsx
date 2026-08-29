@@ -124,11 +124,11 @@ const Home = () => {
     }, []);
 
     /**
-     * Si un message d'authentification est défini on l'affiche
+     * Si un message d'authentification ou de navigation est défini on l'affiche
      */
     useEffect(() => {
         // Message venant du AuthContext (connexion / déconnexion)
-        if (authMessage?.target === 'page') {
+        if (authMessage) {
             setMessage(authMessage);
             setAuthMessage(null);
         }

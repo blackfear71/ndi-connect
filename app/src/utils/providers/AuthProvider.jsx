@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
 
 import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
@@ -14,10 +13,6 @@ import { UsersService } from '../../api';
  * Provider d'authentification global
  */
 const AuthProvider = ({ children }) => {
-    // Router
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
-
     // Local states
     const [auth, setAuth] = useState({
         id: null,
@@ -29,7 +24,7 @@ const AuthProvider = ({ children }) => {
     const [authMessage, setAuthMessage] = useState(null);
 
     // Constantes
-    const redirectPages = ['/settings'];
+    const skipAutoRedirectRef = useRef(false); // Indique qu'une navigation manuelle (login/logout) est en cours pour éviter les redirections automatiques concurrentes basées sur "auth"
 
     /**
      * Contrôle de la connexion au lancement de l'application
@@ -61,7 +56,7 @@ const AuthProvider = ({ children }) => {
                     }
 
                     resetAuth();
-                    setAuthMessage({ code: err?.response?.message, type: err?.response?.status, target: 'page' });
+                    setAuthMessage({ code: err?.response?.message, type: err?.response?.status });
                     return of();
                 }),
                 finalize(() => {
@@ -77,7 +72,7 @@ const AuthProvider = ({ children }) => {
      */
     const login = (formData) => {
         return new Promise((resolve, reject) => {
-            setAuthMessage(null);
+            skipAutoRedirectRef.current = true;
 
             const usersService = new UsersService();
 
@@ -85,16 +80,17 @@ const AuthProvider = ({ children }) => {
                 .connect(formData)
                 .pipe(
                     map((dataUser) => {
+                        const message = { code: dataUser.response.message, type: dataUser.response.status };
+
                         persistAuth(dataUser.response.data);
-                        setAuthMessage({ code: dataUser.response.message, type: dataUser.response.status, target: 'page' });
-                        resolve();
+                        resolve(message);
                     }),
                     take(1),
                     catchError((err) => {
-                        const message = { code: err?.response?.message, type: err?.response?.status, target: 'modal' };
+                        skipAutoRedirectRef.current = false;
+                        const message = { code: err?.response?.message, type: err?.response?.status };
 
                         resetAuth();
-                        setAuthMessage(message);
                         reject(message);
                         return of();
                     })
@@ -108,7 +104,7 @@ const AuthProvider = ({ children }) => {
      */
     const logout = () => {
         return new Promise((resolve, reject) => {
-            setAuthMessage(null);
+            skipAutoRedirectRef.current = true;
 
             const usersService = new UsersService();
 
@@ -116,31 +112,16 @@ const AuthProvider = ({ children }) => {
                 .disconnect()
                 .pipe(
                     map((dataUser) => {
-                        const message = {
-                            code: dataUser.response.message,
-                            type: dataUser.response.status,
-                            target: 'page'
-                        };
+                        const message = { code: dataUser.response.message, type: dataUser.response.status };
 
-                        resolve();
                         resetAuth();
-
-                        // Redirection avec message ou affichage du message selon la page d'origine
-                        if (redirectPages.includes(pathname)) {
-                            navigate('/', {
-                                state: {
-                                    navMessage: message
-                                }
-                            });
-                        } else {
-                            setAuthMessage(message);
-                        }
+                        resolve(message);
                     }),
                     take(1),
                     catchError((err) => {
-                        const message = { code: err?.response?.message, type: err?.response?.status, target: 'page' };
+                        skipAutoRedirectRef.current = false;
+                        const message = { code: err?.response?.message, type: err?.response?.status };
 
-                        setAuthMessage(message);
                         reject(message);
                         return of();
                     })
@@ -184,7 +165,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authMessage, setAuthMessage, refreshAuth, login, logout }}>
+        <AuthContext.Provider value={{ auth, authMessage, setAuthMessage, refreshAuth, login, logout, skipAutoRedirectRef }}>
             {authLoading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" variant="light" />

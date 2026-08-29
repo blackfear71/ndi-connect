@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -29,10 +29,11 @@ const initialConnectionValues = {
  */
 const NavBar = () => {
     // Router
+    const { pathname } = useLocation();
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, login, logout } = useAuth();
+    const { auth, setAuthMessage, login, logout } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -45,6 +46,9 @@ const NavBar = () => {
         message: null
     });
     const [showDropdown, setShowDropdown] = useState(false);
+
+    // Constantes
+    const redirectPages = ['/settings'];
 
     /**
      * Affecte un évènement lors du clic en dehors de la zone
@@ -119,7 +123,8 @@ const NavBar = () => {
 
         // On attend la promesse de connexion pour fermer la modale
         login(values)
-            .then(() => {
+            .then((loginMessage) => {
+                setAuthMessage(loginMessage);
                 openCloseConnectionModal();
             })
             .catch((err) => {
@@ -137,8 +142,19 @@ const NavBar = () => {
      * Déconnexion
      */
     const handleSubmitLogout = () => {
-        // On attend la promesse de déconnexion
-        logout();
+        // On attend la promesse de déconnexion pour rediriger
+        logout().then((logoutMessage) => {
+            // Redirection avec message ou affichage du message selon la page d'origine
+            if (redirectPages.includes(pathname)) {
+                navigate('/', {
+                    state: {
+                        navMessage: logoutMessage
+                    }
+                });
+            } else {
+                setAuthMessage(logoutMessage);
+            }
+        });
     };
 
     return (
