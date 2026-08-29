@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { Edition, Home, Settings } from './pages';
 
-import { Layout } from './components/shared';
+import { Layout, ScrollToTop } from './components/shared';
 
 import { AuthProvider, SseProvider } from './utils/providers';
 
@@ -13,6 +13,8 @@ function App() {
         <div className="app">
             <BrowserRouter>
                 <AuthProvider>
+                    <ScrollToTop />
+
                     <Routes>
                         <Route path="/" element={<Layout />}>
                             {/* Editions : route par défaut */}

@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { Button } from 'react-bootstrap';
 import { HiKey } from 'react-icons/hi2';
+
+import { TooltipButton } from '../../../components/shared';
 
 /**
  * Gestion de l'utilisateur connecté
@@ -24,14 +25,13 @@ const SettingsUser = ({ user, onOpen, isSubmitting }) => {
                 </div>
 
                 {/* Mot de passe */}
-                <Button
-                    onClick={() => onOpen()}
+                <TooltipButton
+                    tooltip={t('settings.password')}
+                    content={<HiKey className="svg-large" color={isSubmitting ? 'gray' : 'white'} />}
                     className="settings-item-button"
-                    style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                    disabled={isSubmitting}
-                >
-                    <HiKey className="svg-large" color={isSubmitting ? 'gray' : 'white'} />
-                </Button>
+                    onClick={() => onOpen()}
+                    isSubmitting={isSubmitting}
+                />
             </div>
 
             {/* Description */}

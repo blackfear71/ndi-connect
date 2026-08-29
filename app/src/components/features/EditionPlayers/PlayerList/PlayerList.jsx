@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 
-import { Button } from 'react-bootstrap';
 import { FaAngleRight, FaGift, FaTrashCan } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
 import { IoGiftSharp } from 'react-icons/io5';
+
+import { TooltipButton } from '../../../../components/shared';
 
 import { EnumAction } from '../../../../enums';
 
@@ -58,36 +59,33 @@ const PlayerList = ({ rights, players, onConfirm, onOpenPlayerModal, onOpenRewar
 
                     {/* Supression */}
                     {rights.isSuperAdmin && (
-                        <Button
-                            onClick={() => handleDelete(p)}
+                        <TooltipButton
+                            tooltip={t('common.delete')}
+                            content={<FaTrashCan color={isSubmitting ? 'gray' : 'white'} />}
                             className="edition-item-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            disabled={isSubmitting}
-                        >
-                            <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
+                            onClick={() => handleDelete(p)}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
 
                     {/* Cadeaux */}
-                    <Button
-                        onClick={() => onOpenRewardModal(p.id)}
+                    <TooltipButton
+                        tooltip={t('edition.rewards')}
+                        content={<FaGift color={isSubmitting ? 'gray' : 'white'} />}
                         className="edition-item-button"
-                        style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                        disabled={isSubmitting}
-                    >
-                        <FaGift color={isSubmitting ? 'gray' : 'white'} />
-                    </Button>
+                        onClick={() => onOpenRewardModal(p.id)}
+                        isSubmitting={isSubmitting}
+                    />
 
                     {/* Modification */}
                     {rights.isAdminOrSuperAdminOnEdition && (
-                        <Button
-                            onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p.id)}
+                        <TooltipButton
+                            tooltip={t('edition.player')}
+                            content={<FaAngleRight color={isSubmitting ? 'gray' : 'white'} />}
                             className="edition-item-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            disabled={isSubmitting}
-                        >
-                            <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
+                            onClick={() => onOpenPlayerModal(EnumAction.UPDATE, p.id)}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
                 </div>
             ))}

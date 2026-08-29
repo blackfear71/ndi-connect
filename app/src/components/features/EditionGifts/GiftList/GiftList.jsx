@@ -6,6 +6,8 @@ import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
 
+import { TooltipButton } from '../../../../components/shared';
+
 import { EnumAction } from '../../../../enums';
 
 /**
@@ -123,26 +125,24 @@ const GiftList = ({ rights, gifts, title, onOpen, onConfirm, isSubmitting }) => 
 
                     {/* Supression */}
                     {rights.isSuperAdmin && (
-                        <Button
-                            onClick={() => handleDelete(g)}
+                        <TooltipButton
+                            tooltip={t('common.delete')}
+                            content={<FaTrashCan color={isSubmitting ? 'gray' : 'white'} />}
                             className="edition-item-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            disabled={isSubmitting}
-                        >
-                            <FaTrashCan color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
+                            onClick={() => handleDelete(g)}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
 
                     {/* Modification */}
                     {rights.isAdminOrSuperAdminOnEdition && (
-                        <Button
-                            onClick={() => onOpen(EnumAction.UPDATE, g.id)}
+                        <TooltipButton
+                            tooltip={t('edition.gift')}
+                            content={<FaAngleRight color={isSubmitting ? 'gray' : 'white'} />}
                             className="edition-item-button"
-                            style={{ cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                            disabled={isSubmitting}
-                        >
-                            <FaAngleRight color={isSubmitting ? 'gray' : 'white'} />
-                        </Button>
+                            onClick={() => onOpen(EnumAction.UPDATE, g.id)}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
                 </div>
             ))}
