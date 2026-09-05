@@ -64,7 +64,7 @@ const Edition = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage, skipAutoRedirectRef } = useAuth();
+    const { auth, authMessage, setAuthMessage } = useAuth();
     const { events } = useSse();
 
     // Traductions
@@ -308,20 +308,6 @@ const Edition = () => {
             });
         }
     }, [events]);
-
-    /**
-     * Redirection vers l'accueil si non connecté
-     */
-    useEffect(() => {
-        // Redirection vers l'accueil si non connecté (en évitant la navigation concurrente à la déconnexion)
-        if (!auth?.isLoggedIn) {
-            if (skipAutoRedirectRef.current) {
-                skipAutoRedirectRef.current = false;
-            } else {
-                navigate('/');
-            }
-        }
-    }, [auth]);
 
     /**
      * Si un message d'authentification est défini on l'affiche
