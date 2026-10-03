@@ -84,7 +84,7 @@ class EditionsService
         }
 
         // Vérification image existante et génération URL
-        $picture = $dataEdition->picture ? FileHelper::checkFile('images', $dataEdition->picture) : null;
+        $picture = $dataEdition->picture ? FileHelper::checkFile('images/editions', $dataEdition->picture) : null;
 
         // Récupération des données édition
         return new EditionOutputDTO(
@@ -157,7 +157,7 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage(null, $data->pictureAction, $file['picture'] ?? null);
+        $picture = $this->processImage(null, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
@@ -194,7 +194,7 @@ class EditionsService
         $endDate = $endDate->modify('+1 day');
 
         // Traitement de l'image
-        $picture = $this->uploadImage($editionId, $data->pictureAction, $file['picture'] ?? null);
+        $picture = $this->processImage($editionId, $data->pictureAction, $file['picture'] ?? null);
 
         // Construction de l'objet
         $edition = new Edition(
@@ -229,6 +229,9 @@ class EditionsService
 
         // Suppression logique des participants
         $this->getPlayersService()->deletePlayers($editionId, $userId);
+
+        // Suppression de l'image
+        $this->processImage($editionId, EnumAction::DELETE->value, null);
 
         // Suppression logique de l'édition
         if (!$this->editionsRepository->deleteEdition($editionId, $userId)) {
@@ -265,8 +268,10 @@ class EditionsService
     /**
      * Traitement de l'image
      */
-    private function uploadImage(?int $editionId, ?string $action, ?array $file): ?string
+    private function processImage(?int $editionId, ?string $action, ?array $file): ?string
     {
+        $destination = 'images/editions';
+
         // Récupération de l'image de l'édition
         $picture = $editionId ? $this->editionsRepository->getEditionPicture($editionId) : null;
 
@@ -274,18 +279,18 @@ class EditionsService
         switch ($action) {
             case EnumAction::CREATE->value:
                 // Import de la nouvelle image
-                $fileName = FileHelper::uploadImage('images', $file);
+                $fileName = FileHelper::uploadImage($destination, $file);
 
                 // Suppression de l'ancienne image si pas d'erreur (hors création)
                 if ($fileName && $picture) {
-                    FileHelper::deleteFile('images', $picture);
+                    FileHelper::deleteFile($destination, $picture);
                 }
 
                 return $fileName;
             case EnumAction::DELETE->value:
                 // Suppression de l'ancienne image (hors création)
                 if ($picture) {
-                    FileHelper::deleteFile('images', $picture);
+                    FileHelper::deleteFile($destination, $picture);
                 }
 
                 return null;

@@ -236,13 +236,14 @@ class EditionsRepository
     public function deleteEdition(int $editionId, int $userId): bool
     {
         $sql = "UPDATE {$this->editionsTable}
-            SET deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
+            SET picture = :picture, deleted_at = :deleted_at, deleted_by = :deleted_by, is_active = :is_active
             WHERE id = :id";
 
         $stmt = $this->db->prepare($sql);
 
         return $stmt->execute([
             'id'         => $editionId,
+            'picture'    => NULL,
             'deleted_at' => date('Y-m-d H:i:s'),
             'deleted_by' => $userId,
             'is_active'  => 0

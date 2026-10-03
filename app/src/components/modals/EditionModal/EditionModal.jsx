@@ -144,6 +144,7 @@ const EditionModal = ({ formData, modalOptions, setModalOptions, onClose, isSubm
                                     title={t('edition.picture')}
                                     icon={<IoImageOutline />}
                                     name={'picture'}
+                                    destination={'editions'}
                                     value={formData.values.picture}
                                     onChange={handleChangeFile}
                                     error={formData.submitCount > 0 && formData.errors.picture}
