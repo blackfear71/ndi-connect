@@ -5,7 +5,7 @@ import { Button, Spinner } from 'react-bootstrap';
  */
 const SpinnerButton = ({ label, isSubmitting }) => {
     return (
-        <Button type="submit" variant="input-action" disabled={isSubmitting}>
+        <Button type="submit" variant="filled-text-action" disabled={isSubmitting}>
             {label}
             {isSubmitting && <Spinner animation="border" role="status" size="sm ms-2" />}
         </Button>

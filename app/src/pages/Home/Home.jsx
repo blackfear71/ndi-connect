@@ -336,7 +336,7 @@ const Home = () => {
                                     {editionsByYear.map((edition) => (
                                         <Button
                                             key={edition.id}
-                                            variant="action"
+                                            variant="filled-action"
                                             className="home-grid-btn-location"
                                             onClick={() => navigate(`/edition/${edition.id}`)}
                                             disabled={isSubmitting}
@@ -356,7 +356,7 @@ const Home = () => {
                                     {yearsAndEditions.map((year) => (
                                         <Button
                                             key={year.year}
-                                            variant="action"
+                                            variant="filled-action"
                                             className="home-grid-btn-year"
                                             onClick={() => showEditionsByYear(year)}
                                             disabled={isSubmitting}

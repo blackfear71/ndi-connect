@@ -52,27 +52,52 @@ h1 {
 }
 
 /* Boutons */
-.btn-action {
+.btn-filled-action {
     display: flex !important;
     flex-direction: row;
     align-items: center !important;
     justify-content: center !important;
-    width: 100%;
-    gap: 6px;
     background-color: var(--color-bg-secondary) !important;
     border: 2px solid var(--color-border-primary) !important;
     color: var(--color-text-white) !important;
     font-size: large !important;
     padding: 8px !important;
+    width: 100%;
+    gap: 6px;
 }
 
-.btn-action svg {
+.btn-filled-action svg {
     flex-shrink: 0;
 }
 
-.btn-action:hover,
-.btn-action:active {
+.btn-filled-action:hover,
+.btn-filled-action:active {
     background-color: var(--color-bg-validate-hover) !important;
+}
+
+.btn-filled-text-action {
+    background-color: var(--color-bg-tertiary) !important;
+    border: 2px solid var(--color-border-primary) !important;
+    color: var(--color-text-white) !important;
+    padding: 5px 12px !important;
+}
+
+.btn-filled-text-action:hover,
+.btn-filled-text-action:active {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+.btn-filled-text-action.btn-red {
+    background-color: var(--color-bg-cancel) !important;
+    border-color: var(--color-border-cancel-hover) !important;
+    color: var(--color-text-white) !important;
+}
+
+.btn-filled-text-action.btn-red:hover,
+.btn-filled-text-action.btn-red:active {
+    background-color: var(--color-bg-cancel-hover) !important;
+    border-color: var(--color-border-cancel-hover) !important;
+    color: var(--color-bg-white) !important;
 }
 
 .btn-outline-action {
@@ -80,13 +105,13 @@ h1 {
     flex-direction: row;
     align-items: center !important;
     justify-content: center !important;
-    width: 100%;
-    gap: 6px;
     background-color: var(--color-bg-transparent) !important;
     border: 2px solid var(--color-border-primary) !important;
     color: var(--color-text-white) !important;
     font-size: large !important;
-    padding: 7px !important;
+    padding: 8px !important;
+    width: 100%;
+    gap: 6px;
 }
 
 .btn-outline-action svg {
@@ -122,43 +147,15 @@ h1 {
     color: var(--color-text-white) !important;
 }
 
-.btn-input-action {
-    background-color: var(--color-bg-tertiary) !important;
-    border: 2px solid var(--color-border-primary) !important;
-    color: var(--color-text-white) !important;
-    padding: 5px 12px !important;
-}
-
-.btn-input-action:hover,
-.btn-input-action:active {
-    background-color: var(--color-bg-secondary) !important;
-}
-
-.btn-input-action.btn-red {
-    background-color: var(--color-bg-cancel) !important;
-    border-color: var(--color-border-cancel-hover) !important;
-    color: var(--color-text-white) !important;
-}
-
-.btn-input-action.btn-red:hover,
-.btn-input-action.btn-red:active {
-    background-color: var(--color-bg-cancel-hover) !important;
-    border-color: var(--color-border-cancel-hover) !important;
-    color: var(--color-bg-white) !important;
-}
-
-.btn-input-outline-action,
-.btn-modal-outline-action {
+.btn-outline-text-action {
     background-color: var(--color-bg-transparent) !important;
     border: 2px solid var(--color-border-gray-medium) !important;
     color: var(--color-text-secondary) !important;
     padding: 5px 12px !important;
 }
 
-.btn-input-outline-action:hover,
-.btn-input-outline-action:active,
-.btn-modal-outline-action:hover,
-.btn-modal-outline-action:active {
+.btn-outline-text-action:hover,
+.btn-outline-text-action:active {
     background-color: var(--color-bg-gray-bold) !important;
     color: var(--color-text-white) !important;
 }

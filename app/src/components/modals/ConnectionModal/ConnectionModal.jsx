@@ -108,7 +108,7 @@ const ConnectionModal = ({ formData, modalOptions, setModalOptions, onClose, isS
 
                         {/* Boutons d'action */}
                         <div className="gap-2 modal-footer-actions">
-                            <Button type="button" variant="modal-outline-action" onClick={() => onClose()} disabled={isSubmitting}>
+                            <Button type="button" variant="outline-text-action" onClick={() => onClose()} disabled={isSubmitting}>
                                 {t('common.close')}
                             </Button>
 
