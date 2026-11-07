@@ -34,7 +34,6 @@ $uri = strtok(substr($_SERVER['REQUEST_URI'], strlen($basePath)), '?');
 // Paramètres CORS
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 $allowedOrigins = [
-    'http://localhost:3000',        // CRA
     'http://localhost:5173',        // Vite
     'http://ndi-connect.ddns.net',  // HTTP
     'https://ndi-connect.ddns.net', // HTTPS
