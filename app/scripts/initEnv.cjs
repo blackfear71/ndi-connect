@@ -25,11 +25,14 @@ VITE_API_URL=/api
 DB_HOST=localhost
 DB_PORT=
 DB_NAME=ndi_connect_db
-DB_USER=root
-DB_PASS=
+DB_USER=local_login
+DB_PASS=local_password
 
 # Dossier des fichiers de l'application (images, logs...)
 FILES_DIR=../files
+
+# Origines autorisées (CORS), séparées par une virgule
+ALLOWED_ORIGINS=http://localhost:5173
 `
     },
     {
@@ -39,11 +42,14 @@ FILES_DIR=../files
 DB_HOST=localhost
 DB_PORT=
 DB_NAME=ndi_connect_db
-DB_USER=root
-DB_PASS=
+DB_USER=prod_login
+DB_PASS=prod_password
 
 # Dossier des fichiers de l'application (images, logs...)
 FILES_DIR=/server_path/files/ndi-connect
+
+# Origines autorisées (CORS), séparées par une virgule
+ALLOWED_ORIGINS=http://ndi-connect.ddns.net,https://ndi-connect.ddns.net
 `
     }
 ];

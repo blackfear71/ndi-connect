@@ -31,13 +31,9 @@ try {
 $basePath = dirname($_SERVER['SCRIPT_NAME']); // "/api"
 $uri = strtok(substr($_SERVER['REQUEST_URI'], strlen($basePath)), '?');
 
-// Paramètres CORS
+// Paramètres CORS (origines autorisées définies dans le fichier .env)
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-$allowedOrigins = [
-    'http://localhost:5173',        // Vite
-    'http://ndi-connect.ddns.net',  // HTTP
-    'https://ndi-connect.ddns.net', // HTTPS
-];
+$allowedOrigins = EnvironmentHelper::getAllowedOrigins();
 
 // Headers de sécurité inconditionnels (sauf SSE)
 if (!str_starts_with($uri, '/sse')) {

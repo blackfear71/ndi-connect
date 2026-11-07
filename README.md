@@ -99,7 +99,21 @@ npm install
 npm run init:env
 ```
 
-### 3. Configuration du back-end
+### 3. Base de données
+
+Importer la base `ndi_connect_db`.
+Créer un premier administrateur (avec le hash généré par PHP) puis gérer les autres comptes depuis la page Paramètres :
+
+```
+php -r "echo password_hash('MotDePasseProvisoire', PASSWORD_DEFAULT);"
+```
+
+```sql
+INSERT INTO users (login, password, level, created_at, is_active)
+VALUES ('admin', '<hash généré>', 1, NOW(), 1);
+```
+
+### 4. Configuration du back-end
 
 Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base de données locale :
 
@@ -107,12 +121,13 @@ Configurer le fichier _.env_ dans le dossier api avec vos identifiants de base d
 DB_HOST=localhost
 DB_PORT=
 DB_NAME=ndi_connect_db
-DB_USER=root
-DB_PASS=
+DB_USER=local_login
+DB_PASS=local_password
 FILES_DIR=../files
+ALLOWED_ORIGINS=http://localhost:5173
 ```
 
-### 4. Lancement en développement
+### 5. Lancement en développement
 
 <u>Back-end :</u>
 
@@ -125,7 +140,7 @@ cd app
 npm run dev
 ```
 
-### 4. Déploiement
+### 6. Déploiement
 
 Configurer le fichier _.env.production_ dans le dossier api avec les identifiants de base de données de production :
 
@@ -136,6 +151,7 @@ DB_NAME=ndi_connect_db
 DB_USER=prod_login
 DB_PASS=prod_password
 FILES_DIR=/server_path/files/ndi-connect
+ALLOWED_ORIGINS=http://ndi-connect.ddns.net,https://ndi-connect.ddns.net
 ```
 
 Utiliser ensuite le script PowerShell pour automatiser le déploiement : **deploy.ps1**. Dans une console lancer la commande puis faire le choix de version :

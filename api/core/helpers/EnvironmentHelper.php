@@ -1,6 +1,22 @@
 <?php
 class EnvironmentHelper
 {
+    private static ?array $env = null;
+
+    /**
+     * Liste des origines autorisées (CORS) depuis le fichier d'environnement
+     */
+    public static function getAllowedOrigins(): array
+    {
+        if (self::$env === null) {
+            self::$env = self::loadEnv(__DIR__ . '/../../.env');
+        }
+
+        $origins = array_map('trim', explode(',', self::$env['ALLOWED_ORIGINS'] ?? ''));
+
+        return array_values(array_filter($origins, fn($origin) => $origin !== ''));
+    }
+
     /**
      * Chargement du fichier d'environnement
      */
