@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -22,7 +22,7 @@ import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper
 
 import { EnumAction, EnumUserRole } from '../../enums';
 
-import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
+import { CardsService, EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
 
 import './Edition.css';
 
@@ -48,7 +48,8 @@ const initialPlayerValues = {
     name: '',
     points: 0,
     giveaway: 0,
-    giveawayPlayerId: ''
+    giveawayPlayerId: '',
+    cardPlayerId: ''
 };
 const initialRewardValues = {
     giftId: '',
@@ -62,6 +63,7 @@ const Edition = () => {
     // Router
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // Contexte
     const { auth, authMessage, setAuthMessage } = useAuth();
@@ -74,6 +76,7 @@ const Edition = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
+    const [scannedCode, setScannedCode] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
         content: '',
         action: null,
@@ -95,6 +98,7 @@ const Edition = () => {
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({
         action: null,
         playerId: null,
+        cardCode: null,
         isOpen: false,
         message: null
     });
@@ -171,7 +175,10 @@ const Edition = () => {
         const currentPlayer = players.find((p) => p.id === modalOptionsPlayer.playerId);
 
         return Yup.object({
-            name: Yup.string().required('errors.invalidName'),
+            name: Yup.string().when('cardPlayerId', {
+                is: (cardPlayerId) => !cardPlayerId, // Si la carte n'est pas rattachée à un participant existant alors le nom est obligatoire
+                then: (schema) => schema.required('errors.invalidName')
+            }),
             points: Yup.number()
                 .typeError('errors.invalidPoints')
                 .required('errors.invalidPoints')
@@ -321,6 +328,31 @@ const Edition = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
+     * Récupération du code d'une carte scannée
+     */
+    useEffect(() => {
+        const cardCode = searchParams.get('card');
+
+        if (cardCode !== null) {
+            setScannedCode(cardCode);
+
+            // Retrait du code de l'URL pour ne pas être rejoué à l'actualisation de la page
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.delete('card');
+            setSearchParams(newSearchParams, { replace: true });
+        }
+    }, [searchParams]);
+
+    /**
+     * Traitement de la carte scannée une fois l'édition chargée
+     */
+    useEffect(() => {
+        if (scannedCode !== null && !isLoading && edition?.id === Number(id)) {
+            handleScannedCard(scannedCode);
+        }
+    }, [scannedCode, isLoading, edition]);
+
+    /**
      * Mise à jour du formulaire de l'édition aux changements de sa modale
      */
     useEffect(() => {
@@ -381,7 +413,8 @@ const Edition = () => {
                     name: currentPlayer.name,
                     points: 0,
                     giveaway: 0,
-                    giveawayPlayerId: ''
+                    giveawayPlayerId: '',
+                    cardPlayerId: ''
                 });
         }
 
@@ -434,6 +467,61 @@ const Edition = () => {
             ...gift,
             color: getIconColor(gift.name)
         }));
+    };
+
+    /**
+     * Traitement d'une carte scannée : ouverture de la modale pour création ou rattachement utilisateur ou consultation
+     * @param {*} code Code carte
+     */
+    const handleScannedCard = (code) => {
+        setScannedCode(null);
+
+        const cardsService = new CardsService();
+
+        cardsService
+            .getCardStatus(edition.id, code)
+            .pipe(
+                map((dataCard) => {
+                    if (dataCard.response.data.isFree) {
+                        // Utilisateur connecté, carte libre : inscription d'un nouveau participant ou rattachement à un participant existant
+                        setModalOptionsPlayer({
+                            action: EnumAction.CREATE,
+                            playerId: null,
+                            cardCode: code,
+                            isOpen: true,
+                            message: null
+                        });
+                    } else if (rights.isAdminOrSuperAdminOnEdition) {
+                        // Utilisateur connecté, carte trouvée : saisie des points du participant
+                        setModalOptionsPlayer({
+                            action: EnumAction.UPDATE,
+                            playerId: dataCard.response.data.playerId,
+                            cardCode: null,
+                            isOpen: true,
+                            message: null
+                        });
+                    } else {
+                        // Uutilisateur non connecté, carte trouvée : consultation des cadeaux du participant
+                        setModalOptionsReward({
+                            playerId: dataCard.response.data.playerId,
+                            isOpen: true,
+                            message: null
+                        });
+                    }
+                }),
+                take(1),
+                catchError((err) => {
+                    // Carte invalide, inconnue, participant inconnu... : redirection vers l'accueil avec message
+                    // TODO : à tester
+                    navigate('/', {
+                        state: {
+                            navMessage: { code: err?.response?.message, type: err?.response?.status }
+                        }
+                    });
+                    return of();
+                })
+            )
+            .subscribe();
     };
 
     /**
@@ -559,13 +647,14 @@ const Edition = () => {
             ...prev,
             action: action,
             playerId: playerId,
+            cardCode: null,
             isOpen: !prev.isOpen,
             message: null
         }));
     };
 
     /**
-     * Création ou modification d'un participant
+     * Validation de la modale participant (création, modification ou rattachement)
      * @param {*} values Données du formulaire
      */
     const handleSubmitPlayer = (values) => {
@@ -573,17 +662,36 @@ const Edition = () => {
 
         const playersService = new PlayersService();
 
+        // QR code scanné et participant existant auquel le rattacher (uniquement à la création)
+        const cardCode = modalOptionsPlayer?.cardCode;
+        const attachedPlayer = values.cardPlayerId ? players.find((p) => p.id === values.cardPlayerId) : null;
+
         let subscriptionPlayers = null;
 
         switch (modalOptionsPlayer?.action) {
             case EnumAction.CREATE:
-                setIsSubmitting(true);
-                setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
+                if (attachedPlayer) {
+                    // Si le participant a déjà un QR code, la confirmation de son remplacement remplace la modale participant (le code est conservé avec les données saisies), sinon on le rattache directement
+                    if (attachedPlayer.hasCard) {
+                        openClosePlayerModal();
+                        openCloseConfirmModal({
+                            content: t('edition.replaceCard', { name: attachedPlayer.name }),
+                            action: 'replaceCard',
+                            data: { ...values, cardCode }
+                        });
+                    } else {
+                        handleReplaceCard({ ...values, cardCode });
+                    }
+                } else {
+                    setIsSubmitting(true);
+                    setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                subscriptionPlayers = playersService.createPlayer(edition?.id, {
-                    name: values.name,
-                    points: values.points
-                });
+                    subscriptionPlayers = playersService.createPlayer(edition?.id, {
+                        name: values.name,
+                        points: values.points,
+                        cardCode
+                    });
+                }
                 break;
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
@@ -614,6 +722,56 @@ const Edition = () => {
                         ...prev,
                         message: { code: err?.response?.message, type: err?.response?.status }
                     }));
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Rattachement du QR code scanné à un participant existant (remplace son QR code actuel s'il en possède un, appelé directement ou après confirmation du remplacement)
+     * @param {*} values Données du formulaire
+     */
+    const handleReplaceCard = (values) => {
+        setMessage(null);
+        setIsSubmitting(true);
+
+        // La modale visible est celle de confirmation si elle est ouverte, sinon c'est la modale participant
+        modalOptionsConfirm.isOpen
+            ? setModalOptionsConfirm((prev) => ({ ...prev, message: null }))
+            : setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
+
+        const playersService = new PlayersService();
+        const attachedPlayer = players.find((p) => p.id === values.cardPlayerId);
+
+        // Modification du participant existant avec les données saisies (pas de don de points à la création)
+        playersService
+            .updatePlayer(attachedPlayer.id, {
+                name: attachedPlayer.name,
+                points: values.points,
+                giveaway: 0,
+                giveawayPlayerId: 0,
+                cardCode: values.cardCode
+            })
+            .pipe(
+                map((dataPlayer) => {
+                    setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
+                }),
+                switchMap(() => playersService.getEditionPlayers(edition?.id)),
+                map((dataPlayers) => {
+                    modalOptionsConfirm.isOpen ? openCloseConfirmModal() : openClosePlayerModal();
+                    setPlayers(processPlayersData(dataPlayers.response.data));
+                }),
+                take(1),
+                catchError((err) => {
+                    const errorMessage = { code: err?.response?.message, type: err?.response?.status };
+
+                    modalOptionsConfirm.isOpen
+                        ? setModalOptionsConfirm((prev) => ({ ...prev, message: errorMessage }))
+                        : setModalOptionsPlayer((prev) => ({ ...prev, message: errorMessage }));
                     return of();
                 }),
                 finalize(() => {
@@ -808,6 +966,8 @@ const Edition = () => {
                 return handleDeletePlayer(modalOptionsConfirm.data);
             case 'deleteReward':
                 return handleDeleteReward(modalOptionsConfirm.data);
+            case 'replaceCard':
+                return handleReplaceCard(modalOptionsConfirm.data);
             default:
                 return;
         }
@@ -1104,11 +1264,15 @@ const Edition = () => {
 
                                 {/* Modale QR Code */}
                                 {edition && modalOptionsQrCode.isOpen && (
-                                    <QrCodeModal editionId={edition.id} onClose={openCloseQrCodeModal} isSubmitting={isSubmitting} />
+                                    <QrCodeModal
+                                        url={`${import.meta.env.VITE_APP_URL}/edition/${edition.id}`}
+                                        onClose={openCloseQrCodeModal}
+                                        isSubmitting={isSubmitting}
+                                    />
                                 )}
 
                                 {/* Modale de confirmation */}
-                                {rights.isSuperAdmin && modalOptionsConfirm.isOpen && (
+                                {rights.isAdminOrSuperAdminOnEdition && modalOptionsConfirm.isOpen && (
                                     <ConfirmModal
                                         modalOptions={modalOptionsConfirm}
                                         setModalOptions={setModalOptionsConfirm}

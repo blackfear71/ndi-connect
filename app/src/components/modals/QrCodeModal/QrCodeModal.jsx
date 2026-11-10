@@ -7,9 +7,9 @@ import { LuQrCode } from 'react-icons/lu';
 import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 
 /**
- * Modale participant
+ * Modale QR code
  */
-const QrCodeModal = ({ editionId, onClose, isSubmitting }) => {
+const QrCodeModal = ({ url, onClose, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ const QrCodeModal = ({ editionId, onClose, isSubmitting }) => {
                     <div className="d-flex align-items-center gap-2 modal-group-content">
                         <QRCodeSVG
                             className="p-3 edition-qr-code"
-                            value={`${import.meta.env.VITE_APP_URL}/edition/${editionId}`}
+                            value={url}
                             size={200}
                             level="Q"
                             fgColor="#07224c"
@@ -39,6 +39,7 @@ const QrCodeModal = ({ editionId, onClose, isSubmitting }) => {
                                 excavate: true
                             }}
                         />
+                        {/* TODO : pour les cartes afficher l'url et un bouton de téléchargement à la place du message */}
                         <div className="edition-qr-code-text">{t('edition.scanMe')}</div>
                     </div>
                 </div>

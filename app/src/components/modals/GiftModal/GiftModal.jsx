@@ -10,6 +10,8 @@ import { IoGiftSharp } from 'react-icons/io5';
 import { TextInput } from '../../../components/inputs';
 import { Message, SpinnerButton } from '../../../components/shared';
 
+import { REGEX_DIGITS_ONLY } from '../../../utils/helpers/regexHelper';
+
 import { EnumAction } from '../../../enums';
 
 /**
@@ -48,7 +50,7 @@ const GiftModal = ({ gift, formData, modalOptions, setModalOptions, onClose, isS
         // Autorise uniquement les chiffres
         const { name, value } = e.target;
 
-        if (/^\d*$/.test(value)) {
+        if (REGEX_DIGITS_ONLY.test(value)) {
             formData.setValues((prev) => ({ ...prev, [name]: value }));
         }
     };

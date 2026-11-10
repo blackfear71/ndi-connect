@@ -133,7 +133,7 @@ const Home = () => {
             setAuthMessage(null);
         }
 
-        // Message venant du navigate() (déconnexion depuis une page admin, suppression édition)
+        // Message venant du navigate() (déconnexion depuis une page admin, suppression édition, erreur sur QR code scanné)
         if (location.state?.navMessage) {
             setMessage(location.state.navMessage);
 

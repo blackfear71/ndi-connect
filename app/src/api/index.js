@@ -1,3 +1,4 @@
+export { default as CardsService } from './cardsService';
 export { default as EditionsService } from './editionsService';
 export { default as GiftsService } from './giftsService';
 export { default as PlayersService } from './playersService';

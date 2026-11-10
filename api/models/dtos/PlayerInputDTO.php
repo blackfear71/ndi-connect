@@ -9,10 +9,11 @@ class PlayerInputDTO
      * Construteur
      */
     public function __construct(
-        public readonly string $name             = '',
-        public readonly int    $points           = 0,
-        public readonly ?int   $giveaway         = null,
-        public readonly ?int   $giveawayPlayerId = null
+        public readonly string  $name             = '',
+        public readonly int     $points           = 0,
+        public readonly ?int    $giveaway         = null,
+        public readonly ?int    $giveawayPlayerId = null,
+        public readonly ?string $cardCode         = null
     ) {}
 
     /**
@@ -24,7 +25,8 @@ class PlayerInputDTO
             name: $data['name'] ?? '',
             points: (int) ($data['points'] ?? 0),
             giveaway: isset($data['giveaway']) ? (int) $data['giveaway'] : null,
-            giveawayPlayerId: isset($data['giveawayPlayerId']) ? (int) $data['giveawayPlayerId'] : null
+            giveawayPlayerId: isset($data['giveawayPlayerId']) ? (int) $data['giveawayPlayerId'] : null,
+            cardCode: $data['cardCode'] ?? null
         );
     }
 }

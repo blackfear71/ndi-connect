@@ -7,6 +7,7 @@ NDI-Connect est une application web permettant la gestion d'éditions, des joueu
 - Gestion des éditions (création, modification, suppression)
 - Gestion des joueurs et de leurs informations
 - Attribution et gestion des récompenses et cadeaux
+- Cartes QR code : inscription ou saisie de points par scan, génération des QR codes, gestion des cartes enregistrées
 - Authentification et gestion des utilisateurs
 - Interface responsive adaptée aux mobiles et ordinateurs
 - API RESTful sécurisée
@@ -69,6 +70,7 @@ ndi-connect/
 │   ├── vite.config.js
 ├── dist/                  # Dossier de déploiement
 ├── files/                 # Dossier des fichiers (images, logs...)
+├── sql/                   # Scripts SQL à exécuter à la main (non déployés)
 ├── .gitattributes
 ├── .gitignore
 ├── deploy.ps1             # Script de déploiement
@@ -101,7 +103,23 @@ npm run init:env
 
 ### 3. Base de données
 
-Importer la base `ndi_connect_db`.
+Importer ou créer la base `ndi_connect_db` :
+
+```sql
+CREATE DATABASE ndi_connect_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Créer les tables (sur chaque environnement, local et production) avec les scripts du dossier `sql`, dans cet ordre à cause des clés étrangères :
+
+```
+mysql -u <utilisateur> -p ndi_connect_db < sql/users.sql
+mysql -u <utilisateur> -p ndi_connect_db < sql/editions.sql
+mysql -u <utilisateur> -p ndi_connect_db < sql/players.sql
+mysql -u <utilisateur> -p ndi_connect_db < sql/gifts.sql
+mysql -u <utilisateur> -p ndi_connect_db < sql/rewards.sql
+mysql -u <utilisateur> -p ndi_connect_db < sql/cards.sql
+```
+
 Créer un premier administrateur (avec le hash généré par PHP) puis gérer les autres comptes depuis la page Paramètres :
 
 ```
@@ -109,8 +127,10 @@ php -r "echo password_hash('MotDePasseProvisoire', PASSWORD_DEFAULT);"
 ```
 
 ```sql
-INSERT INTO users (login, password, level, created_at, is_active)
-VALUES ('admin', '<hash généré>', 1, NOW(), 1);
+INSERT INTO users (login, password, level, created_at, created_by, is_active)
+VALUES ('admin', '<hash généré>', 1, NOW(), 0, 1);
+
+UPDATE users SET created_by = id WHERE login = 'admin';
 ```
 
 ### 4. Configuration du back-end

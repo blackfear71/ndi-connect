@@ -157,6 +157,8 @@ const Settings = () => {
             } else {
                 navigate('/');
             }
+
+            return;
         }
 
         // Récupération des données utilisateurs

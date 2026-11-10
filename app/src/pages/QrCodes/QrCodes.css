@@ -1,0 +1,81 @@
+.qrcodes-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: var(--color-bg-white);
+    border-radius: var(--bs-border-radius);
+}
+
+.qrcodes-form .input-title {
+    font-size: small;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+}
+
+.qrcodes-form .input-icon {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    color: var(--color-bg-gray-bold);
+}
+
+.qrcodes-form .input-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.qrcodes-item {
+    background-color: var(--color-bg-item);
+    border: 1px solid var(--color-border-item);
+    border-radius: var(--bs-border-radius);
+}
+
+.qrcodes-item-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--color-bg-icon);
+    color: var(--color-bg-black);
+}
+
+.qrcodes-item-name {
+    min-width: 0;
+    color: var(--color-text-white);
+}
+
+.qrcodes-item-ellipsis-text {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+    font-size: large;
+}
+
+.qrcodes-item-details {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+    font-size: small;
+    color: var(--color-text-secondary);
+}
+
+.qrcodes-item-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--color-bg-item-button) !important;
+    color: var(--color-text-white) !important;
+    border: none !important;
+    height: 36px;
+    width: 36px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.qrcodes-item-button:hover,
+.qrcodes-item-button:active {
+    background-color: var(--color-border-item) !important;
+}

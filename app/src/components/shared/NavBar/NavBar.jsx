@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { Badge, Dropdown, Image } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
+import { LuQrCode } from 'react-icons/lu';
 
 import ndiConnectLogo from '../../../assets/images/ndi-connect.webp';
 
@@ -15,6 +16,8 @@ import { ConnectionModal } from '../../../components/modals';
 import { SearchBar } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
+
+import { EnumUserRole } from '../../../enums';
 
 import './NavBar.css';
 
@@ -48,7 +51,14 @@ const NavBar = () => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     // Constantes
-    const redirectPages = ['/settings'];
+    const redirectPages = ['/settings', '/qrcodes'];
+    // TODO : trouver un moyen de mettre ça en commun pour toutes les pages
+    const rights = {
+        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
+        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
+        isAdminOrSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN,
+        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
+    };
 
     /**
      * Affecte un évènement lors du clic en dehors de la zone
@@ -193,14 +203,24 @@ const NavBar = () => {
 
                             {/* Paramètres */}
                             <Dropdown.Item
-                                className="p-2 navbar-dropdown-item d-flex align-items-center"
+                                className="d-flex align-items-center p-2 navbar-dropdown-item"
                                 onClick={() => handleRedirect('settings')}
                             >
                                 <IoSettingsOutline className="me-2" /> {t('navbar.settings')}
                             </Dropdown.Item>
 
+                            {/* QR Codes */}
+                            {rights.isAdminOrSuperAdmin && (
+                                <Dropdown.Item
+                                    className="d-flex align-items-center p-2 navbar-dropdown-item"
+                                    onClick={() => handleRedirect('qrcodes')}
+                                >
+                                    <LuQrCode className="me-2" /> {t('navbar.qrCodes')}
+                                </Dropdown.Item>
+                            )}
+
                             {/* Déconnexion */}
-                            <Dropdown.Item className="p-2 navbar-dropdown-item d-flex align-items-center" onClick={handleSubmitLogout}>
+                            <Dropdown.Item className="d-flex align-items-center p-2 navbar-dropdown-item" onClick={handleSubmitLogout}>
                                 <IoLogOutOutline className="me-2" /> {t('navbar.disconnect')}
                             </Dropdown.Item>
                         </Dropdown.Menu>

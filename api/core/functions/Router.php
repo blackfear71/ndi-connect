@@ -48,8 +48,7 @@ class Router
      */
     private function addRoute(string $method, string $path, callable $callback): void
     {
-        $pattern = preg_replace('#:([\w]+)#', '(?P<\1>[^/]+)', $path);
-        $pattern = '#^' . $pattern . '$#';
+        $pattern = RegexHelper::routeToPattern($path);
         $this->routes[] = compact('method', 'pattern', 'callback');
     }
 

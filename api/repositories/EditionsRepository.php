@@ -23,7 +23,7 @@ class EditionsRepository
      */
     public function getAllEditions(): array
     {
-        $sql = "SELECT e.id, e.location, e.start_date, COUNT(p.id) AS 'playerCount'
+        $sql = "SELECT e.id, e.location, e.start_date, e.end_date, COUNT(p.id) AS 'playerCount'
             FROM {$this->editionsTable} AS e
             LEFT JOIN {$this->playersTable} AS p ON p.edition_id = e.id AND p.is_active = 1
             WHERE e.is_active = 1
@@ -36,6 +36,7 @@ class EditionsRepository
             id: (int) $row['id'],
             location: $row['location'],
             startDate: new \DateTimeImmutable($row['start_date']),
+            endDate: new \DateTimeImmutable($row['end_date']),
             playerCount: (int) $row['playerCount']
         ), $stmt->fetchAll(PDO::FETCH_ASSOC));
     }

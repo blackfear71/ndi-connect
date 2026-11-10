@@ -7,6 +7,7 @@ class PlayersRepository
     protected PDO $db;
 
     protected string $playersTable = 'players';
+    protected string $cardsTable = 'cards';
 
     /**
      * Constructeur par défaut
@@ -21,10 +22,10 @@ class PlayersRepository
      */
     public function getEditionPlayers(int $editionId): array
     {
-        $sql = "SELECT id, name, points
-            FROM {$this->playersTable}
-            WHERE edition_id = :edition_id AND is_active = 1
-            ORDER BY name ASC";
+        $sql = "SELECT p.id, p.name, p.points, EXISTS (SELECT 1 FROM {$this->cardsTable} AS c WHERE c.player_id = p.id AND c.is_active = 1) AS has_card
+            FROM {$this->playersTable} AS p
+            WHERE p.edition_id = :edition_id AND p.is_active = 1
+            ORDER BY p.name ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -34,7 +35,8 @@ class PlayersRepository
         return array_map(fn($row) => new Player(
             id: (int) $row['id'],
             name: $row['name'],
-            points: (int) $row['points']
+            points: (int) $row['points'],
+            hasCard: (bool) $row['has_card']
         ), $stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -43,7 +45,7 @@ class PlayersRepository
      */
     public function getPlayer(int $playerId): ?Player
     {
-        $sql = "SELECT id, name, points
+        $sql = "SELECT id, edition_id, name, points
             FROM {$this->playersTable}
             WHERE id = :id AND is_active = 1";
 
@@ -60,6 +62,7 @@ class PlayersRepository
 
         return new Player(
             id: (int) $row['id'],
+            editionId: (int) $row['edition_id'],
             name: $row['name'],
             points: (int) $row['points']
         );
@@ -68,14 +71,14 @@ class PlayersRepository
     /**
      * Insertion d'un joueur
      */
-    public function createPlayer(Player $player): bool
+    public function createPlayer(Player $player): int
     {
         $sql = "INSERT INTO {$this->playersTable} (edition_id, name, points, created_at, created_by, is_active)
             VALUES (:edition_id, :name, :points, :created_at, :created_by, :is_active)";
 
         $stmt = $this->db->prepare($sql);
 
-        return $stmt->execute([
+        $isCreated = $stmt->execute([
             'edition_id' => $player->editionId,
             'name'       => $player->name,
             'points'     => $player->points,
@@ -83,6 +86,8 @@ class PlayersRepository
             'created_by' => $player->createdBy,
             'is_active'  => 1
         ]);
+
+        return $isCreated ? (int) $this->db->lastInsertId() : 0;
     }
 
     /**

@@ -3,6 +3,7 @@
 require_once 'models/dtos/PlayerOutputDTO.php';
 require_once 'models/dtos/RewardOutputDTO.php';
 
+require_once 'services/CardsService.php';
 require_once 'services/EditionsService.php';
 require_once 'services/RewardsService.php';
 
@@ -12,6 +13,7 @@ class PlayersService
 {
     private PDO $db;
 
+    private ?CardsService $cardsService = null;
     private ?EditionsService $editionsService = null;
     private ?RewardsService $rewardsService = null;
 
@@ -24,6 +26,18 @@ class PlayersService
     {
         $this->db = $db;
         $this->playersRepository = new PlayersRepository($db);
+    }
+
+    /**
+     * Instancie le CardsService si besoin
+     */
+    private function getCardsService(): CardsService
+    {
+        if ($this->cardsService === null) {
+            $this->cardsService = new CardsService($this->db);
+        }
+
+        return $this->cardsService;
     }
 
     /**
@@ -72,6 +86,7 @@ class PlayersService
                 id: $player->id,
                 name: $player->name,
                 points: $player->points,
+                hasCard: $player->hasCard,
                 rewards: $rewards
             );
         }, $players);
@@ -119,9 +134,19 @@ class PlayersService
         );
 
         // Insertion
-        if (!$this->playersRepository->createPlayer($player)) {
-            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
-        }
+        Database::runInTransaction($this->db, function () use ($player, $editionId, $user, $data) {
+            // Création du participant
+            $playerId = $this->playersRepository->createPlayer($player);
+
+            if (!$playerId) {
+                throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+            }
+
+            // Liaison de la carte si scannée
+            if ($data->cardCode !== null) {
+                $this->getCardsService()->linkCard($editionId, $playerId, $data->cardCode, $user->id);
+            }
+        });
     }
 
     /**
@@ -129,8 +154,22 @@ class PlayersService
      */
     public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): void
     {
+        // TODO : c'est bizarre on va lire un participant puis contrôler ses données plus tard, revoir l'ordre des contrôles
+        // Lecture du participant (pour lier une carte à la bonne édition)
+        $editionId = null;
+
+        if ($data->cardCode !== null && $playerId) {
+            $currentPlayer = $this->playersRepository->getPlayer($playerId);
+
+            if (!$currentPlayer) {
+                throw new \RuntimeException(MessageHelper::ERR_PLAYER_NOT_FOUND);
+            }
+
+            $editionId = $currentPlayer->editionId;
+        }
+
         // Contrôle des données
-        $this->isValidUpdatePlayerData($playerId, $data, $user->level);
+        $this->isValidUpdatePlayerData($playerId, $editionId, $data, $user->level);
 
         // Construction de l'objet
         $player = new Player(
@@ -141,22 +180,30 @@ class PlayersService
         );
 
         // Modification
-        if (!$this->playersRepository->updatePlayer($player)) {
-            throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
-        }
-
-        // Don de points
-        if ($data->giveaway !== null && $data->giveaway > 0 && $data->giveawayPlayerId !== null && $data->giveawayPlayerId !== 0) {
-            $giveawayPlayer = new Player(
-                id: $data->giveawayPlayerId,
-                points: $data->giveaway,
-                updatedBy: $user->id,
-            );
-
-            if (!$this->playersRepository->updatePlayerPoints($giveawayPlayer)) {
+        Database::runInTransaction($this->db, function () use ($playerId, $player, $editionId, $user, $data) {
+            // Modification du participant
+            if (!$this->playersRepository->updatePlayer($player)) {
                 throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
             }
-        }
+
+            // Don de points
+            if ($data->giveaway !== null && $data->giveaway > 0 && $data->giveawayPlayerId !== null && $data->giveawayPlayerId !== 0) {
+                $giveawayPlayer = new Player(
+                    id: $data->giveawayPlayerId,
+                    points: $data->giveaway,
+                    updatedBy: $user->id,
+                );
+
+                if (!$this->playersRepository->updatePlayerPoints($giveawayPlayer)) {
+                    throw new \RuntimeException(MessageHelper::ERR_UPDATE_FAILED);
+                }
+            }
+
+            // Liaison de la carte (remplace la carte active du participant s'il en a une)
+            if ($data->cardCode !== null) {
+                $this->getCardsService()->linkCard($editionId, $playerId, $data->cardCode, $user->id);
+            }
+        });
     }
 
     /**
@@ -183,22 +230,6 @@ class PlayersService
     }
 
     /**
-     * Suppression logique des participants d'une édition
-     */
-    public function deletePlayers(int $editionId, int $userId): void
-    {
-        // Contrôle des données
-        if (!$editionId) {
-            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
-        }
-
-        // Suppression logique de participants d'une édition
-        if (!$this->playersRepository->deletePlayers($editionId, $userId)) {
-            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
-        }
-    }
-
-    /**
      * Suppression logique d'un participant
      */
     public function deletePlayer(int $playerId, int $userId): void
@@ -208,8 +239,30 @@ class PlayersService
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
-        // Suppression logique du participant
-        if (!$this->playersRepository->deletePlayer($playerId, $userId)) {
+        // Suppression du participant
+        Database::runInTransaction($this->db, function () use ($playerId, $userId) {
+            // Suppression physique des cartes du participant
+            $this->getCardsService()->deletePlayerCards($playerId);
+
+            // Suppression logique du participant
+            if (!$this->playersRepository->deletePlayer($playerId, $userId)) {
+                throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+            }
+        });
+    }
+
+    /**
+     * Suppression logique des participants d'une édition
+     */
+    public function deletePlayers(int $editionId, int $userId): void
+    {
+        // Contrôle des données
+        if (!$editionId) {
+            throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
+        }
+
+        // Suppression logique des participants d'une édition
+        if (!$this->playersRepository->deletePlayers($editionId, $userId)) {
             throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
         }
     }
@@ -242,12 +295,17 @@ class PlayersService
                 throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
             }
         }
+
+        // Carte valide et libre
+        if ($data->cardCode !== null && $this->getCardsService()->getCardByCode($editionId, $data->cardCode)) {
+            throw new \RuntimeException(MessageHelper::ERR_CARD_ALREADY_REGISTERED);
+        }
     }
 
     /**
      * Contrôle des données saisies (modification)
      */
-    private function isValidUpdatePlayerData(int $playerId, PlayerInputDTO $data, int $level): void
+    private function isValidUpdatePlayerData(int $playerId, ?int $editionId, PlayerInputDTO $data, int $level): void
     {
         // Identifiant participant renseigné
         if (!$playerId) {
@@ -279,6 +337,11 @@ class PlayersService
             if ($endDate === null || new \DateTimeImmutable() > $endDate) {
                 throw new \RuntimeException(MessageHelper::ERR_EDITION_FINISHED);
             }
+        }
+
+        // Carte valide et libre
+        if ($data->cardCode !== null && $this->getCardsService()->getCardByCode($editionId, $data->cardCode)) {
+            throw new \RuntimeException(MessageHelper::ERR_CARD_ALREADY_REGISTERED);
         }
     }
 }

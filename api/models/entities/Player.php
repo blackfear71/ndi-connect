@@ -13,6 +13,7 @@ class Player
         public readonly int                 $editionId = 0,
         public readonly string              $name      = '',
         public readonly int                 $points    = 0,
+        public readonly bool                $hasCard   = false,
         public readonly \DateTimeImmutable  $createdAt = new DateTimeImmutable(),
         public readonly int                 $createdBy = 0,
         public readonly ?\DateTimeImmutable $updatedAt = null,

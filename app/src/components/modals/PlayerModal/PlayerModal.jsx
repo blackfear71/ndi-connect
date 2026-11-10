@@ -5,6 +5,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { FaPeopleArrows, FaUserFriends } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
+import { LuQrCode } from 'react-icons/lu';
 import { PiUserListFill } from 'react-icons/pi';
 
 import { IncrementInput, SelectInput, TextInput } from '../../../components/inputs';
@@ -41,6 +42,17 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
      */
     const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
+    };
+
+    /**
+     * Met à jour le formulaire à la sélection du participant à rattacher au QR code
+     * @param {*} e Evènement
+     */
+    const handleChangeCardPlayer = (e) => {
+        formData.setValues((prev) => ({
+            ...prev,
+            cardPlayerId: e.target.value === '' ? '' : Number.parseInt(e.target.value)
+        }));
     };
 
     /**
@@ -114,10 +126,10 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
     };
 
     /**
-     * Met à jour le formulaire à la saisie
+     * Met à jour le formulaire à la sélection du participant à qui donner des points
      * @param {*} e Evènement
      */
-    const handleChangeSelect = (e) => {
+    const handleChangeGiveawayPlayer = (e) => {
         formData.setValues((prev) => ({
             ...prev,
             giveawayPlayerId: e.target.value === '' ? null : Number.parseInt(e.target.value)
@@ -125,9 +137,23 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
     };
 
     /**
+     * Renvoie la liste des participants auxquels rattacher le QR code (avec indicateur si un QR code est déjà lié)
+     */
+    const getCardPlayerOptions = () => {
+        return [
+            { key: 0, value: '', label: t('edition.chooseNewPlayer') },
+            ...players.map((p) => ({
+                key: p.id,
+                value: p.id,
+                label: `${p.name} • ${p.points} ${t('edition.points').toLowerCase()}${p.hasCard ? ` • ${t('edition.cardLinked')}` : ''}`
+            }))
+        ];
+    };
+
+    /**
      * Renvoie une liste de participants sélectionnables
      */
-    const getGivewayOptions = () => {
+    const getGivewayPlayerOptions = () => {
         return availablePlayers.map((p) => ({
             key: p.id,
             value: p.id,
@@ -162,23 +188,41 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                             </div>
                         )}
 
-                        {/* Modification du participant */}
-                        <div className="modal-group">
-                            <div className="modal-group-content">
-                                <TextInput
-                                    title={modalOptions.action === EnumAction.CREATE ? t('edition.name') : t('edition.updateName')}
-                                    icon={<PiUserListFill />}
-                                    name="name"
-                                    ref={nameInputRef}
-                                    placeholder={t('edition.name')}
-                                    value={formData.values.name}
-                                    onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && formData.errors.name}
-                                    maxLength={100}
-                                    required={true}
-                                />
+                        {/* Liste des participants pour rattachement d'un QR code */}
+                        {modalOptions.action === EnumAction.CREATE && !!modalOptions.cardCode && players.length > 0 && (
+                            <div className="modal-group">
+                                <div className="modal-group-content">
+                                    <SelectInput
+                                        title={t('edition.choosePlayer')}
+                                        icon={<LuQrCode />}
+                                        name={'cardPlayer'}
+                                        options={getCardPlayerOptions()}
+                                        value={formData.values.cardPlayerId}
+                                        onChange={handleChangeCardPlayer}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
+
+                        {/* Modification du participant */}
+                        {!formData.values.cardPlayerId && (
+                            <div className="modal-group">
+                                <div className="modal-group-content">
+                                    <TextInput
+                                        title={modalOptions.action === EnumAction.CREATE ? t('edition.name') : t('edition.updateName')}
+                                        icon={<PiUserListFill />}
+                                        name="name"
+                                        ref={nameInputRef}
+                                        placeholder={t('edition.name')}
+                                        value={formData.values.name}
+                                        onChange={formData.handleChange}
+                                        error={formData.submitCount > 0 && formData.errors.name}
+                                        maxLength={100}
+                                        required={true}
+                                    />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Attribution des points */}
                         <div className="modal-group">
@@ -201,13 +245,13 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                                 <div className="modal-group-content gap-2">
                                     {/* Choix du participant */}
                                     <SelectInput
-                                        title={t('edition.giveParticipant')}
+                                        title={t('edition.giveToPlayer')}
                                         icon={<FaUserFriends />}
                                         name={'playerGiveaway'}
-                                        defaultOption={{ key: 0, value: '', label: t('edition.chooseParticipant') }}
-                                        options={getGivewayOptions()}
+                                        defaultOption={{ key: 0, value: '', label: t('edition.choosePlayer') }}
+                                        options={getGivewayPlayerOptions()}
                                         value={formData.values.giveawayPlayerId}
-                                        onChange={handleChangeSelect}
+                                        onChange={handleChangeGiveawayPlayer}
                                         error={formData.submitCount > 0 && formData.errors.giveawayPlayerId}
                                     />
 
