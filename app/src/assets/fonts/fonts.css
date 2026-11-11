@@ -1,6 +1,7 @@
-/* https://fonts.google.com/specimen/Quicksand */
+/* Une seule famille par police et une déclaration pour chaque épaisseur et style : le navigateur choisit le bon fichier selon font-weight / font-style */
 
-/* Une seule famille et une déclaration pour chaque épaisseur : le navigateur choisit le bon fichier selon font-weight */
+/* Quicksand */
+/* https://fonts.google.com/specimen/Quicksand */
 
 @font-face {
     font-family: 'Quicksand';
