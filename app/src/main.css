@@ -1,3 +1,10 @@
+:root {
+    --font-main:
+        'Quicksand', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --bs-body-font-family: var(--font-main);
+    --bs-font-sans-serif: var(--font-main);
+}
+
 html,
 #root {
     height: 100%;
@@ -7,8 +14,7 @@ html,
 
 body {
     margin: 0;
-    font-family:
-        'Quicksand-Regular', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-main);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
