@@ -16,7 +16,7 @@ import { EnumAction } from '../../../enums';
 /**
  * Modale participant
  */
-const PlayerModal = ({ rights, player, players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
+const PlayerModal = ({ rights, player, players, formData, modalOptions, setModalOptions, onClose, onOpenQrCode, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -25,6 +25,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
 
     // Constantes
     const availablePlayers = player && players.filter((p) => p.id !== player.id);
+    const hasCardPlayerChoice = modalOptions.action === EnumAction.CREATE && !!modalOptions.cardCode && players.length > 0;
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -141,11 +142,11 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
      */
     const getCardPlayerOptions = () => {
         return [
-            { key: 0, value: '', label: t('edition.chooseNewPlayer') },
+            { key: 0, value: 0, label: `➕ ${t('edition.newPlayer')}` },
             ...players.map((p) => ({
                 key: p.id,
                 value: p.id,
-                label: `${p.name} • ${p.points} ${t('edition.points').toLowerCase()}${p.hasCard ? ` • ${t('edition.cardLinked')}` : ''}`
+                label: `${p.cardCode ? '🔗' : '🟢'} ${p.name} • ${p.points} ${t('edition.points').toLowerCase()}`
             }))
         ];
     };
@@ -173,39 +174,74 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Nombre de points */}
+                        {/* Statistiques */}
                         {modalOptions.action === EnumAction.UPDATE && (
-                            <div className="modal-group">
-                                <div className="modal-group-content">
-                                    {/* Titre */}
-                                    <div className="modal-group-content-title">{t('edition.points')}</div>
+                            <>
+                                {player?.cardCode ? (
+                                    <div className="modal-statistics">
+                                        {/* Points */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.points')}</div>
 
-                                    {/* Valeur */}
-                                    <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
-                                        {player?.points ?? 0}
+                                            {/* Valeur */}
+                                            <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                                {player?.points ?? 0}
+                                            </div>
+                                        </div>
+
+                                        {/* QR code */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.qrCode')}</div>
+
+                                            {/* Bouton QR code */}
+                                            <button
+                                                type="button"
+                                                className="modal-group-content-value modal-group-content-button gray"
+                                                onClick={() => onOpenQrCode(player)}
+                                            >
+                                                <LuQrCode />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
+                                ) : (
+                                    <div className="modal-group">
+                                        {/* Points */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.points')}</div>
+
+                                            {/* Valeur */}
+                                            <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                                {player?.points ?? 0}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
 
                         {/* Liste des participants pour rattachement d'un QR code */}
-                        {modalOptions.action === EnumAction.CREATE && !!modalOptions.cardCode && players.length > 0 && (
+                        {hasCardPlayerChoice && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     <SelectInput
                                         title={t('edition.choosePlayer')}
                                         icon={<LuQrCode />}
                                         name={'cardPlayer'}
+                                        defaultOption={{ key: -1, value: '', label: t('edition.choosePlayer') }}
                                         options={getCardPlayerOptions()}
                                         value={formData.values.cardPlayerId}
                                         onChange={handleChangeCardPlayer}
+                                        error={formData.submitCount > 0 && formData.errors.cardPlayerId}
                                     />
                                 </div>
                             </div>
                         )}
 
-                        {/* Modification du participant */}
-                        {!formData.values.cardPlayerId && (
+                        {/* Nom du participant (uniquement pour un nouveau participant) */}
+                        {(!hasCardPlayerChoice || formData.values.cardPlayerId === 0) && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     <TextInput

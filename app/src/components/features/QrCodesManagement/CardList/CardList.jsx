@@ -9,7 +9,7 @@ import { TooltipButton } from '../../../../components/shared';
 /**
  * Liste des QR codes enregistrés
  */
-const CardList = ({ cards, onConfirm, isSubmitting }) => {
+const CardList = ({ edition, cards, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -20,7 +20,11 @@ const CardList = ({ cards, onConfirm, isSubmitting }) => {
     const handleDelete = (card) => {
         // Ouverture de la modale de confirmation
         onConfirm({
-            content: t('qrCodes.deleteCard', { name: card.playerName, code: card.code }),
+            content: t('qrCodes.deleteCard', {
+                name: card.playerName,
+                year: new Date(edition.startDate).getFullYear(),
+                location: edition.location
+            }),
             action: 'deleteCard',
             data: card.id
         });

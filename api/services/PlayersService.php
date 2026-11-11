@@ -86,7 +86,7 @@ class PlayersService
                 id: $player->id,
                 name: $player->name,
                 points: $player->points,
-                hasCard: $player->hasCard,
+                cardCode: $player->cardCode,
                 rewards: $rewards
             );
         }, $players);

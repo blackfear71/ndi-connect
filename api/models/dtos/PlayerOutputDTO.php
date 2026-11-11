@@ -10,11 +10,11 @@ class PlayerOutputDTO implements \JsonSerializable
      * @param RewardOutputDTO[] $rewards
      */
     public function __construct(
-        public readonly int    $id      = 0,
-        public readonly string $name    = '',
-        public readonly int    $points  = 0,
-        public readonly bool   $hasCard = false,
-        public readonly array  $rewards = []
+        public readonly int     $id       = 0,
+        public readonly string  $name     = '',
+        public readonly int     $points   = 0,
+        public readonly ?string $cardCode = null,
+        public readonly array   $rewards  = []
     ) {}
 
     /**
@@ -23,11 +23,11 @@ class PlayerOutputDTO implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'id'      => $this->id,
-            'name'    => $this->name,
-            'points'  => $this->points,
-            'hasCard' => $this->hasCard,
-            'rewards' => $this->rewards
+            'id'       => $this->id,
+            'name'     => $this->name,
+            'points'   => $this->points,
+            'cardCode' => $this->cardCode,
+            'rewards'  => $this->rewards
         ];
     }
 }

@@ -17,7 +17,7 @@ class ResponseHelper
         header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
-            status: 'error',
+            status: EnumMessageType::ERROR->value,
             data: null,
             message: $code,
         ));
@@ -35,7 +35,7 @@ class ResponseHelper
         header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
-            status: 'info',
+            status: EnumMessageType::INFO->value,
             data: $data,
             message: $code,
         ));
@@ -65,7 +65,7 @@ class ResponseHelper
         header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
-            status: 'success',
+            status: EnumMessageType::SUCCESS->value,
             data: $data,
             message: $code,
         ));
@@ -87,7 +87,7 @@ class ResponseHelper
         header('Content-Type: application/json; charset=UTF-8');
         http_response_code($httpCode);
         echo json_encode(new ApiResponseDTO(
-            status: 'warning',
+            status: EnumMessageType::WARNING->value,
             data: null,
             message: $code,
         ));

@@ -18,6 +18,7 @@ const QrCodesManagement = ({ editions, cards, onConfirm, isSubmitting }) => {
     const [editionId, setEditionId] = useState('');
 
     // Constantes
+    const edition = editions.find((e) => e.id === editionId);
     const editionCards = cards
         .filter((c) => c.editionId === editionId)
         .sort((a, b) => a.playerName.localeCompare(b.playerName) || a.code.localeCompare(b.code));
@@ -61,7 +62,7 @@ const QrCodesManagement = ({ editions, cards, onConfirm, isSubmitting }) => {
                     {/* Liste */}
                     {editionId !== '' &&
                         (editionCards.length > 0 ? (
-                            <CardList cards={editionCards} onConfirm={onConfirm} isSubmitting={isSubmitting} />
+                            <CardList edition={edition} cards={editionCards} onConfirm={onConfirm} isSubmitting={isSubmitting} />
                         ) : (
                             <div className="px-2 py-3 mt-3 page-empty">{t('qrCodes.noCards')}</div>
                         ))}

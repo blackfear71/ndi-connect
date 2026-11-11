@@ -9,6 +9,7 @@ import { combineLatest, of, switchMap } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 
 import { Spinner, Tab, Tabs } from 'react-bootstrap';
+import { FaDownload } from 'react-icons/fa6';
 import { LuQrCode } from 'react-icons/lu';
 
 import { QrCodesGeneration, QrCodesManagement } from '../../components/features';
@@ -19,7 +20,7 @@ import { useAuth } from '../../utils/context/AuthContext';
 import { generateCardCodes, getCardUrl, MAX_QR_CODES_COUNT } from '../../utils/helpers/cardHelper';
 import { downloadQrCode, downloadQrCodesZip, getQrCodesFileName } from '../../utils/helpers/qrCodeHelper';
 
-import { EnumUserRole } from '../../enums';
+import { EnumMessageType, EnumUserRole } from '../../enums';
 
 import { CardsService, EditionsService } from '../../api';
 
@@ -57,7 +58,11 @@ const QrCodes = () => {
     });
     const [modalOptionsQrCode, setModalOptionsQrCode] = useState({
         url: null,
-        isOpen: false
+        text1: null,
+        text2: null,
+        action: null,
+        isOpen: false,
+        message: null
     });
     const [qrCodesGeneration, setQrCodesGeneration] = useState({
         edition: null,
@@ -171,13 +176,32 @@ const QrCodes = () => {
     /**
      * Ouverture/fermeture de la modale du QR Code
      * @param {*} url URL encodée dans le QR code
+     * @param {*} text1 Texte principal affiché sous le QR code
+     * @param {*} text2 Texte secondaire affiché sous le texte principal
+     * @param {*} action Bouton d'action { icon, label, data } affiché sous le QR code (data est transmis à onAction au clic)
      */
-    const openCloseQrCodeModal = (url = null) => {
+    const openCloseQrCodeModal = (url = null, text1 = null, text2 = null, action = null) => {
         // Ouverture ou fermeture
         setModalOptionsQrCode((prev) => ({
             url: url,
-            isOpen: !prev.isOpen
+            text1: text1,
+            text2: text2,
+            action: action,
+            isOpen: !prev.isOpen,
+            message: null
         }));
+    };
+
+    /**
+     * Ouverture de la modale du QR code d'une carte générée (avec un bouton de téléchargement)
+     * @param {*} item QR code (code et url)
+     */
+    const handleOpenQrCode = (item) => {
+        openCloseQrCodeModal(item.url, null, null, {
+            icon: <FaDownload size={18} />,
+            label: t('qrCodes.download'),
+            data: item
+        });
     };
 
     /**
@@ -213,11 +237,20 @@ const QrCodes = () => {
      * @param {*} item QR code (code et url)
      */
     const handleDownload = (item) => {
-        setMessage(null);
+        // Réinitialisation du message de la modale (si elle est ouverte) ou de la page
+        modalOptionsQrCode.isOpen ? setModalOptionsQrCode((prev) => ({ ...prev, message: null })) : setMessage(null);
+
         setIsSubmitting(true);
 
         downloadQrCode(item)
-            .catch(() => setMessage({ code: 'errors.qrCodeExportFailed', type: 'error' }))
+            .catch(() => {
+                // Message d'erreur dans la modale (si elle est ouverte) ou sur la page
+                const errorMessage = { code: 'errors.qrCodeExportFailed', type: EnumMessageType.ERROR };
+
+                modalOptionsQrCode.isOpen
+                    ? setModalOptionsQrCode((prev) => ({ ...prev, message: errorMessage }))
+                    : setMessage(errorMessage);
+            })
             .finally(() => setIsSubmitting(false));
     };
 
@@ -231,7 +264,7 @@ const QrCodes = () => {
         const zipName = getQrCodesFileName(new Date(qrCodesGeneration.edition.startDate).getFullYear(), qrCodesGeneration.edition.location);
 
         downloadQrCodesZip(qrCodesGeneration.items, zipName)
-            .catch(() => setMessage({ code: 'errors.qrCodeExportFailed', type: 'error' }))
+            .catch(() => setMessage({ code: 'errors.qrCodesExportFailed', type: EnumMessageType.ERROR }))
             .finally(() => setIsSubmitting(false));
     };
 
@@ -343,7 +376,7 @@ const QrCodes = () => {
                                             formData={formGeneration}
                                             editions={generationEditions}
                                             generatedItems={qrCodesGeneration.items}
-                                            onOpenQrCode={openCloseQrCodeModal}
+                                            onOpenQrCode={handleOpenQrCode}
                                             onDownload={handleDownload}
                                             onDownloadAll={handleDownloadAll}
                                             onReset={handleResetGeneration}
@@ -368,7 +401,7 @@ const QrCodes = () => {
                                         formData={formGeneration}
                                         editions={generationEditions}
                                         generatedItems={qrCodesGeneration.items}
-                                        onOpenQrCode={openCloseQrCodeModal}
+                                        onOpenQrCode={handleOpenQrCode}
                                         onDownload={handleDownload}
                                         onDownloadAll={handleDownloadAll}
                                         onReset={handleResetGeneration}
@@ -392,7 +425,13 @@ const QrCodes = () => {
 
                     {/* Modale QR Code */}
                     {modalOptionsQrCode.isOpen && (
-                        <QrCodeModal url={modalOptionsQrCode.url} onClose={openCloseQrCodeModal} isSubmitting={isSubmitting} />
+                        <QrCodeModal
+                            modalOptions={modalOptionsQrCode}
+                            setModalOptions={setModalOptionsQrCode}
+                            onAction={handleDownload}
+                            onClose={() => openCloseQrCodeModal()}
+                            isSubmitting={isSubmitting}
+                        />
                     )}
                 </>
             )}

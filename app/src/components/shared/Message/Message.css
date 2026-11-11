@@ -8,6 +8,7 @@
     transform: translateX(-50%);
     width: max-content;
     max-width: calc(100% - 40px);
+    overflow: hidden;
     animation: messageSlideIn 0.2s ease-out forwards;
 }
 
@@ -15,12 +16,25 @@
     flex-shrink: 0;
 }
 
+.message-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background-color: currentColor;
+    opacity: 0.3;
+    transform-origin: left;
+    animation: messageProgress var(--message-duration) linear forwards;
+}
+
 .message-shadow {
     box-shadow: 0 1px 3px var(--color-bg-gray-black);
 }
 
 .message-inline {
-    position: static;
+    position: relative;
+    z-index: auto;
     transform: none;
     width: auto;
     max-width: 100%;
@@ -37,5 +51,14 @@
     to {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes messageProgress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
     }
 }

@@ -220,6 +220,14 @@ h1 {
     font-weight: 600;
 }
 
+.modal-body .modal-group-content .modal-group-content-button {
+    padding: 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+}
+
 .modal-body .modal-group-content .modal-empty {
     background-color: var(--color-bg-transparent);
     color: var(--color-text-secondary);

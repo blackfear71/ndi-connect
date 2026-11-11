@@ -22,8 +22,9 @@ class PlayersRepository
      */
     public function getEditionPlayers(int $editionId): array
     {
-        $sql = "SELECT p.id, p.name, p.points, EXISTS (SELECT 1 FROM {$this->cardsTable} AS c WHERE c.player_id = p.id AND c.is_active = 1) AS has_card
+        $sql = "SELECT p.id, p.name, p.points, c.code AS card_code
             FROM {$this->playersTable} AS p
+            LEFT JOIN {$this->cardsTable} AS c ON c.player_id = p.id AND c.is_active = 1
             WHERE p.edition_id = :edition_id AND p.is_active = 1
             ORDER BY p.name ASC";
 
@@ -36,7 +37,7 @@ class PlayersRepository
             id: (int) $row['id'],
             name: $row['name'],
             points: (int) $row['points'],
-            hasCard: (bool) $row['has_card']
+            cardCode: $row['card_code']
         ), $stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 

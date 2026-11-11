@@ -38,4 +38,4 @@ export const generateCardCodes = (count) => {
  * @param {*} code Code de la carte
  * @returns URL
  */
-export const getCardUrl = (editionId, code) => `${window.location.origin}/edition/${editionId}?card=${code}`;
+export const getCardUrl = (editionId, code) => `${import.meta.env.VITE_APP_URL}/edition/${editionId}?card=${code}`;

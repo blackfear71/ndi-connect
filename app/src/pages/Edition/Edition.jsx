@@ -18,6 +18,7 @@ import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 import { useSse } from '../../utils/context/SseContext';
+import { getCardUrl } from '../../utils/helpers/cardHelper';
 import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
 
 import { EnumAction, EnumUserRole } from '../../enums';
@@ -103,6 +104,10 @@ const Edition = () => {
         message: null
     });
     const [modalOptionsQrCode, setModalOptionsQrCode] = useState({
+        url: null,
+        text1: null,
+        text2: null,
+        action: null,
         isOpen: false
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({
@@ -117,6 +122,7 @@ const Edition = () => {
     const [players, setPlayers] = useState([]);
 
     // Constantes
+    const editionUrl = `${import.meta.env.VITE_APP_URL}/edition/${id}`;
     const rights = {
         isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
         isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
@@ -174,7 +180,15 @@ const Edition = () => {
     const playerValidationSchema = useMemo(() => {
         const currentPlayer = players.find((p) => p.id === modalOptionsPlayer.playerId);
 
+        // Indicateur liste de participants proposée pour rattacher un QR code
+        const hasCardPlayerChoice = modalOptionsPlayer.action === EnumAction.CREATE && !!modalOptionsPlayer.cardCode && players.length > 0;
+
         return Yup.object({
+            cardPlayerId: Yup.mixed().test(
+                'cardPlayerId-choice',
+                'errors.invalidCardPlayer',
+                (value) => !hasCardPlayerChoice || value === 0 || !!value // Si la liste n'est pas affichée ou si un participant est sélectionné le contrôle est valide
+            ),
             name: Yup.string().when('cardPlayerId', {
                 is: (cardPlayerId) => !cardPlayerId, // Si la carte n'est pas rattachée à un participant existant alors le nom est obligatoire
                 then: (schema) => schema.required('errors.invalidName')
@@ -210,7 +224,7 @@ const Edition = () => {
                     })
             })
         });
-    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, players, auth]);
+    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, modalOptionsPlayer.cardCode, players, auth]);
 
     /**
      * Schéma de validation Yup des récompenses
@@ -526,13 +540,33 @@ const Edition = () => {
 
     /**
      * Ouverture/fermeture de la modale du QR Code
+     * @param {*} url URL encodée dans le QR code (édition ou participant)
+     * @param {*} text1 Texte principal affiché sous le QR code
+     * @param {*} text2 Texte secondaire affiché sous le texte principal
+     * @param {*} action Bouton d'action { icon, label, data } affiché sous le QR code (non utilisé sur cette page)
      */
-    const openCloseQrCodeModal = () => {
+    const openCloseQrCodeModal = (url = null, text1 = null, text2 = null, action = null) => {
         // Ouverture ou fermeture
         setModalOptionsQrCode((prev) => ({
-            ...prev,
+            url: url,
+            text1: text1,
+            text2: text2,
+            action: action,
             isOpen: !prev.isOpen
         }));
+    };
+
+    /**
+     * Ferme la modale participant puis ouvre la modale du QR code de sa carte
+     * @param {*} player Participant
+     */
+    const handleOpenPlayerQrCode = (player) => {
+        openClosePlayerModal();
+        openCloseQrCodeModal(
+            getCardUrl(edition.id, player.cardCode),
+            player.name,
+            t(player.points === 1 ? 'edition.countPoint' : 'edition.countPoints', { count: player.points })
+        );
     };
 
     /**
@@ -672,7 +706,7 @@ const Edition = () => {
             case EnumAction.CREATE:
                 if (attachedPlayer) {
                     // Si le participant a déjà un QR code, la confirmation de son remplacement remplace la modale participant (le code est conservé avec les données saisies), sinon on le rattache directement
-                    if (attachedPlayer.hasCard) {
+                    if (attachedPlayer.cardCode) {
                         openClosePlayerModal();
                         openCloseConfirmModal({
                             content: t('edition.replaceCard', { name: attachedPlayer.name }),
@@ -767,6 +801,7 @@ const Edition = () => {
                 }),
                 take(1),
                 catchError((err) => {
+                    // Message d'erreur dans la modale (si elle est ouverte) ou sur la page
                     const errorMessage = { code: err?.response?.message, type: err?.response?.status };
 
                     modalOptionsConfirm.isOpen
@@ -1168,7 +1203,17 @@ const Edition = () => {
                                     </span>
 
                                     {/* QR Code */}
-                                    <Button className="edition-title-button" onClick={openCloseQrCodeModal} disabled={isSubmitting}>
+                                    <Button
+                                        className="edition-title-button"
+                                        onClick={() =>
+                                            openCloseQrCodeModal(
+                                                editionUrl,
+                                                t('edition.editionYear', { year: new Date(edition.startDate).getFullYear() }),
+                                                edition.location
+                                            )
+                                        }
+                                        disabled={isSubmitting}
+                                    >
                                         <LuQrCode size={30} />
                                     </Button>
                                 </h1>
@@ -1243,6 +1288,7 @@ const Edition = () => {
                                         modalOptions={modalOptionsPlayer}
                                         setModalOptions={setModalOptionsPlayer}
                                         onClose={openClosePlayerModal}
+                                        onOpenQrCode={handleOpenPlayerQrCode}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}
@@ -1263,10 +1309,10 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale QR Code */}
-                                {edition && modalOptionsQrCode.isOpen && (
+                                {edition && modalOptionsQrCode.isOpen && modalOptionsQrCode.url && (
                                     <QrCodeModal
-                                        url={`${import.meta.env.VITE_APP_URL}/edition/${edition.id}`}
-                                        onClose={openCloseQrCodeModal}
+                                        modalOptions={modalOptionsQrCode}
+                                        onClose={() => openCloseQrCodeModal()}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}

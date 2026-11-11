@@ -35,7 +35,7 @@ const QrCodeList = ({ items, onOpenQrCode, onDownload, isSubmitting }) => {
                         tooltip={t('qrCodes.show')}
                         content={<LuQrCode color={isSubmitting ? 'gray' : 'white'} />}
                         className="qrcodes-item-button"
-                        onClick={() => onOpenQrCode(item.url)}
+                        onClick={() => onOpenQrCode(item)}
                         isSubmitting={isSubmitting}
                     />
 

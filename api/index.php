@@ -1,6 +1,7 @@
 <?php
 // Imports
 require_once __DIR__ . '/enums/EnumAction.php';
+require_once __DIR__ . '/enums/EnumMessageType.php';
 require_once __DIR__ . '/enums/EnumSseEvent.php';
 require_once __DIR__ . '/enums/EnumUserRole.php';
 
