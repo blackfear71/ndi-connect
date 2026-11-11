@@ -146,7 +146,7 @@ class PlayersService
 
             // Liaison de la carte si scannée
             if ($data->cardCode !== null) {
-                $this->getCardsService()->linkCard($editionId, $playerId, $data->cardCode, $user->id);
+                $this->getCardsService()->updateCardCode($editionId, $playerId, $data->cardCode, $user->id);
             }
         });
     }
@@ -192,7 +192,7 @@ class PlayersService
 
             // Liaison de la carte (remplace la carte active du participant s'il en a une)
             if ($data->cardCode !== null) {
-                $this->getCardsService()->linkCard($editionId, $playerId, $data->cardCode, $user->id);
+                $this->getCardsService()->updateCardCode($editionId, $playerId, $data->cardCode, $user->id);
             }
         });
     }

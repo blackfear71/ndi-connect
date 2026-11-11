@@ -70,7 +70,7 @@ ndi-connect/
 │   ├── vite.config.js
 ├── dist/                  # Dossier de déploiement
 ├── files/                 # Dossier des fichiers (images, logs...)
-├── sql/                   # Scripts SQL à exécuter à la main (non déployés)
+├── sql/                   # Scripts SQL (non déployés)
 ├── .gitattributes
 ├── .gitignore
 ├── deploy.ps1             # Script de déploiement

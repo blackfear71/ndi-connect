@@ -126,9 +126,9 @@ class CardsService
     }
 
     /**
-     * Liaison d'un code de carte à un participant
+     * Modification d'un code de carte sur un participant
      */
-    public function linkCard(int $editionId, int $playerId, string $code, int $userId): void
+    public function updateCardCode(int $editionId, int $playerId, string $code, int $userId): void
     {
         // Lecture de la carte du participant
         $currentCard = $this->cardsRepository->getCardByPlayerId($playerId);

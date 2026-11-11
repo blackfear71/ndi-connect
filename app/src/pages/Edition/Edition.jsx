@@ -754,8 +754,8 @@ const Edition = () => {
         if (attachedPlayer.cardCode) {
             openClosePlayerModal();
             openCloseConfirmModal({
-                content: t('edition.replaceCard', { name: attachedPlayer.name }),
-                action: 'replaceCard',
+                content: t('edition.attachCard', { name: attachedPlayer.name }),
+                action: 'attachCard',
                 data: data
             });
         } else {
@@ -990,6 +990,8 @@ const Edition = () => {
      */
     const handleConfirmAction = () => {
         switch (modalOptionsConfirm?.action) {
+            case 'attachCard':
+                return handleAttachCard(modalOptionsConfirm.data);
             case 'deleteEdition':
                 return handleDeleteEdition();
             case 'deleteGift':
@@ -998,8 +1000,6 @@ const Edition = () => {
                 return handleDeletePlayer(modalOptionsConfirm.data);
             case 'deleteReward':
                 return handleDeleteReward(modalOptionsConfirm.data);
-            case 'replaceCard':
-                return handleAttachCard(modalOptionsConfirm.data);
             default:
                 return;
         }
