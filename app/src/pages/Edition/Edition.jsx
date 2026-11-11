@@ -549,11 +549,12 @@ const Edition = () => {
     };
 
     /**
-     * Ferme la modale participant puis ouvre la modale du QR code de sa carte
+     * Ferme la modale d'où l'on vient (participant ou cadeaux) puis ouvre la modale du QR code de la carte du participant
      * @param {*} player Participant
+     * @param {*} closeModal Fonction de fermeture de la modale en cours
      */
-    const handleOpenPlayerQrCode = (player) => {
-        openClosePlayerModal();
+    const handleOpenPlayerQrCode = (player, closeModal) => {
+        closeModal();
         openCloseQrCodeModal(
             getCardUrl(edition.id, player.cardCode),
             player.name,
@@ -1285,8 +1286,8 @@ const Edition = () => {
                                         formData={formPlayer}
                                         modalOptions={modalOptionsPlayer}
                                         setModalOptions={setModalOptionsPlayer}
+                                        onOpenQrCode={(p) => handleOpenPlayerQrCode(p, openClosePlayerModal)}
                                         onClose={openClosePlayerModal}
-                                        onOpenQrCode={handleOpenPlayerQrCode}
                                         isSubmitting={isSubmitting}
                                     />
                                 )}
@@ -1301,6 +1302,7 @@ const Edition = () => {
                                         formData={formReward}
                                         modalOptions={modalOptionsReward}
                                         setModalOptions={setModalOptionsReward}
+                                        onOpenQrCode={(p) => handleOpenPlayerQrCode(p, openCloseRewardModal)}
                                         onClose={openCloseRewardModal}
                                         onConfirm={openCloseConfirmModal}
                                         isSubmitting={isSubmitting}

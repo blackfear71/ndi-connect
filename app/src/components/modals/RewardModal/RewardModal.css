@@ -17,6 +17,15 @@
     color: var(--color-text-white);
 }
 
+.reward-modal-qrcode-button {
+    padding: 0;
+    flex-shrink: 0;
+    background: none;
+    border: 0;
+    color: var(--color-text-white);
+    cursor: pointer;
+}
+
 .reward-modal-gift-row {
     border-bottom: 1px solid var(--color-border-separator);
 }

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
 import { FaGift, FaTrashCan } from 'react-icons/fa6';
+import { LuQrCode } from 'react-icons/lu';
 import { PiListStarBold } from 'react-icons/pi';
 
 import { SelectInput } from '../../../components/inputs';
@@ -20,6 +21,7 @@ const RewardModal = ({
     formData,
     modalOptions,
     setModalOptions,
+    onOpenQrCode,
     onClose,
     onConfirm,
     isSubmitting
@@ -90,6 +92,7 @@ const RewardModal = ({
                     <Modal.Body>
                         {/* Participant */}
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
+                            {/* Bulle */}
                             <div
                                 className="d-flex align-items-center justify-content-center reward-modal-icon"
                                 style={{ backgroundColor: player.color }}
@@ -97,7 +100,20 @@ const RewardModal = ({
                                 {player.name.charAt(0).toUpperCase()}
                             </div>
 
-                            <div className="reward-modal-player-name">{player.name}</div>
+                            {/* Nom */}
+                            <div className="flex-grow-1 reward-modal-player-name">{player.name}</div>
+
+                            {/* QR code de la carte */}
+                            {player.cardCode && (
+                                <button
+                                    type="button"
+                                    className="d-flex align-items-center justify-content-center reward-modal-qrcode-button"
+                                    aria-label={t('edition.qrCode')}
+                                    onClick={() => onOpenQrCode(player)}
+                                >
+                                    <LuQrCode size={26} />
+                                </button>
+                            )}
                         </div>
 
                         {/* Statistiques */}
