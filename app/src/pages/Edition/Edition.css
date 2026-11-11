@@ -20,12 +20,11 @@
     flex-shrink: 0;
 }
 
-.edition-title-button,
-.edition-title-button:hover,
-.edition-title-button:active {
+.edition-title-button {
     background-color: var(--color-bg-transparent) !important;
     border: none;
     padding: 6px;
+    margin-right: -6px;
 }
 
 .edition-subtitle {
