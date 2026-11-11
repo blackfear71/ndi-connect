@@ -47,7 +47,6 @@ class MessageHelper
     const ERR_PLAYER_GIVEAWAY  = 'ERR_PLAYER_GIVEAWAY';
     const ERR_PLAYER_NOT_FOUND = 'ERR_PLAYER_NOT_FOUND';
 
-    // TODO : messages à tester
     // Cartes
     const ERR_CARD_ALREADY_REGISTERED = 'ERR_CARD_ALREADY_REGISTERED';
     const ERR_CARD_NOT_FOUND          = 'ERR_CARD_NOT_FOUND';

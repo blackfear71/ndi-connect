@@ -22,7 +22,7 @@ class PlayersRepository
      */
     public function getEditionPlayers(int $editionId): array
     {
-        $sql = "SELECT p.id, p.name, p.points, c.code AS card_code
+        $sql = "SELECT p.id, p.edition_id, p.name, p.points, c.code AS card_code
             FROM {$this->playersTable} AS p
             LEFT JOIN {$this->cardsTable} AS c ON c.player_id = p.id AND c.is_active = 1
             WHERE p.edition_id = :edition_id AND p.is_active = 1
@@ -35,6 +35,7 @@ class PlayersRepository
 
         return array_map(fn($row) => new Player(
             id: (int) $row['id'],
+            editionId: (int) $row['edition_id'],
             name: $row['name'],
             points: (int) $row['points'],
             cardCode: $row['card_code']

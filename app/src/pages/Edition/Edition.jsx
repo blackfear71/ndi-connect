@@ -259,7 +259,7 @@ const Edition = () => {
     const formPlayer = useFormik({
         initialValues: initialPlayerValues,
         validationSchema: playerValidationSchema,
-        onSubmit: (values) => handleSubmitPlayer(values)
+        onSubmit: (values) => (values.cardPlayerId ? handleSubmitCard(values) : handleSubmitPlayer(values))
     });
 
     /**
@@ -519,7 +519,6 @@ const Edition = () => {
                 take(1),
                 catchError((err) => {
                     // Carte invalide, inconnue, participant inconnu... : redirection vers l'accueil avec message
-                    // TODO : à tester
                     navigate('/', {
                         state: {
                             navMessage: { code: err?.response?.message, type: err?.response?.status }
@@ -681,7 +680,7 @@ const Edition = () => {
     };
 
     /**
-     * Validation de la modale participant (création, modification ou rattachement)
+     * Validation de la modale participant (création ou modification)
      * @param {*} values Données du formulaire
      */
     const handleSubmitPlayer = (values) => {
@@ -689,36 +688,18 @@ const Edition = () => {
 
         const playersService = new PlayersService();
 
-        // QR code scanné et participant existant auquel le rattacher (uniquement à la création)
-        const cardCode = modalOptionsPlayer?.cardCode;
-        const attachedPlayer = values.cardPlayerId ? players.find((p) => p.id === values.cardPlayerId) : null;
-
         let subscriptionPlayers = null;
 
         switch (modalOptionsPlayer?.action) {
             case EnumAction.CREATE:
-                if (attachedPlayer) {
-                    // Si le participant a déjà un QR code, la confirmation de son remplacement remplace la modale participant (le code est conservé avec les données saisies), sinon on le rattache directement
-                    if (attachedPlayer.cardCode) {
-                        openClosePlayerModal();
-                        openCloseConfirmModal({
-                            content: t('edition.replaceCard', { name: attachedPlayer.name }),
-                            action: 'replaceCard',
-                            data: { ...values, cardCode }
-                        });
-                    } else {
-                        handleReplaceCard({ ...values, cardCode });
-                    }
-                } else {
-                    setIsSubmitting(true);
-                    setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
+                setIsSubmitting(true);
+                setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
-                    subscriptionPlayers = playersService.createPlayer(edition?.id, {
-                        name: values.name,
-                        points: values.points,
-                        cardCode
-                    });
-                }
+                subscriptionPlayers = playersService.createPlayer(edition?.id, {
+                    name: values.name,
+                    points: values.points,
+                    cardCode: modalOptionsPlayer?.cardCode
+                });
                 break;
             case EnumAction.UPDATE:
                 setIsSubmitting(true);
@@ -759,10 +740,33 @@ const Edition = () => {
     };
 
     /**
-     * Rattachement du QR code scanné à un participant existant (remplace son QR code actuel s'il en possède un, appelé directement ou après confirmation du remplacement)
+     * Validation de la modale participant (via rattachement d'un QR code)
      * @param {*} values Données du formulaire
      */
-    const handleReplaceCard = (values) => {
+    const handleSubmitCard = (values) => {
+        const cardCode = modalOptionsPlayer?.cardCode;
+        const attachedPlayer = players.find((p) => p.id === values.cardPlayerId);
+
+        const data = { player: attachedPlayer, points: values.points, cardCode: cardCode };
+
+        // Si le participant a déjà un QR code, la modale de confirmation de son remplacement s'affiche, sinon on le rattache directement
+        if (attachedPlayer.cardCode) {
+            openClosePlayerModal();
+            openCloseConfirmModal({
+                content: t('edition.replaceCard', { name: attachedPlayer.name }),
+                action: 'replaceCard',
+                data: data
+            });
+        } else {
+            handleAttachCard(data);
+        }
+    };
+
+    /**
+     * Rattachement du QR code scanné à un participant existant (remplace son QR code actuel s'il en possède un)
+     * @param {*} data Participant, points saisis et code du QR code
+     */
+    const handleAttachCard = (data) => {
         setMessage(null);
         setIsSubmitting(true);
 
@@ -772,16 +776,15 @@ const Edition = () => {
             : setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
 
         const playersService = new PlayersService();
-        const attachedPlayer = players.find((p) => p.id === values.cardPlayerId);
 
         // Modification du participant existant avec les données saisies (pas de don de points à la création)
         playersService
-            .updatePlayer(attachedPlayer.id, {
-                name: attachedPlayer.name,
-                points: values.points,
+            .updatePlayer(data.player.id, {
+                name: data.player.name,
+                points: data.points,
                 giveaway: 0,
                 giveawayPlayerId: 0,
-                cardCode: values.cardCode
+                cardCode: data.cardCode
             })
             .pipe(
                 map((dataPlayer) => {
@@ -995,7 +998,7 @@ const Edition = () => {
             case 'deleteReward':
                 return handleDeleteReward(modalOptionsConfirm.data);
             case 'replaceCard':
-                return handleReplaceCard(modalOptionsConfirm.data);
+                return handleAttachCard(modalOptionsConfirm.data);
             default:
                 return;
         }

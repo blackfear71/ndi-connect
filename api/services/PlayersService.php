@@ -84,6 +84,7 @@ class PlayersService
             // Formatage des données participant
             return new PlayerOutputDTO(
                 id: $player->id,
+                editionId: $player->editionId,
                 name: $player->name,
                 points: $player->points,
                 cardCode: $player->cardCode,
@@ -112,6 +113,7 @@ class PlayersService
         // Récupération des données participant
         return new PlayerOutputDTO(
             id: $player->id,
+            editionId: $player->editionId,
             name: $player->name,
             points: $player->points
         );
@@ -154,19 +156,8 @@ class PlayersService
      */
     public function updatePlayer(int $playerId, UserOutputDTO $user, PlayerInputDTO $data): void
     {
-        // TODO : c'est bizarre on va lire un participant puis contrôler ses données plus tard, revoir l'ordre des contrôles
-        // Lecture du participant (pour lier une carte à la bonne édition)
-        $editionId = null;
-
-        if ($data->cardCode !== null && $playerId) {
-            $currentPlayer = $this->playersRepository->getPlayer($playerId);
-
-            if (!$currentPlayer) {
-                throw new \RuntimeException(MessageHelper::ERR_PLAYER_NOT_FOUND);
-            }
-
-            $editionId = $currentPlayer->editionId;
-        }
+        // Récupération de l'identifiant édition à partir du participant (pour lier une carte à la bonne édition)
+        $editionId = $data->cardCode !== null ? $this->getPlayer($playerId)->editionId : null;
 
         // Contrôle des données
         $this->isValidUpdatePlayerData($playerId, $editionId, $data, $user->level);

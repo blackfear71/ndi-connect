@@ -78,34 +78,36 @@ class CardsService
         // Contrôle des données
         $this->isValidCardData($editionId, $code);
 
-        // Edition terminée ou introuvable
-        $endDate = $this->getEditionsService()->getEditionEndDateByType($editionId, 'editions');
-        $isEditionFinished = $endDate === null || new \DateTimeImmutable() > $endDate;
-
         // Lecture de la carte
         $card = $this->cardsRepository->getCardByCode($editionId, $code);
 
-        // Si la carte n'existe pas elle est soit libre soit non trouvée
-        if (!$card) {
-            // Si l'utilisateur est SUPERADMIN ou ADMIN et que l'édition n'est pas terminée, la carte est considérée comme libre
+        if ($card) {
+            // Contrôle de l'existence du participant lié (s'il n'existe pas une erreur est renvoyée)
+            $this->getPlayersService()->getPlayer($card->playerId);
+
+            // Si la carte et le participant existent, la carte est considérée comme non libre
+            $cardStatus = new CardStatusOutputDTO(
+                isFree: false,
+                playerId: $card->playerId
+            );
+        } else {
+            // Edition terminée ou introuvable
+            $endDate = $this->getEditionsService()->getEditionEndDateByType($editionId, 'editions');
+            $isEditionFinished = $endDate === null || new \DateTimeImmutable() > $endDate;
+            
+            // Si la carte n'existe pas elle est soit libre soit non trouvée
             if ($user !== null && ($user->level >= EnumUserRole::SUPERADMIN->value || ($user->level === EnumUserRole::ADMIN->value && !$isEditionFinished))) {
-                return new CardStatusOutputDTO(
+                // Si l'utilisateur connecté est SUPERADMIN ou ADMIN et que l'édition n'est pas terminée, la carte est considérée comme libre
+                $cardStatus = new CardStatusOutputDTO(
                     isFree: true
                 );
+            } else {
+                // Si aucun utilisateur connecté ou si édition terminée et qu'on tente d'accéder à une carte qui n'existe pas, on renvoie une erreur
+                throw new \RuntimeException($isEditionFinished ? MessageHelper::ERR_EDITION_FINISHED : MessageHelper::ERR_CARD_NOT_FOUND);
             }
-
-            // Si l'édition est terminée ou qu'on tente d'accéder à une carte qui n'existe pas, on renvoie une erreur
-            throw new \RuntimeException($isEditionFinished ? MessageHelper::ERR_EDITION_FINISHED : MessageHelper::ERR_CARD_NOT_FOUND);
         }
 
-        // Contrôle de l'existence du participant lié (s'il n'existe pas une erreur est renvoyée)
-        $this->getPlayersService()->getPlayer($card->playerId);
-
-        // Si la carte et le participant existent, la carte est considérée comme non libre
-        return new CardStatusOutputDTO(
-            isFree: false,
-            playerId: $card->playerId
-        );
+        return $cardStatus;
     }
 
     /**
