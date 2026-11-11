@@ -160,6 +160,16 @@ h1 {
     color: var(--color-text-white) !important;
 }
 
+/* Listes déroulantes */
+.form-select {
+    color-scheme: light;
+}
+
+.form-select option {
+    background-color: var(--color-bg-white);
+    color: var(--color-text-primary);
+}
+
 /* Modales */
 .modal-header {
     background-color: var(--color-bg-secondary);

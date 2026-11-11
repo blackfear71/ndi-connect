@@ -2,14 +2,15 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background-color: var(--color-bg-white);
+    background-color: var(--color-bg-item);
+    border: 1px solid var(--color-border-item);
     border-radius: var(--bs-border-radius);
 }
 
 .qrcodes-form .input-title {
     font-size: small;
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--color-text-white);
     text-transform: uppercase;
 }
 
@@ -17,12 +18,63 @@
     width: 30px;
     height: 30px;
     flex-shrink: 0;
-    color: var(--color-bg-gray-bold);
+    color: var(--color-bg-white);
 }
 
 .qrcodes-form .input-icon svg {
     width: 28px;
     height: 28px;
+}
+
+.qrcodes-form .form-select {
+    background-color: var(--color-bg-item-button);
+    color: var(--color-text-white);
+}
+
+.qrcodes-form .form-select:not(.is-invalid) {
+    border-color: var(--color-border-primary);
+}
+
+.qrcodes-form .increment-input-button {
+    background-color: var(--color-bg-item-button) !important;
+    border-color: var(--color-border-primary) !important;
+    color: var(--color-text-white) !important;
+}
+
+.qrcodes-form .increment-input-button:hover,
+.qrcodes-form .increment-input-button:active {
+    background-color: var(--color-border-item) !important;
+}
+
+.qrcodes-form .increment-input-value {
+    background-color: var(--color-bg-item-button);
+    border-color: var(--color-border-primary);
+    color: var(--color-text-white);
+}
+
+.qrcodes-form .increment-input-value.green {
+    color: var(--color-bg-green) !important;
+}
+
+.qrcodes-form .btn-filled-text-action {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-bg-tertiary) !important;
+}
+
+.qrcodes-form .btn-filled-text-action:hover,
+.qrcodes-form .btn-filled-text-action:active {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+.qrcodes-form .btn-outline-text-action {
+    border-color: var(--color-bg-gray-medium) !important;
+    color: var(--color-bg-gray-medium) !important;
+}
+
+.qrcodes-form .btn-outline-text-action:hover,
+.qrcodes-form .btn-outline-text-action:active {
+    background-color: var(--color-bg-gray-medium) !important;
+    color: var(--color-text-primary) !important;
 }
 
 .qrcodes-item {

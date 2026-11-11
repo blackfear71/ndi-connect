@@ -47,7 +47,7 @@ const QrCodesManagement = ({ editions, cards, onConfirm, isSubmitting }) => {
             {editions.length > 0 ? (
                 <>
                     {/* Edition */}
-                    <div className="p-3 qrcodes-form">
+                    <div className="p-3 qrcodes-form" data-bs-theme="dark">
                         <SelectInput
                             title={t('qrCodes.edition')}
                             icon={<FaComputer />}

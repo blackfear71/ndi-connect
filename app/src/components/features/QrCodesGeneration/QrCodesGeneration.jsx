@@ -58,7 +58,7 @@ const QrCodesGeneration = ({ formData, editions, generatedItems, onOpenQrCode, o
                     {/* Formulaire */}
                     <Form onSubmit={formData.handleSubmit}>
                         <fieldset disabled={isSubmitting}>
-                            <div className="p-3 qrcodes-form">
+                            <div className="p-3 qrcodes-form" data-bs-theme="dark">
                                 {/* Edition */}
                                 <SelectInput
                                     title={t('qrCodes.edition')}
