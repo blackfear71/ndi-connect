@@ -37,8 +37,10 @@ class FileHelper
         $realDir = realpath($dir);
         $realPath = realpath($filePath);
 
+        // On ne plante pas pour un fichier non trouvé
         if (!is_dir($dir) || $realDir === false || !is_file($filePath) || $realPath === false || !str_starts_with($realPath, $realDir)) {
-            throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
+            // throw new \RuntimeException(MessageHelper::ERR_FILE_NOT_FOUND);
+            $fileName = '';
         }
 
         return $fileName;
