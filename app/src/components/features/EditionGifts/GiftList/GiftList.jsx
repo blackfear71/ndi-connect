@@ -13,7 +13,7 @@ import { EnumAction } from '../../../../enums';
 /**
  * Liste des cadeaux
  */
-const GiftList = ({ rights, gifts, title, onOpen, onConfirm, isSubmitting }) => {
+const GiftList = ({ rights, canManageEdition, gifts, title, onOpen, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -135,7 +135,7 @@ const GiftList = ({ rights, gifts, title, onOpen, onConfirm, isSubmitting }) => 
                     )}
 
                     {/* Modification */}
-                    {rights.isAdminOrSuperAdminOnEdition && (
+                    {canManageEdition && (
                         <TooltipButton
                             tooltip={t('edition.gift')}
                             content={<FaAngleRight color={isSubmitting ? 'gray' : 'white'} />}

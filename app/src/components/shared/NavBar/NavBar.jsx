@@ -17,8 +17,6 @@ import { SearchBar } from '../../../components/shared';
 
 import { useAuth } from '../../../utils/context/AuthContext';
 
-import { EnumUserRole } from '../../../enums';
-
 import './NavBar.css';
 
 // Valeurs initiales des formulaires
@@ -36,7 +34,7 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, setAuthMessage, login, logout } = useAuth();
+    const { auth, rights, setAuthMessage, login, logout } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -52,13 +50,6 @@ const NavBar = () => {
 
     // Constantes
     const redirectPages = ['/settings', '/qrcodes'];
-    // TODO : trouver un moyen de mettre ça en commun pour toutes les pages
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isAdminOrSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
-    };
 
     /**
      * Affecte un évènement lors du clic en dehors de la zone

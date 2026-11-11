@@ -21,7 +21,7 @@ import { useSse } from '../../utils/context/SseContext';
 import { getCardUrl } from '../../utils/helpers/cardHelper';
 import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
 
-import { EnumAction, EnumUserRole } from '../../enums';
+import { EnumAction } from '../../enums';
 
 import { CardsService, EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
 
@@ -67,7 +67,7 @@ const Edition = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage } = useAuth();
+    const { authMessage, setAuthMessage, rights } = useAuth();
     const { events } = useSse();
 
     // Traductions
@@ -123,14 +123,7 @@ const Edition = () => {
 
     // Constantes
     const editionUrl = `${import.meta.env.VITE_APP_URL}/edition/${id}`;
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN,
-        isAdminOrSuperAdminOnEdition:
-            auth.isLoggedIn &&
-            ((auth.level === EnumUserRole.ADMIN && new Date() <= new Date(edition?.endDate)) || auth.level >= EnumUserRole.SUPERADMIN)
-    };
+    const canManageEdition = rights.isSuperAdmin || (rights.isAdmin && new Date() <= new Date(edition?.endDate));
 
     /**
      * Schéma de validation Yup de l'édition
@@ -224,7 +217,7 @@ const Edition = () => {
                     })
             })
         });
-    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, modalOptionsPlayer.cardCode, players, auth]);
+    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, modalOptionsPlayer.cardCode, players, rights]);
 
     /**
      * Schéma de validation Yup des récompenses
@@ -505,7 +498,7 @@ const Edition = () => {
                             isOpen: true,
                             message: null
                         });
-                    } else if (rights.isAdminOrSuperAdminOnEdition) {
+                    } else if (canManageEdition) {
                         // Utilisateur connecté, carte trouvée : saisie des points du participant
                         setModalOptionsPlayer({
                             action: EnumAction.UPDATE,
@@ -515,7 +508,7 @@ const Edition = () => {
                             message: null
                         });
                     } else {
-                        // Uutilisateur non connecté, carte trouvée : consultation des cadeaux du participant
+                        // Utilisateur non connecté, carte trouvée : consultation des cadeaux du participant
                         setModalOptionsReward({
                             playerId: dataCard.response.data.playerId,
                             isOpen: true,
@@ -1224,6 +1217,7 @@ const Edition = () => {
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
                                             rights={rights}
+                                            canManageEdition={canManageEdition}
                                             players={players}
                                             onOpenPlayerModal={openClosePlayerModal}
                                             onOpenRewardModal={openCloseRewardModal}
@@ -1236,6 +1230,7 @@ const Edition = () => {
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
                                             rights={rights}
+                                            canManageEdition={canManageEdition}
                                             gifts={gifts}
                                             onOpen={openCloseGiftModal}
                                             onConfirm={openCloseConfirmModal}
@@ -1267,7 +1262,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de cadeau */}
-                                {rights.isAdminOrSuperAdminOnEdition && formGift && modalOptionsGift.isOpen && (
+                                {canManageEdition && formGift && modalOptionsGift.isOpen && (
                                     <GiftModal
                                         gift={gifts.find((g) => g.id === modalOptionsGift.giftId)}
                                         formData={formGift}
@@ -1279,7 +1274,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de participant */}
-                                {rights.isAdminOrSuperAdminOnEdition && formPlayer && modalOptionsPlayer.isOpen && (
+                                {canManageEdition && formPlayer && modalOptionsPlayer.isOpen && (
                                     <PlayerModal
                                         rights={rights}
                                         player={players.find((p) => p.id === modalOptionsPlayer.playerId)}
@@ -1297,6 +1292,7 @@ const Edition = () => {
                                 {formReward && modalOptionsReward.isOpen && (
                                     <RewardModal
                                         rights={rights}
+                                        canManageEdition={canManageEdition}
                                         player={players.find((p) => p.id === modalOptionsReward.playerId)}
                                         gifts={gifts}
                                         formData={formReward}
@@ -1318,7 +1314,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de confirmation */}
-                                {rights.isAdminOrSuperAdminOnEdition && modalOptionsConfirm.isOpen && (
+                                {canManageEdition && modalOptionsConfirm.isOpen && (
                                     <ConfirmModal
                                         modalOptions={modalOptionsConfirm}
                                         setModalOptions={setModalOptionsConfirm}

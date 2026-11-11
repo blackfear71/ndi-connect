@@ -20,7 +20,7 @@ import { useAuth } from '../../utils/context/AuthContext';
 import { generateCardCodes, getCardUrl, MAX_QR_CODES_COUNT } from '../../utils/helpers/cardHelper';
 import { downloadQrCode, downloadQrCodesZip, getQrCodesFileName } from '../../utils/helpers/qrCodeHelper';
 
-import { EnumMessageType, EnumUserRole } from '../../enums';
+import { EnumMessageType } from '../../enums';
 
 import { CardsService, EditionsService } from '../../api';
 
@@ -40,7 +40,7 @@ const QrCodes = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, refreshAuth, setAuthMessage, skipAutoRedirectRef } = useAuth();
+    const { auth, rights, authMessage, refreshAuth, setAuthMessage, skipAutoRedirectRef } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -80,12 +80,6 @@ const QrCodes = () => {
     const managementEditions = [...editions].sort(
         (a, b) => new Date(b.startDate) - new Date(a.startDate) || a.location.localeCompare(b.location)
     );
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isAdminOrSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
-    };
 
     /**
      * Schéma de validation Yup de la génération
@@ -134,7 +128,7 @@ const QrCodes = () => {
             return;
         }
 
-        // Récupération des cartes existantes
+        // Récupération des éditions et cartes existantes
         if (rights.isAdminOrSuperAdmin) {
             const editionsService = new EditionsService();
             const cardsService = new CardsService();

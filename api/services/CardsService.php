@@ -133,7 +133,6 @@ class CardsService
 
         // Si le participant possède déjà une carte, son code est remplacé et l'ancien code redevient libre, sinon elle est créée
         if ($currentCard) {
-            // TODO : ce cas est pour lier une carte à un utilisateur qui aurait déjà une carte, vérifier si à la validation de la modale on a une modale de confirmation pour être sûr de son action
             // Remplacement du code de la carte existante
             $card = new Card(
                 id: $currentCard->id,

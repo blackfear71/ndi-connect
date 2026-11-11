@@ -10,14 +10,14 @@ import PlayerList from './PlayerList/PlayerList';
 /**
  * Liste des participants
  */
-const EditionPlayers = ({ rights, players, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
+const EditionPlayers = ({ rights, canManageEdition, players, onOpenPlayerModal, onOpenRewardModal, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
     return (
         <>
             {/* Ajout */}
-            {rights.isAdminOrSuperAdminOnEdition && (
+            {canManageEdition && (
                 <div className="d-grid">
                     <Button variant="outline-action" onClick={() => onOpenPlayerModal(EnumAction.CREATE, null)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
@@ -31,6 +31,7 @@ const EditionPlayers = ({ rights, players, onOpenPlayerModal, onOpenRewardModal,
                 <div className="mt-3">
                     <PlayerList
                         rights={rights}
+                        canManageEdition={canManageEdition}
                         players={players}
                         onConfirm={onConfirm}
                         onOpenPlayerModal={onOpenPlayerModal}

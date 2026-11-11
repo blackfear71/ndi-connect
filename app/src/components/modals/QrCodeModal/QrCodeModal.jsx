@@ -71,7 +71,7 @@ const QrCodeModal = ({ modalOptions, setModalOptions, onAction, onClose, isSubmi
 
                         {/* Textes */}
                         {hasTexts && (
-                            <div className="d-flex flex-column align-items-center">
+                            <div className="d-flex flex-column align-items-center text-center">
                                 {modalOptions.text1 && <div className="qr-code-modal-text1">{modalOptions.text1}</div>}
                                 {modalOptions.text2 && <div className="qr-code-modal-text2">{modalOptions.text2}</div>}
                             </div>

@@ -12,7 +12,7 @@ import GiftList from './GiftList/GiftList';
 /**
  * Liste des cadeaux
  */
-const EditionGifts = ({ rights, gifts, onOpen, onConfirm, isSubmitting }) => {
+const EditionGifts = ({ rights, canManageEdition, gifts, onOpen, onConfirm, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -23,7 +23,7 @@ const EditionGifts = ({ rights, gifts, onOpen, onConfirm, isSubmitting }) => {
     return (
         <>
             {/* Ajout */}
-            {rights.isAdminOrSuperAdminOnEdition && (
+            {canManageEdition && (
                 <div className="d-grid">
                     <Button variant="outline-action" onClick={() => onOpen(EnumAction.CREATE)} disabled={isSubmitting}>
                         <IoAddCircleOutline size={25} />
@@ -40,6 +40,7 @@ const EditionGifts = ({ rights, gifts, onOpen, onConfirm, isSubmitting }) => {
                         <div className="mt-3">
                             <GiftList
                                 rights={rights}
+                                canManageEdition={canManageEdition}
                                 gifts={availableGifts}
                                 title={t('edition.availableGifts')}
                                 onOpen={onOpen}
@@ -54,6 +55,7 @@ const EditionGifts = ({ rights, gifts, onOpen, onConfirm, isSubmitting }) => {
                         <div className="mt-3">
                             <GiftList
                                 rights={rights}
+                                canManageEdition={canManageEdition}
                                 gifts={unavailableGifts}
                                 title={t('edition.unavailableGifts')}
                                 onOpen={onOpen}

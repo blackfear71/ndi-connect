@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { of } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
@@ -6,6 +6,8 @@ import { catchError, finalize, map, take } from 'rxjs/operators';
 import { Spinner } from 'react-bootstrap';
 
 import { AuthContext } from '../../utils/context/AuthContext';
+
+import { EnumUserRole } from '../../enums';
 
 import { UsersService } from '../../api';
 
@@ -25,6 +27,15 @@ const AuthProvider = ({ children }) => {
 
     // Constantes
     const skipAutoRedirectRef = useRef(false); // Indique qu'une navigation manuelle (login/logout) est en cours pour éviter les redirections automatiques concurrentes basées sur "auth"
+    const rights = useMemo(
+        () => ({
+            isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
+            isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
+            isAdminOrSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.ADMIN,
+            isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
+        }),
+        [auth]
+    );
 
     /**
      * Contrôle de la connexion au lancement de l'application
@@ -165,7 +176,7 @@ const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, authMessage, setAuthMessage, refreshAuth, login, logout, skipAutoRedirectRef }}>
+        <AuthContext.Provider value={{ auth, authMessage, setAuthMessage, refreshAuth, rights, login, logout, skipAutoRedirectRef }}>
             {authLoading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" variant="light" />

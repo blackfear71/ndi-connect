@@ -12,7 +12,18 @@ import './RewardModal.css';
 /**
  * Modale récompense
  */
-const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
+const RewardModal = ({
+    rights,
+    canManageEdition,
+    player,
+    gifts,
+    formData,
+    modalOptions,
+    setModalOptions,
+    onClose,
+    onConfirm,
+    isSubmitting
+}) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -72,7 +83,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
-                            {rights.isAdminOrSuperAdminOnEdition ? t('edition.manageGifts') : t('edition.informations')}
+                            {canManageEdition ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
@@ -115,7 +126,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                         </div>
 
                         {/* Attribution cadeaux */}
-                        {rights.isAdminOrSuperAdminOnEdition && (
+                        {canManageEdition && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     {gifts.length > 0 ? (
@@ -195,7 +206,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                                 {t('common.close')}
                             </Button>
 
-                            {rights.isAdminOrSuperAdminOnEdition && obtainableGifts.length > 0 && (
+                            {canManageEdition && obtainableGifts.length > 0 && (
                                 <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                             )}
                         </div>
