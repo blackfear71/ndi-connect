@@ -35,8 +35,8 @@ class MessageHelper
     const MSG_UPDATE_SUCCESS   = 'MSG_UPDATE_SUCCESS';
 
     // Editions
-    const ERR_EDITION_NOT_FOUND  = 'ERR_EDITION_NOT_FOUND';
     const ERR_EDITION_FINISHED   = 'ERR_EDITION_FINISHED';
+    const ERR_EDITION_NOT_FOUND  = 'ERR_EDITION_NOT_FOUND';
     const ERR_INVALID_DATE       = 'ERR_INVALID_DATE';
     const ERR_INVALID_END_TIME   = 'ERR_INVALID_END_TIME';
     const ERR_INVALID_LOCATION   = 'ERR_INVALID_LOCATION';
@@ -46,6 +46,11 @@ class MessageHelper
     const ERR_INVALID_POINTS   = 'ERR_INVALID_POINTS';
     const ERR_PLAYER_GIVEAWAY  = 'ERR_PLAYER_GIVEAWAY';
     const ERR_PLAYER_NOT_FOUND = 'ERR_PLAYER_NOT_FOUND';
+
+    // Cartes
+    const ERR_CARD_ALREADY_REGISTERED = 'ERR_CARD_ALREADY_REGISTERED';
+    const ERR_CARD_NOT_FOUND          = 'ERR_CARD_NOT_FOUND';
+    const ERR_INVALID_CARD_CODE       = 'ERR_INVALID_CARD_CODE';
 
     // Cadeaux
     const ERR_GIFT_NOT_FOUND       = 'ERR_GIFT_NOT_FOUND';
@@ -130,6 +135,11 @@ class MessageHelper
         self::ERR_INVALID_POINTS   => ['http' => 400, 'message' => 'Le nombre de points doit être supérieur ou égal à 0'],
         self::ERR_PLAYER_GIVEAWAY  => ['http' => 400, 'message' => 'Le don de points n\'est pas correctement renseigné'],
         self::ERR_PLAYER_NOT_FOUND => ['http' => 404, 'message' => 'Erreur lors de la récupération du participant'],
+
+        // Cartes
+        self::ERR_CARD_ALREADY_REGISTERED => ['http' => 409, 'message' => 'La carte est déjà enregistrée'],
+        self::ERR_CARD_NOT_FOUND          => ['http' => 404, 'message' => 'Erreur lors de la récupération de la carte'],
+        self::ERR_INVALID_CARD_CODE       => ['http' => 400, 'message' => 'Le code de la carte est invalide'],
 
         // Cadeaux
         self::ERR_GIFT_NOT_FOUND       => ['http' => 404, 'message' => 'Erreur lors de la récupération du cadeau'],

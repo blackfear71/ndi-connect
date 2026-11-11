@@ -116,7 +116,7 @@ const SettingsModal = ({ user, formData, modalOptions, setModalOptions, onReset,
                                     }
                                     icon={<HiIdentification />}
                                     name={'level'}
-                                    defaultOption={{ key: 0, value: '', label: t('settings.chooseLevel') }}
+                                    defaultOption={{ key: -1, value: '', label: t('settings.chooseLevel') }}
                                     options={getLevelOptions()}
                                     value={formData.values.level}
                                     onChange={handleChangeSelect}

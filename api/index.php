@@ -1,6 +1,7 @@
 <?php
 // Imports
 require_once __DIR__ . '/enums/EnumAction.php';
+require_once __DIR__ . '/enums/EnumMessageType.php';
 require_once __DIR__ . '/enums/EnumSseEvent.php';
 require_once __DIR__ . '/enums/EnumUserRole.php';
 
@@ -16,6 +17,7 @@ require_once __DIR__ . '/core/helpers/EnvironmentHelper.php';
 require_once __DIR__ . '/core/helpers/FileHelper.php';
 require_once __DIR__ . '/core/helpers/LoggerHelper.php';
 require_once __DIR__ . '/core/helpers/MessageHelper.php';
+require_once __DIR__ . '/core/helpers/RegexHelper.php';
 require_once __DIR__ . '/core/helpers/ResponseHelper.php';
 
 // Connexion BDD
@@ -71,7 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Dispatch vers le bon groupe de routes
 $router = new Router();
 
-if (str_starts_with($uri, '/editions')) {
+if (str_starts_with($uri, '/cards')) {
+    require_once __DIR__ . '/routes/cards.php';
+} elseif (str_starts_with($uri, '/editions')) {
     require_once __DIR__ . '/routes/editions.php';
 } elseif (str_starts_with($uri, '/gifts')) {
     require_once __DIR__ . '/routes/gifts.php';

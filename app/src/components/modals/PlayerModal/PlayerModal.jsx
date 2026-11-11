@@ -5,6 +5,7 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { FaPeopleArrows, FaUserFriends } from 'react-icons/fa';
 import { FaUser } from 'react-icons/fa6';
 import { GiTwoCoins } from 'react-icons/gi';
+import { LuQrCode } from 'react-icons/lu';
 import { PiUserListFill } from 'react-icons/pi';
 
 import { IncrementInput, SelectInput, TextInput } from '../../../components/inputs';
@@ -15,7 +16,7 @@ import { EnumAction } from '../../../enums';
 /**
  * Modale participant
  */
-const PlayerModal = ({ rights, player, players, formData, modalOptions, setModalOptions, onClose, isSubmitting }) => {
+const PlayerModal = ({ rights, player, players, formData, modalOptions, setModalOptions, onClose, onOpenQrCode, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -24,6 +25,7 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
 
     // Constantes
     const availablePlayers = player && players.filter((p) => p.id !== player.id);
+    const hasCardPlayerChoice = modalOptions.action === EnumAction.CREATE && !!modalOptions.cardCode && players.length > 0;
 
     /**
      * Réinitialise le message à l'ouverture de la modale
@@ -41,6 +43,17 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
      */
     const setModalMessage = (message) => {
         setModalOptions((prev) => ({ ...prev, message: message }));
+    };
+
+    /**
+     * Met à jour le formulaire à la sélection du participant à rattacher au QR code
+     * @param {*} e Evènement
+     */
+    const handleChangeCardPlayer = (e) => {
+        formData.setValues((prev) => ({
+            ...prev,
+            cardPlayerId: e.target.value === '' ? '' : Number.parseInt(e.target.value)
+        }));
     };
 
     /**
@@ -114,10 +127,10 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
     };
 
     /**
-     * Met à jour le formulaire à la saisie
+     * Met à jour le formulaire à la sélection du participant à qui donner des points
      * @param {*} e Evènement
      */
-    const handleChangeSelect = (e) => {
+    const handleChangeGiveawayPlayer = (e) => {
         formData.setValues((prev) => ({
             ...prev,
             giveawayPlayerId: e.target.value === '' ? null : Number.parseInt(e.target.value)
@@ -125,9 +138,23 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
     };
 
     /**
+     * Renvoie la liste des participants auxquels rattacher le QR code (avec indicateur si un QR code est déjà lié)
+     */
+    const getCardPlayerOptions = () => {
+        return [
+            { key: 0, value: 0, label: `➕ ${t('edition.newPlayer')}` },
+            ...players.map((p) => ({
+                key: p.id,
+                value: p.id,
+                label: `${p.cardCode ? '🔗' : '🟢'} ${p.name} • ${p.points} ${t('edition.points').toLowerCase()}`
+            }))
+        ];
+    };
+
+    /**
      * Renvoie une liste de participants sélectionnables
      */
-    const getGivewayOptions = () => {
+    const getGivewayPlayerOptions = () => {
         return availablePlayers.map((p) => ({
             key: p.id,
             value: p.id,
@@ -147,38 +174,91 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                     </Modal.Header>
 
                     <Modal.Body>
-                        {/* Nombre de points */}
+                        {/* Statistiques */}
                         {modalOptions.action === EnumAction.UPDATE && (
+                            <>
+                                {player?.cardCode ? (
+                                    <div className="modal-statistics">
+                                        {/* Points */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.points')}</div>
+
+                                            {/* Valeur */}
+                                            <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                                {player?.points ?? 0}
+                                            </div>
+                                        </div>
+
+                                        {/* QR code */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.qrCode')}</div>
+
+                                            {/* Bouton QR code */}
+                                            <button
+                                                type="button"
+                                                className="modal-group-content-value modal-group-content-button gray"
+                                                onClick={() => onOpenQrCode(player)}
+                                            >
+                                                <LuQrCode />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="modal-group">
+                                        {/* Points */}
+                                        <div className="modal-group-content">
+                                            {/* Titre */}
+                                            <div className="modal-group-content-title">{t('edition.points')}</div>
+
+                                            {/* Valeur */}
+                                            <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
+                                                {player?.points ?? 0}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {/* Liste des participants pour rattachement d'un QR code */}
+                        {hasCardPlayerChoice && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
-                                    {/* Titre */}
-                                    <div className="modal-group-content-title">{t('edition.points')}</div>
-
-                                    {/* Valeur */}
-                                    <div className={`modal-group-content-value ${player?.points > 0 ? 'green' : 'gray'}`}>
-                                        {player?.points ?? 0}
-                                    </div>
+                                    <SelectInput
+                                        title={t('edition.choosePlayer')}
+                                        icon={<LuQrCode />}
+                                        name={'cardPlayer'}
+                                        defaultOption={{ key: -1, value: '', label: t('edition.choosePlayer') }}
+                                        options={getCardPlayerOptions()}
+                                        value={formData.values.cardPlayerId}
+                                        onChange={handleChangeCardPlayer}
+                                        error={formData.submitCount > 0 && formData.errors.cardPlayerId}
+                                    />
                                 </div>
                             </div>
                         )}
 
-                        {/* Modification du participant */}
-                        <div className="modal-group">
-                            <div className="modal-group-content">
-                                <TextInput
-                                    title={modalOptions.action === EnumAction.CREATE ? t('edition.name') : t('edition.updateName')}
-                                    icon={<PiUserListFill />}
-                                    name="name"
-                                    ref={nameInputRef}
-                                    placeholder={t('edition.name')}
-                                    value={formData.values.name}
-                                    onChange={formData.handleChange}
-                                    error={formData.submitCount > 0 && formData.errors.name}
-                                    maxLength={100}
-                                    required={true}
-                                />
+                        {/* Nom du participant (uniquement pour un nouveau participant) */}
+                        {(!hasCardPlayerChoice || formData.values.cardPlayerId === 0) && (
+                            <div className="modal-group">
+                                <div className="modal-group-content">
+                                    <TextInput
+                                        title={modalOptions.action === EnumAction.CREATE ? t('edition.name') : t('edition.updateName')}
+                                        icon={<PiUserListFill />}
+                                        name="name"
+                                        ref={nameInputRef}
+                                        placeholder={t('edition.name')}
+                                        value={formData.values.name}
+                                        onChange={formData.handleChange}
+                                        error={formData.submitCount > 0 && formData.errors.name}
+                                        maxLength={100}
+                                        required={true}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Attribution des points */}
                         <div className="modal-group">
@@ -201,13 +281,13 @@ const PlayerModal = ({ rights, player, players, formData, modalOptions, setModal
                                 <div className="modal-group-content gap-2">
                                     {/* Choix du participant */}
                                     <SelectInput
-                                        title={t('edition.giveParticipant')}
+                                        title={t('edition.giveToPlayer')}
                                         icon={<FaUserFriends />}
                                         name={'playerGiveaway'}
-                                        defaultOption={{ key: 0, value: '', label: t('edition.chooseParticipant') }}
-                                        options={getGivewayOptions()}
+                                        defaultOption={{ key: 0, value: '', label: t('edition.choosePlayer') }}
+                                        options={getGivewayPlayerOptions()}
                                         value={formData.values.giveawayPlayerId}
-                                        onChange={handleChangeSelect}
+                                        onChange={handleChangeGiveawayPlayer}
                                         error={formData.submitCount > 0 && formData.errors.giveawayPlayerId}
                                     />
 

@@ -35,4 +35,24 @@ class Database
 
         return $this->conn;
     }
+
+    /**
+     * Exécute des traitements dans une transaction (rollback en cas d'exception)
+     */
+    public static function runInTransaction(PDO $db, callable $action): void
+    {
+        $db->beginTransaction();
+
+        try {
+            $action();
+
+            $db->commit();
+        } catch (\Throwable $e) {
+            if ($db->inTransaction()) {
+                $db->rollBack();
+            }
+
+            throw $e;
+        }
+    }
 }

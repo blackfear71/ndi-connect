@@ -11,7 +11,7 @@ import { EnumAction } from '../../../../enums';
 /**
  * Liste des participants
  */
-const PlayerList = ({ rights, players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
+const PlayerList = ({ rights, canManageEdition, players, onConfirm, onOpenPlayerModal, onOpenRewardModal, isSubmitting }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -78,7 +78,7 @@ const PlayerList = ({ rights, players, onConfirm, onOpenPlayerModal, onOpenRewar
                     />
 
                     {/* Modification */}
-                    {rights.isAdminOrSuperAdminOnEdition && (
+                    {canManageEdition && (
                         <TooltipButton
                             tooltip={t('edition.player')}
                             content={<FaAngleRight color={isSubmitting ? 'gray' : 'white'} />}

@@ -2,6 +2,7 @@
 // Imports
 require_once 'models/dtos/EditionOutputDTO.php';
 
+require_once 'services/CardsService.php';
 require_once 'services/GiftsService.php';
 require_once 'services/PlayersService.php';
 
@@ -11,6 +12,7 @@ class EditionsService
 {
     private PDO $db;
 
+    private ?CardsService $cardsService = null;
     private ?GiftsService $giftsService = null;
     private ?PlayersService $playersService = null;
 
@@ -23,6 +25,18 @@ class EditionsService
     {
         $this->db = $db;
         $this->editionsRepository = new EditionsRepository($db);
+    }
+
+    /**
+     * Instancie le CardsService si besoin
+     */
+    private function getCardsService(): CardsService
+    {
+        if ($this->cardsService === null) {
+            $this->cardsService = new CardsService($this->db);
+        }
+
+        return $this->cardsService;
     }
 
     /**
@@ -224,19 +238,24 @@ class EditionsService
             throw new \InvalidArgumentException(MessageHelper::ERR_INVALID_ID);
         }
 
-        // Suppression logique des cadeaux
-        $this->getGiftsService()->deleteGifts($editionId, $userId);
+        Database::runInTransaction($this->db, function () use ($editionId, $userId) {
+            // Suppression logique des cadeaux
+            $this->getGiftsService()->deleteGifts($editionId, $userId);
 
-        // Suppression logique des participants
-        $this->getPlayersService()->deletePlayers($editionId, $userId);
+            // Suppression physique des cartes des participants
+            $this->getCardsService()->deleteEditionCards($editionId);
 
-        // Suppression de l'image
-        $this->processImage($editionId, EnumAction::DELETE->value, null);
+            // Suppression logique des participants
+            $this->getPlayersService()->deletePlayers($editionId, $userId);
 
-        // Suppression logique de l'édition
-        if (!$this->editionsRepository->deleteEdition($editionId, $userId)) {
-            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
-        }
+            // Suppression physique de l'image
+            $this->processImage($editionId, EnumAction::DELETE->value, null);
+
+            // Suppression logique de l'édition
+            if (!$this->editionsRepository->deleteEdition($editionId, $userId)) {
+                throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+            }
+        });
     }
 
     /**

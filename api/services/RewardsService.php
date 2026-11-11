@@ -120,13 +120,15 @@ class RewardsService
             createdBy: $user->id,
         );
 
-        // Insertion
-        if (!$this->rewardsRepository->createReward($reward)) {
-            throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
-        }
+        Database::runInTransaction($this->db, function () use ($reward, $playerId, $gift, $user) {
+            // Insertion
+            if (!$this->rewardsRepository->createReward($reward)) {
+                throw new \RuntimeException(MessageHelper::ERR_CREATION_FAILED);
+            }
 
-        // Suppression des points du participant
-        $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $user->id);
+            // Suppression des points du participant
+            $this->getPlayersService()->updatePlayerPoints($playerId, -1 * $gift->value, $user->id);
+        });
     }
 
     /**
@@ -146,13 +148,15 @@ class RewardsService
             throw new \RuntimeException(MessageHelper::ERR_REWARD_NOT_FOUND);
         }
 
-        // Suppression logique de l'attribution
-        if (!$this->rewardsRepository->deleteReward($rewardId, $userId)) {
-            throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
-        }
+        Database::runInTransaction($this->db, function () use ($rewardId, $reward, $userId) {
+            // Suppression logique de l'attribution
+            if (!$this->rewardsRepository->deleteReward($rewardId, $userId)) {
+                throw new \RuntimeException(MessageHelper::ERR_DELETION_FAILED);
+            }
 
-        // Récupération des points pour le participant
-        $this->getPlayersService()->updatePlayerPoints($reward->playerId, $reward->points, $userId);
+            // Récupération des points pour le participant
+            $this->getPlayersService()->updatePlayerPoints($reward->playerId, $reward->points, $userId);
+        });
     }
 
     /**

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -18,11 +18,12 @@ import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 import { useSse } from '../../utils/context/SseContext';
+import { getCardUrl } from '../../utils/helpers/cardHelper';
 import { getDayFromDate, getLocalizedTime } from '../../utils/helpers/dateHelper';
 
-import { EnumAction, EnumUserRole } from '../../enums';
+import { EnumAction } from '../../enums';
 
-import { EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
+import { CardsService, EditionsService, GiftsService, PlayersService, RewardsService } from '../../api';
 
 import './Edition.css';
 
@@ -48,7 +49,8 @@ const initialPlayerValues = {
     name: '',
     points: 0,
     giveaway: 0,
-    giveawayPlayerId: ''
+    giveawayPlayerId: '',
+    cardPlayerId: ''
 };
 const initialRewardValues = {
     giftId: '',
@@ -62,9 +64,10 @@ const Edition = () => {
     // Router
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage } = useAuth();
+    const { authMessage, setAuthMessage, rights } = useAuth();
     const { events } = useSse();
 
     // Traductions
@@ -74,6 +77,7 @@ const Edition = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
+    const [scannedCode, setScannedCode] = useState(null);
     const [modalOptionsConfirm, setModalOptionsConfirm] = useState({
         content: '',
         action: null,
@@ -95,10 +99,15 @@ const Edition = () => {
     const [modalOptionsPlayer, setModalOptionsPlayer] = useState({
         action: null,
         playerId: null,
+        cardCode: null,
         isOpen: false,
         message: null
     });
     const [modalOptionsQrCode, setModalOptionsQrCode] = useState({
+        url: null,
+        text1: null,
+        text2: null,
+        action: null,
         isOpen: false
     });
     const [modalOptionsReward, setModalOptionsReward] = useState({
@@ -113,14 +122,8 @@ const Edition = () => {
     const [players, setPlayers] = useState([]);
 
     // Constantes
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN,
-        isAdminOrSuperAdminOnEdition:
-            auth.isLoggedIn &&
-            ((auth.level === EnumUserRole.ADMIN && new Date() <= new Date(edition?.endDate)) || auth.level >= EnumUserRole.SUPERADMIN)
-    };
+    const editionUrl = `${import.meta.env.VITE_APP_URL}/edition/${id}`;
+    const canManageEdition = rights.isSuperAdmin || (rights.isAdmin && new Date() <= new Date(edition?.endDate));
 
     /**
      * Schéma de validation Yup de l'édition
@@ -170,8 +173,19 @@ const Edition = () => {
     const playerValidationSchema = useMemo(() => {
         const currentPlayer = players.find((p) => p.id === modalOptionsPlayer.playerId);
 
+        // Indicateur liste de participants proposée pour rattacher un QR code
+        const hasCardPlayerChoice = modalOptionsPlayer.action === EnumAction.CREATE && !!modalOptionsPlayer.cardCode && players.length > 0;
+
         return Yup.object({
-            name: Yup.string().required('errors.invalidName'),
+            cardPlayerId: Yup.mixed().test(
+                'cardPlayerId-choice',
+                'errors.invalidCardPlayer',
+                (value) => !hasCardPlayerChoice || value === 0 || !!value // Si la liste n'est pas affichée ou si un participant est sélectionné le contrôle est valide
+            ),
+            name: Yup.string().when('cardPlayerId', {
+                is: (cardPlayerId) => !cardPlayerId, // Si la carte n'est pas rattachée à un participant existant alors le nom est obligatoire
+                then: (schema) => schema.required('errors.invalidName')
+            }),
             points: Yup.number()
                 .typeError('errors.invalidPoints')
                 .required('errors.invalidPoints')
@@ -203,7 +217,7 @@ const Edition = () => {
                     })
             })
         });
-    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, players, auth]);
+    }, [modalOptionsPlayer.playerId, modalOptionsPlayer.action, modalOptionsPlayer.cardCode, players, rights]);
 
     /**
      * Schéma de validation Yup des récompenses
@@ -245,7 +259,7 @@ const Edition = () => {
     const formPlayer = useFormik({
         initialValues: initialPlayerValues,
         validationSchema: playerValidationSchema,
-        onSubmit: (values) => handleSubmitPlayer(values)
+        onSubmit: (values) => (values.cardPlayerId ? handleSubmitCard(values) : handleSubmitPlayer(values))
     });
 
     /**
@@ -321,6 +335,31 @@ const Edition = () => {
     }, [authMessage, setAuthMessage]);
 
     /**
+     * Récupération du code d'une carte scannée
+     */
+    useEffect(() => {
+        const cardCode = searchParams.get('card');
+
+        if (cardCode !== null) {
+            setScannedCode(cardCode);
+
+            // Retrait du code de l'URL pour ne pas être rejoué à l'actualisation de la page
+            const newSearchParams = new URLSearchParams(searchParams);
+            newSearchParams.delete('card');
+            setSearchParams(newSearchParams, { replace: true });
+        }
+    }, [searchParams]);
+
+    /**
+     * Traitement de la carte scannée une fois l'édition chargée
+     */
+    useEffect(() => {
+        if (scannedCode !== null && !isLoading && edition?.id === Number(id)) {
+            handleScannedCard(scannedCode);
+        }
+    }, [scannedCode, isLoading, edition]);
+
+    /**
      * Mise à jour du formulaire de l'édition aux changements de sa modale
      */
     useEffect(() => {
@@ -381,7 +420,8 @@ const Edition = () => {
                     name: currentPlayer.name,
                     points: 0,
                     giveaway: 0,
-                    giveawayPlayerId: ''
+                    giveawayPlayerId: '',
+                    cardPlayerId: ''
                 });
         }
 
@@ -437,14 +477,89 @@ const Edition = () => {
     };
 
     /**
-     * Ouverture/fermeture de la modale du QR Code
+     * Traitement d'une carte scannée : ouverture de la modale pour création ou rattachement utilisateur ou consultation
+     * @param {*} code Code carte
      */
-    const openCloseQrCodeModal = () => {
+    const handleScannedCard = (code) => {
+        setScannedCode(null);
+
+        const cardsService = new CardsService();
+
+        cardsService
+            .getCardStatus(edition.id, code)
+            .pipe(
+                map((dataCard) => {
+                    if (dataCard.response.data.isFree) {
+                        // Utilisateur connecté, carte libre : inscription d'un nouveau participant ou rattachement à un participant existant
+                        setModalOptionsPlayer({
+                            action: EnumAction.CREATE,
+                            playerId: null,
+                            cardCode: code,
+                            isOpen: true,
+                            message: null
+                        });
+                    } else if (canManageEdition) {
+                        // Utilisateur connecté, carte trouvée : saisie des points du participant
+                        setModalOptionsPlayer({
+                            action: EnumAction.UPDATE,
+                            playerId: dataCard.response.data.playerId,
+                            cardCode: null,
+                            isOpen: true,
+                            message: null
+                        });
+                    } else {
+                        // Utilisateur non connecté, carte trouvée : consultation des cadeaux du participant
+                        setModalOptionsReward({
+                            playerId: dataCard.response.data.playerId,
+                            isOpen: true,
+                            message: null
+                        });
+                    }
+                }),
+                take(1),
+                catchError((err) => {
+                    // Carte invalide, inconnue, participant inconnu... : redirection vers l'accueil avec message
+                    navigate('/', {
+                        state: {
+                            navMessage: { code: err?.response?.message, type: err?.response?.status }
+                        }
+                    });
+                    return of();
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Ouverture/fermeture de la modale du QR Code
+     * @param {*} url URL encodée dans le QR code (édition ou participant)
+     * @param {*} text1 Texte principal affiché sous le QR code
+     * @param {*} text2 Texte secondaire affiché sous le texte principal
+     * @param {*} action Bouton d'action { icon, label, data } affiché sous le QR code (non utilisé sur cette page)
+     */
+    const openCloseQrCodeModal = (url = null, text1 = null, text2 = null, action = null) => {
         // Ouverture ou fermeture
         setModalOptionsQrCode((prev) => ({
-            ...prev,
+            url: url,
+            text1: text1,
+            text2: text2,
+            action: action,
             isOpen: !prev.isOpen
         }));
+    };
+
+    /**
+     * Ferme la modale d'où l'on vient (participant ou cadeaux) puis ouvre la modale du QR code de la carte du participant
+     * @param {*} player Participant
+     * @param {*} closeModal Fonction de fermeture de la modale en cours
+     */
+    const handleOpenPlayerQrCode = (player, closeModal) => {
+        closeModal();
+        openCloseQrCodeModal(
+            getCardUrl(edition.id, player.cardCode),
+            player.name,
+            t(player.points === 1 ? 'edition.countPoint' : 'edition.countPoints', { count: player.points })
+        );
     };
 
     /**
@@ -559,13 +674,14 @@ const Edition = () => {
             ...prev,
             action: action,
             playerId: playerId,
+            cardCode: null,
             isOpen: !prev.isOpen,
             message: null
         }));
     };
 
     /**
-     * Création ou modification d'un participant
+     * Validation de la modale participant (création ou modification)
      * @param {*} values Données du formulaire
      */
     const handleSubmitPlayer = (values) => {
@@ -582,7 +698,8 @@ const Edition = () => {
 
                 subscriptionPlayers = playersService.createPlayer(edition?.id, {
                     name: values.name,
-                    points: values.points
+                    points: values.points,
+                    cardCode: modalOptionsPlayer?.cardCode
                 });
                 break;
             case EnumAction.UPDATE:
@@ -614,6 +731,79 @@ const Edition = () => {
                         ...prev,
                         message: { code: err?.response?.message, type: err?.response?.status }
                     }));
+                    return of();
+                }),
+                finalize(() => {
+                    setIsSubmitting(false);
+                })
+            )
+            .subscribe();
+    };
+
+    /**
+     * Validation de la modale participant (via rattachement d'un QR code)
+     * @param {*} values Données du formulaire
+     */
+    const handleSubmitCard = (values) => {
+        const cardCode = modalOptionsPlayer?.cardCode;
+        const attachedPlayer = players.find((p) => p.id === values.cardPlayerId);
+
+        const data = { player: attachedPlayer, points: values.points, cardCode: cardCode };
+
+        // Si le participant a déjà un QR code, la modale de confirmation de son remplacement s'affiche, sinon on le rattache directement
+        if (attachedPlayer.cardCode) {
+            openClosePlayerModal();
+            openCloseConfirmModal({
+                content: t('edition.attachCard', { name: attachedPlayer.name }),
+                action: 'attachCard',
+                data: data
+            });
+        } else {
+            handleAttachCard(data);
+        }
+    };
+
+    /**
+     * Rattachement du QR code scanné à un participant existant (remplace son QR code actuel s'il en possède un)
+     * @param {*} data Participant, points saisis et code du QR code
+     */
+    const handleAttachCard = (data) => {
+        setMessage(null);
+        setIsSubmitting(true);
+
+        // La modale visible est celle de confirmation si elle est ouverte, sinon c'est la modale participant
+        modalOptionsConfirm.isOpen
+            ? setModalOptionsConfirm((prev) => ({ ...prev, message: null }))
+            : setModalOptionsPlayer((prev) => ({ ...prev, message: null }));
+
+        const playersService = new PlayersService();
+
+        // Modification du participant existant avec les données saisies (pas de don de points à la création)
+        playersService
+            .updatePlayer(data.player.id, {
+                name: data.player.name,
+                points: data.points,
+                giveaway: 0,
+                giveawayPlayerId: 0,
+                cardCode: data.cardCode
+            })
+            .pipe(
+                map((dataPlayer) => {
+                    setMessage({ code: dataPlayer.response.message, type: dataPlayer.response.status });
+                }),
+                switchMap(() => playersService.getEditionPlayers(edition?.id)),
+                map((dataPlayers) => {
+                    modalOptionsConfirm.isOpen ? openCloseConfirmModal() : openClosePlayerModal();
+                    setPlayers(processPlayersData(dataPlayers.response.data));
+                }),
+                take(1),
+                catchError((err) => {
+                    // Message d'erreur dans la modale (si elle est ouverte) ou sur la page
+                    const errorMessage = { code: err?.response?.message, type: err?.response?.status };
+
+                    modalOptionsConfirm.isOpen
+                        ? setModalOptionsConfirm((prev) => ({ ...prev, message: errorMessage }))
+                        : setModalOptionsPlayer((prev) => ({ ...prev, message: errorMessage }));
                     return of();
                 }),
                 finalize(() => {
@@ -800,6 +990,8 @@ const Edition = () => {
      */
     const handleConfirmAction = () => {
         switch (modalOptionsConfirm?.action) {
+            case 'attachCard':
+                return handleAttachCard(modalOptionsConfirm.data);
             case 'deleteEdition':
                 return handleDeleteEdition();
             case 'deleteGift':
@@ -1008,7 +1200,17 @@ const Edition = () => {
                                     </span>
 
                                     {/* QR Code */}
-                                    <Button className="edition-title-button" onClick={openCloseQrCodeModal} disabled={isSubmitting}>
+                                    <Button
+                                        className="edition-title-button"
+                                        onClick={() =>
+                                            openCloseQrCodeModal(
+                                                editionUrl,
+                                                t('edition.editionYear', { year: new Date(edition.startDate).getFullYear() }),
+                                                edition.location
+                                            )
+                                        }
+                                        disabled={isSubmitting}
+                                    >
                                         <LuQrCode size={30} />
                                     </Button>
                                 </h1>
@@ -1019,6 +1221,7 @@ const Edition = () => {
                                     <Tab eventKey="players" title={t('edition.players')}>
                                         <EditionPlayers
                                             rights={rights}
+                                            canManageEdition={canManageEdition}
                                             players={players}
                                             onOpenPlayerModal={openClosePlayerModal}
                                             onOpenRewardModal={openCloseRewardModal}
@@ -1031,6 +1234,7 @@ const Edition = () => {
                                     <Tab eventKey="gifts" title={t('edition.gifts')}>
                                         <EditionGifts
                                             rights={rights}
+                                            canManageEdition={canManageEdition}
                                             gifts={gifts}
                                             onOpen={openCloseGiftModal}
                                             onConfirm={openCloseConfirmModal}
@@ -1062,7 +1266,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de cadeau */}
-                                {rights.isAdminOrSuperAdminOnEdition && formGift && modalOptionsGift.isOpen && (
+                                {canManageEdition && formGift && modalOptionsGift.isOpen && (
                                     <GiftModal
                                         gift={gifts.find((g) => g.id === modalOptionsGift.giftId)}
                                         formData={formGift}
@@ -1074,7 +1278,7 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale de création/modification de participant */}
-                                {rights.isAdminOrSuperAdminOnEdition && formPlayer && modalOptionsPlayer.isOpen && (
+                                {canManageEdition && formPlayer && modalOptionsPlayer.isOpen && (
                                     <PlayerModal
                                         rights={rights}
                                         player={players.find((p) => p.id === modalOptionsPlayer.playerId)}
@@ -1082,6 +1286,7 @@ const Edition = () => {
                                         formData={formPlayer}
                                         modalOptions={modalOptionsPlayer}
                                         setModalOptions={setModalOptionsPlayer}
+                                        onOpenQrCode={(p) => handleOpenPlayerQrCode(p, openClosePlayerModal)}
                                         onClose={openClosePlayerModal}
                                         isSubmitting={isSubmitting}
                                     />
@@ -1091,11 +1296,13 @@ const Edition = () => {
                                 {formReward && modalOptionsReward.isOpen && (
                                     <RewardModal
                                         rights={rights}
+                                        canManageEdition={canManageEdition}
                                         player={players.find((p) => p.id === modalOptionsReward.playerId)}
                                         gifts={gifts}
                                         formData={formReward}
                                         modalOptions={modalOptionsReward}
                                         setModalOptions={setModalOptionsReward}
+                                        onOpenQrCode={(p) => handleOpenPlayerQrCode(p, openCloseRewardModal)}
                                         onClose={openCloseRewardModal}
                                         onConfirm={openCloseConfirmModal}
                                         isSubmitting={isSubmitting}
@@ -1103,12 +1310,16 @@ const Edition = () => {
                                 )}
 
                                 {/* Modale QR Code */}
-                                {edition && modalOptionsQrCode.isOpen && (
-                                    <QrCodeModal editionId={edition.id} onClose={openCloseQrCodeModal} isSubmitting={isSubmitting} />
+                                {edition && modalOptionsQrCode.isOpen && modalOptionsQrCode.url && (
+                                    <QrCodeModal
+                                        modalOptions={modalOptionsQrCode}
+                                        onClose={() => openCloseQrCodeModal()}
+                                        isSubmitting={isSubmitting}
+                                    />
                                 )}
 
                                 {/* Modale de confirmation */}
-                                {rights.isSuperAdmin && modalOptionsConfirm.isOpen && (
+                                {canManageEdition && modalOptionsConfirm.isOpen && (
                                     <ConfirmModal
                                         modalOptions={modalOptionsConfirm}
                                         setModalOptions={setModalOptionsConfirm}

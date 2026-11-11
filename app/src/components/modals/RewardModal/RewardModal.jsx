@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal } from 'react-bootstrap';
 import { FaGift, FaTrashCan } from 'react-icons/fa6';
+import { LuQrCode } from 'react-icons/lu';
 import { PiListStarBold } from 'react-icons/pi';
 
 import { SelectInput } from '../../../components/inputs';
@@ -12,7 +13,19 @@ import './RewardModal.css';
 /**
  * Modale récompense
  */
-const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOptions, onClose, onConfirm, isSubmitting }) => {
+const RewardModal = ({
+    rights,
+    canManageEdition,
+    player,
+    gifts,
+    formData,
+    modalOptions,
+    setModalOptions,
+    onOpenQrCode,
+    onClose,
+    onConfirm,
+    isSubmitting
+}) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -72,13 +85,14 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                     <Modal.Header closeButton>
                         <Modal.Title>
                             <FaGift />
-                            {rights.isAdminOrSuperAdminOnEdition ? t('edition.manageGifts') : t('edition.informations')}
+                            {canManageEdition ? t('edition.manageGifts') : t('edition.informations')}
                         </Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         {/* Participant */}
                         <div className="d-flex align-items-center gap-2 p-2 reward-modal-player">
+                            {/* Bulle */}
                             <div
                                 className="d-flex align-items-center justify-content-center reward-modal-icon"
                                 style={{ backgroundColor: player.color }}
@@ -86,7 +100,20 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                                 {player.name.charAt(0).toUpperCase()}
                             </div>
 
-                            <div className="reward-modal-player-name">{player.name}</div>
+                            {/* Nom */}
+                            <div className="flex-grow-1 reward-modal-player-name">{player.name}</div>
+
+                            {/* QR code de la carte */}
+                            {player.cardCode && (
+                                <button
+                                    type="button"
+                                    className="d-flex align-items-center justify-content-center reward-modal-qrcode-button"
+                                    aria-label={t('edition.qrCode')}
+                                    onClick={() => onOpenQrCode(player)}
+                                >
+                                    <LuQrCode size={26} />
+                                </button>
+                            )}
                         </div>
 
                         {/* Statistiques */}
@@ -115,7 +142,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                         </div>
 
                         {/* Attribution cadeaux */}
-                        {rights.isAdminOrSuperAdminOnEdition && (
+                        {canManageEdition && (
                             <div className="modal-group">
                                 <div className="modal-group-content">
                                     {gifts.length > 0 ? (
@@ -195,7 +222,7 @@ const RewardModal = ({ rights, player, gifts, formData, modalOptions, setModalOp
                                 {t('common.close')}
                             </Button>
 
-                            {rights.isAdminOrSuperAdminOnEdition && obtainableGifts.length > 0 && (
+                            {canManageEdition && obtainableGifts.length > 0 && (
                                 <SpinnerButton label={t('common.validate')} isSubmitting={isSubmitting} />
                             )}
                         </div>

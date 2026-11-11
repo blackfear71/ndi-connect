@@ -24,4 +24,12 @@ class DataHelper
         $d = DateTime::createFromFormat($format, $value);
         return $d && $d->format($format) === $value;
     }
+
+    /**
+     * Normalisation d'un code de carte
+     */
+    public static function normalizeCode(string $code): string
+    {
+        return strtoupper(trim($code));
+    }
 }

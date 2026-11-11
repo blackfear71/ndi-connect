@@ -16,7 +16,7 @@ import { Message } from '../../components/shared';
 
 import { useAuth } from '../../utils/context/AuthContext';
 
-import { EnumAction, EnumUserRole } from '../../enums';
+import { EnumAction } from '../../enums';
 
 import { EditionsService } from '../../api';
 
@@ -43,7 +43,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, setAuthMessage } = useAuth();
+    const { rights, authMessage, setAuthMessage } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -61,13 +61,6 @@ const Home = () => {
     // API states
     const [yearsAndEditions, setYearsAndEditions] = useState([]);
     const [editionsByYear, setEditionsByYear] = useState();
-
-    // Constantes
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
-    };
 
     /**
      * Schéma de validation Yup de l'édition
@@ -133,7 +126,7 @@ const Home = () => {
             setAuthMessage(null);
         }
 
-        // Message venant du navigate() (déconnexion depuis une page admin, suppression édition)
+        // Message venant du navigate() (déconnexion depuis une page admin, suppression édition, erreur sur QR code scanné)
         if (location.state?.navMessage) {
             setMessage(location.state.navMessage);
 

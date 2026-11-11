@@ -1,35 +1,37 @@
 /* https://fonts.google.com/specimen/Quicksand */
 
+/* Une seule famille et une déclaration pour chaque épaisseur : le navigateur choisit le bon fichier selon font-weight */
+
 @font-face {
-    font-family: 'Quicksand-Light';
+    font-family: 'Quicksand';
     src: url('./Quicksand-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Quicksand-Regular';
+    font-family: 'Quicksand';
     src: url('./Quicksand-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Quicksand-Medium';
+    font-family: 'Quicksand';
     src: url('./Quicksand-Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Quicksand-SemiBold';
+    font-family: 'Quicksand';
     src: url('./Quicksand-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'Quicksand-Bold';
+    font-family: 'Quicksand';
     src: url('./Quicksand-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;

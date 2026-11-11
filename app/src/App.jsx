@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import { Edition, Home, Settings } from './pages';
+import { Edition, Home, QrCodes, Settings } from './pages';
 
 import { Layout, ScrollToTop } from './components/shared';
 
@@ -29,6 +29,9 @@ function App() {
                                     </SseProvider>
                                 }
                             />
+
+                            {/* QR Codes */}
+                            <Route path="qrcodes" element={<QrCodes />} />
 
                             {/* Paramètres */}
                             <Route path="settings" element={<Settings />} />

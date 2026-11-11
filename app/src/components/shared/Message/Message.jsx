@@ -7,12 +7,17 @@ import { Alert, Button } from 'react-bootstrap';
 
 import { getMessageTranslationKey } from '../../../utils/helpers/messageHelper';
 
+import { EnumMessageType } from '../../../enums';
+
 import './Message.css';
+
+// Délai de fermeture automatique des messages de succès (ms), partagé avec l'animation de la barre de progression
+const AUTO_CLOSE_DELAY = 5000;
 
 /**
  * Message
  */
-const Message = ({ code, params = {}, type = 'error', inline = false, setMessage }) => {
+const Message = ({ code, params = {}, type = EnumMessageType.ERROR, inline = false, setMessage }) => {
     // Traductions
     const { t } = useTranslation();
 
@@ -20,7 +25,7 @@ const Message = ({ code, params = {}, type = 'error', inline = false, setMessage
     const [showMessage, setShowMessage] = useState(true);
 
     // Constantes
-    const autoClose = type === 'success';
+    const autoClose = type === EnumMessageType.SUCCESS;
 
     /**
      * Fermeture automatique du message
@@ -30,7 +35,7 @@ const Message = ({ code, params = {}, type = 'error', inline = false, setMessage
             const timer = setTimeout(() => {
                 setShowMessage(false);
                 setMessage?.(null);
-            }, 10000);
+            }, AUTO_CLOSE_DELAY);
 
             // Nettoyage si le composant est démonté avant
             return () => clearTimeout(timer);
@@ -50,10 +55,10 @@ const Message = ({ code, params = {}, type = 'error', inline = false, setMessage
      */
     const getVariantFromType = (messageType) =>
         ({
-            success: 'success',
-            error: 'danger',
-            warning: 'warning',
-            info: 'info'
+            [EnumMessageType.SUCCESS]: 'success',
+            [EnumMessageType.ERROR]: 'danger',
+            [EnumMessageType.WARNING]: 'warning',
+            [EnumMessageType.INFO]: 'info'
         })[messageType] || 'info';
 
     return (
@@ -67,6 +72,11 @@ const Message = ({ code, params = {}, type = 'error', inline = false, setMessage
 
                 {/* Bouton de fermeture */}
                 {!autoClose && <Button variant="close" className="p-0 message-button-close" onClick={handleClose} />}
+
+                {/* Temps restant avant la fermeture automatique */}
+                {autoClose && (
+                    <span className="message-progress" style={{ '--message-duration': `${AUTO_CLOSE_DELAY}ms` }} aria-hidden="true" />
+                )}
             </Alert>
         )
     );

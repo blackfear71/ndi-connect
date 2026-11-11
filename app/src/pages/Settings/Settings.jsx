@@ -47,7 +47,7 @@ const Settings = () => {
     const navigate = useNavigate();
 
     // Contexte
-    const { auth, authMessage, refreshAuth, setAuthMessage, skipAutoRedirectRef } = useAuth();
+    const { auth, rights, authMessage, refreshAuth, setAuthMessage, skipAutoRedirectRef } = useAuth();
 
     // Traductions
     const { t } = useTranslation();
@@ -77,13 +77,6 @@ const Settings = () => {
     // API states
     const [users, setUsers] = useState([]);
     const [connectedUser, setConnectedUser] = useState(null);
-
-    // Constantes
-    const rights = {
-        isUser: auth.isLoggedIn && auth.level === EnumUserRole.USER,
-        isAdmin: auth.isLoggedIn && auth.level === EnumUserRole.ADMIN,
-        isSuperAdmin: auth.isLoggedIn && auth.level >= EnumUserRole.SUPERADMIN
-    };
 
     /**
      * Schéma de validation Yup du mot de passe
@@ -157,6 +150,8 @@ const Settings = () => {
             } else {
                 navigate('/');
             }
+
+            return;
         }
 
         // Récupération des données utilisateurs

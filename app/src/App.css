@@ -160,6 +160,16 @@ h1 {
     color: var(--color-text-white) !important;
 }
 
+/* Listes déroulantes */
+.form-select {
+    color-scheme: light;
+}
+
+.form-select option {
+    background-color: var(--color-bg-white);
+    color: var(--color-text-primary);
+}
+
 /* Modales */
 .modal-header {
     background-color: var(--color-bg-secondary);
@@ -218,6 +228,14 @@ h1 {
 .modal-body .modal-group-content .modal-group-content-value {
     font-size: x-large;
     font-weight: 600;
+}
+
+.modal-body .modal-group-content .modal-group-content-button {
+    padding: 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
 }
 
 .modal-body .modal-group-content .modal-empty {

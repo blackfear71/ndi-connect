@@ -226,7 +226,7 @@ const SearchBar = () => {
                                     </div>
 
                                     <div className="search-result-item-right">
-                                        <span className="search-result-item-text">{t('edition.editionResult', { year: item.year })}</span>
+                                        <span className="search-result-item-text">{t('edition.editionYear', { year: item.year })}</span>
                                     </div>
                                 </div>
                             ))}

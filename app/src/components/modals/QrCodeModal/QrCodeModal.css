@@ -1,0 +1,22 @@
+.qr-code-modal-code {
+    border-radius: var(--bs-border-radius-xl);
+    box-shadow: 0 1px 3px var(--color-bg-gray-black);
+}
+
+.qr-code-modal-text {
+    font-style: italic;
+    color: var(--color-text-secondary);
+}
+
+.qr-code-modal-text1 {
+    font-size: xx-large;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--color-text-primary);
+}
+
+.qr-code-modal-text2 {
+    font-size: x-large;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+}
