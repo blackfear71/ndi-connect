@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Badge, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FaAngleRight, FaGift, FaSort, FaTrashCan } from 'react-icons/fa6';
 import { GiCardboardBox, GiCardboardBoxClosed } from 'react-icons/gi';
 import { GrMoney } from 'react-icons/gr';
@@ -81,9 +81,7 @@ const GiftList = ({ rights, canManageEdition, gifts, title, onOpen, onConfirm, i
         <>
             {/* Titre & tri */}
             <div className="d-flex align-items-center justify-content-between gap-2">
-                <Badge pill bg="warning" className="edition-subtitle-badge">
-                    {title}
-                </Badge>
+                <div className="d-flex align-items-center gap-2 edition-subtitle">{title}</div>
 
                 <Button className="d-flex align-items-center p-2 gap-2 edition-gifts-sort" onClick={handleToggleSort}>
                     <FaSort size={15} />

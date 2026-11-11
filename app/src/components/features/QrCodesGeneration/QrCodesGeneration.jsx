@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Badge, Button, Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { FaComputer, FaFileZipper } from 'react-icons/fa6';
 import { PiHashBold } from 'react-icons/pi';
 
@@ -100,11 +100,7 @@ const QrCodesGeneration = ({ formData, editions, generatedItems, onOpenQrCode, o
                     {generatedItems.length > 0 && (
                         <>
                             {/* Titre et export global */}
-                            <div className="d-flex mt-3 mb-2">
-                                <Badge pill bg="warning" className="edition-subtitle-badge">
-                                    {t('qrCodes.generatedCodes')}
-                                </Badge>
-                            </div>
+                            <div className="d-flex align-items-center gap-2 mt-3 mb-2 edition-subtitle">{t('qrCodes.generatedCodes')}</div>
 
                             <div className="d-grid">
                                 <Button variant="outline-action" onClick={onDownloadAll} disabled={isSubmitting}>

@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Badge } from 'react-bootstrap';
 import { FaTrashCan } from 'react-icons/fa6';
 import { LuQrCode } from 'react-icons/lu';
 
@@ -33,11 +32,7 @@ const CardList = ({ edition, cards, onConfirm, isSubmitting }) => {
     return (
         <>
             {/* Titre */}
-            <div className="d-flex mt-3">
-                <Badge pill bg="warning" className="edition-subtitle-badge">
-                    {t('qrCodes.registeredCards')}
-                </Badge>
-            </div>
+            <div className="d-flex align-items-center gap-2 mt-3 edition-subtitle">{t('qrCodes.registeredCards')}</div>
 
             {/* Liste */}
             {cards?.map((c) => (
